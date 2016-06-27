@@ -34,7 +34,7 @@ def forward_selected(data, response):
             scores_with_candidates.append((score, candidate))
         scores_with_candidates.sort()
         best_new_score, best_candidate = scores_with_candidates.pop()
-        if (current_score < best_new_score) and ((best_new_score - current_score) > .0050):
+        if (current_score < best_new_score) and ((best_new_score - current_score) > cutoff):
             remaining.remove(best_candidate)
             selected.append(best_candidate)
             current_score = best_new_score

@@ -16,8 +16,12 @@ import statsmodels.formula.api as smf
 from forward import forward_selected
 
 def convertToCelsius(value):
-    celsius = round(((value/100.0) * 1.8) - 459.67)
+    celsius = round((value * 1.8) - 459.67)
     return celsius
+
+def convertToKelvin(value):
+    kelvin = round((value + 459.67) * (5.0/9.0))
+    return kelvin
 
 # Declare variables
 column_list = ['700-500MB THICKNESS','850-700MB THICKNESS','1000-850MB THICKNESS',
@@ -31,14 +35,17 @@ column_list = ['700-500MB THICKNESS','850-700MB THICKNESS','1000-850MB THICKNESS
                '10M U-WIND','10M V-WIND','10M WIND SPEED','700MB WIND SPEED','850MB WIND SPEED',
                '925MB WIND SPEED','950MB WIND SPEED','975MB WIND SPEED','K-INDEX']
 
+print "WISPS starting. Alpha testing."
+
 # GFS netCDF file name creation
-model_dir = '/scratch3/NCEPDEV/mdl/Jason.Levit/wisps/gfs/'
+model_dir = '/scratch3/NCEPDEV/mdl/Jason.Levit/wisps/gfs_new/'
 model_filename = model_dir + 'u201.gfs00.f030.cl.nc'
 model_file = Dataset(model_filename, 'r', format="NETCDF4")
 
 # OBS netCDF file name creation
-obs_dir = '/scratch3/NCEPDEV/mdl/Jason.Levit/wisps/obs/'
-obs_filename = obs_dir + 'metar_tdmxmn_predictands.nc'
+obs_dir = '/scratch3/NCEPDEV/mdl/Jason.Levit/wisps/obs_new/'
+#obs_filename = obs_dir + 'metar_tdmxmn_predictands.nc'
+obs_filename = obs_dir + 'u201.gfstemp.tand.cl.nc'
 obs_file = Dataset(obs_filename, 'r', format="NETCDF4")
 
 # Create a list of dates
@@ -48,7 +55,8 @@ numyears = 2
 epoch_range = []
 for ny in range(0,numyears):
     start_date = pd.datetime(start_years[ny], 10, 2, 6)
-    end_date = pd.datetime(end_years[ny], 3, 31, 6)
+#    end_date = pd.datetime(end_years[ny], 3, 31, 6)
+    end_date = pd.datetime(end_years[ny], 4, 1, 6)
     epoch_list = (pd.date_range(start_date, end_date, freq='1D').astype(int) // 10**9)
     for e in epoch_list:
         epoch_range.append(e)
@@ -78,13 +86,13 @@ stations_obs = map(''.join, stations_obs)
 stations_model = map(''.join, stations_model)
 
 # Read in observation data into numpy array
-print "Reading obs data."
-nsta = int(len(obs_file.dimensions['nsta']))
-nrtm = int(len(obs_file.dimensions['rtime']))
-nvar = int(len(obs_variable_list))
+print "Reading observation data."
+nsta_obs = int(len(obs_file.dimensions['nsta']))
+nrtm_obs = int(len(obs_file.dimensions['rtime']))
+nvar_obs = int(len(obs_variable_list))
 nrtm = len(epoch_range)
-print nsta, nrtm, nvar
-obs = np.empty([nvar,nrtm,nsta])
+print nsta_obs, nrtm, nvar_obs
+obs = np.empty([nvar_obs,nrtm,nsta_obs])
 for v, var in enumerate(obs_variable_list):
     for e, epoch in enumerate(epoch_range):
         for t, time in enumerate(times_obs):
@@ -93,12 +101,12 @@ for v, var in enumerate(obs_variable_list):
 
 # Read in model data into numpy array
 print "Reading model data."
-nsta = int(len(model_file.dimensions['nsta']))
-nrtm = int(len(model_file.dimensions['rtime']))
-nvar = int(len(model_variable_list))
+nsta_model = int(len(model_file.dimensions['nsta']))
+nrtm_model = int(len(model_file.dimensions['rtime']))
+nvar_model = int(len(model_variable_list))
 nrtm = len(epoch_range)
-print nsta, nrtm, nvar
-model = np.empty([nvar,nrtm,nsta])
+print nsta_model, nrtm, nvar_model
+model = np.empty([nvar_model,nrtm,nsta_model])
 for v, var in enumerate(model_variable_list):
     for e, epoch in enumerate(epoch_range):
         for t, time in enumerate(times_model_add):
@@ -106,17 +114,18 @@ for v, var in enumerate(model_variable_list):
                 model[v,e,:] = model_file.variables[var][0,t,:]
 
 # Replace all missing values with numpy NAN
-obs[obs == 99990000] = np.NaN
-model[model == 99990000] = np.NaN
-model[model == 999900000] = np.NaN
+obs[obs == 9999.0] = np.NaN
+model[model == 9999.0] = np.NaN
 
-# Convert some values to Celsius
-for e, epoch in enumerate(epoch_range):
-    for n in range(nsta):
-        model[12,e,n] = convertToCelsius(model[12,e,n])
+# Convert temperature obs to Kelvin
+#for e, epoch in enumerate(epoch_range):
+#    for n in range(nsta_obs):
+#        obs[0,e,n] = convertToKelvin(obs[0,e,n])
 
 model_file.close()
 obs_file.close()
+
+print "Begin stepwise linear regression."
 
 # Replace all missing values with numpy NAN
 #df_obs.replace(99990000,np.NaN,inplace=True)
@@ -159,7 +168,10 @@ for so, station_obs in enumerate(stations_obs):
 #                   new_col_name = "COL" + str(mv)
 #                   df_data.rename(columns={model_var:new_col_name},inplace=True)
                 result = forward_selected(df_data,'_TEMPERATURE')
-                print station_obs, result.model.formula, result.rsquared_adj
+#                print station_obs, result.model.formula, result.rsquared_adj
+#                print station_obs, result.model.formula, result.params, result.rsquared_adj
+                print station_obs
+                print result.summary()
                 sys.stdout.flush()
 
 # Linear regression just using numpy alone
