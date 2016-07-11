@@ -14,6 +14,9 @@ import calendar
 from netCDF4 import Dataset 
 import statsmodels.formula.api as smf
 from forward import forward_selected
+from stepreg import stepregress
+from scipy import stats
+from sklearn import linear_model
 
 def convertToCelsius(value):
     celsius = round((value * 1.8) - 459.67)
@@ -156,40 +159,36 @@ print "Begin stepwise linear regression."
 #for v in model_variable_list:
 #x = df_all[['_TEMP_Z__2','Intercept']]
 
+# Use data frames
 # Linear regression using numpy and data frames
+#for so, station_obs in enumerate(stations_obs):
+#    for sm, station_model in enumerate(stations_model):
+#        if (station_obs == station_model):
+#            nantest = np.isnan(obs[0,:,so])
+#            if (np.all(nantest) != True):
+#                df_data['_TEMPERATURE'] = obs[0,:,so]
+#                for mv, model_var in enumerate(model_variable_list_rename):
+#                    df_data[model_var] = model[mv,:,sm]
+##                   new_col_name = "COL" + str(mv)
+##                   df_data.rename(columns={model_var:new_col_name},inplace=True)
+#                result = forward_selected(df_data,'_TEMPERATURE')
+##                print station_obs, result.model.formula, result.rsquared_adj
+##                print station_obs, result.model.formula, result.params, result.rsquared_adj
+#                print station_obs
+#                print result.summary()
+#                sys.stdout.flush()
+
+# Stepwise linear regression using numpy and smf.OLS
 for so, station_obs in enumerate(stations_obs):
     for sm, station_model in enumerate(stations_model):
         if (station_obs == station_model):
             nantest = np.isnan(obs[0,:,so])
             if (np.all(nantest) != True):
-                df_data['_TEMPERATURE'] = obs[0,:,so]
-                for mv, model_var in enumerate(model_variable_list_rename):
-                    df_data[model_var] = model[mv,:,sm]
-#                   new_col_name = "COL" + str(mv)
-#                   df_data.rename(columns={model_var:new_col_name},inplace=True)
-                result = forward_selected(df_data,'_TEMPERATURE')
-#                print station_obs, result.model.formula, result.rsquared_adj
-#                print station_obs, result.model.formula, result.params, result.rsquared_adj
-                print station_obs
-                print result.summary()
-                sys.stdout.flush()
-
-# Linear regression just using numpy alone
-#for so, station_obs in enumerate(stations_obs):
-#    for sm, station_model in enumerate(stations_model):
-#        if (station_obs == station_model):
-#            y = obs[0,:,so] 
-#            nantest = np.isnan(y)
-#            if (np.all(nantest) != True):
-#                highest_rsquared = 0.0
-#                best_var = ''
-#                for v, var in enumerate(model_variable_list):
-#                    x = np.column_stack((model[v,:,sm],np.full((nrtm),1)))
-#                    result = smf.OLS(y,x,missing='drop').fit()
-#                    if (result.rsquared_adj > highest_rsquared):
-#                        best_var = var
-#                        highest_rsquared = result.rsquared_adj
-#                print station_obs, best_var, highest_rsquared
+                result, predictors = stepregress(model[:,:,sm],y = obs[0,:,so])
+            print station_obs, result.rsquared_adj
+            for pd, predict in enumerate(predictors):
+                print result.params[pd],model_variable_list[predict]
+            print result.params[-1], "INTERCEPT"
 
 #print model.params
 #predictions = model.predict(df_new)
@@ -211,7 +210,4 @@ for so, station_obs in enumerate(stations_obs):
 #                    if (epoch == time_model+times_model_valid):
 #                        for v in model_variable_list:
 #                            df_model[v][epoch] = model_file.variables[v][0,tm,sm]
-
-
-
 
