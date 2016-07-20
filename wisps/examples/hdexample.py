@@ -1,4 +1,3 @@
-#!/contrib/anaconda/2.3.0/bin/python
 #
 # This example creates an HDF5 file compound.h5 and an empty datasets /DSC in it.
 #

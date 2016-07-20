@@ -1,5 +1,3 @@
-#!/contrib/anaconda/2.3.0/bin/python
-
 # Program converts CSV hourly obs files to netCDF.
 # Jason Levit, MDL, May 2016
 

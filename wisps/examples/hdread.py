@@ -1,7 +1,6 @@
-#!/contrib/anaconda/2.3.0/bin/python
-
-# Program reads netCDF files and converts to monthly groups.
-# Jason Levit, MDL, April 2016
+# Program creates fake, interpolated model data from a list of observation sites
+# and stores them into a HDF5 file.
+# Jason Levit, MDL, May 2016
 
 # Declare imports
 import csv
@@ -10,8 +9,10 @@ import numpy as np
 import sys
 import time
 from datetime import datetime, date, timedelta
+from pandas.tseries.offsets import *
 import calendar
-from netCDF4 import Dataset 
+import h5py
+import random
 
 # Declare global variables
 var_list = ['700-500MB THICKNESS','850-700MB THICKNESS','1000-850MB THICKNESS',
@@ -25,31 +26,14 @@ var_list = ['700-500MB THICKNESS','850-700MB THICKNESS','1000-850MB THICKNESS',
             '10M U-WIND','10M V-WIND','10M WIND SPEED','700MB WIND SPEED','850MB WIND SPEED',
             '925MB WIND SPEED','950MB WIND SPEED','975MB WIND SPEED','K-INDEX']
 
-# Read in station list into numpy array
-station_list = np.loadtxt("stations.csv",dtype="str")
+hd_filename = "/scratch3/NCEPDEV/mdl/Jason.Levit/wisps/gfs_20151001.h5"
 
-# Read variable list in numpy array
-variable_list = np.loadtxt("variables.csv",dtype="str")
+rdata = np.ndarray((3029,31,38,4),dtype="i2")
 
-# Create a list of dates
-start_date = pd.datetime(2015, 10, 1, 0)
-end_date = pd.datetime(2016, 3, 31, 23)
-daterange = pd.date_range(start_date, end_date, freq='MS')
+with h5py.File(hd_filename,"r") as f:
+    for c, cycle in enumerate(range(0,24,6)):
+        group_name = "/GFS/" + str(cycle).zfill(2) + "Z/000"
+        dset = f[group_name]
+        rdata[:,:,:,c] = dset[...]
 
-# Begin netCDF file creation
-nc_dir = '/scratch3/NCEPDEV/mdl/Jason.Levit/wisps/gfsmos_temp_test/u201/'
-nc_filename = nc_dir + 'u201.gfs00.f006.cl.nc'
-ncfile = Dataset(nc_filename, 'r', format="NETCDF4")
-
-data = np.ndarray((38,365,3001),dtype="i4")
-
-# read the data in variable named 'data'.
-for v, var in enumerate(variable_list):
-    data[v,:,:] = ncfile[var][:]
-
-print data[1,40,450]
-
-# close the file.
-ncfile.close()
-
-
+print rdata[0,0,0,:]

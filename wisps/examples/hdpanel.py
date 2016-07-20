@@ -1,5 +1,3 @@
-#!/contrib/anaconda/2.3.0/bin/python
-
 # Program creates fake, interpolated model data from a list of observation sites
 # and stores them into a HDF5 file.
 # Jason Levit, MDL, May 2016

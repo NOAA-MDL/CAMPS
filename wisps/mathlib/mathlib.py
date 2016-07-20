@@ -1,5 +1,3 @@
-#!/contrib/anaconda/2.3.0/bin/python
-
 import numpy as np
 from numpy import linalg
 import statsmodels.formula.api as smf

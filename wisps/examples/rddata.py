@@ -1,8 +1,6 @@
-#!/contrib/anaconda/2.3.0/bin/python
-
 # Program creates fake, interpolated model data from a list of observation sites
-# and stores them into a HDF5 file.
-# Jason Levit, MDL, May 2016
+# and stores them into a netCDF file.
+# Jason Levit, MDL, April 2016
 
 # Declare imports
 import csv
@@ -13,8 +11,7 @@ import time
 from datetime import datetime, date, timedelta
 from pandas.tseries.offsets import *
 import calendar
-import h5py
-import random
+from netCDF4 import Dataset 
 
 # Declare global variables
 var_list = ['700-500MB THICKNESS','850-700MB THICKNESS','1000-850MB THICKNESS',
@@ -28,14 +25,34 @@ var_list = ['700-500MB THICKNESS','850-700MB THICKNESS','1000-850MB THICKNESS',
             '10M U-WIND','10M V-WIND','10M WIND SPEED','700MB WIND SPEED','850MB WIND SPEED',
             '925MB WIND SPEED','950MB WIND SPEED','975MB WIND SPEED','K-INDEX']
 
-hd_filename = "/scratch3/NCEPDEV/mdl/Jason.Levit/wisps/gfs_20151001.h5"
+nc_list = []
+data = []
+#data = np.zeros((38,186,1))
 
-rdata = np.ndarray((3029,31,38,4),dtype="i2")
+start_years=[2014,2015]
+end_years=[2015,2016]
+numyears = 2
 
-with h5py.File(hd_filename,"r") as f:
-    for c, cycle in enumerate(range(0,24,6)):
-        group_name = "/GFS/" + str(cycle).zfill(2) + "Z/000"
-        dset = f[group_name]
-        rdata[:,:,:,c] = dset[...]
+# Create a list of dates
+for ny in range(0,numyears):
+    start_date = pd.datetime(start_years[ny], 10, 1, 0)
+    end_date = pd.datetime(end_years[ny], 3, 31, 23)
+    daterange = pd.date_range(start_date, end_date, freq='MS')
 
-print rdata[0,0,0,:]
+# Loop through range of dates, create data file for each month
+    for date in daterange:
+
+        nc_dir = '/scratch3/NCEPDEV/mdl/Jason.Levit/wisps/'
+        nc_filename = nc_dir + 'gfs_' + date.strftime('%Y%m%d') + ".nc"
+        ncfile = Dataset(nc_filename,'r') 
+
+# read the data in variable named 'data'.
+        for v in var_list:
+            print v, date
+            data.append(ncfile.variables[v][0,::4,0])
+
+# close the file.
+        ncfile.close()
+
+print len(data)
+

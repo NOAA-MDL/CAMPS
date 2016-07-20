@@ -1,5 +1,3 @@
-#!/contrib/anaconda/2.3.0/bin/python
-
 # Program converts MDL CSV hourly obs to a cleaned
 # CSV file, ready for merging and eventual conversion
 # to netCDF.
