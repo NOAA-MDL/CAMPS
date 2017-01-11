@@ -1,0 +1,8 @@
+title : "METAR observation data"
+institution : "NOAA/National Weather Service"
+source : "Data from METAR with MDL Quality Control"
+version : 0.1
+history : "Generated on NOAA's Weather and Climate Operational Supercomputing System"
+references : ""
+organization : "NOAA/MDL/SMB"
+url : "http://www.nws.noaa.gov/mdl/"

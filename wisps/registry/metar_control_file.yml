@@ -1,0 +1,22 @@
+# Control file used as input for metar_driver to run.
+# Assumed that This file is located in the registry/ directory,
+
+year : 2013
+month : 2     # Where 1 is January and 12 is December
+METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/"
+
+nc_output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/output/"
+
+# Can be DEBUG, INFO, WARNING, ERROR, CRITICAL
+debug_level : "INFO"  
+
+# Log file that records the status of a run
+log_file : "log.log"
+
+# Provides all stations with colon delimeted information about the station,
+# including lat, lon, long name.
+station_defs : "/home/Riley.Conroy/dev/wisps_dev/iolib/config/station.tbl"
+
+# Provides a list of all stations that will be used in observations
+valid_stations : "/home/Riley.Conroy/dev/wisps_dev/iolib/config/metar.lst"
+

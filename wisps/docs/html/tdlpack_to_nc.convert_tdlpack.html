@@ -1,0 +1,88 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module tdlpack_to_nc.convert_tdlpack</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="tdlpack_to_nc.html"><font color="#ffffff">tdlpack_to_nc</font></a>.convert_tdlpack</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/tdlpack_to_nc/convert_tdlpack.py">/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/tdlpack_to_nc/convert_tdlpack.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="argparse.html">argparse</a><br>
+<a href="registry.util.html">registry.util</a><br>
+<a href="numpy.html">numpy</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+<a href="pdb.html">pdb</a><br>
+<a href="tdlpack_to_nc.pytdlpack.html">tdlpack_to_nc.pytdlpack</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+<a href="time.html">time</a><br>
+<a href="metar_to_nc.util.html">metar_to_nc.util</a><br>
+</td><td width="25%" valign=top><a href="yaml.html">yaml</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="tdlpack_to_nc.convert_tdlpack.html#point">point</a>
+</font></dt></dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="point">class <strong>point</strong></a></font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="point-__init__"><strong>__init__</strong></a>(self, name, obs_types, num_timesteps)</dt></dl>
+
+<dl><dt><a name="point-add_predictor"><strong>add_predictor</strong></a>(self, predictor_id)</dt></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-convert_model"><strong>convert_model</strong></a>(filepath, out_dir<font color="#909090">='./'</font>)</dt><dd><tt>Converts&nbsp;TDL&nbsp;pack&nbsp;at&nbsp;location&nbsp;filepath&nbsp;to&nbsp;netcdf.</tt></dd></dl>
+ <dl><dt><a name="-convert_obs"><strong>convert_obs</strong></a>(filepath, out_dir<font color="#909090">='./'</font>)</dt></dl>
+ <dl><dt><a name="-find_all_obs_types"><strong>find_all_obs_types</strong></a>(records)</dt></dl>
+ <dl><dt><a name="-find_number_of_records_in_one_timestep"><strong>find_number_of_records_in_one_timestep</strong></a>(records)</dt></dl>
+ <dl><dt><a name="-find_number_of_timesteps"><strong>find_number_of_timesteps</strong></a>(records)</dt></dl>
+ <dl><dt><a name="-get_point_list"><strong>get_point_list</strong></a>(points)</dt><dd><tt>Returns&nbsp;a&nbsp;4&nbsp;by&nbsp;n&nbsp;charactar&nbsp;array&nbsp;representing&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#point">point</a></tt></dd></dl>
+ <dl><dt><a name="-is_obs_tdl_file"><strong>is_obs_tdl_file</strong></a>(tdl_filepath)</dt><dd><tt>Returns&nbsp;True&nbsp;if&nbsp;is&nbsp;detects&nbsp;that&nbsp;the&nbsp;file&nbsp;is&nbsp;an&nbsp;obs&nbsp;file</tt></dd></dl>
+ <dl><dt><a name="-parse_grid_definition"><strong>parse_grid_definition</strong></a>(grid_def)</dt><dd><tt>Parses&nbsp;a&nbsp;grid&nbsp;definition&nbsp;section&nbsp;array&nbsp;that&nbsp;is&nbsp;in&nbsp;<br>
+a&nbsp;ptdl&nbsp;record.&nbsp;Returns&nbsp;dictionary.</tt></dd></dl>
+ <dl><dt><a name="-parse_hour_to_datetime"><strong>parse_hour_to_datetime</strong></a>(str_date)</dt><dd><tt>Assumed&nbsp;that&nbsp;time&nbsp;is&nbsp;in&nbsp;form&nbsp;YYYYMMDDHH,&nbsp;which&nbsp;is&nbsp;the&nbsp;format&nbsp;of&nbsp;the<br>
+hours&nbsp;array.</tt></dd></dl>
+ <dl><dt><a name="-parse_product_definition"><strong>parse_product_definition</strong></a>(prod_def)</dt></dl>
+ <dl><dt><a name="-write_model_to_netcdf"><strong>write_model_to_netcdf</strong></a>(filepath, var_dict)</dt></dl>
+ <dl><dt><a name="-write_obs_to_netcdf"><strong>write_obs_to_netcdf</strong></a>(filepath, point_dict)</dt><dd><tt>Writes&nbsp;a&nbsp;Point&nbsp;dictionary&nbsp;of&nbsp;objects&nbsp;to&nbsp;a&nbsp;netcdf&nbsp;file.<br>
+Expects&nbsp;point_dict&nbsp;to&nbsp;have&nbsp;the&nbsp;same&nbsp;shape&nbsp;and&nbsp;number&nbsp;of&nbsp;<br>
+predictors.</tt></dd></dl>
+ <dl><dt><a name="-write_station_names"><strong>write_station_names</strong></a>(var_dict, names)</dt><dd><tt>Write&nbsp;station&nbsp;names.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>MISSING_VALUE</strong> = 9999<br>
+<strong>file_dir</strong> = '/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/tdlpack_to_nc'<br>
+<strong>path</strong> = '/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps'<br>
+<strong>relative_path</strong> = '/..'</td></tr></table>
+</body></html>

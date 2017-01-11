@@ -1,0 +1,6 @@
+# Where 'size' : 0 or 'size' : None,  is Unlimited/variable dimension size
+
+time_dimension : 'time_projection'
+n_stations_dimension : 'nstations'
+plev : 'plev'
+number_of_chars_dimension : 'num_characters'

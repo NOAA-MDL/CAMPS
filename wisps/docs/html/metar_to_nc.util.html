@@ -1,0 +1,77 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module metar_to_nc.util</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="metar_to_nc.html"><font color="#ffffff">metar_to_nc</font></a>.util</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/metar_to_nc/util.py">/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/metar_to_nc/util.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="registry.util.html">registry.util</a><br>
+<a href="copy.html">copy</a><br>
+<a href="logging.html">logging</a><br>
+</td><td width="25%" valign=top><a href="numpy.html">numpy</a><br>
+<a href="os.html">os</a><br>
+<a href="pickle.html">pickle</a><br>
+</td><td width="25%" valign=top><a href="metar_to_nc.qc_main.html">metar_to_nc.qc_main</a><br>
+<a href="sys.html">sys</a><br>
+<a href="time.html">time</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-convert_to_numpy"><strong>convert_to_numpy</strong></a>(station_list)</dt><dd><tt>Takes&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;stations,&nbsp;loops&nbsp;through&nbsp;each&nbsp;of&nbsp;their&nbsp;observation<br>
+arrays&nbsp;and&nbsp;converts&nbsp;them&nbsp;to&nbsp;numpy</tt></dd></dl>
+ <dl><dt><a name="-fix_rounding_errors"><strong>fix_rounding_errors</strong></a>(station_list)</dt><dd><tt>Takes&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;stations&nbsp;and<br>
+rounds&nbsp;the&nbsp;float&nbsp;arrays</tt></dd></dl>
+ <dl><dt><a name="-get_data_type"><strong>get_data_type</strong></a>(predictor, nc_struct)</dt><dd><tt>This&nbsp;routine&nbsp;will&nbsp;get&nbsp;the&nbsp;data&nbsp;type&nbsp;for&nbsp;the&nbsp;given&nbsp;predictor.<br>
+The&nbsp;predictor&nbsp;is&nbsp;expected&nbsp;to&nbsp;be&nbsp;a&nbsp;WISPS&nbsp;standard&nbsp;name&nbsp;for&nbsp;the&nbsp;<br>
+obervation.&nbsp;Additionally,&nbsp;a&nbsp;dictionary&nbsp;entry&nbsp;'data_type'&nbsp;needs&nbsp;to&nbsp;<br>
+be&nbsp;defined&nbsp;in&nbsp;the&nbsp;netcdf&nbsp;configuration&nbsp;for&nbsp;this&nbsp;variable.&nbsp;The&nbsp;<br>
+value&nbsp;for&nbsp;data_type&nbsp;should&nbsp;be&nbsp;a&nbsp;standard&nbsp;numpy&nbsp;data&nbsp;type.<br>
+e.g.&nbsp;uint16,&nbsp;int8,&nbsp;_int,&nbsp;float,&nbsp;etc.</tt></dd></dl>
+ <dl><dt><a name="-init_netcdf_output"><strong>init_netcdf_output</strong></a>(filename)</dt><dd><tt>Initializes&nbsp;the&nbsp;structure&nbsp;of&nbsp;the&nbsp;output&nbsp;netCDF&nbsp;file.</tt></dd></dl>
+ <dl><dt><a name="-open_file"><strong>open_file</strong></a>(filename)</dt><dd><tt>Opens&nbsp;a&nbsp;netcdf&nbsp;file&nbsp;with&nbsp;a&nbsp;given&nbsp;filename</tt></dd></dl>
+ <dl><dt><a name="-parse_year_month"><strong>parse_year_month</strong></a>(year_month)</dt><dd><tt>Returns&nbsp;a&nbsp;two&nbsp;element&nbsp;string&nbsp;tuple&nbsp;of&nbsp;a&nbsp;combined&nbsp;yearmonth&nbsp;datestring.</tt></dd></dl>
+ <dl><dt><a name="-read_obs"><strong>read_obs</strong></a>(data_dir, year, month)</dt><dd><tt>Reads&nbsp;the&nbsp;observations&nbsp;from&nbsp;a&nbsp;given&nbsp;year&nbsp;and&nbsp;month.&nbsp;<br>
+Uses&nbsp;a&nbsp;metarreader&nbsp;to&nbsp;get&nbsp;the&nbsp;data&nbsp;fromthe&nbsp;ASCII&nbsp;files</tt></dd></dl>
+ <dl><dt><a name="-real_nc_data_type"><strong>real_nc_data_type</strong></a>(data_type)</dt></dl>
+ <dl><dt><a name="-remove_time_buffer"><strong>remove_time_buffer</strong></a>(station_list)</dt></dl>
+ <dl><dt><a name="-save_object"><strong>save_object</strong></a>(obj, filename)</dt></dl>
+ <dl><dt><a name="-scale_observation"><strong>scale_observation</strong></a>(observation, observation_array)</dt><dd><tt>takes&nbsp;a&nbsp;METAR&nbsp;observation&nbsp;string&nbsp;and&nbsp;an&nbsp;associated&nbsp;array.&nbsp;If&nbsp;the&nbsp;scale<br>
+factor&nbsp;is&nbsp;in&nbsp;the&nbsp;'scale'&nbsp;dictionary,&nbsp;this&nbsp;function&nbsp;will&nbsp;scale&nbsp;the&nbsp;values<br>
+of&nbsp;the&nbsp;array&nbsp;by&nbsp;that&nbsp;key&nbsp;value.&nbsp;This&nbsp;will&nbsp;NOT&nbsp;change&nbsp;the&nbsp;type&nbsp;of&nbsp;array.</tt></dd></dl>
+ <dl><dt><a name="-write_call"><strong>write_call</strong></a>(stations, call_var)</dt></dl>
+ <dl><dt><a name="-write_dims"><strong>write_dims</strong></a>(structured_config, nc)</dt><dd><tt>Writes&nbsp;nc&nbsp;dimensions&nbsp;that&nbsp;are&nbsp;packed&nbsp;into&nbsp;a&nbsp;structured&nbsp;format.<br>
+The&nbsp;format&nbsp;is&nbsp;an&nbsp;array&nbsp;of&nbsp;dictionary&nbsp;objects&nbsp;where&nbsp;each&nbsp;dictionary&nbsp;<br>
+has&nbsp;a&nbsp;'name'&nbsp;and&nbsp;a&nbsp;'size'&nbsp;key,&nbsp;and&nbsp;values&nbsp;that&nbsp;match&nbsp;the&nbsp;name&nbsp;of<br>
+the&nbsp;dimension&nbsp;and&nbsp;the&nbsp;size&nbsp;of&nbsp;that&nbsp;dimension&nbsp;respectively</tt></dd></dl>
+ <dl><dt><a name="-write_globals"><strong>write_globals</strong></a>(structured_config, nc)</dt><dd><tt>Writes&nbsp;nc&nbsp;globals&nbsp;that&nbsp;are&nbsp;packed&nbsp;into&nbsp;a&nbsp;structured&nbsp;format.</tt></dd></dl>
+ <dl><dt><a name="-write_time"><strong>write_time</strong></a>(stations, time_var)</dt><dd><tt>Write&nbsp;the&nbsp;variety&nbsp;of&nbsp;time&nbsp;variables&nbsp;with&nbsp;dimensions&nbsp;of&nbsp;time</tt></dd></dl>
+ <dl><dt><a name="-write_type"><strong>write_type</strong></a>(stations, type_var)</dt></dl>
+ <dl><dt><a name="-write_variables"><strong>write_variables</strong></a>(structured_nc_format, nc)</dt></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>file_dir</strong> = '/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/metar_to_nc'<br>
+<strong>path</strong> = '/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps'<br>
+<strong>relative_path</strong> = '/..'</td></tr></table>
+</body></html>
