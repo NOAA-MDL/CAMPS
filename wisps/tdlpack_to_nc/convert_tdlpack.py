@@ -78,7 +78,7 @@ def parse_product_definition(prod_def):
 def write_model_to_netcdf(filepath, var_dict):
     nc = Dataset(filename, mode='w', format="NETCDF4")
     for i in var:
-        pass
+        pdb.set_trace()
 
 
 
@@ -139,23 +139,16 @@ def is_obs_tdl_file(tdl_filepath):
     """ 
     Returns True if is detects that the file is an obs file
     """
-    records = ptdl.TdlpackDecode(tdl_filepath)
-    if records[0].nsta > 0:
-        return True
-    return False
+    return 'gfs' not in tdl_filepath
 
 def convert_model(filepath, out_dir="./"):
     """
     Converts TDL pack at location filepath to netcdf.
     """
     records = ptdl.TdlpackDecode(filepath)
-    # Convert 
-    #for r in records:
-    #    r.product_definition_section = parse_product_definition(r.product_definition_section)
-    #    r.grid_definition_section = parse_grid_definition(r.grid_definition_section)
-
     var_dict = {} # forecast time <= 192
     alt_var_dict = {} # forecast time > 192
+    pdb.set_trace()
     for i,r in enumerate(records):
         name = r.plain_language.strip()
         data = r.unpackData()

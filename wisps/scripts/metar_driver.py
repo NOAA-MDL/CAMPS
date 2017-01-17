@@ -16,6 +16,7 @@ from collections import OrderedDict
 from metar_to_nc.util import *
 import metar_to_nc.qc_main as qc
 import registry.util as cfg
+import data_mgmt.Wisps_data
 
 def main():
     """
@@ -31,9 +32,9 @@ def main():
     #cfg.read_nc_config()
     # Read control file and assign vales
     control = cfg.read_metar_control()
-    data_dir = control["METAR_data_directory"]
-    year = control["year"]
-    month = control["month"]
+    data_dir = control['METAR_data_directory']
+    year = control['year']
+    month = control['month']
     debug_level = control['debug_level']
     log_file = control['log_file']
     output_dir = control['nc_output_directory']
@@ -67,15 +68,20 @@ def main():
     # 'var_dict' is the netcdf variable objects
     filename = output_dir
     filename += gen_filename(year, month)
-    nc,var_dict = init_netcdf_output(filename)
+
+    var_dims = cfg.read_dimensions()
+    n_chars = var_dims['number_of_chars_dimension']
+    num_stations = var_dims['n_stations_dimension']
+    time_dim = var_dims['time_dimension']
+    #nc,var_dict = init_netcdf_output(filename)
 
     # Handle special case variables.
     # 'CALL' has char dimension, 'TYPE' and 'Time' have 1 dimension.
     # Write these variables to the NetCDF file.
-    call_var = var_dict.pop('station', 0)
-    time_var = var_dict.pop('observation_time', 0)
-    write_call(stations,call_var)
-    write_time(stations,time_var)
+    #call_var = var_dict.pop('station', 0)
+    #time_var = var_dict.pop('observation_time', 0)
+    #write_call(stations,call_var)
+    #write_time(stations,time_var)
 
     # formats each observation into a 2D array with
     # dimensions of # of stations and time
@@ -96,6 +102,9 @@ def main():
             else:
                 temp_obs = np.vstack((temp_obs, station_data)) # takes tuple arg
         try:
+
+            wisps_obj = Wisps_data('observation_name')
+            obj.set_dimensions(tuple(n_chars, num_stations))
             nc_var[:] = temp_obs
         except TypeError as e:
             print "observation contains a decimal when integer type. skipping"

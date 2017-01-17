@@ -30,16 +30,15 @@ class Wisps_data(nc_writable):
         self.processes = []
         self.metadata = {}
         self.OM_ObservedProperty = ""
-        self.time = None
+        self.time = []
         self.add_db_metadata()
         
         # Give time bounds or plev arrays if metadata specifies
+        self.add_time()
         if self.has_plev():
             self.plev = np.array([])
             if has_bounds():
                 self.plev_bounds = np.array([])
-        if self.has_time_bounds():
-            self.time_bounds = np.array([])
 
     def has_plev(self):
         """ 
@@ -49,6 +48,10 @@ class Wisps_data(nc_writable):
             return self.metadata['coordinate'] == 'plev'
         except:
             return False
+    
+    def add_time(self):
+        if self.has_time_bounds():
+            self.time_bounds = np.array([])
         
     def has_time_bounds(self):
         """
@@ -96,16 +99,6 @@ class Wisps_data(nc_writable):
                     "equal to number of object dimensions"
             raise ValueError
         self.data = data
-        return self
-
-    def set_time(self, time_obj):
-        """
-        Given a Time object, sets the time instance member of this object 
-        """
-        if type(time_obj) is not type(Time):
-            print type(time_obj), "argument is not of type Time"
-            raise TypeError
-        self.time = time_obj
         return self
 
     def set_dimensions(self,dimensions):

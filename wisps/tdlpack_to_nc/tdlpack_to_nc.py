@@ -4,6 +4,7 @@ import os
 sys.path.insert(0,os.path.abspath('..'))
 import argparse
 from convert_tdlpack import *
+import pdb
 
 parser = argparse.ArgumentParser(
         description="converts tdlpack files to NetCDF files",
@@ -24,7 +25,6 @@ out_dir = args.out
 in_dir = args.in_dir
 if type(in_dir) is list:
     in_dir = str(in_dir[0])
-
 
 for tdl_file in file_list:
     tdl_file = in_dir + str(tdl_file)

@@ -71,6 +71,3 @@ def main():
 
     writer.write(obj_list, out_path)
 
-
-
-
