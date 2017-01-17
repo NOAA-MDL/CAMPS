@@ -76,6 +76,15 @@ def epoch_time(time):
     seconds_since_epoch = unix_time(time)
     return seconds_since_epoch
 
+def num_timesteps(start_time, end_time, stride):
+    """Calculates the number of timesteps between 
+    a start and end time with a certain duration.
+    """
+    duration = end_time - start_time
+    total_seconds = int(duration.total_seconds())
+    timesteps = int(total_seconds / stride.total_seconds())
+    return timesteps
+
 
 class Time(nc_writable):
     """
@@ -92,9 +101,10 @@ class Time(nc_writable):
         if start_time and end_time:
             self.init_time_data(start_time, end_time, stride)
         
-    def init_time_data(start_date, end_date, stride):
+    def init_time_data(self, start_date, end_date, stride):
         """
         Fills the arrays with appropriate data.
+        end_time is non-inclusive.
         """
         # Type check
         if type(start_date) == str:
@@ -107,7 +117,7 @@ class Time(nc_writable):
             stride = timedelta(seconds=stride)
         
         # Create array with correct size
-        size = num_timesteps(start_time, end_time, stride)
+        size = num_timesteps(start_date, end_date, stride)
         self.data = np.zeros(size)
         
         # Initialize array with correct values
@@ -127,14 +137,16 @@ class Time(nc_writable):
         nc_time[:] = self.name
         self.add_common_metadata(nc_valid_time)
 
-    def num_timesteps(start_time, end_time, stride):
-        """Calculates the number of timesteps between 
-        a start and end time with a certain duration.
-        """
-        duration = end_time - start_time
-        total_seconds = int(duration.total_seconds())
-        timesteps = total_seconds / stride.total_seconds
-        return timesteps
+    def get_stride(self, as_timedelta=False):
+        size = len(self.data)
+        if size <= 1:
+            raise IndexError("Time data has 1 or 0 elements")
+        start = self.data[0]
+        end = self.data[1]
+        stride = end - start
+        if as_timedelta:
+            return timedelta(seconds=stride)
+        return stride
 
     def add_common_metadata(self, nc_var):
         """
@@ -148,10 +160,21 @@ class Time(nc_writable):
         return 'time'
 
     def __add__(self, other):
+        """ overloading + opporator """
         if type(self) is type(other):
             self.data = np.append(self.data, other.data)
             return self
-   
+
+    def __str__(self):
+        ret_str = self.name = "\n"
+        if len(self.data > 0):
+            ret_str += "start_time: "
+            ret_str += self.data[0] + "\n"
+            ret_str += "end_time:   "
+            ret_str += self.data[-1]
+            ret
+        
+  
 
 class PhenomenonTime(Time):
     """Class representing the Phenomenon Time
@@ -164,7 +187,7 @@ class PhenomenonTime(Time):
         """
         Initializes the data array
         """
-        super(Time,self).__init__(start_time, end_time)       
+        super(PhenomenonTime,self).__init__(start_time, end_time)       
         self.name = "OM_phenomenonTime"
 
 class ValidTime(Time):
@@ -173,17 +196,17 @@ class ValidTime(Time):
     Must be a period of time.
     """
 
-    def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR, valid_offset=0):
+    def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR, offset=0):
         """
         Initializes the data array.
-        valid_offset can be:
+        offset can be:
         a function that is applied to the data array, 
         a deltatime duration, 
         a datetime fixed date, or 
         a 0 representing an unlimited valid time
         """
-        super(Time,self).__init__(start_time, end_time, stride)       
-        self.add_offset(valid_offset)
+        super(ValidTime,self).__init__(start_time, end_time, stride)       
+        self.add_offset(offset)
 
     def add_offset(self, offset):
         """Offset can be:
@@ -199,16 +222,15 @@ class ValidTime(Time):
             for i,value in enumerate(self.data):
                 self.data[i] = offset(value)
 
-        elif o_type is datetime:
-            for i,value in enumerate(self.data):
-                self.data[i] = epoch_time(offset)
-
         elif o_type is timedelta:
             for i,value in enumerate(self.data):
                 self.data[i] += offset.total_seconds()
+
+        elif o_type is datetime:
+            self.data[:] = epoch_time(offset)
                 
         elif o_type is int and offset == 0:
-                self.data[i] = None
+            self.data[:] = None
 
 
 class ResultTime(Time):
@@ -266,13 +288,18 @@ class LeadTime(Time):
             self.data = phenom_time - forecast_ref_time
 
 
-
-
 class BoundedTime(Time):
     """Class reproesenting the Bounded time. 
     The bounded time represents an instant in time 
     separated duration
     """
+    def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR, offset=None):
+        """
+        Initializes the data array
+        """
+        super(BoundedTime,self).__init__(start_time, end_time)       
+        self.name = 'time_bounds'
+        self.add_bounds(stride,offset)
     
     def add_bounds(self, stride, offset):
         """
@@ -280,11 +307,17 @@ class BoundedTime(Time):
         the number of time steps to skip, and offset is the
         starting point in the array
         """
-#        size = (len(self.result_time) - offset) / stride
-        bounds = []
-        for i in range(offset, len(self.result_time), stride):
-            self.bounds.append(self.result_time[i])
-        self.bounds = np.array(self.bounds)
-        return self.bounds
+        if type(offset) is list:
+            for i in range(0, len(self.data)):
+                if epoch_to_datetime(self.data[i]) not in offset:
+                    self.data[i] = None
+            return
+        elif type(offset) is int:
+            for i in range(0, len(self.data)):
+                if i % offset != 0:
+                    self.data[i] = None
+            return
+        raise AssertionError("Offset type not recognized")
 
-         
+    
+             
