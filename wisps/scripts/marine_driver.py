@@ -17,6 +17,7 @@ from datetime import timedelta
 from marine_to_nc.marinereader import marinereader
 import metar_to_nc.qc_main as qc
 import registry.util as cfg
+import registry.db.db as db
 
 def main():
     """
@@ -36,7 +37,7 @@ def main():
 
     # Read Configuration
     marine_convert = cfg.read_marine_lookup()
-    nc_vars = cfg.read_nc_variables()
+    nc_vars = cfg.read_variables()
 
     # Read file
     print "Reading marine file"
@@ -61,8 +62,8 @@ def main():
         std_name = marine_convert[observation_name]
         try:
             std_var = nc_vars[std_name]
-            ob_arr = ob_arr.astype(std_var['data_type'])
             obj = Wisps_data(std_name)
+            ob_arr = ob_arr.astype(std_var['data_type'])
             obj.set_dimensions(tuple(std_var['dimensions']))
             obj.add_data(ob_arr)
             obj_list.append(obj)

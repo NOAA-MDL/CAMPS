@@ -33,13 +33,6 @@ class Wisps_data(nc_writable):
         self.time = []
         self.add_db_metadata()
         
-        # Give time bounds or plev arrays if metadata specifies
-        self.add_time()
-        if self.has_plev():
-            self.plev = np.array([])
-            if has_bounds():
-                self.plev_bounds = np.array([])
-
     def has_plev(self):
         """ 
         Checks metadata to see if this has plev.
@@ -49,10 +42,6 @@ class Wisps_data(nc_writable):
         except:
             return False
     
-    def add_time(self):
-        if self.has_time_bounds():
-            self.time_bounds = np.array([])
-        
     def has_time_bounds(self):
         """
         Checks metadata to see if this variable time bounds.
@@ -89,23 +78,55 @@ class Wisps_data(nc_writable):
         Given a numpy array with the correct dimensions,
         sets it to objects 'data' instance variable.
         """
-        # The following check might be too much.
-        # Feel free to remove.
         if type(data) is not type(np.array([])):
             print type(data), "is not a numpy array"
-            raise TypeError
+            raise ValueError
+        if len(self.dimensions) == 0:
+            try:
+                set_dimensions()
+            except:
+                pass
         if len(data.shape) != len(self.dimensions):
             print "number of dimensions of data is not " \
                     "equal to number of object dimensions"
             raise ValueError
+
         self.data = data
         return self
 
-    def set_dimensions(self,dimensions):
+    def get_data_type(self):
+        """Check if data_type is defined in the properties
+        database for this varibale name. Return value if available,
+        otherwise throw ValueError.
+        """
+        return db.get_property(self.name, 'data_type')
+
+    def get_dimensions(self):
+        """Check if dimensions is defined in the properties
+        database for this varibale name. Return value if available,
+        otherwise throw ValueError.
+        """
+        var = cfg.read_variables()[self.name]
+        dimensions = var['dimensions']
+        return dimensions
+
+    def change_data_type(self, data_type=None):
+        """
+        Attempts to force the datatype to change for this data
+        """
+        if data_type:
+            self.data.astype(data_type)
+        else:
+            self.data.astype(self.get_data_type())
+
+    def set_dimensions(self,dimensions=None):
         """
         Given a tuple of String dimensions, sets object to the 
         dimensions.
         """
+        if not dimensions:
+            dimensions = self.get_dimensions()
+            dimensions = tuple(dimensions)
         if type(dimensions) is not tuple:
             print type(dimensions), "is not of type tuple"
             raise TypeError
@@ -121,7 +142,7 @@ class Wisps_data(nc_writable):
         """
         meta_dict = {}
         try :
-            meta_dict = db.get_all_defined_metadata(self.name)
+            meta_dict = db.get_all_metadata(self.name)
         except ValueError :
             print "ERROR:", self.name, "not defined in metadata db"
         self.metadata = meta_dict
@@ -177,6 +198,7 @@ class Wisps_data(nc_writable):
             #     except RuntimeError: # Name is same as something that exists
             #         pass
 
+
     def create_dimension(self, nc_handle, dimension_name):
         """
         Creates a netCDF dimension for each of the individual
@@ -187,11 +209,12 @@ class Wisps_data(nc_writable):
         nc_handle.createDimension(dimension_name, dim_length)
 
 
-    def get_nc_variable(self, nc_handle):
+    def write_to_nc(self, nc_handle):
         """ 
         Adds a netCDF variable to the nc_handle. 
         Includes the data and metadata associated with the object.
         """
+        print "writing", self.name
         # Check that the dimensions are correct for the shape of the data
         if len(self.data.shape) != len(self.dimensions):
             print "dimensions of data not equal to dimensions attribute"
@@ -251,11 +274,12 @@ class Wisps_data(nc_writable):
         # Tell the Process objects and Time Object 
         # to write to the file
         if self.time:
-            self.time.get_nc_variable(nc_handle)
+            self.time.write_to_nc(nc_handle)
         for p in self.processes:
-            p.get_nc_variable(nc_handle)
+            p.write_to_nc(nc_handle)
         return nc_handle
-    
+
+
     def get_process_str(self):
         """
         Returns a string representation of the process.
@@ -272,7 +296,7 @@ class Wisps_data(nc_writable):
         obj_str += "* dtype               : " + str(self.data.dtype) + "\n"
         obj_str += "* processes           : " + self.get_process_str() + "\n"
         obj_str += "* dimensions          : " + str(self.dimensions) + "\n"
-        obj_str += "Metadata:"
+        obj_str += "Metadata:\n"
         obj_str += "* OM_ObservedProperty : " + self.OM_ObservedProperty + "\n"
         for k,v in self.metadata.iteritems():
             num_chars = len(k)

@@ -21,6 +21,13 @@ def test_qc():
 
     qc_main.qc(mmk)
 
+def test_alt():
+    with open('stations.pkl', 'rb') as input:
+        mmk = pickle.load(input)
+        metar_driver.test_alt(mmk)
 
+
+
+
+#test_alt()
 test_obs_driver()
-

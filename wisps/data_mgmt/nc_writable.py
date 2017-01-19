@@ -9,7 +9,7 @@ class nc_writable(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def get_nc_variable(self, nc_handle):
+    def write_to_nc(self, nc_handle):
         """
         Abstract method to write a netCDF Variable to the nc_handle
         """

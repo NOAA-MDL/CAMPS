@@ -2,6 +2,7 @@ import numpy as np
 from datetime import datetime
 from datetime import timedelta
 from nc_writable import nc_writable
+import pdb
 
 # Common amounts of time in seconds
 ONE_MINUTE = 60
@@ -10,11 +11,11 @@ ONE_DAY = ONE_HOUR*24
 
 # Common time interpretation functions
 def parse_ISO_standard_time(time):
-        """
-        Given a string that is the ISO standard representation of time,
-        Return a the epoch time.
-        """
-        pass
+    """
+    Given a string that is the ISO standard representation of time,
+    Return a the epoch time.
+    """
+    pass
 
 def parse_development_sample(sample_str):
     """
@@ -52,8 +53,7 @@ def datetime_to_str(time):
 
 def str_to_datetime(time):
     """
-    Assumed that time is in form YYYYMMDDHH, which is the format of the
-    self.hours array.
+    Assumed that time is in form YYYYMMDDHH
     """
     year = int(time[:4])
     month = int(time[4:6])
@@ -66,7 +66,9 @@ def epoch_to_datetime(seconds):
     return datetime.utcfromtimestamp(seconds)
 
 def epoch_time(time):
-    """Return hours array as seconds since the epoch """
+    """Return hours array as seconds since the epoch,
+    where time can be a datetime or str
+    """
     if type(time) is not datetime and type(time) is not str:
         raise TypeError("argument is not of type datetime or str")
     if type(time) is str:
@@ -126,7 +128,7 @@ class Time(nc_writable):
             self.data[i] = epoch_time(cur_date)
             cur_date += stride
 
-    def get_nc_variable(self, nc_handle):
+    def write_to_nc(self, nc_handle):
         """
         Adds the netCDF Variable representation of the Time.
         """
@@ -173,8 +175,15 @@ class Time(nc_writable):
             ret_str += "end_time:   "
             ret_str += self.data[-1]
             ret
-        
-  
+
+    def __eq__(self, other):
+        if type(self) != type(other):
+            return False
+        if self.data[0] == other.data[0]:
+           if self.data[-1] == other.data[-1]:
+                if len(self.data) == len(other.data):
+                    return True
+        return False
 
 class PhenomenonTime(Time):
     """Class representing the Phenomenon Time
@@ -232,7 +241,6 @@ class ValidTime(Time):
         elif o_type is int and offset == 0:
             self.data[:] = None
 
-
 class ResultTime(Time):
     """Class representing the Result time.
     The result time is when the result (analysis, forcast)
@@ -248,7 +256,18 @@ class ResultTime(Time):
         self.append_result(result_time)
         
     def append_result(self, result_time):
-        self.data[:] = result_time
+        o_type = type(result_time)
+        if result_time is None:
+            self.data[i] = epoch_time(datetime.now())
+        elif o_type is timedelta:
+            for i,value in enumerate(self.data):
+                self.data[i] = epoch_time(datetime.now() + result_time)
+
+        elif o_type is datetime or o_type is str:
+            self.data[:] = epoch_time(result_time)
+                
+        elif o_type is int:
+            self.data[:] = result_time
         
     
 class ForecastReferenceTime(Time):
@@ -317,5 +336,3 @@ class BoundedTime(Time):
             return
         raise AssertionError("Offset type not recognized")
 
-    
-             

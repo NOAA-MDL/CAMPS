@@ -14,7 +14,7 @@ class Location(nc_writable):
         self.lon = np.array([])
         self.station_names = set([])
 
-    def get_nc_variable(nc_handle):
+    def write_to_nc(nc_handle):
         """
         Writes this objects netCDF representation as a 
         netCDF Variable to the nc_handle.

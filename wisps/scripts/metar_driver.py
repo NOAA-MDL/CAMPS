@@ -16,7 +16,8 @@ from collections import OrderedDict
 from metar_to_nc.util import *
 import metar_to_nc.qc_main as qc
 import registry.util as cfg
-import data_mgmt.Wisps_data
+from data_mgmt.Wisps_data import Wisps_data
+import data_mgmt.writer as writer
 
 def main():
     """
@@ -38,6 +39,7 @@ def main():
     debug_level = control['debug_level']
     log_file = control['log_file']
     output_dir = control['nc_output_directory']
+    pickle = control['pickle']
 
     # This will read the ASCII files and put them into stations
     reader = read_obs(data_dir, year, month)
@@ -51,8 +53,9 @@ def main():
     fix_rounding_errors(stations)
 
     # Optionally pickle and save
-    print "Pickling"
-    save_object(stations, 'stations.pkl')
+    if pickle:
+        print "Pickling"
+        save_object(stations, 'stations.pkl')
 
     # Quality control the list of stations
     stations = qc.qc(stations)
@@ -69,10 +72,10 @@ def main():
     filename = output_dir
     filename += gen_filename(year, month)
 
-    var_dims = cfg.read_dimensions()
-    n_chars = var_dims['number_of_chars_dimension']
-    num_stations = var_dims['n_stations_dimension']
-    time_dim = var_dims['time_dimension']
+    dimensions = cfg.read_dimensions()
+    n_chars = dimensions['chars']
+    num_stations = dimensions['nstations']
+    time_dim = dimensions['time']
     #nc,var_dict = init_netcdf_output(filename)
 
     # Handle special case variables.
@@ -86,33 +89,110 @@ def main():
     # formats each observation into a 2D array with
     # dimensions of # of stations and time
     print "Construct 2D arrays"
-    for observation_name, nc_var in var_dict.iteritems():
+    wisps_data = []
+    example_station = stations.values()[0]
+    obs = example_station.observations.keys()
+    start_time = example_station.hours[0]
+    end_time = example_station.hours[-1]
+    #for metar_name, nc_var in var_dict.iteritems():
+    for metar_name in obs:
         # Set the observation name to the standard WISPS name
         try :
-            observation_name = cfg.nc_to_metar[observation_name]
+            observation_name = cfg.metar_to_nc[metar_name]
         except :
-            print "ERROR: cannot find the netcdf equivalent of " +observation_name +\
+            print "ERROR: cannot find the netcdf equivalent of " +metar_name +\
                     "in METAR lookup table. Skipping."
-
+            continue
+        # Loop through the stations and stitch together the current observation
         temp_obs = []
         for station_name, cur_station in stations.iteritems():
-            station_data = cur_station.observations[observation_name] 
-            if len(temp_obs) == 0:
+            station_data = cur_station.get_obs(metar_name)
+            if len(temp_obs) == 0: #If the first station
                 temp_obs = station_data
             else:
                 temp_obs = np.vstack((temp_obs, station_data)) # takes tuple arg
-        try:
 
-            wisps_obj = Wisps_data('observation_name')
-            obj.set_dimensions(tuple(n_chars, num_stations))
-            nc_var[:] = temp_obs
-        except TypeError as e:
-            print "observation contains a decimal when integer type. skipping"
-            print e
-        except ValueError as e:
-            print "observation likely includes a string. skipping"
-            print e
+        wisps_obj = Wisps_data(observation_name)
+        wisps_obj.set_dimensions()
+        wisps_obj.add_data(temp_obs)
+        wisps_obj.change_data_type()
+        wisps_obj.time = add_time(start_time, end_time)
+        wisps_data.append(obj)
+ 
+
+    writer.write(wisps_data, filename)
     print "writing complete. Closing nc file"
-    nc.close()
 
+def add_time(self, start, end, stride=None):
+    time = []
+    if stride == None: 
+        stride = Time.ONE_HOUR
+    pt = Time.PhenomenonTime(start, end, stride)
+    rt = Time.ResultTime(start, end, stride) # Result time will be now
+    vt = Time.Valid_time(start, end, stride)
+        
+    time.append(pt)
+    time.append(rt)
+    time.append(vt)
+    return time
+
+    
+def test_alt(stations):
+
+    # Take off the start and end times from the arrays
+    remove_time_buffer(stations)
+
+    # Sort stations by station name
+    stations = OrderedDict(sorted(stations.items()))
+    
+    filename = "kjdf"
+
+    dimensions = cfg.read_dimensions()
+    n_chars = dimensions['chars']
+    num_stations = dimensions['nstations']
+    time_dim = dimensions['time']
+    #nc,var_dict = init_netcdf_output(filename)
+
+    # Handle special case variables.
+    # 'CALL' has char dimension, 'TYPE' and 'Time' have 1 dimension.
+    # Write these variables to the NetCDF file.
+    #call_var = var_dict.pop('station', 0)
+    #time_var = var_dict.pop('observation_time', 0)
+    #write_call(stations,call_var)
+    #write_time(stations,time_var)
+
+    # formats each observation into a 2D array with
+    # dimensions of # of stations and time
+    print "Construct 2D arrays"
+    wisps_data = []
+    obs = stations.values()[0].observations.keys()
+    obs.remove("TIME")
+    #for metar_name, nc_var in var_dict.iteritems():
+    for metar_name in obs:
+        # Set the observation name to the standard WISPS name
+        try :
+            observation_name = cfg.metar_to_nc[metar_name]
+        except :
+            print "ERROR: cannot find the netcdf equivalent of " +metar_name +\
+                    "in METAR lookup table. Skipping."
+            continue
+        # Loop through the stations and stitch together the current observation
+        temp_obs = []
+        print metar_name
+        for station_name, cur_station in stations.iteritems():
+            station_data = cur_station.get_obs(metar_name)
+            if len(temp_obs) == 0: #If the first station
+                temp_obs = station_data
+            else:
+                temp_obs = np.vstack((temp_obs, station_data)) # takes tuple arg
+
+        wisps_obj = Wisps_data(observation_name)
+        wisps_obj.set_dimensions()
+        wisps_obj.add_data(temp_obs)
+        wisps_obj.change_data_type()
+        wisps_data.append(wisps_obj)
+ 
+
+    writer.write(wisps_data, filename)
+    print "writing complete. Closing nc file"
 

@@ -74,6 +74,13 @@ def test_epoch_time():
        pass
    print "Passed test_epoch_time"
 
+def test_eq():
+    t1 = Time.PhenomenonTime(get_start_date(), get_end_date())
+    t2 = Time.PhenomenonTime(get_start_date(), get_end_date())
+
+    assert t1 == t2
+    print "Passed equality test"
+
 def get_nc():
     Dataset.open('test.nc', 'w')
 
@@ -89,5 +96,5 @@ test_get_stride()
 test_epoch_time()
 test_PhenomenonTime()
 test_ValidTime()
-
+test_eq()
 

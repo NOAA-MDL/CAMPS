@@ -33,9 +33,9 @@ def write(wisps_data, filename):
     for d_name,size in dims.iteritems():
         nc.createDimension(d_name, size)
 
-    # Write the data by calling its get_nc_variable function
+    # Write the data by calling its write_to_nc function
     for d in wisps_data:
-        d.get_nc_variable(nc)
+        d.write_to_nc(nc)
     nc.close()
 
    

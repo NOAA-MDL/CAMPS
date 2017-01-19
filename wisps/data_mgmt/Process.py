@@ -16,7 +16,7 @@ class Process(nc_writable):
         self.source = source
         self.attributes = kwargs
             
-    def get_nc_variable(self, nc_handle):
+    def write_to_nc(self, nc_handle):
         """
         Writes the netCDF variable representation of the Process 
         to the nc_handle.
