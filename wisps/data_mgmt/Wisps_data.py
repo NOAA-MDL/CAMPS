@@ -10,14 +10,17 @@ from nc_writable import nc_writable
 from Process import Process
 from netCDF4 import Dataset
 from Time import Time
+import pdb
 import re
 import registry.util as cfg
 import registry.db.db as db
 
 
 FILL_VALUE = 9999
+coord = 'coordinates'
 
 class Wisps_data(nc_writable):
+
  
     def __init__(self, name):
         """
@@ -29,39 +32,57 @@ class Wisps_data(nc_writable):
         self.dimensions = [] # The name of the dimensions
         self.processes = []
         self.metadata = {}
-        self.OM_ObservedProperty = ""
         self.time = []
         self.add_db_metadata()
+
+        # Coordinates
+        #self.plev = get_plev()
+        #self.
         
     def has_plev(self):
         """ 
         Checks metadata to see if this has plev.
         """
-        try:
-            return self.metadata['coordinate'] == 'plev'
-        except:
-            return False
-    
-    def has_time_bounds(self):
-        """
-        Checks metadata to see if this variable time bounds.
-        """
-        try:
-            return self.metadata['coordinate'] == 'time'
-        except:
-            return False
+        if coord in self.metadata:
+            return self.metadata[coord] == 'plev'
 
+    def has_elev(self):
+        """ 
+        Checks metadata to see if this has elev.
+        """
+        if coord in self.metadata:
+            return self.metadata[coord] == 'elev'
+    
     def has_bounds(self):
         """ 
         Checks metadata to see if this variable has a bounds attribute.
         """
         return 'bounds' in self.metadata
 
+    def has_time_bounds(self):
+        """
+        Checks metadata to see if this variable time bounds.
+        """
+        if coord in self.metadata:
+            return self.metadata[coord] == 'time_bounds'
+
     def has_plev_bounds(self):
         """
         Returns True if metadata indicates variable has plev bounds.
         """
-        return False
+        if coord in self.metadata:
+            return self.metadata[coord] == 'plev_bounds'
+
+    def has_elev_bounds(self):
+        """Returns True if metadata indicates variable has plev bounds.
+        """
+        if coord in self.metadata:
+            return self.metadata[coord] == 'elev_bounds'
+
+    def get_coordinate(self):
+        """Returns the value of the coordinate data if it has 
+        one"""
+        return db.get_property(self.name, 'coord_val')
 
     def add_process(self, process):
         """ 
@@ -146,10 +167,6 @@ class Wisps_data(nc_writable):
         except ValueError :
             print "ERROR:", self.name, "not defined in metadata db"
         self.metadata = meta_dict
-        try :
-            self.OM_ObservedProperty = self.metadata.pop('OM_ObservedProperty')
-        except KeyError :
-            print "Warning: OM_ObservedProperty not defined in metadata db for", self.name
 
     def add_metadata(self, key, value):
         """
@@ -165,39 +182,69 @@ class Wisps_data(nc_writable):
         self.metadata['LE_Source'] = value
         return self
 
+    def add_plev_attributes(self, plev_var):
+        setattr(plev_var, 'long name', 'pressure')
+        setattr(plev_var, 'units', 'hPa')
+        setattr(plev_var, 'standard name','air_pressure')
+        setattr(plev_var, 'positive', 'down')
+        setattr(plev_var, 'axis', 'Z')
+
+    def get_plev_name(self, nc_handle):
+        coord_data = self.get_coordinate()
+        num = 0
+        all_vars = nc_handle.variables
+        pdb.set_trace()
+        # Find all plev variables already written
+        for v in all_vars.keys():
+            if re.match(r'^plev\d+$',  v, re.I):
+                # Check if same plev
+                if coord_data == all_vars[v][0]:
+                    already_exists = True
+                    return (already_exists, v)
+                num += 1
+
+        name = 'plev' + str(num)
+        already_exists = False
+        return (already_exists, name)
+
+    def create_dimensions(self, nc_handle):
+        """Check if self.dimensions are defined. if not
+        create them
+        """
+        dims = nc_handle.dimensions
+        for d in self.dimensions:
+            if d not in dims:
+                self.create_dimension(nc_handle, d)
+
     def write_plev(self, nc_handle):
         """
         Writes the pressure level variable. 
         Changes the name to plev[n] where n a number
         when there are multiple plev variables.
-        Returns the name of the variable
         """
-        num = 0
-        all_vars = nc_handle.variables
-        for v in all_vars.keys():
-            if re.match(r'^plev\d+$',  v, re.I):
-                num += 1
-                if np.array_equal(all_vars[v],self.plev):
-                    return v
-        name = 'plev' + str(num)
-        plev_var = nc_handle.createVariable(name, int, ('plev'))
-        self.add_plev_attributes(plev_var)
-        return name
+        if not self.has_plev():
+            return False
+        exists,name = self.get_plev_name(nc_handle)
+        self.metadata[coord] = name
+        if not exists:
+            if 'plev' not in nc_handle.dimensions:
+                nc_handle.createDimension('plev', 1)
+            plev_var = nc_handle.createVariable(name, int, ('plev'))
+            self.add_plev_attributes(plev_var)
+        return True
 
-            # Alternative for potentially faster execution
-            #
-            # nameFound = False
-            # while nameFound is False:
-            #     try:
-            #         plev = nc_handle.createVariable(
-            #             'plev'+num, 
-            #             float,
-            #             ('plev')
-            #             )
-            #         nameFound = True
-            #     except RuntimeError: # Name is same as something that exists
-            #         pass
-
+    def reshape(self, coord_name):
+        """
+        Reshapes the data when adding the plev dimension
+        """
+        self.dimensions.append(coord_name)
+        shape = self.data.shape
+        new_shape = list(shape)
+        new_shape.append(1)
+        new_shape = tuple(new_shape)
+        # This will add a dimension with length 1 at the end
+        # e.g. (1200, 25000) becomes (1200, 25000, 1)
+        self.data = self.data.reshape(new_shape)
 
     def create_dimension(self, nc_handle, dimension_name):
         """
@@ -208,36 +255,26 @@ class Wisps_data(nc_writable):
         dim_length = self.data.shape[index]
         nc_handle.createDimension(dimension_name, dim_length)
 
-
     def write_to_nc(self, nc_handle):
         """ 
         Adds a netCDF variable to the nc_handle. 
         Includes the data and metadata associated with the object.
         """
         print "writing", self.name
+        
+        # Writes the plev variable if it exists
+        success = self.write_plev(nc_handle)
+        if success: # modify the shape of the data to accommodate plev.
+            self.reshape('plev')
+        
         # Check that the dimensions are correct for the shape of the data
         if len(self.data.shape) != len(self.dimensions):
             print "dimensions of data not equal to dimensions attribute"
             return
 
         # Check if dimensions are defined. If they aren't, create them
-        dims = nc_handle.dimensions
-        for d in self.dimensions:
-            if d not in dims:
-                self.create_dimension(nc_handle, d)
+        self.create_dimensions(nc_handle)
         
-        # If the object has a plev dimension, 
-        # then modify the shape of the data to accommodate it.
-        if self.has_plev():
-            plev_name = write_plev()
-            metadata['coordinates'] = plev_name
-            dimensions.append('plev')
-            shape = self.data.shape
-            new_shape = tuple(list(shape).append(1))
-
-            # This will add an dimension with lenght 1 at the end
-            # e.g. (1200, 25000) becomes (1200, 25000, 1)
-            self.data = self.data.reshape(new_shape)
         
         # If the oject has a plev bounds, create the plev bound netCDF variable
         if self.has_plev_bounds():
@@ -258,25 +295,20 @@ class Wisps_data(nc_writable):
             if name != 'name':
                 setattr(nc_var, name, value)
 
-        # Create time bounds if it is in metadata
-        if 'time_bounds' in self.metadata:
-            pass
-
         # Write the processes attribute string
         process_str = self.get_process_str()
         setattr(nc_var, "OM_Procedure", process_str)
 
-        # write observed property
-        setattr(nc_var, "OM_ObservedProperty", self.OM_ObservedProperty)
-
         nc_var[:] = self.data
 
-        # Tell the Process objects and Time Object 
+        # Tell the Process objects and Time Objects
         # to write to the file
-        if self.time:
-            self.time.write_to_nc(nc_handle)
+        for t in self.time:
+            t.write_to_nc(nc_handle)
+
         for p in self.processes:
             p.write_to_nc(nc_handle)
+
         return nc_handle
 
 
@@ -297,7 +329,6 @@ class Wisps_data(nc_writable):
         obj_str += "* processes           : " + self.get_process_str() + "\n"
         obj_str += "* dimensions          : " + str(self.dimensions) + "\n"
         obj_str += "Metadata:\n"
-        obj_str += "* OM_ObservedProperty : " + self.OM_ObservedProperty + "\n"
         for k,v in self.metadata.iteritems():
             num_chars = len(k)
             obj_str += "* " + k

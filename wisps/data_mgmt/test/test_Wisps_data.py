@@ -41,13 +41,28 @@ def test_check_correct_dimension():
 
 def test_variable():
 
-    mmk = Wisps_data('wind_speed')
+    temp_var = Wisps_data('wind_speed')
     nc = Dataset('test2.nc', 'w', format="NETCDF4")
-    mmk.dimensions = ['ayy','bee']
-    mmk.data = np.array([[1,2,34],[3,2,9]])
-    mmk.get_nc_variable(nc)
+    temp_var.dimensions = ['ayy','bee']
+    temp_var.data = np.array([[1,2,34],[3,2,9]])
+    temp_var.write_to_nc(nc)
     passed() 
 
+def test_plev():
+    nc = Dataset('test2.nc', 'w', format="NETCDF4")
+    temp_var = Wisps_data('test_plev')
+    temp_var.dimensions = ['ayy','bee']
+    temp_var.data = np.array([[1,2,34],[3,2,9]])
+    temp_var.write_to_nc(nc)
 
-test_variable()
+    temp_var2 = Wisps_data('test_plev2')
+    temp_var2.dimensions = ['ayy','bee']
+    temp_var2.data = np.array([[1,2,34],[3,2,9]])
+    temp_var2.write_to_nc(nc)
+    nc.close()
+
+    passed() 
+
+#test_variable()
+test_plev()
 test_check_correct_dimension()

@@ -1009,3 +1009,29 @@ variables :
     attribute:
       OM_procedure : "()"
       OM_observedProperty : ""
+  test_plev : 
+    coord_val : 700
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      coordinates : "plev"
+  test_plev2 : 
+    coord_val : 600
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      coordinates : "plev"
+  test_elev :
+    coord_val : 2
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      coordinates : "elev"
+  test_bounds : 
+    coord_val1 :  500
+    coord_val2 :  700
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      coordinates : "time_bounds"
+
