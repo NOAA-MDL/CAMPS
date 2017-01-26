@@ -80,8 +80,6 @@ def write_model_to_netcdf(filepath, var_dict):
     for i in var:
         pdb.set_trace()
 
-
-
 def write_obs_to_netcdf(filepath, point_dict):
     """
     Writes a Point dictionary of objects to a netcdf file.

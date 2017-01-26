@@ -31,7 +31,7 @@ def test_ValidTime():
     time = Time.ValidTime(start_time, end_time, offset=0)
     test_time = time.data
     correct_time =  np.zeros(test_time.shape)
-    correct_time[:] = None
+    correct_time[:] = -sys.maxint
     np.testing.assert_array_equal(correct_time, test_time)
 
     # Test fixed date valid 
@@ -90,8 +90,20 @@ def get_start_date():
 def get_end_date():
     return datetime(year=2013, month=5, day=12)
 
+def test_conversions():
+    d1 = datetime(year=2013, month=5, day=2, hour=7)
+    d2 = Time.str_to_datetime('2013050207')
+    assert d1 == d2
+    print "Passed conversion test"
+
+def test_timesteps():
+    d1 = datetime(year=2013, month=4, day=12)
+    d2 = datetime(year=2013, month=4, day=13)
+    num = Time.num_timesteps(d1,d2)
+    assert num == 25
 
 
+test_timesteps()
 test_get_stride()
 test_epoch_time()
 test_PhenomenonTime()

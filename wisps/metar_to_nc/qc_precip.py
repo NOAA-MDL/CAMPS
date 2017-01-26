@@ -34,19 +34,6 @@ def qc_precip(station_list):
         corrected_24h = 0
         precip_24_diff = 0
         for i in range(1, len(precip_1h), 6):
-            date = station.hours[i]
-            if date > 2006111300 and date < 2007032800:
-                udef_amount = 0
-            else:
-                undef_amount = MISSING_VALUE
-            if precip_1h[i] == -9:
-                precip_1h[i] = undef_amount
-            if precip_3h[i] == -9:
-                precip_3h[i] = undef_amount
-            if precip_6h[i] == -9:
-                precip_6h[i] = undef_amount
-            if precip_24h[i] == -9:
-                precip_24h[i] = undef_amount
 
             i_3h = i + 2
             i_6h = i + 5
@@ -101,6 +88,18 @@ def qc_precip(station_list):
             p1 = precip_1h[i:i+6]
             for j in range(0, len(p1)):
                 date = station.hours[i+j]
+                if date > 2006111300 and date < 2007032800:
+                    udef_amount = 0
+                else:
+                    undef_amount = MISSING_VALUE
+                if precip_1h[i+j] == -9:
+                    precip_1h[i+j] = undef_amount
+                if precip_3h[i+j] == -9:
+                    precip_3h[i+j] = undef_amount
+                if precip_6h[i+j] == -9:
+                    precip_6h[i+j] = undef_amount
+                if precip_24h[i+j] == -9:
+                    precip_24h[i+j] = undef_amount
                 if p1[j] != MISSING_VALUE and p1[j] > 3.75:
                     errors.append(qc_error(
                        station_name=station.name,date_of_error=date,\

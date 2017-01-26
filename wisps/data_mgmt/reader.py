@@ -4,9 +4,7 @@ from Process import Process
 import pdb
 
 def read(filename, *more_files):
-    """
-    Function to read a netCDF file of given filename into 
-    a list of WISPS data objects
+    """Function to read a netCDF file of given filename into a list of WISPS data objects
     """
     wisps_data = []
     nc = Dataset(filename, mode='r', format="NETCDF4")
@@ -22,8 +20,7 @@ def read(filename, *more_files):
     return wisps_data
        
 def create_wisps_data(nc_variable, procedures_dict):
-    """
-    Given the netCDF variable and any associated procedures, 
+    """Given the netCDF variable and any associated procedures, 
     creates and returns a Wisps_data object
     """
     # Try to get OM_observedProperty from the netCDF Variable. 
@@ -76,8 +73,7 @@ def create_wisps_data(nc_variable, procedures_dict):
         return w_obj
 
 def parse_processes_string(process_string):
-    """
-    Returns a list of process names given a string 
+    """Returns a list of process names given a string 
     that is comma separated and enclosed in parens.
     """
     process_string = process_string.replace(" ","")
@@ -87,8 +83,7 @@ def parse_processes_string(process_string):
     return processes
 
 def separate_procedure_and_data(variables_dict):
-    """
-    Separates the variables into Processes and data-holding variables. 
+    """Separates the variables into Processes and data-holding variables. 
     Returns the processes and normal variables as a tuple.
     """
     process_identifier = 'process'

@@ -2,7 +2,9 @@
 Defines various enumerations used in metar conversion.
 """
 MISSING_VALUE = 9999
-
+#default_func = lambda ob: ob
+def default_func(ob):
+    return ob
 def get_station_type_enumeration(station_type_str):
     """
     Where station_type is the string that represents the station_type
@@ -14,7 +16,9 @@ def get_enumeration_function(name):
     Returns an enumeration function based if given 'name' enumeration.
     Otherwise, returns None.
     """
-    return needs_enumeration.get(name, lambda ob: ob)
+    if name in needs_enumeration:
+        return get_enumeration.get(name, default_func)
+    return default_func
 
 def get_station_type(station_type_num):
     """ Returns the string representation of the station type. """
@@ -167,7 +171,7 @@ station_type = {
                 'UNKN' : 9
                 }
 
-needs_enumeration = {
+get_enumeration = {
         'TYPE' : get_station_type_enumeration,
         'PRWX1' : get_weather_type_enumeration,
         'PRWX2' : get_weather_type_enumeration,
@@ -179,5 +183,18 @@ needs_enumeration = {
         'CA5' : get_cloud_amount_enumeration,
         'CA6' : get_cloud_amount_enumeration
         }
+
+needs_enumeration = set([
+        'TYPE' ,
+        'PRWX1' ,
+        'PRWX2' ,
+        'PRWX3' ,
+        'CA1' ,
+        'CA2' ,
+        'CA3' ,
+        'CA4' ,
+        'CA5' ,
+        'CA6' 
+        ])
 
 

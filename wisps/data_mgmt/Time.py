@@ -1,7 +1,9 @@
 import numpy as np
+import sys
 from datetime import datetime
 from datetime import timedelta
 from nc_writable import nc_writable
+import re
 import pdb
 
 # Common amounts of time in seconds
@@ -11,15 +13,13 @@ ONE_DAY = ONE_HOUR*24
 
 # Common time interpretation functions
 def parse_ISO_standard_time(time):
-    """
-    Given a string that is the ISO standard representation of time,
+    """Given a string that is the ISO standard representation of time,
     Return a the epoch time.
     """
     pass
 
 def parse_development_sample(sample_str):
-    """
-    Given a string with an ISO interval representation, 
+    """Given a string with an ISO interval representation, 
     such as 2014-04-01/2014-09-30, returns tuple of 2 datetimes 
     where index 0 = the start date, and index 1 = the end date
     """
@@ -29,8 +29,7 @@ def parse_development_sample(sample_str):
     return (dt_start, dt_end)
 
 def parse_forecast_reference_time(forecast_str):
-    """
-    Given a string of type YYYY-MM-DDTFF,
+    """Given a string of type YYYY-MM-DDTFF,
     returns the FF component, which represents the
     forcast reference time, as a tuple. Where 
     index 0 = number of hours
@@ -42,8 +41,7 @@ def parse_forecast_reference_time(forecast_str):
     return (hour, seconds)
 
 def datetime_to_str(time):
-    """
-    Assumed that time is a datetime object.
+    """Assumed that time is a datetime object.
     hours are represented YYYYMMDDHH
     """
     return str(time.year).zfill(4) + \
@@ -52,8 +50,7 @@ def datetime_to_str(time):
            str(time.hour).zfill(2)
 
 def str_to_datetime(time):
-    """
-    Assumed that time is in form YYYYMMDDHH
+    """Assumed that time is in form YYYYMMDDHH
     """
     year = int(time[:4])
     month = int(time[4:6])
@@ -76,26 +73,27 @@ def epoch_time(time):
     epoch = datetime.utcfromtimestamp(0)
     unix_time = lambda dt: (dt-epoch).total_seconds()
     seconds_since_epoch = unix_time(time)
+    # Remove the microsecond precision
+    seconds_since_epoch = int(seconds_since_epoch)
     return seconds_since_epoch
 
-def num_timesteps(start_time, end_time, stride):
-    """Calculates the number of timesteps between 
-    a start and end time with a certain duration.
+def num_timesteps(start_time, end_time, stride=timedelta(hours=1)):
+    """Calculates the number of timesteps between a start and end time with a certain duration.
+    Assumes inclusive start and end times
     """
     duration = end_time - start_time
     total_seconds = int(duration.total_seconds())
     timesteps = int(total_seconds / stride.total_seconds())
-    return timesteps
+    timesteps += 1 # To keep end time inclusive
+    return timesteps 
 
 
 class Time(nc_writable):
-    """
-    Baseclass representing time.
+    """Baseclass representing time.
     """
 
     def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR):
-        """
-        Initializes the valid_time, result_time, phenomenon_time,
+        """Initializes the valid_time, result_time, phenomenon_time,
         and lead time arrays.
         """
         self.data = np.array([])
@@ -104,8 +102,9 @@ class Time(nc_writable):
             self.init_time_data(start_time, end_time, stride)
         
     def init_time_data(self, start_date, end_date, stride):
-        """
-        Fills the arrays with appropriate data.
+        """Fills the arrays with appropriate data.
+        start and end dates can be of type datetime,
+        str (YYYYMMDD), or int (epoch time in seconds).
         end_time is non-inclusive.
         """
         # Type check
@@ -129,16 +128,38 @@ class Time(nc_writable):
             cur_date += stride
 
     def write_to_nc(self, nc_handle):
+        """Adds the netCDF Variable representation of the Time.
+        If Time variable already exists, it will return None.
+        Additional Time variables of same type will have consecutive 
+        integers appended on the end of the variable name.
         """
-        Adds the netCDF Variable representation of the Time.
-        """
-        nc_time = nc_handle.createVariable(
-                self.name,  
-                int,                         
-                dimensions=(self.dimension)) 
-        nc_time[:] = self.name
-        self.add_common_metadata(nc_valid_time)
+        time_dim = self.get_dimension_name()
+        if time_dim not in nc_handle.dimensions:
+            nc_handle.createDimension(time_dim, (len(self.data)))
+        name,exists = self.get_name(nc_handle)
+        if not exists:
+            nc_time = nc_handle.createVariable(
+                    name,  
+                    int,                         
+                    dimensions=(time_dim)) 
+            nc_time[:] = self.data
+            self.add_common_metadata(nc_time)
 
+    def get_name(self, nc_handle):
+        all_vars = nc_handle.variables
+        varkeys = all_vars.keys()
+        match = lambda var: re.match(r'^'+self.name+'\d*$',var,re.I)
+        time_vars = filter(match,varkeys)
+        for name in time_vars:
+            var = all_vars[name]
+            # Check for a data match
+            if np.all(np.equal(var[:], self.data)):
+                return (name,True)
+        name = self.name + str(len(time_vars))
+        return (name,False)
+
+
+            
     def get_stride(self, as_timedelta=False):
         size = len(self.data)
         if size <= 1:
@@ -151,15 +172,14 @@ class Time(nc_writable):
         return stride
 
     def add_common_metadata(self, nc_var):
-        """
-        Adds metadata that is common to Time variables.
+        """Adds metadata that is common to Time variables.
         """
         setattr(nc_var, 'calendar', 'gregorian')
         setattr(nc_var, 'units', 'seconds')
 
     def get_dimension_name(self):
         """ Provides a way accessing the name of the time dimension """
-        return 'time'
+        return 'time_projection'
 
     def __add__(self, other):
         """ overloading + opporator """
@@ -193,8 +213,7 @@ class PhenomenonTime(Time):
     """
 
     def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR):
-        """
-        Initializes the data array
+        """Initializes the data array
         """
         super(PhenomenonTime,self).__init__(start_time, end_time)       
         self.name = "OM_phenomenonTime"
@@ -206,8 +225,7 @@ class ValidTime(Time):
     """
 
     def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR, offset=0):
-        """
-        Initializes the data array.
+        """Initializes the data array.
         offset can be:
         a function that is applied to the data array, 
         a deltatime duration, 
@@ -215,6 +233,7 @@ class ValidTime(Time):
         a 0 representing an unlimited valid time
         """
         super(ValidTime,self).__init__(start_time, end_time, stride)       
+        self.name = 'OM_validTime'
         self.add_offset(offset)
 
     def add_offset(self, offset):
@@ -239,7 +258,8 @@ class ValidTime(Time):
             self.data[:] = epoch_time(offset)
                 
         elif o_type is int and offset == 0:
-            self.data[:] = None
+            min_int = -sys.maxint - 1
+            self.data[:] = min_int
 
 class ResultTime(Time):
     """Class representing the Result time.
@@ -248,8 +268,7 @@ class ResultTime(Time):
     Must be an instant in time.
     """
     def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR, result_time=None):
-        """
-        Initializes the data array
+        """Initializes the data array
         """
         super(ResultTime,self).__init__(start_time, end_time)       
         self.name = 'OM_resultTime'
@@ -258,7 +277,8 @@ class ResultTime(Time):
     def append_result(self, result_time):
         o_type = type(result_time)
         if result_time is None:
-            self.data[i] = epoch_time(datetime.now())
+            #Return current time rounded to the next hour
+            self.data[:] = (epoch_time(datetime.now())/ONE_HOUR)*ONE_HOUR+ONE_HOUR
         elif o_type is timedelta:
             for i,value in enumerate(self.data):
                 self.data[i] = epoch_time(datetime.now() + result_time)
@@ -284,7 +304,7 @@ class ForecastReferenceTime(Time):
         super(ForecastReferenceTime,self).__init__(start_time, end_time)       
         self.name = 'forecast_reference_time'
         self.append_reference_time(reference_time)
-        
+       
     def append_reference_time(self, result_time):
         self.data[:] = result_time
 

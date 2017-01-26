@@ -71,14 +71,21 @@ def read_metar_control():
     Reads the metar control file that provides time ranges and 
     directory locations for the observations.
     """
-    return read_yaml(CONFIG_PATH+"metar_control_file.yml")
+    return read_yaml(CONFIG_PATH+"metar_control.yml")
 
 def read_marine_control():
     """
     Reads the marine control file that provides time ranges and 
     directory locations for the observations.
     """
-    return read_yaml(CONFIG_PATH+"marine_control_file.yml")
+    return read_yaml(CONFIG_PATH+"marine_control.yml")
+
+def read_grib2_control():
+    """
+    Reads the grib2 control file that provides 
+    directory locations for the observations.
+    """
+    return read_yaml(CONFIG_PATH+"grib2_control.yml")
 
 def read_mosID_lookup():
     """
