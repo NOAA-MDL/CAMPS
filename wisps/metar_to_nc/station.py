@@ -50,7 +50,7 @@ class station:
                 self.observations[ob] = []; 
 
         remove_dupe = False
-        unknown_station_type = 9
+        #unknown_station_type = 9
         # enumerate station type
         #type_index = observation_keys.index('TYPE')
         #unknown_station_type = 'UNKN'

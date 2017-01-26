@@ -1027,11 +1027,28 @@ variables :
       OM_procedure : "()"
       OM_observedProperty : ""
       coordinates : "elev"
-  test_bounds : 
+  test_time_bounds : 
     coord_val1 :  500
     coord_val2 :  700
     attribute:
       OM_procedure : "()"
       OM_observedProperty : ""
-      coordinates : "time_bounds"
+      coordinates : "time"
+      bounds : "time_bounds"
+  test_elev_bounds : 
+    coord_val1 :  500
+    coord_val2 :  700
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      coordinates : "elev"
+      bounds : "elev_bounds"
+  test_elev_bounds : 
+    coord_val1 :  500
+    coord_val2 :  700
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      coordinates : "elev"
+      bounds : "elev_bounds"
 
