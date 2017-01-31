@@ -1,6 +1,7 @@
 # Control file used as input for metar_driver to run.
 # Assumed that This file is located in the registry/ directory,
 
+# This will process the entire date
 year : 2013
 month : 2     # Where 1 is January and 12 is December
 METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/"

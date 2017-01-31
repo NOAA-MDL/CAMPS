@@ -6,7 +6,7 @@
 
 input_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/"
 input_filename : "nbd201305.txt.qc.final"
-output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/"
+output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/output"
 output_filename : "nbd201305"
 start_date : ""
 end_date : "2013060100"

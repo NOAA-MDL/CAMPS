@@ -16,6 +16,8 @@ from datetime import datetime
 import registry.util as cfg
 import metar_to_nc.util as util
 from collections import OrderedDict
+from data_mgmt.Wisps_data import Wisps_data
+import data_mgmt.writer as writer
 
 MISSING_VALUE = 9999
 
@@ -89,16 +91,20 @@ def write_obs_to_netcdf(filepath, point_dict):
     cfg.read_nc_config()
     mosID_lookup = cfg.read_mosID_lookup()
     temp_obs = []
-    nc,var_dict = util.init_netcdf_output(filepath)
+    #nc,var_dict = util.init_netcdf_output(filepath)
     all_predictors = point_dict.values()[0].predictors.keys() #mosIDs
     sorted_point_dict = OrderedDict(sorted(point_dict.items()))
     all_points = sorted_point_dict.values()
     all_names = sorted_point_dict.keys()
+
+    all_obj = []
     for p in all_predictors:
         try:
             nc_var_name = mosID_lookup[p]
         except KeyError: 
             print p.name + " is not in mosID->netcdf lookup table. Skipping."
+            continue
+        print "Creating : ", nc_var_name
         temp_obs = []
         for v in all_points:
             cur_data = v.predictors[p]
@@ -106,19 +112,27 @@ def write_obs_to_netcdf(filepath, point_dict):
                 temp_obs = cur_data
             else:
                 temp_obs = np.vstack((temp_obs,cur_data))
-        try:
-            var_dict[nc_var_name][:] = temp_obs
-        except TypeError as e:
-            print "Observation, "+nc_var_name+", is a different type from what is defined in config."
-            print e
-        except ValueError as e: 
-            print "Observation, "+nc_var_name+", contains a string. Skipping."
-            print e
-        except KeyError as e:
-            print "MOS ID does not equal valid WISPS variable name"
-    write_station_names(var_dict, all_names)
-    print "Finished writing NetCDF file"
-    nc.close()
+        obj = Wisps_data(nc_var_name)
+        obj.add_data(temp_obs)
+        all_obj.append(obj)
+    writer.write(all_obj, 'test2.nc')
+
+
+
+    #    temp_obs = []
+    #    try:
+    #        var_dict[nc_var_name][:] = temp_obs
+    #    except TypeError as e:
+    #        print "Observation, "+nc_var_name+", is a different type from what is defined in config."
+    #        print e
+    #    except ValueError as e: 
+    #        print "Observation, "+nc_var_name+", contains a string. Skipping."
+    #        print e
+    #    except KeyError as e:
+    #        print "MOS ID does not equal valid WISPS variable name"
+    #write_station_names(var_dict, all_names)
+    #print "Finished writing NetCDF file"
+    #nc.close()
 
 def write_station_names(var_dict, names):
     """

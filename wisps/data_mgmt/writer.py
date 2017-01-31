@@ -30,13 +30,14 @@ def write(wisps_data, filename):
     print ""
     # Get all dimenesions in the list.
     # Will error out if dimensions arn't correct.
-    dims = get_dimensions(wisps_data)
-
     nc = open_nc(filename)
-
-    # Write dimensions
-    for d_name,size in dims.iteritems():
-        nc.createDimension(d_name, size)
+    try:
+        dims = get_dimensions(wisps_data)
+        # Write dimensions
+        for d_name,size in dims.iteritems():
+            nc.createDimension(d_name, size)
+    except:
+        pass
 
     # Write the data by calling its write_to_nc function
     for d in wisps_data:

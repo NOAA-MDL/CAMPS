@@ -7,11 +7,14 @@ sys.path.insert(0, path)
 
 from subprocess import call 
 from subprocess import Popen
+from data_mgmt.Wisps_data import Wisps_data
+import data_mgmt.writer as writer
 import registry.util as yamlutil
 import subprocess
 import pygrib
 import pdb
 import re
+import numpy as np
 
 
 def reduce_grib():
@@ -83,11 +86,34 @@ def reduce_grib():
 
 
 def convert_grib2(filename):
+    """
+    Converts grib file into Wisps Data and writes 
+    to netCDF.
+    """
     grbs = pygrib.open(filename)
+    all_vars = {}
     for grb in grbs:
-        fcst_hash = grb.name +'_'+ grb.level
+        fcst_hash = str(grb.name) +'_'+ str(grb.level)
         data = grb.values
-        forecast_time()
+        if fcst_hash not in all_vars:
+            all_vars[fcst_hash] = data
+        else:
+            all_vars[fcst_hash] += data
+
+    for name,data in all_vars.iteritems():
+        stacked = np.array([])
+        for i in data:
+            if len(stacked) == 0:
+                stacked = i
+            else:
+                stacked = np.vstack((i,stacked))
+
+        obj = Wisps_data(name)
+        obj.dimensions = ['lat','lon']
+        try:
+            obj.add_data(stacked) 
+        except: 
+            print 'not an numpy array'
 
 
 def convert_grib(filename):
@@ -332,5 +358,5 @@ def get_grbs(grbs):
     return forecasts
 
 reduce_grib()
-#convert_grib('/scratch3/NCEPDEV/mdl/Riley.Conroy/output/mdl.gfs47.18.pgrb2')
+#convert_grib2('/scratch3/NCEPDEV/mdl/Riley.Conroy/output/mdl.gfs47.06.pgrb2')
 

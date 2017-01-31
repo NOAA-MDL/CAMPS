@@ -92,6 +92,13 @@ class Wisps_data(nc_writable):
         coord = int(coord)
         return coord
 
+    def get_time_bound(self):
+        if not self.has_time_bounds():
+            return None
+        for i in time:
+            if type(Time.TimeBounds) == type(i):
+                return i
+
     def add_process(self, process):
         """ 
         Adds a Process object to the Processes list.
@@ -174,7 +181,7 @@ class Wisps_data(nc_writable):
         try :
             meta_dict = db.get_all_metadata(self.name)
         except ValueError :
-            print "ERROR: '"+ self.name+ "' not defined in metadata db"
+            print "WARNING: '"+ self.name+ "' not defined in metadata db"
         self.metadata = meta_dict
 
     def add_metadata(self, key, value):
@@ -210,6 +217,34 @@ class Wisps_data(nc_writable):
         setattr(elev_var, 'standard name','height')
         setattr(elev_var, 'positive', 'up')
         setattr(elev_var, 'axis', 'Z')
+
+    def in_metadata(self, var):
+        return var in self.metadata
+
+    def get_var_name(self):
+        name = ""
+        try:
+            name += self.metadata['dataSource']
+        except:
+            name += '_'
+            print "No dataSource metadata"
+        name += '_'
+        try:
+            name += self.metadata['OM_ObservedProperty']
+        except:
+            name += '_'
+            print "No OM_ObservedProperty metadata"
+        name += '_'
+        if self.has_time_bounds():
+            bounds = self.get_time_bounds()
+            name += str(bounds.get_duration / Time.ONE_HOUR)
+        name += '_'
+        
+
+        return name
+            
+
+
 
     def get_coord_name(self, nc_handle, coord_name, is_bounds=False):
         """
@@ -426,7 +461,7 @@ class Wisps_data(nc_writable):
             nc_var[:] = self.data
         except Exception as e:
             print e
-            pdb.set_trace()
+            #pdb.set_trace()
 
 
         return nc_handle
@@ -445,7 +480,7 @@ class Wisps_data(nc_writable):
     def __add__(self, other):
         if type(other) != type(self):
             raise TypeError("Types do not match")
-        if name != other.name
+        if name != other.name:
             raise Exception("Attempt to combine different variables failed")
         # Add data
         self.data = self.data + other.data

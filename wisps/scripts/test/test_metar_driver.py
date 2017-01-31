@@ -38,6 +38,3 @@ def alt_func():
 #test_alt()
 metar_driver.main()
 #alt_func()
-=======
-#metar_driver.main()
-alt_func()
