@@ -59,8 +59,7 @@ def str_to_datetime(time):
     return datetime(year,month,day,hour)
 
 def epoch_to_datetime(seconds):
-    """Converts epoch time to datetime"""
-    return datetime.utcfromtimestamp(seconds)
+    """Converts epoch time to datetime"""return datetime.utcfromtimestamp(seconds)
 
 def epoch_time(time):
     """Return hours array as seconds since the epoch,
