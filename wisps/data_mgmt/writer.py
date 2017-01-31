@@ -25,20 +25,24 @@ def write(wisps_data, filename):
     """
     Writes a list of Wisps_data to NetCDF file
     """
-    # Will error out if dimensions arn't correct
+    print ""
+    print "Writing"
+    print ""
+    # Get all dimenesions in the list.
+    # Will error out if dimensions arn't correct.
     dims = get_dimensions(wisps_data)
+
     nc = open_nc(filename)
 
     # Write dimensions
     for d_name,size in dims.iteritems():
         nc.createDimension(d_name, size)
 
-    # Write the data by calling its get_nc_variable function
+    # Write the data by calling its write_to_nc function
     for d in wisps_data:
-        d.get_nc_variable(nc)
+        d.write_to_nc(nc)
     nc.close()
 
-   
 def get_dimensions(wisps_data):
     """
     Checks if each object's dimensions have the same length.

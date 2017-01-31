@@ -1,0 +1,1054 @@
+########################################
+## Globals
+## -------
+##
+## Defines the global attributes in the netcdf file.
+## You can add arbitrary globals to have them represented
+## in the file
+##
+########################################
+globals:
+  title : "METAR observation data"
+  institution : "NOAA/National Weather Service"
+  source : "Data from METAR with MDL Quality Control"
+  version : 0.1
+  history : "Generated on NOAA's Weather and Climate Operational Supercomputing System"
+  references : ""
+  organization : "NOAA/MDL/SMB"
+  url : "http://www.nws.noaa.gov/mdl/"
+
+########################################
+##
+## Dimensions
+## -------
+##
+## Defines the Dimensions of the netcdf files. 
+## Only the dimensions used will be written.
+##
+########################################
+dimensions :
+  time : &time 'time_projection'
+  nstations : &nstations 'number_of_stations'
+  plev : &plev 'pressure_level'
+  elev : &elev 'elevation'
+  chars : &chars 'num_characters'
+
+########################################
+##
+## Variables
+## -------
+##
+## Defines all possible variables of the netcdf files.
+## The attribute properties contain the metadata for a 
+## variable
+##
+########################################
+variables :
+  station :
+    data_type : "c" # NC_CHAR
+    dimensions : [*nstations,*chars]
+    fill_value : "X"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "ICAO METAR call letters"
+      comment : "
+                Only currently archives reports from stations only if  
+                the first letter of the ICAO ID is 'K', 'P', 'M', 'C', or 'T'.
+                "
+  station_type :
+    data_type : int8
+    dimensions : [*nstations,*time]
+    fill_value : 9
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "station type"
+      comment : ""
+  latitude :
+    #data_type : int16
+    data_type : float32
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "latitude"
+      units : "degrees_north"
+      comment : "N/A"
+      valid_min : -90.0
+      valid_max : 90.0
+    dimensions : [*nstations,*time]
+  longitude :
+    data_type : float32
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "longitude"
+      units : "degrees_west"
+      valid_min : -180.0
+      valid_max : 180.0
+      missing_value : 9999
+      comment : "N/A"
+    dimensions : [*nstations,*time]
+  observation_time :
+    data_type : int64
+    dimensions : [*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : *time
+      units : "HHMM"
+      comment : "Represented as two-digit hour and two-digit minute"
+  air_temperature :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "dry bulb temperature"
+      valid_min : -80
+      valid_max : 130 
+      units : "degrees F"
+      comment : "N/A"
+  dew_point_temperature :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "dew point temperature"
+      valid_min : -85
+      valid_max :  80
+      units : "degrees F"
+      comment : "N/A"
+  present_weather_group_1 :
+    data_type : uint16
+    dimensions : [*nstations,*time]
+    fill_value : 9999
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "present weather group 1"
+      valid_min : 208
+      valid_max :  0
+      comment : "enumeration legend available at:"
+  present_weather_group_2 :
+    data_type : uint16
+    dimensions : [*nstations,*time]
+    fill_value : 9999
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "present weather group 2"
+      valid_min : 208
+      valid_max :  0
+      comment : "enumeration legend available at:"
+  present_weather_group_3 :
+    data_type : uint16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "present weather group 3"
+      valid_min : 208
+      valid_max :  0
+      comment : "enumeration legend available at:"
+  visibility_in_air :
+    data_type : float32
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "horizontal visiblity"
+      units : "miles"
+      valid_min : 40
+      valid_max : 0
+      comment : "N/A"
+  wind_from_direction :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "wind direction"
+      units : "degrees"
+      valid_min : 360
+      valid_max : 0
+      comment : "Wind direction is set to 0 if winds are variable."
+  wind_speed :
+    data_type : int16 
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : "/u/r/i/wind_speed"
+      long_name : "wind speed"
+      valid_min : 75
+      valid_max : 0
+      units : "knot"
+      comment : "Wind speed is set to -9 if winds are variable."
+  wind_speed_of_gust :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute :
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "wind speed of gust"
+      valid_min : 200
+      valid_max : 0
+      units : "knot"
+      comment : "N/A"
+  air_pressure_at_sea_level :
+    data_type : float32
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "mean sea level pressure"
+      valid_min : 875
+      valid_max : 1075
+      units : "millibar"
+      comment : "metar does not include leading 9 or 10. This attribute does"
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  altimeter_setting : # altimiter_range? 
+    data_type : float32
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "altimiter setting"
+      valid_min : 24
+      valid_max : 32
+      units : "mm Hg"
+      comment : "N/A"
+  cloud_amount_layer_1 :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "cloud amount layer 1"
+      units : "coded"
+      valid_min : 0
+      valid_max : 10
+      comment : "
+                0 : CLR
+                1 : SKC
+                2 : FEW
+                3 : SCT
+                6 : BKN
+                8 : OVC
+                9 : POB
+                10 : OB
+                "
+  cloud_height_layer_1  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "cloud height layer 1"
+      units : "feet"
+      comment : "N/A"
+  cloud_amount_layer_2  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "cloud amount layer 2"
+      valid_min : 0
+      valid_max : 10
+      units : "coded"
+      comment : "
+                0 : CLR
+                1 : SKC
+                2 : FEW
+                3 : SCT
+                6 : BKN
+                8 : OVC
+                9 : POB
+                10 : OB
+                "
+  cloud_height_layer_2  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "cloud height layer 2"
+      units : "feet"
+      comment : "N/A"
+  cloud_amount_layer_3  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "cloud amount layer 3"
+      valid_min : 0
+      units : "coded"
+      valid_max : 10
+      comment : "
+                0 : CLR
+                1 : SKC
+                2 : FEW
+                3 : SCT
+                6 : BKN
+                8 : OVC
+                9 : POB
+                10 : OB
+                "
+  cloud_height_layer_3  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "cloud height layer 3"
+      units : "feet"
+      comment : "N/A"
+  cloud_amount_layer_4  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "cloud amount layer 4"
+      valid_min : 0
+      valid_max : 10
+      units : "coded"
+      comment : "
+                0 : CLR
+                1 : SKC
+                2 : FEW
+                3 : SCT
+                6 : BKN
+                8 : OVC
+                9 : POB
+                10 : OB
+                "
+  cloud_height_layer_4  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "cloud height layer 4"
+      units : "feet"
+      comment : "N/A"
+  cloud_amount_layer_5  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "cloud amount layer 5"
+      valid_min : 0
+      valid_max : 10
+      units : "coded"
+      comment : "N/A"
+  cloud_height_layer_5  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "cloud height layer 5"
+      units : "feet"
+      comment : "N/A"
+  cloud_amount_layer_6  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "cloud amount layer 6"
+      valid_min : 0
+      valid_max : 10
+      units : "coded"
+      comment : "N/A"
+  cloud_height_layer_6  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "cloud height layer 6"
+      units : "feet"
+      comment : "N/A"
+  precipitation_amount_1_hour  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "Hourly precipitation amount"
+      valid_min : 0
+      valid_max : 3.75
+      units : "inches"
+      scale_factor : 100
+      comment : "A -4 is used to represent a trace amount\n
+                 A -9 is used to represent an indeterminate amount"
+  precipitation_amount_3_hour  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "3-hour precipitation amount"
+      valid_min : 0
+      valid_max : 9
+      units : "inches"
+      scale_factor : 100
+  precipitation_amount_6_hour  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "6-hour precipitation amount"
+      valid_min : 0
+      valid_max : 12
+      units : "inches"
+      scale_factor : 100
+  precipitation_amount_24_hour  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "24-hour precipitation amount"
+      valid_min : 0
+      valid_max : 24
+      scale_factor : 100
+      units : "inches"
+  duration_of_sunshine :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "minutes of sunshine"
+      units : "minutes"
+  temperature_6_hour_maximum  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "6-hour maximum temperature"
+      units : "inches"
+      comment : "Minimum and maximum values depend on season and region"
+  temperature_6_hour_minimum  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "6-hour minimum temperature"
+      units : "inches"
+      comment : "Minimum and maximum values depend on season and region"
+  calendar_day_maximum_temperature  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "Calendar day maximum temperature"
+      units : "degrees F"
+      comment : "Minimum and maximum values depend on season and region"
+  calendar_day_minimum_temperature  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "calendar day minimum temperature"
+      units : "degrees F"
+      comment : "Minimum and maximum values depend on season and region"
+  snow_depth_on_ground :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "snow depth on the ground"
+      units : "inches"
+      comment : "N/A"
+  snowfall_amount :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "snowfall amount"
+      units : "inches"
+      comment : "N/A"
+  sattelite_cloud_amount_category_GOES_E :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "satellite cloud amount category from GOES-East"
+      units : "coded"
+      comment : "N/A"
+  sattelite_effective_cloud_amount_GOES_E :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "sattelite effective cloud amount from GOES-East"
+      units : "coded"
+      comment : "N/A"
+  sattelite_cloud_amount_category_GOES_W :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "sattelite cloud amount from GOES-West"
+      units : "coded"
+      comment : "N/A"
+  sattelite_effective_cloud_amount_GOES_W :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "sattelite effective cloud amount from GOES-West"
+      units : "coded"
+      comment : "N/A"
+  water_temperature :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "water temperature"
+      units : "degrees F"
+      comment : "N/A"
+  wave_height :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "wave_height"
+      units : "centimeters"
+      comment : "N/A"
+  wave_direction :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    fill_value : "9999"
+    attribute : 
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      long_name : "wave direction"
+      units : "degrees"
+      comment : "N/A"
+  1000_MB_HGT : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  1000_MB_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  1000_MB_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  1000_MB_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  1000_MB_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  1000_MB_VV : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  10_M_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  10_M_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  12-H_CAT_FZ_RAIN : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  12-H_CAT_ICE_PELLETS : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  12-H_CAT_RAIN : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  12-H_CAT_SNOW : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  12-H_CONV_PRECIP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  12-H_MAX_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  12-H_MIN_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  12-H_SFC_ALBEDO : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  12-H_TOTAL_PRECIP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  2_M_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  2_M_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  300_MB_HGT : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  300_MB_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  300_MB_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  300_MB_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  300_MB_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  300_MB_VV : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  500_MB_HGT : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  500_MB_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  500_MB_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  500_MB_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  500_MB_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  500_MB_VV : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  600_MB_HGT : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  600_MB_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  600_MB_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  600_MB_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  600_MB_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  600_MB_VV : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  700_MB_HGT : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  700_MB_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  700_MB_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  700_MB_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  700_MB_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  700_MB_VV : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  750_MB_HGT : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  750_MB_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  750_MB_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  750_MB_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  750_MB_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  750_MB_VV : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  800_MB_HGT : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  800_MB_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  800_MB_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  800_MB_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  800_MB_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  800_MB_VV : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  850_MB_HGT : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  850_MB_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  850_MB_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  850_MB_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  850_MB_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  850_MB_VV : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  900_MB_HGT : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  900_MB_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  900_MB_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  900_MB_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  900_MB_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  900_MB_VV : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  925_MB_HGT : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  925_MB_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  925_MB_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  925_MB_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  925_MB_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  925_MB_VV : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  950_MB_HGT : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  950_MB_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  950_MB_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  950_MB_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  950_MB_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  950_MB_VV : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  975_MB_HGT : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  975_MB_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  975_MB_TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  975_MB_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  975_MB_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  975_MB_VV : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  995_SIG_VV : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  BEST_LI : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  B.L._RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  B.L._TEMP : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  MEAN_RH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  MSL_PRES : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  SFC_CAPE : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  SFC_LI : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  SFC_PRES : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  STRM_REL_HELICITY : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  TOTAL_P._WATER : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  TROP_U_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  TROP_V_GRD : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  VOL_SOIL_MOIST_0-.1M_BGL : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  VOL_SOIL_MOIST_.1-.4M_BGL : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  VOL_SOIL_MOIST_.4-1.M_BGL : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  WATER_EQIV_ACCUM_SNOW_DEPTH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  WATER_EQIV_ACCUM_SNOW_DEPTH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  WATER_EQIV_ACCUM_SNOW_DEPTH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  WATER_EQIV_ACCUM_SNOW_DEPTH : 
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+  test_plev : 
+    coord_val : 700
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      coordinates : "plev"
+  test_plev2 : 
+    coord_val : 600
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      coordinates : "plev"
+  test_elev :
+    coord_val : 2
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      coordinates : "elev"
+  test_time_bounds : 
+    coord_val1 :  500
+    coord_val2 :  700
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      coordinates : "time"
+      bounds : "time_bounds"
+  test_elev_bounds : 
+    coord_val1 :  500
+    coord_val2 :  700
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      coordinates : "elev"
+      bounds : "elev_bounds"
+  test_elev_bounds : 
+    coord_val1 :  500
+    coord_val2 :  700
+    attribute:
+      OM_procedure : "()"
+      OM_observedProperty : ""
+      coordinates : "elev"
+      bounds : "elev_bounds"
+

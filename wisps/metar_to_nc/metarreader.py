@@ -21,7 +21,7 @@ class metarreader():
     and exists as a METAR formatted file, calling read will 
     add stations to the station_list.
     """
-    
+
     obs_type = "METAR"
      
     # Specify input filename.
@@ -51,6 +51,7 @@ class metarreader():
             station_list = f.read().splitlines()
         station_list = strip_array(station_list)
         return station_list
+
     
     def read_station_definitions(self, file_path):
         """
@@ -58,6 +59,8 @@ class metarreader():
         file. Returns a dictionary where the keys are the station
         call letters and has dictionary values such that
         {lat: xxx, lon:yyy}.
+        Positive values indicate North or West, while
+        negative values indicate South or East.
         """
         station_dict = {}
         with open(file_path,'r') as f:
@@ -84,15 +87,15 @@ class metarreader():
                     station_dict[call]['lat'] = lat
                     station_dict[call]['lon'] = lon
         return station_dict
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 
-
-    def read(self):
+    def read(self, filename=None):
         """
         Starts reading self.filename.
         """
+        if filename:
+            self.filename = filename
         with open(self.filename, "r") as metar_file:
-            metar_reader = csv.reader(metar_file, delimiter=":" ) 
+            metar_reader = csv.reader(metar_file, delimiter=":") 
             self.parse_file(metar_reader)
     
     def parse_file(self, metar_reader):
@@ -164,11 +167,12 @@ class metarreader():
                                 ". Old value : " + str(station_def['lon'])
                         ))
 
-
 def strip_array(arr):
     """
     Strips whitespace out of an array of strings.
     Will fail if not given a string list.
     """
     return [word.strip(' ') for word in arr]
+
+
 

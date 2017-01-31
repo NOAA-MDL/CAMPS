@@ -9,6 +9,8 @@ import scripts.metar_driver as metar_driver
 import metar_to_nc.station
 import metar_to_nc.qc_main as qc_main
 import pickle
+import cProfile
+import re
 
 def test_obs_driver():
     metar_driver.main()
@@ -21,6 +23,21 @@ def test_qc():
 
     qc_main.qc(mmk)
 
+def test_alt():
+    with open('stations.pkl', 'rb') as input:
+        mmk = pickle.load(input)
+        metar_driver.test_alt(mmk)
 
-test_obs_driver()
+def alt_func():
+    with open('postqc.pkl', 'rb') as input:
+        mmk = pickle.load(input)
+        metar_driver.alt_func(mmk)
 
+
+
+#test_alt()
+metar_driver.main()
+#alt_func()
+=======
+#metar_driver.main()
+alt_func()
