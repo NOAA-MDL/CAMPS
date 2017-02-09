@@ -122,7 +122,7 @@ def convert_to_numpy(station_list):
 # year and month
 # other things
 
-def read_obs(data_dir, year, month):
+def read_obs(data_dir, year, month, def_path, val_path):
     """
     Reads the observations from a given year and month. 
     Uses a metarreader to get the data fromthe ASCII files
@@ -134,13 +134,13 @@ def read_obs(data_dir, year, month):
     start_buffer = one_day + one_hour 
     end_buffer = one_hour
     print "Reading observations"
-    reader = metarreader()
+    reader = metarreader(def_path, val_path)
     #start of given month
     start_time = datetime(year, month, 1, 0)
     start_time = start_time - start_buffer
     current_time = copy.copy(start_time)
     #end_time = datetime(year, month, 3, 0)  #less than a month
-    end_time = datetime(year, (month+1%12), 1, 0) #full month
+    end_time = datetime(year, (month%12)+1, 1, 0) #full month
     end_time = end_time + end_buffer
     number_of_timesteps = 0 
     init_time = time.time()

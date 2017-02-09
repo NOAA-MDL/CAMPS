@@ -20,7 +20,9 @@ from data_mgmt.Wisps_data import Wisps_data
 import data_mgmt.Time as Time
 import data_mgmt.writer as writer
 
-def main():
+
+
+def main(control_file=None):
     """
     1. Reads control file
     2. Reads METAR and packages data into a station data type
@@ -31,23 +33,25 @@ def main():
     7. Fills NetCDF file with QC'd obersvation data
     """
     print "Starting main"
-    #cfg.read_nc_config()
     # Read control file and assign vales
-    control = cfg.read_metar_control()
+    if control_file:
+        control = cfg.read_yaml(control_file)
+    else:
+        control = cfg.read_metar_control()
     data_dir = control['METAR_data_directory']
     year = control['year']
     month = control['month']
     debug_level = control['debug_level']
     log_file = control['log_file']
     output_dir = control['nc_output_directory']
+    def_path = control['station_defs']
+    val_path = control['valid_stations']
     pickle = control['pickle']
 
-    # This will read the ASCII files and put them into stations
-    reader = read_obs(data_dir, year, month)
+    # This will read the CSV files and put them into stations
+    reader = read_obs(data_dir, year, month, def_path, val_path)
 
     # Convert all arrays to numpy arrays
-    # Note: The reason I'm not initializing these as numpy arrays
-    #       is because I would need to know its size in advance.
     print "Converting station arrays to numpy arrays"
     stations = reader.station_list
     stations = convert_to_numpy(stations)
@@ -67,9 +71,7 @@ def main():
     # Sort stations by station name
     stations = OrderedDict(sorted(stations.items()))
 
-    # Initialize the NetCDF file. 
-    # 'nc' is the filehandle.
-    # 'var_dict' is the netcdf variable objects
+    # Create Output filename
     filename = output_dir
     filename += gen_filename(year, month)
 
@@ -131,47 +133,10 @@ def add_time(start, end, stride=None):
         stride = Time.ONE_HOUR
     pt = Time.PhenomenonTime(start, end, stride)
     rt = Time.ResultTime(start, end, stride) # Result time will be now
-    vt = Time.ValidTime(start, end, stride)
+    vt = Time.ValidTime(start, end, stride) # Valid Time will be forever
         
     time.append(pt)
     time.append(rt)
     time.append(vt)
     return time
 
-def alt_func(stations):
-
-    print "Construct 2D arrays"
-    wisps_data = []
-    example_station = stations.values()[0]
-    obs = example_station.observations.keys()
-    obs.remove('TIME')
-    start_time = example_station.hours[0]
-    end_time = example_station.hours[-1]
-    #for metar_name, nc_var in var_dict.iteritems():
-    for metar_name in obs:
-        # Set the observation name to the standard WISPS name
-        try :
-            observation_name = cfg.metar_to_nc[metar_name]
-        except :
-            print "ERROR: cannot find the netcdf equivalent of " +metar_name +\
-                    "in METAR lookup table. Skipping."
-            continue
-        # Loop through the stations and stitch together the current observation
-        temp_obs = []
-        for station_name, cur_station in stations.iteritems():
-            station_data = cur_station.get_obs(metar_name)
-            if len(temp_obs) == 0: #If the first station
-                temp_obs = station_data
-            else:
-                temp_obs = np.vstack((temp_obs, station_data)) # takes tuple arg
-        print observation_name
-        wisps_obj = Wisps_data(observation_name)
-        wisps_obj.set_dimensions()
-        wisps_obj.add_data(temp_obs)
-        wisps_obj.change_data_type()
-        wisps_obj.time = add_time(start_time, end_time)
-        wisps_data.append(wisps_obj)
- 
-
-    writer.write(wisps_data, 'test.nc')
-    print "writing complete. Closing nc file"

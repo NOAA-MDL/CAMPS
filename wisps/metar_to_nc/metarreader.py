@@ -26,7 +26,7 @@ class metarreader():
      
     # Specify input filename.
     # Specify output directory -- will append data to filename.
-    def __init__(self,filename=None):
+    def __init__(self, def_path, val_path, filename=None):
         """
         Initializes station dictionaries, and observation list.
         """
@@ -36,8 +36,8 @@ class metarreader():
         self.station_list = {}
 
         # Read valid and defined stations
-        def_path = cfg.read_metar_control()['station_defs']
-        val_path = cfg.read_metar_control()['valid_stations']
+        #def_path = cfg.read_metar_control()['station_defs']
+        #val_path = cfg.read_metar_control()['valid_stations']
         self.station_definitions = self.read_station_definitions(def_path)
         self.valid_stations = self.read_valid_stations(val_path)
     

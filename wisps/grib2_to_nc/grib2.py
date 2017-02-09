@@ -16,7 +16,6 @@ import pdb
 import re
 import numpy as np
 
-
 def reduce_grib():
     
     registery_path = yamlutil.CONFIG_PATH
@@ -75,7 +74,8 @@ def reduce_grib():
     #    p3 = Popen(non_pcp_cmd, stdin=p2.stdout)
     #    p1.stdout.close()
     #    p2.stdout.close()
-    #    ## OR
+
+        ## OR
 
         #Do nonPCP
         cmd = " ".join(get_inv_cmd) + " | grep -f "+nonpcp_file+" | " + " ".join(non_pcp_cmd)
@@ -83,38 +83,113 @@ def reduce_grib():
         cmd = " ".join(get_inv_cmd) + " | grep -f "+pcp_file+" | " + " ".join(pcp_cmd)
         subprocess.check_output(cmd, shell=True)
    
+def get_forecast_hash(grb):
+    if 'lengthOfTimeRange' in grb.keys():
+        fcst_hash = str(grb.name) + '_' \
+                + str(grb.lengthOfTimeRange) + 'hr' + '_' \
+                + str(grb.stepTypeInternal) + '_'\
+                + str(grb.level)
+        return fcst_hash
 
+    fcst_hash = str(grb.name) + '_' \
+            + str(grb.stepTypeInternal) + '_'\
+            + str(grb.level)
+
+    return fcst_hash
+
+def get_lon_lat_data(grb):
+    pass
+    
 
 def convert_grib2(filename):
     """
     Converts grib file into Wisps Data and writes 
     to netCDF.
     """
+    # Load lookup table first
+    lookup = yamlutil.read_grib2_lookup()
+    # Read Control and take out a few variables
+    control = yamlutil.read_grib2_control()
+    outpath = control['outpath']
+
+    print "reading grib"
     grbs = pygrib.open(filename)
-    all_vars = {}
+    # where each index is an hour. So we need the +1 for hour 96
+    number_of_forecast_hours = 96 + 1
+    fcst_hours = [None] * number_of_forecast_hours
+    metadata = {}
+    print "organizing grbs into model runs/projection hours"
     for grb in grbs:
-        fcst_hash = str(grb.name) +'_'+ str(grb.level)
-        data = grb.values
+        # Initialize dictionary at forecast hour if necessary
+        
+        if not fcst_hours[grb.forecastTime]:
+            fcst_hours[grb.forecastTime] = {}
+
+        fcst_hash = get_forecast_hash(grb)
+        #data = grb.values
+        
+        # Pull out the grb dictionary at the forecast hour
+        all_vars = fcst_hours[grb.forecastTime]
         if fcst_hash not in all_vars:
-            all_vars[fcst_hash] = data
+            all_vars[fcst_hash] = [grb]
         else:
-            all_vars[fcst_hash] += data
+            all_vars[fcst_hash].append(grb)
 
-    for name,data in all_vars.iteritems():
-        stacked = np.array([])
-        for i in data:
-            if len(stacked) == 0:
-                stacked = i
-            else:
-                stacked = np.vstack((i,stacked))
+    #pdb.set_trace()
+    
+    # Temporary grb to grab standard information
+    tmp_grb = fcst_hours[0]
+    tmp_grb = tmp_grb[tmp_grb.keys()[0]][0]
+    lead_time = tmp_grb.hour
+    all_objs = [] # Collection of Wisps_data objects
+    print "Creating Wisps-data objects for variables at each projection"
+    # Will typically only do something every third forecast hour
+    for hour in range(number_of_forecast_hours):
+        all_vars = fcst_hours[hour]
+        if all_vars == None:
+            continue
+        print hour
+        for name,values in all_vars.iteritems():
+            # Convert name to the proper wisps name in the db/netcdf.yml
+            try:
+                name = lookup[name]
+            except:
+                print 'Warning:', name, 'not in grib2 lookup table'
+            stacked = np.array([])
+            for grb in values:
+                if len(stacked) == 0:
+                    stacked = grb.values
+                else:
+                    stacked = np.dstack((stacked,grb.values))
 
-        obj = Wisps_data(name)
-        obj.dimensions = ['lat','lon']
-        try:
-            obj.add_data(stacked) 
-        except: 
-            print 'not an numpy array'
+            obj = Wisps_data(name)
+            obj.add_source('GFS')
+            obj.add_leadTime(filename[-2:])
+            obj.add_metadata('ForecastReferenceTime', hour)
+            obj.dimensions = ['lat','lon','time']
+            try:
+                obj.add_data(stacked) 
+                all_objs.append(obj)
+            except: 
+                print 'not an numpy array'
+ 
+    # Make longitude and latitude variables
+    lat = Wisps_data('latitude')
+    lon = Wisps_data('longitude')
+    lat.dimensions = ['lat','lon']
+    lon.dimensions = ['lat','lon']
+    lat_lon_data = tmp_grb.latlons()
+    lat.data = lat_lon_data
+    lon.data = lat_lon_data
+    all_objs.append(lat)
+    all_objs.append(lon)
 
+    outfile = outpath + get_output_filename()
+    writer.write(all_objs, outfile)
+
+def get_output_filename():
+    """Returns a string representing the netcdf filename of gfs model data"""
+    return 'grbtst.nc'
 
 def convert_grib(filename):
     """
@@ -357,6 +432,6 @@ def get_grbs(grbs):
         forecasts.append(grb_info)
     return forecasts
 
-reduce_grib()
-#convert_grib2('/scratch3/NCEPDEV/mdl/Riley.Conroy/output/mdl.gfs47.06.pgrb2')
+#reduce_grib()
+convert_grib2('/scratch3/NCEPDEV/mdl/Riley.Conroy/output/mdl.gfs47.12.pgrb2')
 

@@ -111,7 +111,8 @@ def check_6hour_max(hourly_temp_array, six_hour_max_array, date_array, station_t
         # Every 6 hours (00,06,12,18)z, do checks
         if (int(current_hour) % 6) == 0: 
             if(len(tmp_6hours) < 3 and i != 1):
-                pdb.set_trace()
+                #pdb.set_trace()
+                pass
             extrema,indicies,num_missing = calc_special_max(tmp_6hours,six_hour_temp)
             temp_difference = extrema - six_hour_temp
             # Tolerance definition

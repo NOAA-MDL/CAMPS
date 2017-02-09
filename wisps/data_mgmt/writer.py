@@ -60,6 +60,7 @@ def get_dimensions(wisps_data):
         shape = i.data.shape
         if len(dims) != len(shape):
             print "Problem: shape of data and number of dimensions dont match"
+            print "Problem: with,",i.name
             raise ValueError
         for c,d in enumerate(dims):
             if d not in count:

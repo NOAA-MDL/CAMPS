@@ -87,6 +87,12 @@ def read_grib2_control():
     """
     return read_yaml(CONFIG_PATH+"grib2_control.yml")
 
+def read_grib2_lookup():
+    """
+    Reads and returns the grib2 -> NetCDF variables yaml file.
+    """
+    return read_yaml(CONFIG_PATH+"grib2_to_nc.yml")
+
 def read_mosID_lookup():
     """
     Reads and returns the MOS ID -> NetCDF variables yaml file.

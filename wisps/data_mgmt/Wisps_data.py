@@ -20,6 +20,12 @@ FILL_VALUE = 9999
 coord_str = 'coordinates'
 
 class Wisps_data(nc_writable):
+    """
+    WISPS data object for storing metadata and accompanied objects
+    that describe the variable. This class will attempt to 
+    gather information from the database on a given property, but 
+    any gaps will need to be provided by the user
+    """
 
  
     def __init__(self, name):
@@ -114,7 +120,7 @@ class Wisps_data(nc_writable):
         Given a numpy array with the correct dimensions,
         sets it to objects 'data' instance variable.
         """
-        if type(data) is not type(np.array([])):
+        if not isinstance(data, type(np.array([]))):
             print type(data), "is not a numpy array"
             raise ValueError
         if len(self.dimensions) == 0:
@@ -196,7 +202,12 @@ class Wisps_data(nc_writable):
         Sets the LE_Source attribute to 'value'.
         """
         self.metadata['LE_Source'] = value
-        return self
+
+    def add_leadTime(self, value):
+        """
+        Sets the LE_Source attribute to 'value'.
+        """
+        self.metadata['LeadTime'] = value
 
     def add_plev_attributes(self, plev_var):
         """
@@ -224,20 +235,22 @@ class Wisps_data(nc_writable):
     def get_var_name(self):
         name = ""
         try:
-            name += self.metadata['dataSource']
+            name += self.metadata['LE_Source']
         except:
             name += '_'
-            print "No dataSource metadata"
         name += '_'
         try:
             name += self.metadata['OM_ObservedProperty']
         except:
             name += '_'
-            print "No OM_ObservedProperty metadata"
         name += '_'
         if self.has_time_bounds():
             bounds = self.get_time_bounds()
             name += str(bounds.get_duration / Time.ONE_HOUR)
+        try:
+            name += str(self.metadata['ForecastReferenceTime'])
+        except:
+            name += '_'
         name += '_'
         
 
@@ -430,41 +443,56 @@ class Wisps_data(nc_writable):
         for p in self.processes:
             p.write_to_nc(nc_handle)
         
-        # Check that the dimensions are correct for the shape of the data
-        if len(self.data.shape) != len(self.dimensions):
-            print "dimensions of data not equal to dimensions attribute"
-            return
+        self.check_correct_shape()
 
-        # Check if dimensions are defined. If they aren't, create them
+        # Check if dimensions are defined in the netCDF file.
+        # If not, create them.
         self.create_dimensions(nc_handle)
 
         # Create the variable 
-        nc_var = nc_handle.createVariable( \
-                self.name, \
-                self.data.dtype, \
-                tuple(self.dimensions), \
-                zlib=True, \
-                complevel=7, \
-                shuffle=True, \
+        nc_var = nc_handle.createVariable( 
+                #self.name, 
+                self.name + self.get_var_name(),
+                self.data.dtype, 
+                tuple(self.dimensions), 
+                zlib=True, 
+                complevel=7, 
+                shuffle=False, 
                 fill_value=FILL_VALUE)
 
         # Add the metadata
-        for name,value in self.metadata.iteritems():
-            if name != 'name':
-                setattr(nc_var, name, value)
+        self.add_nc_metadata(nc_var)
 
         # Write the processes attribute string
         process_str = self.get_process_str()
         setattr(nc_var, "OM_Procedure", process_str)
-        
+         
+        self.add_nc_data(nc_var)
+
+        return nc_handle
+
+    def check_correct_shape(self):
+        # Check that the dimensions are correct for the shape of the data
+        if len(self.data.shape) != len(self.dimensions):
+            print "dimensions of data not equal to dimensions attribute"
+            print "Will not write", self.name
+            raise ValueError
+
+
+    def add_nc_data(self, nc_var):
+        """
+        Time intensive. See netCDF4.Variable.__setitem__
+        """
         try:
             nc_var[:] = self.data
         except Exception as e:
             print e
             #pdb.set_trace()
 
-
-        return nc_handle
+    def add_nc_metadata(self, nc_var):
+        for name,value in self.metadata.iteritems():
+            if name != 'name':
+                setattr(nc_var, name, value)
 
     def get_process_str(self):
         """

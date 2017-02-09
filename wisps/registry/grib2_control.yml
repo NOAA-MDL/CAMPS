@@ -1,6 +1,6 @@
 wgrib2 : "/apps/wgrib2/0.1.9.5.1/bin/wgrib2"
 grbindex : "/scratch3/NCEPDEV/nwprod/NWPROD.WCOSS/util/exec/grb2index"
-datadir : "/scratch3/NCEPDEV/mdl/Jason.Levit/gfs/2017012406/"
+datadir : "/scratch3/NCEPDEV/mdl/Jason.Levit/gfs/2017012412/"
 outpath : "/scratch3/NCEPDEV/mdl/Riley.Conroy/output/"
 nonpcp_file : "mdl_gfs_nonpcp.wgrib2"
 pcp_file : "mdl_gfs_pcp.wgrib2"

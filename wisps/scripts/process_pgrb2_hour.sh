@@ -14,13 +14,11 @@ fi
 cd ../grib2_to_nc
 pwd
 for dir in $gfs_dir/*$1; do 
-    echo $dir
     dir=`basename $dir`
     echo $dir
     sed -i -r "s/^datadir.*/datadir : \"\/scratch3\/NCEPDEV\/mdl\/Jason.Levit\/gfs\/$dir\/\"/" $grb_control
     $python $convert_script 
     echo "done"
-    read
 done
 
     

@@ -75,7 +75,7 @@ def qc(station_dict):
     with open('all_errors', 'w') as mmk:
         mmk.write(str(all_errors))
 
-    pdb.set_trace()
+    #pdb.set_trace()
 
 
     return station_dict
