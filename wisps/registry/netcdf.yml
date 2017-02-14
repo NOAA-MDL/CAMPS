@@ -208,8 +208,8 @@ variables :
       OM_procedure : "()"
       OM_observedProperty : "/common/present_weather_group_1"
       long_name : "present weather group 1"
-      valid_min : 208
-      valid_max :  0
+      valid_min : 0
+      valid_max : 208
       comment : "enumeration legend available at:"
   present_weather_group_2 :
     data_type : uint16
@@ -218,8 +218,8 @@ variables :
       OM_procedure : "()"
       OM_observedProperty : "/common/present_weather_group_1"
       long_name : "present weather group 2"
-      valid_min : 208
-      valid_max :  0
+      valid_min : 0
+      valid_max : 208
       comment : "enumeration legend available at:"
   present_weather_group_3 :
     data_type : uint16
@@ -228,8 +228,8 @@ variables :
       OM_procedure : "()"
       OM_observedProperty : "/common/present_weather_group_1"
       long_name : "present weather group 3"
-      valid_min : 208
-      valid_max :  0
+      valid_min : 0 
+      valid_max : 208
       comment : "enumeration legend available at:"
   visibility_in_air :
     data_type : float32
@@ -239,8 +239,8 @@ variables :
       OM_observedProperty : "/common/visibility_in_air"
       long_name : "horizontal visiblity"
       units : "miles"
-      valid_min : 40
-      valid_max : 0
+      valid_min : 0
+      valid_max : 40
       comment : "N/A"
   wind_from_direction :
     data_type : int16
@@ -250,8 +250,8 @@ variables :
       OM_observedProperty : "/common/wind_from_direction"
       long_name : "wind direction"
       units : "degrees"
-      valid_min : 360
-      valid_max : 0
+      valid_min : 0
+      valid_max : 360
       comment : "Wind direction is set to 0 if winds are variable."
   wind_speed :
     data_type : int16 
@@ -260,8 +260,8 @@ variables :
       OM_procedure : "()"
       OM_observedProperty : "/common/wind_speed"
       long_name : "wind speed"
-      valid_min : 75
-      valid_max : 0
+      valid_min : 0
+      valid_max : 75
       units : "knot"
       comment : "Wind speed is set to -9 if winds are variable."
   wind_speed_of_gust :
@@ -271,8 +271,8 @@ variables :
       OM_procedure : "()"
       OM_observedProperty : "/common/wind_speed_of_gust"
       long_name : "wind speed of gust"
-      valid_min : 200
-      valid_max : 0
+      valid_min : 0
+      valid_max : 200
       units : "knot"
       comment : "N/A"
   air_pressure_at_sea_level :
