@@ -333,7 +333,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/cloud_amount_layer_2 "
+      OM_observedProperty : "/common/cloud_amount_layer_2"
       long_name : "cloud amount layer 2"
       valid_min : 0
       valid_max : 10
@@ -353,7 +353,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/cloud_height_layer_2 "
+      OM_observedProperty : "/common/cloud_height_layer_2"
       long_name : "cloud height layer 2"
       units : "feet"
       comment : "N/A"
@@ -362,7 +362,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/cloud_amount_layer_3 "
+      OM_observedProperty : "/common/cloud_amount_layer_3"
       long_name : "cloud amount layer 3"
       valid_min : 0
       units : "coded"
@@ -382,7 +382,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/cloud_height_layer_3 "
+      OM_observedProperty : "/common/cloud_height_layer_3"
       long_name : "cloud height layer 3"
       units : "feet"
       comment : "N/A"
@@ -391,7 +391,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/cloud_amount_layer_4 "
+      OM_observedProperty : "/common/cloud_amount_layer_4"
       long_name : "cloud amount layer 4"
       valid_min : 0
       valid_max : 10
@@ -411,7 +411,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/cloud_height_layer_4 "
+      OM_observedProperty : "/common/cloud_height_layer_4"
       long_name : "cloud height layer 4"
       units : "feet"
       comment : "N/A"
@@ -420,7 +420,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/cloud_amount_layer_5 "
+      OM_observedProperty : "/common/cloud_amount_layer_5"
       long_name : "cloud amount layer 5"
       valid_min : 0
       valid_max : 10
@@ -431,7 +431,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/cloud_height_layer_5 "
+      OM_observedProperty : "/common/cloud_height_layer_5"
       long_name : "cloud height layer 5"
       units : "feet"
       comment : "N/A"
@@ -440,7 +440,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/cloud_amount_layer_6 "
+      OM_observedProperty : "/common/cloud_amount_layer_6"
       long_name : "cloud amount layer 6"
       valid_min : 0
       valid_max : 10
@@ -451,7 +451,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/cloud_height_layer_6 "
+      OM_observedProperty : "/common/cloud_height_layer_6"
       long_name : "cloud height layer 6"
       units : "feet"
       comment : "N/A"
@@ -460,7 +460,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/precipitation_amount_1_hour "
+      OM_observedProperty : "/common/precipitation_amount_1_hour"
       long_name : "Hourly precipitation amount"
       valid_min : 0
       valid_max : 3.75
@@ -473,7 +473,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/precipitation_amount_3_hour "
+      OM_observedProperty : "/common/precipitation_amount_3_hour"
       long_name : "3-hour precipitation amount"
       valid_min : 0
       valid_max : 9
@@ -484,7 +484,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/precipitation_amount_6_hour "
+      OM_observedProperty : "/common/precipitation_amount_6_hour"
       long_name : "6-hour precipitation amount"
       valid_min : 0
       valid_max : 12
@@ -495,7 +495,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/precipitation_amount_24_hour "
+      OM_observedProperty : "/common/precipitation_amount_24_hour"
       long_name : "24-hour precipitation amount"
       valid_min : 0
       valid_max : 24
@@ -514,7 +514,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/temperature_6_hour_maximum "
+      OM_observedProperty : "/common/temperature_6_hour_maximum"
       long_name : "6-hour maximum temperature"
       units : "inches"
       comment : "Minimum and maximum values depend on season and region"
@@ -523,7 +523,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/temperature_6_hour_minimum "
+      OM_observedProperty : "/common/temperature_6_hour_minimum"
       long_name : "6-hour minimum temperature"
       units : "inches"
       comment : "Minimum and maximum values depend on season and region"
@@ -532,7 +532,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/calendar_day_maximum_temperature "
+      OM_observedProperty : "/common/calendar_day_maximum_temperature"
       long_name : "Calendar day maximum temperature"
       units : "degrees F"
       comment : "Minimum and maximum values depend on season and region"
@@ -541,7 +541,7 @@ variables :
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/common/calendar_day_minimum_temperature "
+      OM_observedProperty : "/common/calendar_day_minimum_temperature"
       long_name : "calendar day minimum temperature"
       units : "degrees F"
       comment : "Minimum and maximum values depend on season and region"

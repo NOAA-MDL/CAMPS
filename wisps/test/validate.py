@@ -26,25 +26,25 @@ for var in ans_arr:
     different = 0
     num_points = 0
     num_bad_points = 0
-    if nc1.variables[var].dtype is np.dtype('float32'):
+    #if nc1.variables[var].dtype is np.dtype('float32'):
 
     for s in range(3000):
     
         var1 = nc1.variables[var][s+different]
         var2 = nc2.variables[var][s]
-        time = nc1.variables['observation_time']
-        while nc1.variables['station'][s+different][0] != nc2.variables['station'][s][0] \
+        #time = nc1.variables['observation_time']
+        while nc1.variables['METAR_station_name_instant_'][s+different][0] != nc2.variables['METAR_station_name_instant_'][s][0] \
                 or \
-                nc1.variables['station'][s+different][1] != nc2.variables['station'][s][1] \
+                nc1.variables['METAR_station_name_instant_'][s+different][1] != nc2.variables['METAR_station_name_instant_'][s][1] \
                 or \
-                nc1.variables['station'][s+different][2] != nc2.variables['station'][s][2] \
+                nc1.variables['METAR_station_name_instant_'][s+different][2] != nc2.variables['METAR_station_name_instant_'][s][2] \
                     or \
-                nc1.variables['station'][s+different][3] != nc2.variables['station'][s][3]:
+                nc1.variables['METAR_station_name_instant_'][s+different][3] != nc2.variables['METAR_station_name_instant_'][s][3]:
             print 'Different'
             different += 1
             var1 = nc1.variables[var][s+different]
         if printErr:
-            print nc1.variables['station'][s+different],nc2.variables['station'][s]
+            print nc1.variables['METAR_station_name_instant_'][s+different],nc2.variables['METAR_station_name_instant_'][s]
         if len(var1) != len(var2):
             if printErr:
                 print 'Error: The two variables dont have the same length'
@@ -58,8 +58,8 @@ for var in ans_arr:
                 num_bad_points += 1
                 if printErr:
                     print i, 'not equal to', j
-                    print 'at index', time[hour]
-                    print 'at station', nc1.variables['station'][s]
+                    print 'at index', str(hour)
+                    print 'at station', nc1.variables['METAR_station_name_instant_'][s]
         if counter > 0:
             big_counter += 1
         counter=0

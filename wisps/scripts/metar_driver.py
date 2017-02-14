@@ -32,7 +32,6 @@ def main(control_file=None):
     6. Constructs an output NetCDF file
     7. Fills NetCDF file with QC'd obersvation data
     """
-    print "Starting main"
     # Read control file and assign vales
     if control_file:
         control = cfg.read_yaml(control_file)
@@ -47,6 +46,13 @@ def main(control_file=None):
     def_path = control['station_defs']
     val_path = control['valid_stations']
     pickle = control['pickle']
+    
+    out_log = open(log_file, 'w+')
+
+    sys.stdout = out_log
+    sys.stderr = out_log
+
+    print "Starting main"
 
     # This will read the CSV files and put them into stations
     reader = read_obs(data_dir, year, month, def_path, val_path)
@@ -126,6 +132,7 @@ def main(control_file=None):
  
     writer.write(wisps_data, filename)
     print "writing complete. Closing nc file"
+    out_log.close()
 
 def add_time(start, end, stride=None):
     time = []

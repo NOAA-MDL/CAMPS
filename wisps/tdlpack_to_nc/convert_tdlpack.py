@@ -10,14 +10,16 @@ import yaml
 import time
 import numpy as np
 import argparse
-from netCDF4 import Dataset
 import pdb
-from datetime import datetime
 import registry.util as cfg
 import metar_to_nc.util as util
+import data_mgmt.writer as writer
+import data_mgmt.Time as Time
+from netCDF4 import Dataset
 from collections import OrderedDict
 from data_mgmt.Wisps_data import Wisps_data
-import data_mgmt.writer as writer
+from datetime import datetime
+import scripts.metar_driver as metar_driver
 
 MISSING_VALUE = 9999
 
@@ -96,6 +98,9 @@ def write_obs_to_netcdf(filepath, point_dict):
     sorted_point_dict = OrderedDict(sorted(point_dict.items()))
     all_points = sorted_point_dict.values()
     all_names = sorted_point_dict.keys()
+    temp_obs = sorted_point_dict.values()[0].dates
+    start_date = temp_obs[0]
+    end_date = temp_obs[-1]
 
     all_obj = []
     for p in all_predictors:
@@ -113,9 +118,21 @@ def write_obs_to_netcdf(filepath, point_dict):
             else:
                 temp_obs = np.vstack((temp_obs,cur_data))
         obj = Wisps_data(nc_var_name)
+        obj.set_dimensions()
+        if nc_var_name == 'observation_time':
+            temp_obs = temp_obs[0,:]
         obj.add_data(temp_obs)
+        obj.add_source('METAR')
+        obj.change_data_type()
+        #obj.time = metar_driver.add_time(start_date, end_date)
+        
         all_obj.append(obj)
-    writer.write(all_obj, 'test2.nc')
+
+    obj = metar_driver.pack_station_names(all_names)
+    obj.add_source('METAR')
+    all_obj.append(obj)
+    print "Writing to", filepath
+    writer.write(all_obj, filepath)
 
 
 

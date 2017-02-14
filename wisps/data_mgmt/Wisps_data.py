@@ -139,7 +139,7 @@ class Wisps_data(nc_writable):
 
     def get_data_type(self):
         """Check if data_type is defined in the properties
-        database for this varibale name. Return value if available,
+        database for this variable name. Return value if available,
         otherwise throw ValueError.
         """
         return db.get_property(self.name, 'data_type')
@@ -153,11 +153,11 @@ class Wisps_data(nc_writable):
         dimensions = var['dimensions']
         return dimensions
 
-    def get_observedProperty():
+    def get_observedProperty(self):
         """Returns the parsed OM_observedProperty metadata
         element.
         """
-        op = metadata['OM_observedProperty']
+        op = self.metadata['OM_observedProperty']
         if op[-1] == '/':
             op = op[0:-1]
         return os.path.basename(op)
@@ -167,9 +167,9 @@ class Wisps_data(nc_writable):
         Attempts to force the datatype to change for this data
         """
         if data_type:
-            self.data.astype(data_type)
+            self.data = self.data.astype(data_type)
         else:
-            self.data.astype(self.get_data_type())
+            self.data = self.data.astype(self.get_data_type())
 
     def set_dimensions(self,dimensions=None):
         """
@@ -251,7 +251,8 @@ class Wisps_data(nc_writable):
         try:
             name += self.get_observedProperty()
         except:
-            name += '_'
+            pass
+            #name += '_'
         name += '_'
         if self.has_time_bounds():
             bounds = self.get_time_bounds()
@@ -261,7 +262,8 @@ class Wisps_data(nc_writable):
         try:
             name += str(self.metadata['ForecastReferenceTime'])
         except:
-            name += '_'
+            pass
+            #name += '_'
         name += '_'
         
 
@@ -460,6 +462,14 @@ class Wisps_data(nc_writable):
         # If not, create them.
         self.create_dimensions(nc_handle)
 
+        # Get a variable name and make it unique if needed
+        variable_name = self.get_variable_name()
+        if variable_name in nc_handle.variables:
+            counter = 1
+            while variable_name+'_'+str(counter) in nc_handle.variables:
+                counter += 1
+            variable_name = variable_name + '_' + str(counter)
+
         # Create the variable 
         variable_name = self.get_variable_name()
         counter = 1
@@ -548,7 +558,7 @@ class Wisps_data(nc_writable):
             num_chars = len(k)
             obj_str += "* " + k
             obj_str += " "*(20-num_chars)
-            obj_str += ": " +v+"\n"
+            obj_str += ": " +str(v)+"\n"
             
         obj_str += "Data: \n"
         obj_str += str(self.data)

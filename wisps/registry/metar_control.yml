@@ -8,10 +8,11 @@ METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/metar/"
 
 nc_output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/output/"
 
-# Can be DEBUG, INFO, WARNING, ERROR, CRITICAL
+# Can be DEBUG, INFO, WARNING, ERROR, CRITICAL.
 debug_level : "INFO"  
 
-# Log file that records the status of a run
+# Log file that records the status of a run.
+# Set log_file to None or "" to print to stdout.
 log_file : "log.log"
 
 # Provides all stations with colon delimeted information about the station,
@@ -22,4 +23,4 @@ station_defs : "/home/Riley.Conroy/dev/wisps_dev/iolib/config/station.tbl"
 valid_stations : "/home/Riley.Conroy/dev/wisps_dev/iolib/config/metar.lst"
 
 # Optionally pickle station data before qc. Mostly used for debugging
-pickle : True
+pickle : False

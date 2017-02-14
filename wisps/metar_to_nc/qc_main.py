@@ -72,8 +72,9 @@ def qc(station_dict):
 
     qc_error.stats(all_errors,50)
     all_errors = sorted(all_errors, key=lambda err: err.station_name)
-    with open('all_errors', 'w') as mmk:
-        mmk.write(str(all_errors))
+    with open('all_errors', 'w+') as err_file:
+        for i in all_errors:
+            err_file.write(str(i))
 
     #pdb.set_trace()
 
