@@ -66,9 +66,27 @@ def main():
             ob_arr = ob_arr.astype(std_var['data_type'])
             obj.set_dimensions(tuple(std_var['dimensions']))
             obj.add_data(ob_arr)
+            obj.add_source("MARINE")
             obj_list.append(obj)
         except KeyError:
             print observation_name, "undefined"
 
+    obj = pack_station_names(station_names)
+    obj.add_source("MARINE")
+    obj_list.append(obj)
+
     writer.write(obj_list, out_path)
 
+def pack_station_names(names):
+    w_obj = Wisps_data('station')
+    
+    station_name_arr = np.array([])
+    for name in names:
+        char_arr = np.array(list(name), 'c')
+        if len(station_name_arr) == 0:
+            station_name_arr = char_arr
+        else:
+            station_name_arr = np.vstack((station_name_arr,char_arr))
+    w_obj.set_dimensions(tuple(['number_of_stations','num_charactars']))
+    w_obj.add_data(station_name_arr)
+    return w_obj

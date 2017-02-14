@@ -54,8 +54,14 @@ def str_to_datetime(time):
     """
     year = int(time[:4])
     month = int(time[4:6])
-    day = int(time[6:8])
-    hour =  int(time[8:10])
+    try:
+        day = int(time[6:8])
+    except:
+        day = 1
+    try:
+        hour =  int(time[8:10])
+    except:
+        hour = 0
     return datetime(year,month,day,hour)
 
 def epoch_to_datetime(seconds):
@@ -210,6 +216,7 @@ class Time(nc_writable):
         time_dim = self.get_dimension_name()
         if time_dim not in nc_handle.dimensions:
             nc_handle.createDimension(time_dim, (len(self.data)))
+        # 
         name,exists = self.get_name(nc_handle)
         if not exists:
             nc_time = nc_handle.createVariable(
@@ -265,10 +272,21 @@ class Time(nc_writable):
         ret_str = self.name = "\n"
         if len(self.data > 0):
             ret_str += "start_time: "
-            ret_str += self.data[0] + "\n"
+            ret_str += str(epoch_to_datetime(self.data[0])) + "\n"
             ret_str += "end_time:   "
-            ret_str += self.data[-1]
-            ret
+            ret_str += str(epoch_to_datetime(self.data[-1])) + "\n"
+            ret_str += "Timesteps:  " 
+            ret_str += str(len(self.data)) + "\n"
+            ret_str += "Data: \n" 
+            ret_str += "["+str(epoch_to_datetime(self.data[0])) + ", "
+            ret_str += str(epoch_to_datetime(self.data[1])) + ",\n"
+            ret_str += "  ....\n"
+            ret_str += str(epoch_to_datetime(self.data[-2])) + ", "
+            ret_str += str(epoch_to_datetime(self.data[-1])) + "]"
+
+            return ret_str
+
+    __repr__ = __str__
 
     def __eq__(self, other):
         if type(self) != type(other):
@@ -289,7 +307,7 @@ class PhenomenonTime(Time):
     def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR):
         """Initializes the data array
         """
-        super(PhenomenonTime,self).__init__(start_time, end_time)       
+        super(PhenomenonTime,self).__init__(start_time, end_time, stride)       
         self.name = "OM_phenomenonTime"
 
 class ValidTime(Time):
@@ -344,7 +362,7 @@ class ResultTime(Time):
     def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR, result_time=None):
         """Initializes the data array
         """
-        super(ResultTime,self).__init__(start_time, end_time)       
+        super(ResultTime,self).__init__(start_time, end_time, stride)       
         self.name = 'OM_resultTime'
         self.append_result(result_time)
         
@@ -375,7 +393,7 @@ class ForecastReferenceTime(Time):
         """
         Initializes the data array
         """
-        super(ForecastReferenceTime,self).__init__(start_time, end_time)       
+        super(ForecastReferenceTime,self).__init__(start_time, end_time, stride)       
         self.name = 'forecast_reference_time'
         self.append_reference_time(reference_time)
        
@@ -408,7 +426,7 @@ class BoundedTime(Time):
         """
         Initializes the data array
         """
-        super(BoundedTime,self).__init__(start_time, end_time)       
+        super(BoundedTime,self).__init__(start_time, end_time, stride)       
         self.name = 'time_bounds'
         self.add_bounds(stride,offset)
     

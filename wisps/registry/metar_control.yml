@@ -4,7 +4,7 @@
 # This will process the entire date
 year : 2013
 month : 2     # Where 1 is January and 12 is December
-METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/"
+METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/metar/"
 
 nc_output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/output/"
 

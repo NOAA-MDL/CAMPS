@@ -79,10 +79,6 @@ def main(control_file=None):
     n_chars = dimensions['chars']
     num_stations = dimensions['nstations']
     time_dim = dimensions['time']
-    #nc,var_dict = init_netcdf_output(filename)
-
-    # Handle special case variables.
-    #write_call(stations,call_var)
 
     # formats each observation into a 2D array with
     # dimensions of # of stations and time
@@ -98,7 +94,6 @@ def main(control_file=None):
     end_time = example_station.hours[-1]
     print "start time", start_time
     print "end time", end_time
-    #for metar_name, nc_var in var_dict.iteritems():
     for metar_name in obs:
         # Set the observation name to the standard WISPS name
         try :
@@ -119,11 +114,16 @@ def main(control_file=None):
         wisps_obj = Wisps_data(observation_name)
         wisps_obj.set_dimensions()
         wisps_obj.add_data(temp_obs)
+        wisps_obj.add_source('METAR')
         wisps_obj.change_data_type()
         wisps_obj.time = add_time(start_time, end_time)
         wisps_data.append(wisps_obj)
- 
 
+    wisps_obj = pack_station_names(stations.keys())
+    wisps_obj.add_source('METAR')
+    wisps_data.append(wisps_obj)
+
+ 
     writer.write(wisps_data, filename)
     print "writing complete. Closing nc file"
 
@@ -139,4 +139,19 @@ def add_time(start, end, stride=None):
     time.append(rt)
     time.append(vt)
     return time
+
+def pack_station_names(names):
+    w_obj = Wisps_data('station')
+    
+    station_name_arr = np.array([])
+    for name in names:
+        char_arr = np.array(list(name), 'c')
+        if len(station_name_arr) == 0:
+            station_name_arr = char_arr
+        else:
+            station_name_arr = np.vstack((station_name_arr,char_arr))
+    w_obj.set_dimensions(tuple(['number_of_stations','num_charactars']))
+    w_obj.add_data(station_name_arr)
+    return w_obj
+    
 

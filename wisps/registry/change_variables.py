@@ -17,7 +17,7 @@ def center(str_len):
     return int(cols/2) - int(str_len/2) - 1
 
 def print_options(stdscr):
-    stdscr.addstr(6,0,'e - enter variable editing')
+    #stdscr.addstr(6,0,'e - enter variable editing')
     stdscr.addstr(7,0,'s - search variables')
     stdscr.addstr(8,0,'h - help')
     stdscr.addstr(9,0,'q - quit this program')
@@ -29,22 +29,37 @@ def clear(stdscr, y=5):
 
 def var_editing(stdscr):
     nc_vars = netcdf.variables
+    START_EDIT = STARTY+7
     clear(stdscr)
     intro_str = "Editing: "
     stdscr.addstr(STARTY , 0, "Editing: ")
-    stdscr.addstr(STARTY , len(intro_str), clipboard, 4)
-    stdscr.addstr(STARTY+1, 0,"Variable metadata:")
+    stdscr.addstr(STARTY , len(intro_str), clipboard, curses.color_pair(4))
+    stdscr.addstr(STARTY+1 , 0, "OPTIONS: ")
+    stdscr.addstr(STARTY+2 , 0, "t - Add Time Bounds")
+    stdscr.addstr(STARTY+3 , 0, "p - Add Plev Bounds")
+    stdscr.addstr(STARTY+4 , 0, "e - Add Elev Bounds")
+    stdscr.addstr(STARTY+5 , 0, "q - quit ")
+
+    stdscr.addstr(START_EDIT, 0,"Variable metadata:")
     if clipboard in nc_vars:
         for i,(key,value) in enumerate(nc_vars[clipboard]['attribute'].iteritems()):
-            stdscr.addstr(STARTY+2+i, 0,key)
-            stdscr.addstr(STARTY+2+i, 25, str(value))
+            stdscr.addstr(START_EDIT+1+i, 0,key)
+            stdscr.addstr(START_EDIT+1+i, 25, str(value))
+    else: # If a new variable
+        stdscr.addstr(STARTY+1, 0,"You're creating a new variable!", curses.color_pair(3))
     stdscr.refresh()
-    time.sleep(3)
+    while True: # enter or carriage return exits
+        char = stdscr.getch()
+        if char == 10 or char == 13 or ord(char) == 'q': # enter or carriage return exits
+            break
+        #elif char == 127 or char == 8 or char == 263: #backspace
+        elif char == curses.KEY_DOWN:
+            pass
+        elif char == curses.KEY_UP:
+            pass
+        else:
+            ascii_char = unichr(char)
     clear(stdscr)
-            
-
-        
-
 
 def display_help(stdscr):
     clear(stdscr)
@@ -89,7 +104,7 @@ def search(stdscr):
     all_vars = netcdf.variables
     clear(stdscr)
     searchX = 6
-    stdscr.addstr(STARTY,0, "Enter search term to narrow down variables")
+    stdscr.addstr(STARTY,0, "Start typing a search term to narrow down variables")
     stdscr.addstr(STARTY+1,0, "Pressing Enter will exit. Arrow up/down to select variable.")
     stdscr.addstr(STARTY+2,0, "var : _________________")
     stdscr.refresh()
@@ -140,6 +155,7 @@ def search(stdscr):
         display_matches(stdscr, possible_matches, selection)
         display_clipboard(stdscr)
     clear(stdscr)
+    var_editing(stdscr)
 
     #time.sleep(1)
 

@@ -9,7 +9,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="scripts.html"><font color="#ffffff">scripts</font></a>.metar_driver</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/scripts/metar_driver.py">/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/scripts/metar_driver.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps/wisps/scripts/metar_driver.py">/home/Riley.Conroy/dev/wisps/wisps/scripts/metar_driver.py</a></font></td></tr></table>
     <p><tt>#&nbsp;Add&nbsp;a&nbsp;relative&nbsp;path</tt></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -18,29 +18,33 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="registry.util.html">registry.util</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="data_mgmt.Time.html">data_mgmt.Time</a><br>
+<a href="registry.util.html">registry.util</a><br>
 <a href="copy.html">copy</a><br>
-<a href="logging.html">logging</a><br>
-</td><td width="25%" valign=top><a href="numpy.html">numpy</a><br>
+</td><td width="25%" valign=top><a href="logging.html">logging</a><br>
+<a href="numpy.html">numpy</a><br>
 <a href="os.html">os</a><br>
-<a href="pickle.html">pickle</a><br>
-</td><td width="25%" valign=top><a href="metar_to_nc.qc_main.html">metar_to_nc.qc_main</a><br>
+</td><td width="25%" valign=top><a href="pickle.html">pickle</a><br>
+<a href="metar_to_nc.qc_main.html">metar_to_nc.qc_main</a><br>
 <a href="sys.html">sys</a><br>
-<a href="time.html">time</a><br>
-</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+</td><td width="25%" valign=top><a href="time.html">time</a><br>
+<a href="data_mgmt.writer.html">data_mgmt.writer</a><br>
+</td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
 <td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-main"><strong>main</strong></a>()</dt><dd><tt>1.&nbsp;Reads&nbsp;control&nbsp;file<br>
+<td width="100%"><dl><dt><a name="-add_time"><strong>add_time</strong></a>(start, end, stride<font color="#909090">=None</font>)</dt></dl>
+ <dl><dt><a name="-main"><strong>main</strong></a>(control_file<font color="#909090">=None</font>)</dt><dd><tt>1.&nbsp;Reads&nbsp;control&nbsp;file<br>
 2.&nbsp;Reads&nbsp;METAR&nbsp;and&nbsp;packages&nbsp;data&nbsp;into&nbsp;a&nbsp;station&nbsp;data&nbsp;type<br>
 3.&nbsp;Preprocesses&nbsp;the&nbsp;station&nbsp;data<br>
 4.&nbsp;QCs&nbsp;the&nbsp;observation&nbsp;data<br>
 5.&nbsp;Postprocesses&nbsp;the&nbsp;station&nbsp;data<br>
 6.&nbsp;Constructs&nbsp;an&nbsp;output&nbsp;NetCDF&nbsp;file<br>
 7.&nbsp;Fills&nbsp;NetCDF&nbsp;file&nbsp;with&nbsp;QC'd&nbsp;obersvation&nbsp;data</tt></dd></dl>
+ <dl><dt><a name="-pack_station_names"><strong>pack_station_names</strong></a>(names)</dt></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
@@ -48,7 +52,7 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>file_dir</strong> = '/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/metar_to_nc'<br>
-<strong>path</strong> = '/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps'<br>
+<td width="100%"><strong>file_dir</strong> = '/home/Riley.Conroy/dev/wisps/wisps/metar_to_nc'<br>
+<strong>path</strong> = '/home/Riley.Conroy/dev/wisps/wisps'<br>
 <strong>relative_path</strong> = '/..'</td></tr></table>
 </body></html>

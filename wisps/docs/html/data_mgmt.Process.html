@@ -9,7 +9,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="data_mgmt.html"><font color="#ffffff">data_mgmt</font></a>.Process</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/data_mgmt/Process.py">/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/data_mgmt/Process.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps/wisps/data_mgmt/Process.py">/home/Riley.Conroy/dev/wisps/wisps/data_mgmt/Process.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -33,7 +33,7 @@
 <font color="#000000" face="helvetica, arial"><a name="Process">class <strong>Process</strong></a>(<a href="data_mgmt.nc_writable.html#nc_writable">data_mgmt.nc_writable.nc_writable</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt>Class&nbsp;that&nbsp;holds&nbsp;process&nbsp;chain&nbsp;information.<br>&nbsp;</tt></td></tr>
+<td colspan=2><tt>Class&nbsp;that&nbsp;holds&nbsp;process&nbsp;chain&nbsp;information&nbsp;for&nbsp;WISPS&nbsp;data<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="data_mgmt.Process.html#Process">Process</a></dd>
@@ -43,13 +43,14 @@
 <hr>
 Methods defined here:<br>
 <dl><dt><a name="Process-__init__"><strong>__init__</strong></a>(self, name, process_step, source<font color="#909090">=''</font>, **kwargs)</dt><dd><tt>Initializes&nbsp;the&nbsp;<a href="#Process">Process</a>.&nbsp;<br>
-Requires&nbsp;process_step,&nbsp;which&nbsp;would&nbsp;be&nbsp;the&nbsp;URI&nbsp;for&nbsp;the&nbsp;<a href="#Process">Process</a></tt></dd></dl>
+Requires&nbsp;process_step,&nbsp;which&nbsp;would&nbsp;be&nbsp;the&nbsp;URI&nbsp;for&nbsp;the&nbsp;<a href="#Process">Process</a>.</tt></dd></dl>
 
-<dl><dt><a name="Process-add_attribute"><strong>add_attribute</strong></a>(self, key, value)</dt><dd><tt>Add&nbsp;a&nbsp;new&nbsp;attribute,&nbsp;or&nbsp;change&nbsp;exsisting&nbsp;attribute</tt></dd></dl>
+<dl><dt><a name="Process-add_attribute"><strong>add_attribute</strong></a>(self, key, value)</dt><dd><tt>Add&nbsp;a&nbsp;new&nbsp;attribute,&nbsp;or&nbsp;change&nbsp;an&nbsp;exsisting&nbsp;attribute.</tt></dd></dl>
 
-<dl><dt><a name="Process-get_attribute"><strong>get_attribute</strong></a>(self, key)</dt><dd><tt>Return&nbsp;value&nbsp;of&nbsp;attribute&nbsp;key</tt></dd></dl>
+<dl><dt><a name="Process-get_attribute"><strong>get_attribute</strong></a>(self, key)</dt><dd><tt>Returns&nbsp;value&nbsp;of&nbsp;attribute&nbsp;key</tt></dd></dl>
 
-<dl><dt><a name="Process-get_nc_variable"><strong>get_nc_variable</strong></a>(self, nc_handle)</dt></dl>
+<dl><dt><a name="Process-write_to_nc"><strong>write_to_nc</strong></a>(self, nc_handle)</dt><dd><tt>Writes&nbsp;the&nbsp;netCDF&nbsp;variable&nbsp;representation&nbsp;of&nbsp;the&nbsp;<a href="#Process">Process</a>&nbsp;<br>
+to&nbsp;the&nbsp;nc_handle.</tt></dd></dl>
 
 <hr>
 Data and other attributes defined here:<br>

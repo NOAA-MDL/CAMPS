@@ -288,7 +288,9 @@ def init_netcdf_output(filename):
 
 def gen_filename(year, month):
     """Generates the netcdf filename for METAR observations"""
-    return "hre"+str(year)+str(month)+".nc"
+    month = str(month).zfill(2)
+    year = str(year)
+    return "hre"+year+month+".nc"
 
 
 #GLOBAL -- I think necessary for performance and not passing this everywhere.

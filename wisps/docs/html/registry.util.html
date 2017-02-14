@@ -9,7 +9,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="registry.html"><font color="#ffffff">registry</font></a>.util</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/registry/util.py">/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/registry/util.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps/wisps/registry/util.py">/home/Riley.Conroy/dev/wisps/wisps/registry/util.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -50,6 +50,10 @@
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl><dt><a name="-read_dimensions"><strong>read_dimensions</strong></a>()</dt><dd><tt>Reads&nbsp;and&nbsp;returns&nbsp;dimension&nbsp;definitions</tt></dd></dl>
+ <dl><dt><a name="-read_globals"><strong>read_globals</strong></a>()</dt><dd><tt>Reads&nbsp;and&nbsp;returns&nbsp;global&nbsp;attributes&nbsp;definitions</tt></dd></dl>
+ <dl><dt><a name="-read_grib2_control"><strong>read_grib2_control</strong></a>()</dt><dd><tt>Reads&nbsp;the&nbsp;grib2&nbsp;control&nbsp;file&nbsp;that&nbsp;provides&nbsp;<br>
+directory&nbsp;locations&nbsp;for&nbsp;the&nbsp;observations.</tt></dd></dl>
+ <dl><dt><a name="-read_grib2_lookup"><strong>read_grib2_lookup</strong></a>()</dt><dd><tt>Reads&nbsp;and&nbsp;returns&nbsp;the&nbsp;grib2&nbsp;-&gt;&nbsp;NetCDF&nbsp;variables&nbsp;yaml&nbsp;file.</tt></dd></dl>
  <dl><dt><a name="-read_marine_control"><strong>read_marine_control</strong></a>()</dt><dd><tt>Reads&nbsp;the&nbsp;marine&nbsp;control&nbsp;file&nbsp;that&nbsp;provides&nbsp;time&nbsp;ranges&nbsp;and&nbsp;<br>
 directory&nbsp;locations&nbsp;for&nbsp;the&nbsp;observations.</tt></dd></dl>
  <dl><dt><a name="-read_marine_lookup"><strong>read_marine_lookup</strong></a>()</dt><dd><tt>Returns&nbsp;the&nbsp;lookup&nbsp;table&nbsp;for&nbsp;METAR&nbsp;-&gt;&nbsp;NetCDF&nbsp;variables.</tt></dd></dl>
@@ -58,7 +62,7 @@ directory&nbsp;locations&nbsp;for&nbsp;the&nbsp;observations.</tt></dd></dl>
  <dl><dt><a name="-read_metar_lookup"><strong>read_metar_lookup</strong></a>()</dt><dd><tt>Returns&nbsp;the&nbsp;lookup&nbsp;table&nbsp;for&nbsp;METAR&nbsp;-&gt;&nbsp;NetCDF&nbsp;variables.</tt></dd></dl>
  <dl><dt><a name="-read_mosID_lookup"><strong>read_mosID_lookup</strong></a>()</dt><dd><tt>Reads&nbsp;and&nbsp;returns&nbsp;the&nbsp;MOS&nbsp;ID&nbsp;-&gt;&nbsp;NetCDF&nbsp;variables&nbsp;yaml&nbsp;file.</tt></dd></dl>
  <dl><dt><a name="-read_nc_config"><strong>read_nc_config</strong></a>()</dt><dd><tt>Read&nbsp;YAML&nbsp;config&nbsp;files&nbsp;to&nbsp;get&nbsp;netcdf&nbsp;structure&nbsp;and&nbsp;properties.</tt></dd></dl>
- <dl><dt><a name="-read_nc_variables"><strong>read_nc_variables</strong></a>()</dt><dd><tt>returns&nbsp;structured&nbsp;configuration&nbsp;of&nbsp;all&nbsp;WISPS&nbsp;supported&nbsp;variables</tt></dd></dl>
+ <dl><dt><a name="-read_variables"><strong>read_variables</strong></a>()</dt><dd><tt>returns&nbsp;structured&nbsp;configuration&nbsp;of&nbsp;all&nbsp;WISPS&nbsp;supported&nbsp;variables</tt></dd></dl>
  <dl><dt><a name="-read_yaml"><strong>read_yaml</strong></a>(filename)</dt><dd><tt>Reads&nbsp;the&nbsp;contents&nbsp;of&nbsp;a&nbsp;yaml&nbsp;file&nbsp;and&nbsp;returns&nbsp;the&nbsp;value</tt></dd></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -67,7 +71,7 @@ directory&nbsp;locations&nbsp;for&nbsp;the&nbsp;observations.</tt></dd></dl>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>CONFIG_PATH</strong> = '/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/registry/'<br>
+<td width="100%"><strong>CONFIG_PATH</strong> = '/home/Riley.Conroy/dev/wisps/wisps/registry/'<br>
 <strong>metar_to_nc</strong> = {'1PCP': 'precipitation_amount_1_hour', '24PP': 'precipitation_amount_24_hour', '3PCP': 'precipitation_amount_3_hour', '6PCP': 'precipitation_amount_6_hour', 'ALT': 'altimeter_setting', 'CA1': 'cloud_amount_layer_1', 'CA2': 'cloud_amount_layer_2', 'CA3': 'cloud_amount_layer_3', 'CA4': 'cloud_amount_layer_4', 'CA5': 'cloud_amount_layer_5', ...}<br>
 <strong>nc_to_metar</strong> = {'air_pressure_at_sea_level': 'MSL', 'air_temperature': 'TMP', 'altimeter_setting': 'ALT', 'calendar_day_maximum_temperature': 'X24', 'calendar_day_minimum_temperature': 'N24', 'cloud_amount_layer_1': 'CA1', 'cloud_amount_layer_2': 'CA2', 'cloud_amount_layer_3': 'CA3', 'cloud_amount_layer_4': 'CA4', 'cloud_amount_layer_5': 'CA5', ...}</td></tr></table>
 </body></html>

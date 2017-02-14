@@ -9,7 +9,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="registry.html"><font color="#ffffff">registry</font></a>.<a href="registry.db.html"><font color="#ffffff">db</font></a>.db</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/registry/db/db.py">/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/registry/db/db.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps/wisps/registry/db/db.py">/home/Riley.Conroy/dev/wisps/wisps/registry/db/db.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -30,23 +30,40 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-connect"><strong>connect</strong></a>(db)</dt></dl>
+<td width="100%"><dl><dt><a name="-connect"><strong>connect</strong></a>(db)</dt><dd><tt>Returns&nbsp;sqlite3.Connection&nbsp;object&nbsp;for&nbsp;a&nbsp;given&nbsp;database<br>
+housed&nbsp;in&nbsp;the&nbsp;db&nbsp;directory.</tt></dd></dl>
  <dl><dt><a name="-create_new_metadata_db"><strong>create_new_metadata_db</strong></a>()</dt><dd><tt>Deletes&nbsp;old&nbsp;metadata&nbsp;table&nbsp;and&nbsp;replaces&nbsp;it&nbsp;with&nbsp;a&nbsp;new&nbsp;table&nbsp;<br>
 based&nbsp;on&nbsp;the&nbsp;configuration.</tt></dd></dl>
- <dl><dt><a name="-get_all_defined_metadata"><strong>get_all_defined_metadata</strong></a>(name)</dt><dd><tt>Returns&nbsp;dictionary&nbsp;of&nbsp;attribute&nbsp;names&nbsp;and&nbsp;values&nbsp;<br>
+ <dl><dt><a name="-create_new_properties_db"><strong>create_new_properties_db</strong></a>()</dt><dd><tt>Deletes&nbsp;old&nbsp;properties&nbsp;table&nbsp;and&nbsp;replaces&nbsp;it&nbsp;with&nbsp;a&nbsp;new&nbsp;table&nbsp;<br>
+based&nbsp;on&nbsp;the&nbsp;configuration.</tt></dd></dl>
+ <dl><dt><a name="-get_all_metadata"><strong>get_all_metadata</strong></a>(name)</dt><dd><tt>Returns&nbsp;dictionary&nbsp;of&nbsp;attribute&nbsp;names&nbsp;and&nbsp;values&nbsp;<br>
 that&nbsp;are&nbsp;defined&nbsp;(not&nbsp;None&nbsp;or&nbsp;an&nbsp;empty&nbsp;string)&nbsp;for&nbsp;given&nbsp;variable&nbsp;name.<br>
 str&nbsp;name&nbsp;:&nbsp;name&nbsp;of&nbsp;the&nbsp;variable.</tt></dd></dl>
  <dl><dt><a name="-get_column_names_string"><strong>get_column_names_string</strong></a>(names)</dt><dd><tt>returns&nbsp;a&nbsp;sqlite&nbsp;string&nbsp;for&nbsp;column&nbsp;names<br>
 given&nbsp;a&nbsp;set&nbsp;of&nbsp;names.&nbsp;Assumes&nbsp;all&nbsp;columns&nbsp;are&nbsp;of&nbsp;type&nbsp;'text'</tt></dd></dl>
- <dl><dt><a name="-get_dictionary_attribute_keys"><strong>get_dictionary_attribute_keys</strong></a>(var_dict)</dt><dd><tt>Gets&nbsp;all&nbsp;of&nbsp;the&nbsp;unique&nbsp;attribute&nbsp;names&nbsp;for&nbsp;each&nbsp;variable&nbsp;and<br>
+ <dl><dt><a name="-get_data_type"><strong>get_data_type</strong></a>(name)</dt><dd><tt>Check&nbsp;if&nbsp;data_type&nbsp;is&nbsp;defined&nbsp;in&nbsp;the&nbsp;properties<br>
+database&nbsp;for&nbsp;this&nbsp;varibale&nbsp;name.&nbsp;Return&nbsp;value&nbsp;if&nbsp;available,<br>
+otherwise&nbsp;throw&nbsp;ValueError.</tt></dd></dl>
+ <dl><dt><a name="-get_dictionary_attribute_keys"><strong>get_dictionary_attribute_keys</strong></a>(variables)</dt><dd><tt>Gets&nbsp;all&nbsp;of&nbsp;the&nbsp;unique&nbsp;attribute&nbsp;names&nbsp;for&nbsp;each&nbsp;variable&nbsp;and<br>
 returns&nbsp;an&nbsp;set&nbsp;of&nbsp;the&nbsp;results.&nbsp;<br>
 Parsing&nbsp;the&nbsp;config&nbsp;is&nbsp;specific&nbsp;to&nbsp;the&nbsp;nc_vars&nbsp;yaml&nbsp;file.</tt></dd></dl>
+ <dl><dt><a name="-get_dictionary_properties_keys"><strong>get_dictionary_properties_keys</strong></a>(variables)</dt><dd><tt>Gets&nbsp;all&nbsp;of&nbsp;the&nbsp;unique&nbsp;properties&nbsp;names&nbsp;for&nbsp;each&nbsp;variable&nbsp;and<br>
+returns&nbsp;an&nbsp;set&nbsp;of&nbsp;the&nbsp;results.&nbsp;<br>
+Parsing&nbsp;the&nbsp;config&nbsp;is&nbsp;specific&nbsp;to&nbsp;the&nbsp;nc_vars&nbsp;yaml&nbsp;file.</tt></dd></dl>
+ <dl><dt><a name="-get_dimensions_type"><strong>get_dimensions_type</strong></a>(name)</dt><dd><tt>Check&nbsp;if&nbsp;dimensions&nbsp;is&nbsp;defined&nbsp;in&nbsp;the&nbsp;properties<br>
+database&nbsp;for&nbsp;this&nbsp;varibale&nbsp;name.&nbsp;Return&nbsp;value&nbsp;if&nbsp;available,<br>
+otherwise&nbsp;throw&nbsp;ValueError.</tt></dd></dl>
  <dl><dt><a name="-get_metadata"><strong>get_metadata</strong></a>(name, attr)</dt><dd><tt>Returns&nbsp;the&nbsp;value&nbsp;of&nbsp;of&nbsp;the&nbsp;attribute&nbsp;for&nbsp;<br>
 the&nbsp;name.<br>
 str&nbsp;name&nbsp;:&nbsp;name&nbsp;of&nbsp;predictor.&nbsp;e.g.&nbsp;wind_speed</tt></dd></dl>
- <dl><dt><a name="-print_metadata"><strong>print_metadata</strong></a>(name)</dt><dd><tt>Prints&nbsp;a&nbsp;formatted&nbsp;list&nbsp;of&nbsp;attribute&nbsp;names&nbsp;and&nbsp;<br>
+ <dl><dt><a name="-get_property"><strong>get_property</strong></a>(name, attr)</dt><dd><tt>Returns&nbsp;the&nbsp;value&nbsp;of&nbsp;of&nbsp;the&nbsp;attribute&nbsp;for&nbsp;<br>
+the&nbsp;name.<br>
+str&nbsp;name&nbsp;:&nbsp;name&nbsp;of&nbsp;predictor.&nbsp;e.g.&nbsp;wind_speed</tt></dd></dl>
+ <dl><dt><a name="-print_from"><strong>print_from</strong></a>(db, name)</dt><dd><tt>Prints&nbsp;a&nbsp;formatted&nbsp;list&nbsp;of&nbsp;attribute&nbsp;names&nbsp;and&nbsp;<br>
 their&nbsp;associated&nbsp;values&nbsp;for&nbsp;a&nbsp;given&nbsp;variable<br>
 name.</tt></dd></dl>
+ <dl><dt><a name="-print_metadata"><strong>print_metadata</strong></a>(name)</dt></dl>
+ <dl><dt><a name="-print_properties"><strong>print_properties</strong></a>(name)</dt></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
@@ -54,6 +71,7 @@ name.</tt></dd></dl>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>db_dir</strong> = '/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/registry/db/'<br>
-<strong>relative_path</strong> = '/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/registry'</td></tr></table>
+<td width="100%"><strong>db_dir</strong> = '/home/Riley.Conroy/dev/wisps/wisps/registry/db/'<br>
+<strong>db_name</strong> = 'wisps.db'<br>
+<strong>relative_path</strong> = '/home/Riley.Conroy/dev/wisps/wisps/registry'</td></tr></table>
 </body></html>

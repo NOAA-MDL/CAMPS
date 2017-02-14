@@ -25,9 +25,7 @@ def write(wisps_data, filename):
     """
     Writes a list of Wisps_data to NetCDF file
     """
-    print ""
-    print "Writing"
-    print ""
+    print "\nWriting\n"
     # Get all dimenesions in the list.
     # Will error out if dimensions arn't correct.
     nc = open_nc(filename)

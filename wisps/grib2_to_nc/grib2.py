@@ -17,6 +17,9 @@ import re
 import numpy as np
 
 def reduce_grib():
+    """Reads grib2 files, changes the map projection and
+    grid extent, and packages the gribs into a single grib2 file
+    """
     
     registery_path = yamlutil.CONFIG_PATH
     # Init
@@ -141,6 +144,8 @@ def convert_grib2(filename):
     tmp_grb = fcst_hours[0]
     tmp_grb = tmp_grb[tmp_grb.keys()[0]][0]
     lead_time = tmp_grb.hour
+    year = tmp_grb.year
+    month = tmp_grb.month
     all_objs = [] # Collection of Wisps_data objects
     print "Creating Wisps-data objects for variables at each projection"
     # Will typically only do something every third forecast hour
@@ -156,11 +161,16 @@ def convert_grib2(filename):
             except:
                 print 'Warning:', name, 'not in grib2 lookup table'
             stacked = np.array([])
+            example_grb = values[0] # example grib of variable type
             for grb in values:
                 if len(stacked) == 0:
                     stacked = grb.values
                 else:
                     stacked = np.dstack((stacked,grb.values))
+
+            if 'avg' in name:
+                pdb.set_trace()
+                
 
             obj = Wisps_data(name)
             obj.add_source('GFS')
@@ -172,6 +182,22 @@ def convert_grib2(filename):
                 all_objs.append(obj)
             except: 
                 print 'not an numpy array'
+
+            if example_grib.startStep != example_grib.endStep:
+                # Then we know it's time bounded
+                pass
+
+            # Add PhenomononTime
+
+            # Add LeadTime
+
+            # Add ValidTime
+
+            # Add ResultTime
+
+            # Add ForecastReferenceTime
+
+
  
     # Make longitude and latitude variables
     lat = Wisps_data('latitude')
@@ -179,37 +205,19 @@ def convert_grib2(filename):
     lat.dimensions = ['lat','lon']
     lon.dimensions = ['lat','lon']
     lat_lon_data = tmp_grb.latlons()
-    lat.data = lat_lon_data
-    lon.data = lat_lon_data
+    lat.data = lat_lon_data[0]
+    lon.data = lat_lon_data[1]
     all_objs.append(lat)
     all_objs.append(lon)
 
-    outfile = outpath + get_output_filename()
+    outfile = outpath + get_output_filename(year,month)
     writer.write(all_objs, outfile)
 
-def get_output_filename():
+def get_output_filename(year, month):
     """Returns a string representing the netcdf filename of gfs model data"""
-    return 'grbtst.nc'
-
-def convert_grib(filename):
-    """
-    Converts grib file into Wisps Data
-    """
-    grbs = pygrib.open(filename)
-    pdb.set_trace()
-    grbs_info = get_grbs(grbs)
-    len(grbs_info)
-    i = 1
-    tmp_dict = {}
-    for fcst in grbs_info:
-        fcst_hash = fcst.name + fcst.level
-        fcst_hash = fcst.model_run
-        if fcst_hash in tmp_dict:
-            tmp_dict[fcst_hash] += 1
-        else:
-            tmp_dict[fcst_hash] = 0
-    pdb.set_trace()
-    print ""
+    year = str(year)
+    month = str(month).zfill(2)
+    return 'gfs00'+year+month+'00.nc'
 
 def get_fcst_time(fcst_time_str):
     """
@@ -229,6 +237,26 @@ def get_fcst_time(fcst_time_str):
     if len(matches) == 2:
         bounded = True
         return (bounded, matches[1])
+
+def get_PhenomenonTime(grbs, deep_check=False):
+    """Get the Phenomenon Times for a collection of related grbs"""
+    pass
+
+def get_LeadTime(grbs, deep_check=False):
+    """Get the Lead Times for a collection of related grbs"""
+    pass
+
+def get_ValidTime(grbs, deep_check=False):
+    """Get the Valid Times for a collection of related grbs"""
+    pass
+
+def get_ResultTime(grbs, deep_check=False):
+    """Get the Result Times for a collection of related grbs"""
+    pass
+
+def get_ForecastReferenceTime(grbs, deep_check=False):
+    """Get the ForecastReference Times for a collection of related grbs"""
+    pass
 
 def get_grbs(grbs):
     """
@@ -433,5 +461,5 @@ def get_grbs(grbs):
     return forecasts
 
 #reduce_grib()
-convert_grib2('/scratch3/NCEPDEV/mdl/Riley.Conroy/output/mdl.gfs47.12.pgrb2')
+#convert_grib2('/scratch3/NCEPDEV/mdl/Riley.Conroy/output/mdl.gfs47.12.pgrb2')
 

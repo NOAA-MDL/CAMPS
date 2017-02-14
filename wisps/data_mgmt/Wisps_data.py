@@ -129,7 +129,7 @@ class Wisps_data(nc_writable):
             except:
                 print 'set_dimensions failed'
         if len(data.shape) != len(self.dimensions):
-            pdb.set_trace()
+            #pdb.set_trace()
             print "number of dimensions of data is not " \
                     "equal to number of object dimensions"
             raise ValueError
@@ -152,6 +152,15 @@ class Wisps_data(nc_writable):
         var = cfg.read_variables()[self.name]
         dimensions = var['dimensions']
         return dimensions
+
+    def get_observedProperty():
+        """Returns the parsed OM_observedProperty metadata
+        element.
+        """
+        op = metadata['OM_observedProperty']
+        if op[-1] == '/':
+            op = op[0:-1]
+        return os.path.basename(op)
 
     def change_data_type(self, data_type=None):
         """
@@ -232,7 +241,7 @@ class Wisps_data(nc_writable):
     def in_metadata(self, var):
         return var in self.metadata
 
-    def get_var_name(self):
+    def get_variable_name(self):
         name = ""
         try:
             name += self.metadata['LE_Source']
@@ -240,13 +249,15 @@ class Wisps_data(nc_writable):
             name += '_'
         name += '_'
         try:
-            name += self.metadata['OM_ObservedProperty']
+            name += self.get_observedProperty()
         except:
             name += '_'
         name += '_'
         if self.has_time_bounds():
             bounds = self.get_time_bounds()
             name += str(bounds.get_duration / Time.ONE_HOUR)
+        else:
+            name += 'instant'
         try:
             name += str(self.metadata['ForecastReferenceTime'])
         except:
@@ -433,7 +444,7 @@ class Wisps_data(nc_writable):
         # Writes the elev, plev, and bounds variables if they exist
         success = self.write_coordinate(nc_handle)
         if success: # modify the shape of the data to accommodate coordinate.
-            self.reshape(metatadata[coord_str])
+            self.reshape(self.metadata[coord_str])
 
         # Tell the Process objects and Time Objects
         # to write to the file
@@ -450,9 +461,13 @@ class Wisps_data(nc_writable):
         self.create_dimensions(nc_handle)
 
         # Create the variable 
+        variable_name = self.get_variable_name()
+        counter = 1
+        while variable_name in nc_handle.variables:
+            variable_name = variable_name + '_' + str(counter)
+            counter += 1
         nc_var = nc_handle.createVariable( 
-                #self.name, 
-                self.name + self.get_var_name(),
+                variable_name,
                 self.data.dtype, 
                 tuple(self.dimensions), 
                 zlib=True, 
@@ -487,7 +502,6 @@ class Wisps_data(nc_writable):
             nc_var[:] = self.data
         except Exception as e:
             print e
-            #pdb.set_trace()
 
     def add_nc_metadata(self, nc_var):
         for name,value in self.metadata.iteritems():

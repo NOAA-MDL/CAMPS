@@ -9,7 +9,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="data_mgmt.html"><font color="#ffffff">data_mgmt</font></a>.reader</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/data_mgmt/reader.py">/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/data_mgmt/reader.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps/wisps/data_mgmt/reader.py">/home/Riley.Conroy/dev/wisps/wisps/data_mgmt/reader.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -26,10 +26,12 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-create_wisps_data"><strong>create_wisps_data</strong></a>(nc_variable, procedures_dict)</dt></dl>
+<td width="100%"><dl><dt><a name="-create_wisps_data"><strong>create_wisps_data</strong></a>(nc_variable, procedures_dict)</dt><dd><tt>Given&nbsp;the&nbsp;netCDF&nbsp;variable&nbsp;and&nbsp;any&nbsp;associated&nbsp;procedures,&nbsp;<br>
+creates&nbsp;and&nbsp;returns&nbsp;a&nbsp;Wisps_data&nbsp;object</tt></dd></dl>
  <dl><dt><a name="-parse_processes_string"><strong>parse_processes_string</strong></a>(process_string)</dt><dd><tt>Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;process&nbsp;names&nbsp;given&nbsp;a&nbsp;string&nbsp;<br>
-that&nbsp;is&nbsp;comma&nbsp;separated&nbsp;and&nbsp;enclosed&nbsp;in&nbsp;parens</tt></dd></dl>
- <dl><dt><a name="-read"><strong>read</strong></a>(filename, *more_files)</dt></dl>
- <dl><dt><a name="-separate_procedure_and_data"><strong>separate_procedure_and_data</strong></a>(variables_dict)</dt><dd><tt>returns&nbsp;only&nbsp;the&nbsp;process&nbsp;variables&nbsp;from&nbsp;a&nbsp;list&nbsp;of&nbsp;all&nbsp;nc&nbsp;variables</tt></dd></dl>
+that&nbsp;is&nbsp;comma&nbsp;separated&nbsp;and&nbsp;enclosed&nbsp;in&nbsp;parens.</tt></dd></dl>
+ <dl><dt><a name="-read"><strong>read</strong></a>(filename, *more_files)</dt><dd><tt>Function&nbsp;to&nbsp;read&nbsp;a&nbsp;netCDF&nbsp;file&nbsp;of&nbsp;given&nbsp;filename&nbsp;into&nbsp;a&nbsp;list&nbsp;of&nbsp;WISPS&nbsp;data&nbsp;objects</tt></dd></dl>
+ <dl><dt><a name="-separate_procedure_and_data"><strong>separate_procedure_and_data</strong></a>(variables_dict)</dt><dd><tt>Separates&nbsp;the&nbsp;variables&nbsp;into&nbsp;Processes&nbsp;and&nbsp;data-holding&nbsp;variables.&nbsp;<br>
+Returns&nbsp;the&nbsp;processes&nbsp;and&nbsp;normal&nbsp;variables&nbsp;as&nbsp;a&nbsp;tuple.</tt></dd></dl>
 </td></tr></table>
 </body></html>

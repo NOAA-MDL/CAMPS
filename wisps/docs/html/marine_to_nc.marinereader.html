@@ -9,7 +9,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="marine_to_nc.html"><font color="#ffffff">marine_to_nc</font></a>.marinereader</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/marine_to_nc/marinereader.py">/home/Riley.Conroy/dev/wisps_dev/test_structure/wisps/wisps/marine_to_nc/marinereader.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/Riley.Conroy/dev/wisps/wisps/marine_to_nc/marinereader.py">/home/Riley.Conroy/dev/wisps/wisps/marine_to_nc/marinereader.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -37,10 +37,11 @@
 <td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#000000" face="helvetica, arial"><a name="marinereader">class <strong>marinereader</strong></a></font></td></tr>
     
-<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Class&nbsp;to&nbsp;read&nbsp;Marine&nbsp;CSV&nbsp;text&nbsp;files.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="marinereader-__init__"><strong>__init__</strong></a>(self, filename<font color="#909090">='undefined'</font>)</dt><dd><tt>#&nbsp;Specify&nbsp;input&nbsp;filename.<br>
-#&nbsp;Specify&nbsp;output&nbsp;directory&nbsp;--&nbsp;will&nbsp;append&nbsp;data&nbsp;to&nbsp;filename.</tt></dd></dl>
+<dl><dt><a name="marinereader-__init__"><strong>__init__</strong></a>(self, filename<font color="#909090">='undefined'</font>)</dt><dd><tt>Initializes&nbsp;class&nbsp;variables.</tt></dd></dl>
 
 <dl><dt><a name="marinereader-fill_empty_records"><strong>fill_empty_records</strong></a>(self, n_records, num_obs<font color="#909090">=14</font>)</dt><dd><tt>Method&nbsp;to&nbsp;append&nbsp;empty&nbsp;records&nbsp;to&nbsp;station_list&nbsp;up&nbsp;to&nbsp;<br>
 n_records.&nbsp;If&nbsp;only&nbsp;1&nbsp;record&nbsp;is&nbsp;in&nbsp;a&nbsp;station,&nbsp;fills&nbsp;records&nbsp;from&nbsp;previous&nbsp;dates</tt></dd></dl>
@@ -48,7 +49,8 @@ n_records.&nbsp;If&nbsp;only&nbsp;1&nbsp;record&nbsp;is&nbsp;in&nbsp;a&nbsp;stat
 <dl><dt><a name="marinereader-parse_file"><strong>parse_file</strong></a>(self, marine_reader, start_date, end_date)</dt><dd><tt>Takes&nbsp;an&nbsp;csv&nbsp;reader&nbsp;argument&nbsp;where&nbsp;each&nbsp;iteratable&nbsp;item&nbsp;contains&nbsp;<br>
 an&nbsp;array&nbsp;representing&nbsp;the&nbsp;observation&nbsp;of&nbsp;a&nbsp;station&nbsp;at&nbsp;a&nbsp;given&nbsp;hour</tt></dd></dl>
 
-<dl><dt><a name="marinereader-read"><strong>read</strong></a>(self, start_date<font color="#909090">=None</font>, end_date<font color="#909090">=None</font>)</dt></dl>
+<dl><dt><a name="marinereader-read"><strong>read</strong></a>(self, start_date<font color="#909090">=None</font>, end_date<font color="#909090">=None</font>)</dt><dd><tt>Reads&nbsp;the&nbsp;file&nbsp;stored&nbsp;in&nbsp;self.<strong>filename</strong>&nbsp;and&nbsp;<br>
+stores&nbsp;the&nbsp;results&nbsp;as&nbsp;a&nbsp;station&nbsp;list&nbsp;dictionary.</tt></dd></dl>
 
 <hr>
 Data and other attributes defined here:<br>

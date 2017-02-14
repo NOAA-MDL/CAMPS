@@ -202,17 +202,24 @@ def get_dictionary_attribute_keys(variables):
     returns an set of the results. 
     Parsing the config is specific to the nc_vars yaml file.
     """
-    all_attributes = ['name']
+    # if there's more that one data type for the same variable, 
+    # then use the least common denomenator. e.g. float are favored over ints
+
+    # Add name manually
+    all_attributes = {'name':str}
     for i in variables.values():  
         try:
             attributes = i['attribute']
         except KeyError:
             print "keyword 'attribute' not in ", i
             raise 
-        for j in attributes.keys():
-            all_attributes.append(j)
+        for name,value in attributes.iteritems():
+            if name in all_attributes and all_attributes[name] is float:
+                pass # to keep the float. Because we prefer floats.
+            else:
+                all_attributes[name] = type(value)
 
-    return set(all_attributes)
+    return all_attributes
 
 def get_dictionary_properties_keys(variables):
     """
@@ -220,13 +227,18 @@ def get_dictionary_properties_keys(variables):
     returns an set of the results. 
     Parsing the config is specific to the nc_vars yaml file.
     """
-    all_properties = ['name']
+    # if there's more that one data type for the same variable, 
+    # then use the least common denomenator. e.g. float are favored over ints
+    all_properties = {'name':str}
     for i in variables.values():  
-        for j in i.keys():
-            if j != 'attribute' and j != 'dimensions':
-                all_properties.append(j)
+        for name,value in i.iteritems():
+            if name != 'attribute' and name != 'dimensions':
+                if name in all_properties and all_properties[name] is int:
+                    pass #because we prefer floats
+                else:
+                    all_properties[name] = type(value)
 
-    return set(all_properties)
+    return all_properties
 
 def get_column_names_string(names):
     """
@@ -234,8 +246,13 @@ def get_column_names_string(names):
     given a set of names. Assumes all columns are of type 'text'
     """
     db_names = "("
-    for i in names:
-        db_names = db_names + str(i) + " text, "
+    for name,dtype in names.iteritems():
+        if dtype is float:
+            db_names = db_names + str(name) + " REAL, "
+        elif dtype is int:
+            db_names = db_names + str(name) + " INTEGER, "
+        else:
+            db_names = db_names + str(name) + " TEXT, "
     db_names = db_names[:-2] + ")"
     return db_names
     

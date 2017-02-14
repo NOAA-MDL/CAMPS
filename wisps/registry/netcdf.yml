@@ -40,10 +40,94 @@ dimensions :
 ## -------
 ##
 ## Defines all possible variables of the netcdf files.
-## The attribute properties contain the metadata for a 
-## variable
+## 
+## the Key/Value pairs of each variable will be considered
+## 'Poperties' of the variable. They are fixed values that 
+## describe how the data should be presented.
+##
+## The 'attribute' key of the properties contains the 
+## metadata for a variable, where it's dictionary values can be 
+## added, removed, or modified to change the variable's netcdf metadata
+##
+## Guide to creaing new Variables:
+##  
+##   Properties: 
+##     
+##     data_type : [valid numpy dtype]
+##       Optional. If defined and change_data_type() is called
+##       on the Wisps_data object, it will force the object's data to 
+##       be of the defined type.
+##      
+##     dimensions : [ [dimension1, dimension2, ...] ]
+##       Optional. Can be used to give hints on what the dimensions are.
+##       Typically however, the user will need to set the
+##       dimensions of their data.
+##
+##     fill_value : [value]
+##       Optional. Not currently used as all fill values are the same
+##       across variables.
+##     
+##     coord_val : [value]
+##       Conditionally Required. Specifies the height or pressure level 
+##       of the variable. If the 'attribute' property defines 
+##       'coordinate' AND it is set to either 'elev' OR 'plev', 
+##       coord_val must be defined. 
+## 
+##     coord_val[1,2] : [value]
+##       Conditionally Required. Specifies the height or pressure level 
+##       of the variable. If the 'attribute' property defines 
+##       'coordinate' AND it is set to either 'elev' OR 'plev',
+##       AND 'bounds' is defined and set to either 'elev' or 'plev',
+##       coord_val[1,2] must be defined. 
+##     
+##     attribute : [ {} ]
+##       Describes the metadata.
+##
+##   Attributes: 
+##
+##     OM_procedure : ["()"]
+##       Required. However, it does not need to have any values. 
+##
+##     OM_observedProperty : [Property URI]
+##       Required. URI to a wmo code entry representing the propery. 
+##       e.q. /common/momentum/wind_speed
+##
+##     long_name : [long name]
+##       Optional but suggested. A longer name. A name that might be
+##       displayed on a graph for example.
+##
+##     standard_name : [standard name]
+##       Optional but suggested. A standard name. Similar to long_name
+##
+##     units : [units]
+##       Optional but suggested. Units of the data. Powers represented
+##       by '^' charactar. 
+##
+##     valid_min : [minimum]
+##       Optional but suggested. Valid minimum value of the data.
+##       IMPORTANT: Providing this attribute could potentially 
+##       change the values of the data. Any data value falling below 
+##       this threshold will be set to the fill_value. Can be a float 
+##       or an int. If a string is used, it will not affect the data, 
+##       but will be shown in the metadata.
+##
+##     valid_max : [maximum]
+##       Optional but suggested. Valid minimum value of the data.
+##       IMPORTANT: Providing this attribute could potentially 
+##       change the values of the data. Any data value above
+##       this threshold will be set to the fill_value. Can be a float 
+##       or an int. If a string is used, it will not affect the data, 
+##       but will be shown in the metadata.
+##
+##     coordinates : [ plev / elev / *time]
+##       Optional. If coordinates are defined as one of the
+##       three attributes above, a new netcdf variable will
+##       be generated describing the verical/time coordinate. 
+##       Note: the coordinate is 'plev' or 'elev', a coord_val
+##       property must be defined.
 ##
 ########################################
+standard_fill_value : &fill 9999
 variables :
   station :
     data_type : "c" # NC_CHAR
@@ -51,7 +135,7 @@ variables :
     fill_value : "X"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/station_name"
       long_name : "ICAO METAR call letters"
       comment : "
                 Only currently archives reports from stations only if  
@@ -63,16 +147,14 @@ variables :
     fill_value : 9
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/station_type"
       long_name : "station type"
-      comment : ""
   latitude :
     #data_type : int16
     data_type : float32
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/latitude"
       long_name : "latitude"
       units : "degrees_north"
       valid_min : -90.0
@@ -80,11 +162,10 @@ variables :
     dimensions : [*nstations,*time]
   longitude :
     data_type : float32
-    fill_value : "9999"
     dimensions : [*nstations,*time]
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/longitude"
       long_name : "longitude"
       units : "degrees_west"
       valid_min : -180.0
@@ -92,20 +173,18 @@ variables :
   observation_time :
     data_type : int64
     dimensions : [*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/time/observation_time"
       long_name : *time
       units : "HHMM"
       comment : "Represented as two-digit hour and two-digit minute"
   air_temperature :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/air_temperature"
       long_name : "dry bulb temperature"
       valid_min : -80
       valid_max : 130 
@@ -114,10 +193,9 @@ variables :
   dew_point_temperature :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/dew_point_temperature"
       long_name : "dew point temperature"
       valid_min : -85
       valid_max :  80
@@ -126,10 +204,9 @@ variables :
   present_weather_group_1 :
     data_type : uint16
     dimensions : [*nstations,*time]
-    fill_value : 9999
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/present_weather_group_1"
       long_name : "present weather group 1"
       valid_min : 208
       valid_max :  0
@@ -137,10 +214,9 @@ variables :
   present_weather_group_2 :
     data_type : uint16
     dimensions : [*nstations,*time]
-    fill_value : 9999
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/present_weather_group_1"
       long_name : "present weather group 2"
       valid_min : 208
       valid_max :  0
@@ -148,10 +224,9 @@ variables :
   present_weather_group_3 :
     data_type : uint16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/present_weather_group_1"
       long_name : "present weather group 3"
       valid_min : 208
       valid_max :  0
@@ -159,10 +234,9 @@ variables :
   visibility_in_air :
     data_type : float32
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/visibility_in_air"
       long_name : "horizontal visiblity"
       units : "miles"
       valid_min : 40
@@ -171,10 +245,9 @@ variables :
   wind_from_direction :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/wind_from_direction"
       long_name : "wind direction"
       units : "degrees"
       valid_min : 360
@@ -183,10 +256,9 @@ variables :
   wind_speed :
     data_type : int16 
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : "/u/r/i/wind_speed"
+      OM_observedProperty : "/common/wind_speed"
       long_name : "wind speed"
       valid_min : 75
       valid_max : 0
@@ -195,10 +267,9 @@ variables :
   wind_speed_of_gust :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute :
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/wind_speed_of_gust"
       long_name : "wind speed of gust"
       valid_min : 200
       valid_max : 0
@@ -207,10 +278,9 @@ variables :
   air_pressure_at_sea_level :
     data_type : float32
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/air_pressure_at_sea_level"
       long_name : "mean sea level pressure"
       valid_min : 875
       valid_max : 1075
@@ -221,10 +291,9 @@ variables :
   altimeter_setting : # altimiter_range? 
     data_type : float32
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/altimeter_setting"
       long_name : "altimiter setting"
       valid_min : 24
       valid_max : 32
@@ -233,10 +302,9 @@ variables :
   cloud_amount_layer_1 :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/cloud_amount_layer_1"
       long_name : "cloud amount layer 1"
       units : "coded"
       valid_min : 0
@@ -254,20 +322,18 @@ variables :
   cloud_height_layer_1  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/cloud_height_layer_1"
       long_name : "cloud height layer 1"
       units : "feet"
       comment : "N/A"
   cloud_amount_layer_2  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/cloud_amount_layer_2 "
       long_name : "cloud amount layer 2"
       valid_min : 0
       valid_max : 10
@@ -285,20 +351,18 @@ variables :
   cloud_height_layer_2  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/cloud_height_layer_2 "
       long_name : "cloud height layer 2"
       units : "feet"
       comment : "N/A"
   cloud_amount_layer_3  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/cloud_amount_layer_3 "
       long_name : "cloud amount layer 3"
       valid_min : 0
       units : "coded"
@@ -316,20 +380,18 @@ variables :
   cloud_height_layer_3  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/cloud_height_layer_3 "
       long_name : "cloud height layer 3"
       units : "feet"
       comment : "N/A"
   cloud_amount_layer_4  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/cloud_amount_layer_4 "
       long_name : "cloud amount layer 4"
       valid_min : 0
       valid_max : 10
@@ -347,20 +409,18 @@ variables :
   cloud_height_layer_4  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/cloud_height_layer_4 "
       long_name : "cloud height layer 4"
       units : "feet"
       comment : "N/A"
   cloud_amount_layer_5  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/cloud_amount_layer_5 "
       long_name : "cloud amount layer 5"
       valid_min : 0
       valid_max : 10
@@ -369,20 +429,18 @@ variables :
   cloud_height_layer_5  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/cloud_height_layer_5 "
       long_name : "cloud height layer 5"
       units : "feet"
       comment : "N/A"
   cloud_amount_layer_6  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/cloud_amount_layer_6 "
       long_name : "cloud amount layer 6"
       valid_min : 0
       valid_max : 10
@@ -391,20 +449,18 @@ variables :
   cloud_height_layer_6  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/cloud_height_layer_6 "
       long_name : "cloud height layer 6"
       units : "feet"
       comment : "N/A"
   precipitation_amount_1_hour  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/precipitation_amount_1_hour "
       long_name : "Hourly precipitation amount"
       valid_min : 0
       valid_max : 3.75
@@ -415,10 +471,9 @@ variables :
   precipitation_amount_3_hour  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/precipitation_amount_3_hour "
       long_name : "3-hour precipitation amount"
       valid_min : 0
       valid_max : 9
@@ -427,10 +482,9 @@ variables :
   precipitation_amount_6_hour  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/precipitation_amount_6_hour "
       long_name : "6-hour precipitation amount"
       valid_min : 0
       valid_max : 12
@@ -439,10 +493,9 @@ variables :
   precipitation_amount_24_hour  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/precipitation_amount_24_hour "
       long_name : "24-hour precipitation amount"
       valid_min : 0
       valid_max : 24
@@ -451,149 +504,134 @@ variables :
   duration_of_sunshine :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/duration_of_sunshine"
       long_name : "minutes of sunshine"
       units : "minutes"
   temperature_6_hour_maximum  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_6_hour_maximum "
       long_name : "6-hour maximum temperature"
       units : "inches"
       comment : "Minimum and maximum values depend on season and region"
   temperature_6_hour_minimum  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_6_hour_minimum "
       long_name : "6-hour minimum temperature"
       units : "inches"
       comment : "Minimum and maximum values depend on season and region"
   calendar_day_maximum_temperature  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/calendar_day_maximum_temperature "
       long_name : "Calendar day maximum temperature"
       units : "degrees F"
       comment : "Minimum and maximum values depend on season and region"
   calendar_day_minimum_temperature  :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/calendar_day_minimum_temperature "
       long_name : "calendar day minimum temperature"
       units : "degrees F"
       comment : "Minimum and maximum values depend on season and region"
   snow_depth_on_ground :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/snow_depth_on_ground"
       long_name : "snow depth on the ground"
       units : "inches"
       comment : "N/A"
   snowfall_amount :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/snowfall_amount"
       long_name : "snowfall amount"
       units : "inches"
       comment : "N/A"
   sattelite_cloud_amount_category_GOES_E :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/sattelite_cloud_amount_category_GOES_E"
       long_name : "satellite cloud amount category from GOES-East"
       units : "coded"
       comment : "N/A"
   sattelite_effective_cloud_amount_GOES_E :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/sattelite_effective_cloud_amount_GOES_E"
       long_name : "sattelite effective cloud amount from GOES-East"
       units : "coded"
       comment : "N/A"
   sattelite_cloud_amount_category_GOES_W :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/sattelite_cloud_amount_category_GOES_W"
       long_name : "sattelite cloud amount from GOES-West"
       units : "coded"
       comment : "N/A"
   sattelite_effective_cloud_amount_GOES_W :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/sattelite_effective_cloud_amount_GOES_W"
       long_name : "sattelite effective cloud amount from GOES-West"
       units : "coded"
       comment : "N/A"
   water_temperature :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/water_temperature"
       long_name : "water temperature"
       units : "degrees F"
       comment : "N/A"
   wave_height :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/wave_height"
       long_name : "wave_height"
       units : "centimeters"
       comment : "N/A"
   wave_direction :
     data_type : int16
     dimensions : [*nstations,*time]
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/wave_direction"
       long_name : "wave direction"
       units : "degrees"
       comment : "N/A"
   albedo_3hr_avg :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/albedo_3hr_avg"
       long_name : "albedo_3hr_avg"
       standard_name : "albedo_3hr_avg"
       units : ""
@@ -602,10 +640,9 @@ variables :
   albedo_6hr_avg :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/albedo"
       long_name : "albedo_6hr_avg"
       standard_name : "albedo_6hr_avg"
       units : ""
@@ -614,10 +651,9 @@ variables :
   best_4layer_lifted_index_instant :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/best_4layer_lifted_index_instant"
       long_name : "best_4layer_lifted_index_instant"
       standard_name : "best_4layer_lifted_index_instant"
       units : ""
@@ -626,10 +662,9 @@ variables :
   categorical_freezing_rain_3hr_avg_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/categorical_freezing_rain"
       long_name : "categorical_freezing_rain_3hr_avg_surface"
       standard_name : "categorical_freezing_rain_3hr_avg_surface"
       units : ""
@@ -638,10 +673,9 @@ variables :
   categorical_freezing_rain_6hr_avg_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/categorical_freezing_rain_6hr_avg_surface"
       long_name : "categorical_freezing_rain_6hr_avg_surface"
       standard_name : "categorical_freezing_rain_6hr_avg_surface"
       units : ""
@@ -650,10 +684,9 @@ variables :
   categorical_ice_pellets_3hr_avg_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/categorical_ice_pellets_3hr_avg_surface"
       long_name : "categorical_ice_pellets_3hr_avg_surface"
       standard_name : "categorical_ice_pellets_3hr_avg_surface"
       units : ""
@@ -662,10 +695,9 @@ variables :
   categorical_ice_pellets_6hr_avg_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/categorical_ice_pellets_6hr_avg_surface"
       long_name : "categorical_ice_pellets_6hr_avg_surface"
       standard_name : "categorical_ice_pellets_6hr_avg_surface"
       units : ""
@@ -674,10 +706,9 @@ variables :
   categorical_rain_3hr_avg_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/categorical_rain_3hr_avg_surface"
       long_name : "categorical_rain_3hr_avg_surface"
       standard_name : "categorical_rain_3hr_avg_surface"
       units : ""
@@ -686,10 +717,9 @@ variables :
   categorical_rain_6hr_avg_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/categorical_rain_6hr_avg_surface"
       long_name : "categorical_rain_6hr_avg_surface"
       standard_name : "categorical_rain_6hr_avg_surface"
       units : ""
@@ -698,10 +728,9 @@ variables :
   categorical_snow_3hr_avg_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/categorical_snow_3hr_avg_surface"
       long_name : "categorical_snow_3hr_avg_surface"
       standard_name : "categorical_snow_3hr_avg_surface"
       units : ""
@@ -710,10 +739,9 @@ variables :
   categorical_snow_6hr_avg_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/categorical_snow_6hr_avg_surface"
       long_name : "categorical_snow_6hr_avg_surface"
       standard_name : "categorical_snow_6hr_avg_surface"
       units : ""
@@ -722,10 +750,9 @@ variables :
   convective_available_potential_energy_instant :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/convective_available_potential_energy_instant"
       long_name : "convective_available_potential_energy_instant"
       standard_name : "convective_available_potential_energy_instant"
       units : ""
@@ -734,10 +761,9 @@ variables :
   convective_inhibition_instant :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/convective_inhibition_instant"
       long_name : "convective_inhibition_instant"
       standard_name : "convective_inhibition_instant"
       units : ""
@@ -746,10 +772,9 @@ variables :
   convective_precipitation_3hr_accum_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/convective_precipitation_3hr_accum_surface"
       long_name : "convective_precipitation_3hr_accum_surface"
       standard_name : "convective_precipitation_3hr_accum_surface"
       units : ""
@@ -758,10 +783,9 @@ variables :
   convective_precipitation_6hr_accum_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/convective_precipitation_6hr_accum_surface"
       long_name : "convective_precipitation_6hr_accum_surface"
       standard_name : "convective_precipitation_6hr_accum_surface"
       units : ""
@@ -770,154 +794,165 @@ variables :
   geopotential_height_instant_1000 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 1000
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/geopotential_height_instant_1000"
       long_name : "geopotential_height_instant_1000"
       standard_name : "geopotential_height_instant_1000"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   geopotential_height_instant_300 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 300
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/geopotential_height_instant_300"
       long_name : "geopotential_height_instant_300"
       standard_name : "geopotential_height_instant_300"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   geopotential_height_instant_500 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 500
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/geopotential_height_instant_500"
       long_name : "geopotential_height_instant_500"
       standard_name : "geopotential_height_instant_500"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   geopotential_height_instant_600 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 600
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/geopotential_height_instant_600"
       long_name : "geopotential_height_instant_600"
       standard_name : "geopotential_height_instant_600"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   geopotential_height_instant_700 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 700
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/geopotential_height_instant_700"
       long_name : "geopotential_height_instant_700"
       standard_name : "geopotential_height_instant_700"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   geopotential_height_instant_750 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 750
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/geopotential_height_instant_750"
       long_name : "geopotential_height_instant_750"
       standard_name : "geopotential_height_instant_750"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   geopotential_height_instant_800 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 800
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/geopotential_height_instant_800"
       long_name : "geopotential_height_instant_800"
       standard_name : "geopotential_height_instant_800"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   geopotential_height_instant_850 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 850
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/geopotential_height_instant_850"
       long_name : "geopotential_height_instant_850"
       standard_name : "geopotential_height_instant_850"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   geopotential_height_instant_900 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 900
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/geopotential_height_instant_900"
       long_name : "geopotential_height_instant_900"
       standard_name : "geopotential_height_instant_900"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   geopotential_height_instant_925 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 925
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/geopotential_height_instant_925"
       long_name : "geopotential_height_instant_925"
       standard_name : "geopotential_height_instant_925"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   geopotential_height_instant_950 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 950
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/geopotential_height_instant_950"
       long_name : "geopotential_height_instant_950"
       standard_name : "geopotential_height_instant_950"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   geopotential_height_instant_975 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 975
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/geopotential_height_instant_975"
       long_name : "geopotential_height_instant_975"
       standard_name : "geopotential_height_instant_975"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   planetary_boundary_layer_height_instant :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/planetary_boundary_layer_height_instant"
       long_name : "planetary_boundary_layer_height_instant"
       standard_name : "planetary_boundary_layer_height_instant"
       units : ""
@@ -926,10 +961,9 @@ variables :
   precipitable_water_instant_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/precipitable_water_instant_surface"
       long_name : "precipitable_water_instant_surface"
       standard_name : "precipitable_water_instant_surface"
       units : ""
@@ -938,10 +972,9 @@ variables :
   pressure_reduced_to_msl_instant :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/pressure_reduced_to_msl_instant"
       long_name : "pressure_reduced_to_msl_instant"
       standard_name : "pressure_reduced_to_msl_instant"
       units : ""
@@ -950,10 +983,9 @@ variables :
   relative_humidity_instant_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_surface"
       long_name : "relative_humidity_instant_surface"
       standard_name : "relative_humidity_instant_surface"
       units : ""
@@ -962,22 +994,22 @@ variables :
   relative_humidity_instant_1000 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 1000
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_1000"
       long_name : "relative_humidity_instant_1000"
       standard_name : "relative_humidity_instant_1000"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   relative_humidity_instant_2 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_2"
       long_name : "relative_humidity_instant_2"
       standard_name : "relative_humidity_instant_2"
       units : ""
@@ -986,10 +1018,10 @@ variables :
   relative_humidity_instant_300 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 300
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_300"
       long_name : "relative_humidity_instant_300"
       standard_name : "relative_humidity_instant_300"
       units : ""
@@ -998,10 +1030,9 @@ variables :
   relative_humidity_instant_3000 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_3000"
       long_name : "relative_humidity_instant_3000"
       standard_name : "relative_humidity_instant_3000"
       units : ""
@@ -1010,130 +1041,139 @@ variables :
   relative_humidity_instant_500 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 500
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_500"
       long_name : "relative_humidity_instant_500"
       standard_name : "relative_humidity_instant_500"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   relative_humidity_instant_600 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 600
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_600"
       long_name : "relative_humidity_instant_600"
       standard_name : "relative_humidity_instant_600"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   relative_humidity_instant_700 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 700
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_700"
       long_name : "relative_humidity_instant_700"
       standard_name : "relative_humidity_instant_700"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   relative_humidity_instant_750 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 750
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_750"
       long_name : "relative_humidity_instant_750"
       standard_name : "relative_humidity_instant_750"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   relative_humidity_instant_800 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 800
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_800"
       long_name : "relative_humidity_instant_800"
       standard_name : "relative_humidity_instant_800"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   relative_humidity_instant_850 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 850
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_850"
       long_name : "relative_humidity_instant_850"
       standard_name : "relative_humidity_instant_850"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   relative_humidity_instant_900 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 900
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_900"
       long_name : "relative_humidity_instant_900"
       standard_name : "relative_humidity_instant_900"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   relative_humidity_instant_925 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 925
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_925"
       long_name : "relative_humidity_instant_925"
       standard_name : "relative_humidity_instant_925"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   relative_humidity_instant_950 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 950
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_950"
       long_name : "relative_humidity_instant_950"
       standard_name : "relative_humidity_instant_950"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   relative_humidity_instant_975 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 975
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/relative_humidity_instant_975"
       long_name : "relative_humidity_instant_975"
       standard_name : "relative_humidity_instant_975"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   storm_relative_helicity_instant_3000 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/storm_relative_helicity_instant_3000"
       long_name : "storm_relative_helicity_instant_3000"
       standard_name : "storm_relative_helicity_instant_3000"
       units : ""
@@ -1142,10 +1182,9 @@ variables :
   lifted_index_instant_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/lifted_index_instant_surface"
       long_name : "lifted_index_instant_surface"
       standard_name : "lifted_index_instant_surface"
       units : ""
@@ -1154,10 +1193,9 @@ variables :
   pressure_instant_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/pressure_instant_surface"
       long_name : "pressure_instant_surface"
       standard_name : "pressure_instant_surface"
       units : ""
@@ -1166,10 +1204,9 @@ variables :
   maximum_temperature_3hr_max_2 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/maximum_temperature_3hr_max_2"
       long_name : "maximum_temperature_3hr_max_2"
       standard_name : "maximum_temperature_3hr_max_2"
       units : ""
@@ -1178,10 +1215,9 @@ variables :
   maximum_temperature_6hr_max_2 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/maximum_temperature_6hr_max_2"
       long_name : "maximum_temperature_6hr_max_2"
       standard_name : "maximum_temperature_6hr_max_2"
       units : ""
@@ -1190,10 +1226,9 @@ variables :
   minimum_temperature_3hr_min_2 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/minimum_temperature_3hr_min_2"
       long_name : "minimum_temperature_3hr_min_2"
       standard_name : "minimum_temperature_3hr_min_2"
       units : ""
@@ -1202,10 +1237,9 @@ variables :
   minimum_temperature_6hr_min_2 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/minimum_temperature_6hr_min_2"
       long_name : "minimum_temperature_6hr_min_2"
       standard_name : "minimum_temperature_6hr_min_2"
       units : ""
@@ -1214,10 +1248,9 @@ variables :
   2_metre_temperature_instant_2 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/2_metre_temperature_instant_2"
       long_name : "2_metre_temperature_instant_2"
       standard_name : "2_metre_temperature_instant_2"
       units : ""
@@ -1226,34 +1259,35 @@ variables :
   temperature_instant_1000 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 1000
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_instant_1000"
       long_name : "temperature_instant_1000"
       standard_name : "temperature_instant_1000"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   temperature_instant_300 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 300
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_instant_300"
       long_name : "temperature_instant_300"
       standard_name : "temperature_instant_300"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   temperature_instant_3000 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_instant_3000"
       long_name : "temperature_instant_3000"
       standard_name : "temperature_instant_3000"
       units : ""
@@ -1262,130 +1296,139 @@ variables :
   temperature_instant_500 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 500
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_instant_500"
       long_name : "temperature_instant_500"
       standard_name : "temperature_instant_500"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   temperature_instant_600 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 600
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_instant_600"
       long_name : "temperature_instant_600"
       standard_name : "temperature_instant_600"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   temperature_instant_700 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 700
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_instant_700"
       long_name : "temperature_instant_700"
       standard_name : "temperature_instant_700"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   temperature_instant_750 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 750
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_instant_750"
       long_name : "temperature_instant_750"
       standard_name : "temperature_instant_750"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   temperature_instant_800 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 800
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_instant_800"
       long_name : "temperature_instant_800"
       standard_name : "temperature_instant_800"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   temperature_instant_850 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 850
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_instant_850"
       long_name : "temperature_instant_850"
       standard_name : "temperature_instant_850"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   temperature_instant_900 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 900
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_instant_900"
       long_name : "temperature_instant_900"
       standard_name : "temperature_instant_900"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   temperature_instant_925 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 925
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_instant_925"
       long_name : "temperature_instant_925"
       standard_name : "temperature_instant_925"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   temperature_instant_950 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 950
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_instant_950"
       long_name : "temperature_instant_950"
       standard_name : "temperature_instant_950"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   temperature_instant_975 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 975
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/temperature_instant_975"
       long_name : "temperature_instant_975"
       standard_name : "temperature_instant_975"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   total_precipitation_3hr_accum_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/total_precipitation_3hr_accum_surface"
       long_name : "total_precipitation_3hr_accum_surface"
       standard_name : "total_precipitation_3hr_accum_surface"
       units : ""
@@ -1394,10 +1437,9 @@ variables :
   total_precipitation_6hr_accum_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/total_precipitation_6hr_accum_surface"
       long_name : "total_precipitation_6hr_accum_surface"
       standard_name : "total_precipitation_6hr_accum_surface"
       units : ""
@@ -1406,10 +1448,9 @@ variables :
   U_wind_speed_instant_10m :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/U_wind_speed_instant_10m"
       long_name : "U_wind_speed_instant_10m"
       standard_name : "U_wind_speed_instant_10m"
       units : ""
@@ -1418,10 +1459,9 @@ variables :
   V_wind_speed_instant_10m :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/V_wind_speed_instant_10m"
       long_name : "V_wind_speed_instant_10m"
       standard_name : "V_wind_speed_instant_10m"
       units : ""
@@ -1430,10 +1470,9 @@ variables :
   u_component_of_wind_instant_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/u_component_of_wind_instant_surface"
       long_name : "u_component_of_wind_instant_surface"
       standard_name : "u_component_of_wind_instant_surface"
       units : ""
@@ -1442,154 +1481,165 @@ variables :
   u_component_of_wind_instant_1000 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 1000
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/u_component_of_wind_instant_1000"
       long_name : "u_component_of_wind_instant_1000"
       standard_name : "u_component_of_wind_instant_1000"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   u_component_of_wind_instant_300 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 300
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/u_component_of_wind_instant_300"
       long_name : "u_component_of_wind_instant_300"
       standard_name : "u_component_of_wind_instant_300"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   u_component_of_wind_instant_500 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 500
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/u_component_of_wind_instant_500"
       long_name : "u_component_of_wind_instant_500"
       standard_name : "u_component_of_wind_instant_500"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   u_component_of_wind_instant_600 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 600
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/u_component_of_wind_instant_600"
       long_name : "u_component_of_wind_instant_600"
       standard_name : "u_component_of_wind_instant_600"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   u_component_of_wind_instant_700 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 700
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/u_component_of_wind_instant_700"
       long_name : "u_component_of_wind_instant_700"
       standard_name : "u_component_of_wind_instant_700"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   u_component_of_wind_instant_750 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 750
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/u_component_of_wind_instant_750"
       long_name : "u_component_of_wind_instant_750"
       standard_name : "u_component_of_wind_instant_750"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   u_component_of_wind_instant_800 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 800
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/u_component_of_wind_instant_800"
       long_name : "u_component_of_wind_instant_800"
       standard_name : "u_component_of_wind_instant_800"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   u_component_of_wind_instant_850 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 850
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/u_component_of_wind_instant_850"
       long_name : "u_component_of_wind_instant_850"
       standard_name : "u_component_of_wind_instant_850"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   u_component_of_wind_instant_900 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 900
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/u_component_of_wind_instant_900"
       long_name : "u_component_of_wind_instant_900"
       standard_name : "u_component_of_wind_instant_900"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   u_component_of_wind_instant_925 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 925
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/u_component_of_wind_instant_925"
       long_name : "u_component_of_wind_instant_925"
       standard_name : "u_component_of_wind_instant_925"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   u_component_of_wind_instant_950 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 950
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/u_component_of_wind_instant_950"
       long_name : "u_component_of_wind_instant_950"
       standard_name : "u_component_of_wind_instant_950"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   u_component_of_wind_instant_975 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 975
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/u_component_of_wind_instant_975"
       long_name : "u_component_of_wind_instant_975"
       standard_name : "u_component_of_wind_instant_975"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   unknown_instant_2 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/unknown_instant_2"
       long_name : "unknown_instant_2"
       standard_name : "unknown_instant_2"
       units : ""
@@ -1598,10 +1648,9 @@ variables :
   v_component_of_wind_instant_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/v_component_of_wind_instant_surface"
       long_name : "v_component_of_wind_instant_surface"
       standard_name : "v_component_of_wind_instant_surface"
       units : ""
@@ -1610,154 +1659,165 @@ variables :
   v_component_of_wind_instant_1000 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 1000
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/v_component_of_wind_instant_1000"
       long_name : "v_component_of_wind_instant_1000"
       standard_name : "v_component_of_wind_instant_1000"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   v_component_of_wind_instant_300 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 300
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/v_component_of_wind_instant_300"
       long_name : "v_component_of_wind_instant_300"
       standard_name : "v_component_of_wind_instant_300"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   v_component_of_wind_instant_500 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 500
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/v_component_of_wind_instant_500"
       long_name : "v_component_of_wind_instant_500"
       standard_name : "v_component_of_wind_instant_500"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   v_component_of_wind_instant_600 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 600
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/v_component_of_wind_instant_600"
       long_name : "v_component_of_wind_instant_600"
       standard_name : "v_component_of_wind_instant_600"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   v_component_of_wind_instant_700 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 700
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/v_component_of_wind_instant_700"
       long_name : "v_component_of_wind_instant_700"
       standard_name : "v_component_of_wind_instant_700"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   v_component_of_wind_instant_750 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 750
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/v_component_of_wind_instant_750"
       long_name : "v_component_of_wind_instant_750"
       standard_name : "v_component_of_wind_instant_750"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   v_component_of_wind_instant_800 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 800
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/v_component_of_wind_instant_800"
       long_name : "v_component_of_wind_instant_800"
       standard_name : "v_component_of_wind_instant_800"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   v_component_of_wind_instant_850 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 850
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/v_component_of_wind_instant_850"
       long_name : "v_component_of_wind_instant_850"
       standard_name : "v_component_of_wind_instant_850"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   v_component_of_wind_instant_900 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 900
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/v_component_of_wind_instant_900"
       long_name : "v_component_of_wind_instant_900"
       standard_name : "v_component_of_wind_instant_900"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   v_component_of_wind_instant_925 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 925
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/v_component_of_wind_instant_925"
       long_name : "v_component_of_wind_instant_925"
       standard_name : "v_component_of_wind_instant_925"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   v_component_of_wind_instant_950 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 950
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/v_component_of_wind_instant_950"
       long_name : "v_component_of_wind_instant_950"
       standard_name : "v_component_of_wind_instant_950"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   v_component_of_wind_instant_975 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 975
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/v_component_of_wind_instant_975"
       long_name : "v_component_of_wind_instant_975"
       standard_name : "v_component_of_wind_instant_975"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   vertical_velocity_instant_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/vertical_velocity_instant_surface"
       long_name : "vertical_velocity_instant_surface"
       standard_name : "vertical_velocity_instant_surface"
       units : ""
@@ -1766,154 +1826,165 @@ variables :
   vertical_velocity_instant_1000 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 1000
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/vertical_velocity_instant_1000"
       long_name : "vertical_velocity_instant_1000"
       standard_name : "vertical_velocity_instant_1000"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   vertical_velocity_instant_300 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 300
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/vertical_velocity_instant_300"
       long_name : "vertical_velocity_instant_300"
       standard_name : "vertical_velocity_instant_300"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   vertical_velocity_instant_500 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 500
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/vertical_velocity_instant_500"
       long_name : "vertical_velocity_instant_500"
       standard_name : "vertical_velocity_instant_500"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   vertical_velocity_instant_600 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 600
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/vertical_velocity_instant_600"
       long_name : "vertical_velocity_instant_600"
       standard_name : "vertical_velocity_instant_600"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   vertical_velocity_instant_700 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 700
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/vertical_velocity_instant_700"
       long_name : "vertical_velocity_instant_700"
       standard_name : "vertical_velocity_instant_700"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   vertical_velocity_instant_750 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 750
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/vertical_velocity_instant_750"
       long_name : "vertical_velocity_instant_750"
       standard_name : "vertical_velocity_instant_750"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   vertical_velocity_instant_800 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 800
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/vertical_velocity_instant_800"
       long_name : "vertical_velocity_instant_800"
       standard_name : "vertical_velocity_instant_800"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   vertical_velocity_instant_850 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 850
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/vertical_velocity_instant_850"
       long_name : "vertical_velocity_instant_850"
       standard_name : "vertical_velocity_instant_850"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   vertical_velocity_instant_900 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 900
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/vertical_velocity_instant_900"
       long_name : "vertical_velocity_instant_900"
       standard_name : "vertical_velocity_instant_900"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   vertical_velocity_instant_925 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 925
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/vertical_velocity_instant_925"
       long_name : "vertical_velocity_instant_925"
       standard_name : "vertical_velocity_instant_925"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   vertical_velocity_instant_950 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 950
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/vertical_velocity_instant_950"
       long_name : "vertical_velocity_instant_950"
       standard_name : "vertical_velocity_instant_950"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   vertical_velocity_instant_975 :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
+    coord_val : 975
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/vertical_velocity_instant_975"
       long_name : "vertical_velocity_instant_975"
       standard_name : "vertical_velocity_instant_975"
       units : ""
       valid_min : ""
       valid_max : ""
+      coordinates : "plev"
   volumetric_soil_moisture_content_instant :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/volumetric_soil_moisture_content_instant"
       long_name : "volumetric_soil_moisture_content_instant"
       standard_name : "volumetric_soil_moisture_content_instant"
       units : ""
@@ -1922,10 +1993,9 @@ variables :
   water_equivalent_of_accumulated_snow_depth_instant :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/water_equivalent_of_accumulated_snow_depth_instant"
       long_name : "water_equivalent_of_accumulated_snow_depth_instant"
       standard_name : "water_equivalent_of_accumulated_snow_depth_instant"
       units : ""
@@ -1934,10 +2004,9 @@ variables :
   wind_speed_(gust)_instant_surface :
     data_type : float32
     dimensions : [] 
-    fill_value : "9999"
     attribute : 
       OM_procedure : "()"
-      OM_observedProperty : ""
+      OM_observedProperty : "/common/wind_speed_gust"
       long_name : "wind_speed_(gust)_instant_surface"
       standard_name : "wind_speed_(gust)_instant_surface"
       units : ""

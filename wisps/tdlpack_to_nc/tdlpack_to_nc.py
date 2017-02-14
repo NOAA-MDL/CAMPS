@@ -17,7 +17,7 @@ parser.add_argument('-o','--out', type=str,metavar="dir",\
         default="./")
 parser.add_argument('-i','--in_dir',type=str,metavar="dir",\
         nargs=1, help='directory that contains input file(s)',\
-        default="./")
+        default="")
 args = parser.parse_args()
 
 file_list = args.files
