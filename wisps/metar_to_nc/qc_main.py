@@ -72,7 +72,8 @@ def qc(station_dict):
 
     qc_error.stats(all_errors,50)
     all_errors = sorted(all_errors, key=lambda err: err.station_name)
-    data_date = station_list[0].hours[43][0:6] # pls fix this
+
+    data_date = station_list[0].hours[43][0:6] 
     with open('all_errors'+data_date, 'w+') as err_file:
         for i in all_errors:
             err_file.write(str(i))

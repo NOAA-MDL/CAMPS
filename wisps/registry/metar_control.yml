@@ -3,8 +3,9 @@
 
 # This will process the entire date
 year : 2013
-month : 2     # Where 1 is January and 12 is December
-METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/metar/"
+month : 12     # Where 1 is January and 12 is December
+#METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/metar/"
+METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/testObs/"
 
 nc_output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/output/"
 
@@ -13,7 +14,7 @@ debug_level : "INFO"
 
 # Log file that records the status of a run.
 # Set log_file to None or "" to print to stdout.
-log_file : "log.log"
+log_file : ""
 
 # Provides all stations with colon delimeted information about the station,
 # including lat, lon, long name.

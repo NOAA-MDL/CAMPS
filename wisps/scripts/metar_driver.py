@@ -47,10 +47,11 @@ def main(control_file=None):
     val_path = control['valid_stations']
     pickle = control['pickle']
     
-    out_log = open(log_file, 'w+')
+    if log_file:
+        out_log = open(log_file, 'w+')
 
-    sys.stdout = out_log
-    sys.stderr = out_log
+        sys.stdout = out_log
+        sys.stderr = out_log
 
     print "Starting main"
 
@@ -132,7 +133,8 @@ def main(control_file=None):
  
     writer.write(wisps_data, filename)
     print "writing complete. Closing nc file"
-    out_log.close()
+    if log_file:
+        out_log.close()
 
 def add_time(start, end, stride=None):
     time = []

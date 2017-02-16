@@ -9,12 +9,14 @@ from subprocess import call
 from subprocess import Popen
 from data_mgmt.Wisps_data import Wisps_data
 import data_mgmt.writer as writer
+import data_mgmt.Time as Time
 import registry.util as yamlutil
 import subprocess
 import pygrib
 import pdb
 import re
 import numpy as np
+from datetime import timedelta
 
 def reduce_grib():
     """Reads grib2 files, changes the map projection and
@@ -129,7 +131,6 @@ def convert_grib2(filename):
             fcst_hours[grb.forecastTime] = {}
 
         fcst_hash = get_forecast_hash(grb)
-        #data = grb.values
         
         # Pull out the grb dictionary at the forecast hour
         all_vars = fcst_hours[grb.forecastTime]
@@ -138,22 +139,26 @@ def convert_grib2(filename):
         else:
             all_vars[fcst_hash].append(grb)
 
-    #pdb.set_trace()
-    
-    # Temporary grb to grab standard information
+    # Temporary grb to grab shared information
     tmp_grb = fcst_hours[0]
     tmp_grb = tmp_grb[tmp_grb.keys()[0]][0]
     lead_time = tmp_grb.hour
     year = tmp_grb.year
     month = tmp_grb.month
+
     all_objs = [] # Collection of Wisps_data objects
     print "Creating Wisps-data objects for variables at each projection"
+
+    # Loop through each forcast hour
     # Will typically only do something every third forecast hour
     for hour in range(number_of_forecast_hours):
         all_vars = fcst_hours[hour]
+
+        # To be on the safe side, instead of striding every 3 hours,
+        # It will skip the loop if there're no values for each hour.
         if all_vars == None:
             continue
-        print hour
+        print "Creating variables for lead time:", hour
         for name,values in all_vars.iteritems():
             # Convert name to the proper wisps name in the db/netcdf.yml
             try:
@@ -169,7 +174,8 @@ def convert_grib2(filename):
                     stacked = np.dstack((stacked,grb.values))
 
             if 'avg' in name:
-                pdb.set_trace()
+                #pdb.set_trace()
+                pass
                 
 
             obj = Wisps_data(name)
@@ -183,25 +189,37 @@ def convert_grib2(filename):
             except: 
                 print 'not an numpy array'
 
-            if example_grib.startStep != example_grib.endStep:
+            if example_grb.startStep != example_grb.endStep:
                 # Then we know it's time bounded
                 pass
 
             # Add PhenomononTime
+            ptime = get_PhenomenonTime(values)
+            obj.time.append(ptime)
 
             # Add LeadTime
+            ltime = get_LeadTime(values)
+         #   obj.time.append(ltime)
 
             # Add ValidTime
+            vtime = get_ValidTime(values)
+            obj.time.append(vtime)
 
             # Add ResultTime
+            rtime = get_ResultTime(values)
+            obj.time.append(rtime)
 
             # Add ForecastReferenceTime
+            ftime = get_ForecastReferenceTime(values)
+         #   obj.time.append(rtime)
 
 
  
     # Make longitude and latitude variables
     lat = Wisps_data('latitude')
     lon = Wisps_data('longitude')
+    lat.add_source('GFS')
+    lon.add_source('GFS')
     lat.dimensions = ['lat','lon']
     lon.dimensions = ['lat','lon']
     lat_lon_data = tmp_grb.latlons()
@@ -240,22 +258,53 @@ def get_fcst_time(fcst_time_str):
 
 def get_PhenomenonTime(grbs, deep_check=False):
     """Get the Phenomenon Times for a collection of related grbs"""
-    pass
+    if deep_check:
+        # Search all grbs to ensure the stride is consistant and dates are in order
+        pass
+    start_date = str(grbs[0].dataDate)
+    start_hour = str(grbs[0].hour).zfill(2)
+    end_date = str(grbs[-1].dataDate)
+    end_hour = str(grbs[-1].hour).zfill(2)
+
+    start = start_date + start_hour
+    end = end_date + end_hour
+    stride = Time.ONE_DAY
+    return Time.PhenomenonTime(start,end,stride)
+
 
 def get_LeadTime(grbs, deep_check=False):
     """Get the Lead Times for a collection of related grbs"""
-    pass
+    ftime = grbs[0].forecastTime
 
 def get_ValidTime(grbs, deep_check=False):
     """Get the Valid Times for a collection of related grbs"""
-    pass
+    # refer to grb attribute: validityDate and validityTime
+    start_date = str(grbs[0].dataDate)
+    start_hour = str(grbs[0].hour).zfill(2)
+    end_date = str(grbs[-1].dataDate)
+    end_hour = str(grbs[-1].hour).zfill(2)
+
+    start = start_date + start_hour
+    end = end_date + end_hour
+    stride = Time.ONE_DAY
+    offset = timedelta(seconds=(grbs[0].forecastTime*Time.ONE_HOUR))
+    return Time.ValidTime(start,end,stride,offset)
 
 def get_ResultTime(grbs, deep_check=False):
     """Get the Result Times for a collection of related grbs"""
-    pass
+    start_date = str(grbs[0].dataDate)
+    start_hour = str(grbs[0].hour).zfill(2)
+    end_date = str(grbs[-1].dataDate)
+    end_hour = str(grbs[-1].hour).zfill(2)
+
+    start = start_date + start_hour
+    end = end_date + end_hour
+    stride = Time.ONE_DAY
+    return Time.ResultTime(start,end,stride)
 
 def get_ForecastReferenceTime(grbs, deep_check=False):
     """Get the ForecastReference Times for a collection of related grbs"""
+    
     pass
 
 def get_grbs(grbs):
@@ -461,5 +510,5 @@ def get_grbs(grbs):
     return forecasts
 
 #reduce_grib()
-#convert_grib2('/scratch3/NCEPDEV/mdl/Riley.Conroy/output/mdl.gfs47.12.pgrb2')
+convert_grib2('/scratch3/NCEPDEV/mdl/Riley.Conroy/output/mdl.gfs47.12.pgrb2')
 

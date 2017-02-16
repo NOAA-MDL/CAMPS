@@ -10,6 +10,7 @@ import pdb
 ONE_MINUTE = 60
 ONE_HOUR = ONE_MINUTE*60
 ONE_DAY = ONE_HOUR*24
+FILL_VALUE = 9999
 
 # Common time interpretation functions
 def parse_ISO_standard_time(time):
@@ -176,7 +177,7 @@ class Time(nc_writable):
         """Initializes the valid_time, result_time, phenomenon_time,
         and lead time arrays.
         """
-        self.data = np.array([])
+        self.data = np.array([], dtype=int)
         self.name = "time"
         if start_time and end_time:
             self.init_time_data(start_time, end_time, stride)
@@ -192,6 +193,10 @@ class Time(nc_writable):
             start_date = str_to_datetime(start_date)
         if type(end_date) == str:
             end_date = str_to_datetime(end_date)
+        if type(start_date) == int:
+            start_date = epoch_to_datetime(end_date)
+        if type(end_date) == int:
+            end_date = epoch_to_datetime(end_date)
         if type(stride) == str:
             stride = int(str)
         if type(stride) is not timedelta:
@@ -222,9 +227,11 @@ class Time(nc_writable):
             nc_time = nc_handle.createVariable(
                     name,  
                     int,                         
-                    dimensions=(time_dim)) 
+                    dimensions=(time_dim),
+                    fill_value=FILL_VALUE) 
             nc_time[:] = self.data
             self.add_common_metadata(nc_time)
+        return name
 
     def get_name(self, nc_handle):
         all_vars = nc_handle.variables
@@ -236,7 +243,10 @@ class Time(nc_writable):
             # Check for a data match
             if np.all(np.equal(var[:], self.data)):
                 return (name,True)
-        name = self.name + str(len(time_vars))
+        if len(time_vars) == 0:
+            name = self.name
+        else:
+            name = self.name + str(len(time_vars))
         return (name,False)
 
 
@@ -260,7 +270,13 @@ class Time(nc_writable):
 
     def get_dimension_name(self):
         """ Provides a way accessing the name of the time dimension """
-        return 'time_projection'
+        return 'time'
+
+    def get_start_time(self):
+        return epoch_to_datetime(int(self.data[0]))
+
+    def get_end_time(self):
+        return epoch_to_datetime(int(self.data[-1]))
 
     def __add__(self, other):
         """ overloading + opporator """
@@ -336,9 +352,9 @@ class ValidTime(Time):
         a 0 representing an unlimited valid time
         """
         o_type = type(offset)
-        a_function = callable(offset)
+        is_a_function = callable(offset)
 
-        if a_function:
+        if is_a_function:
             for i,value in enumerate(self.data):
                 self.data[i] = offset(value)
 
@@ -441,16 +457,31 @@ class BoundedTime(Time):
         if type(offset) is list:
             for i in range(0, len(self.data)):
                 if epoch_to_datetime(self.data[i]) not in offset:
-                    self.data[i] = None
+                    self.data[i] = FILL_VALUE
             return
         elif type(offset) is int:
+            self.duration = offset
             for i in range(0, len(self.data)):
                 if i % offset != 0:
-                    self.data[i] = None
+                    self.data[i] = FILL_VALUE
             return
         raise AssertionError("Offset type not recognized")
 
     def get_duration(self):
-        if len(self.data) >= 2:
-            return self.data[1] - self.data[0]
+        try:
+            return self.duration
+        except:
+            if len(self.data) >= 2:
+                return self.data[1] - self.data[0]
+
+    def add_common_metadata(self, nc_var):
+        """Adds metadata that is common to Time variables.
+        """
+        setattr(nc_var, 'calendar', 'gregorian')
+        setattr(nc_var, 'units', 'seconds')
+        try:
+            setattr(nc_var, 'interval', self.duration)
+        except:
+            pass
+
 

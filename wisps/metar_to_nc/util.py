@@ -139,13 +139,17 @@ def read_obs(data_dir, year, month, def_path, val_path):
     start_time = datetime(year, month, 1, 0)
     start_time = start_time - start_buffer
     current_time = copy.copy(start_time)
-    #end_time = datetime(year, month, 3, 0)  #less than a month
-    end_time = datetime(year, (month%12)+1, 1, 0) #full month
+    #end_time = datetime(year, month, 3, 0)  #less than a month 
+
+    if month == 12:
+        year += 1
+        month = 0
+
+    end_time = datetime(year, month+1, 1, 0) #full month
     end_time = end_time + end_buffer
     number_of_timesteps = 0 
     init_time = time.time()
     while current_time <= end_time:
-        logging.debug("processing: " + str(current_time))
         if number_of_timesteps % 24 == 0:
             diff_time = time.time() - init_time 
             init_time = time.time()

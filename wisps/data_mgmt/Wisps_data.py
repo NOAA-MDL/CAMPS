@@ -9,7 +9,7 @@ import Location
 from nc_writable import nc_writable 
 from Process import Process
 from netCDF4 import Dataset
-from Time import Time
+import Time 
 import pdb
 import re
 import registry.util as cfg
@@ -98,11 +98,11 @@ class Wisps_data(nc_writable):
         coord = int(coord)
         return coord
 
-    def get_time_bound(self):
+    def get_time_bounds(self):
         if not self.has_time_bounds():
             return None
-        for i in time:
-            if type(Time.TimeBounds) == type(i):
+        for i in self.time:
+            if i.name == 'time_bounds':
                 return i
 
     def add_process(self, process):
@@ -256,9 +256,15 @@ class Wisps_data(nc_writable):
         name += '_'
         if self.has_time_bounds():
             bounds = self.get_time_bounds()
-            name += str(bounds.get_duration / Time.ONE_HOUR)
+            name += str(bounds.get_duration())
         else:
             name += 'instant'
+        if self.has_plev() or self.has_elev():
+            level = self.get_coordinate()
+            if type(level) is tuple:
+                level = level[0]
+            name += str(level)
+        name += '_'
         try:
             name += str(self.metadata['ForecastReferenceTime'])
         except:
@@ -326,6 +332,9 @@ class Wisps_data(nc_writable):
         elif self.has_elev():
             return self.write_elev(nc_handle)
 
+        if self.has_time_bounds():
+            return self.write_time_bounds(nc_handle)
+
         return False
     
     def write_elev_bounds(self, nc_handle):
@@ -351,6 +360,19 @@ class Wisps_data(nc_writable):
             elev_var[:] = coord_data
         return True
     
+    def write_time_bounds(self, nc_handle):
+        """
+        Writes the Time bounds variable
+        """
+        #pdb.set_trace()
+        hours = db.get_property(self.name, 'hours')
+        hours = int(hours)
+        b_time = Time.BoundedTime(self.time[0].get_start_time(), self.time[0].get_end_time(), offset=hours)
+        self.time.append(b_time)
+
+
+
+
     def write_plev_bounds(self, nc_handle):
         """
         Writes the pressure level variable. 
@@ -451,7 +473,9 @@ class Wisps_data(nc_writable):
         # Tell the Process objects and Time Objects
         # to write to the file
         for t in self.time:
-            t.write_to_nc(nc_handle)
+            time_name = t.write_to_nc(nc_handle)
+            time_type = type(t).__name__
+            self.metadata[time_type] = time_name
 
         for p in self.processes:
             p.write_to_nc(nc_handle)
@@ -490,7 +514,7 @@ class Wisps_data(nc_writable):
 
         # Write the processes attribute string
         process_str = self.get_process_str()
-        setattr(nc_var, "OM_Procedure", process_str)
+        setattr(nc_var, "OM_procedure", process_str)
          
         self.add_nc_data(nc_var)
 
