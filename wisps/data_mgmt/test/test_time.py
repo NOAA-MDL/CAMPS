@@ -31,7 +31,7 @@ def test_ValidTime():
     time = Time.ValidTime(start_time, end_time, offset=0)
     test_time = time.data
     correct_time =  np.zeros(test_time.shape)
-    correct_time[:] = -sys.maxint
+    correct_time[:] = 9999
     np.testing.assert_array_equal(correct_time, test_time)
 
     # Test fixed date valid 

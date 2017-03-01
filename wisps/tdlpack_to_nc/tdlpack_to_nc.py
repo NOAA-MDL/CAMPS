@@ -18,11 +18,18 @@ parser.add_argument('-o','--out', type=str,metavar="dir",\
 parser.add_argument('-i','--in_dir',type=str,metavar="dir",\
         nargs=1, help='directory that contains input file(s)',\
         default="")
+parser.add_argument('-d','--debug',type=str,metavar="dir",\
+        nargs=1, help='option to start up pdb on run',\
+        default="")
 args = parser.parse_args()
 
 file_list = args.files
 out_dir = args.out
 in_dir = args.in_dir
+debug = args.debug
+
+if debug:
+    pdb.set_trace()
 if type(in_dir) is list:
     in_dir = str(in_dir[0])
 

@@ -296,9 +296,6 @@ def gen_filename(year, month):
     year = str(year)
     return "hre"+year+month+".nc"
 
-
-#GLOBAL -- I think necessary for performance and not passing this everywhere.
-# Read netcdf configuration file. It will be global
 #main()
 
 

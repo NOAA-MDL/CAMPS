@@ -4,10 +4,13 @@ relative_path = "/.."
 path = os.path.abspath(file_dir + relative_path)
 sys.path.insert(0, path)
 import registry.db.db as db
+import registry.util as util
 
 from netCDF4 import Dataset
 from Wisps_data import Wisps_data
+import time
 import pdb
+
 
 """
 Module to handle writing Wisps netCDF data
@@ -21,11 +24,12 @@ def open_nc(filename):
     nc = Dataset(filename, mode='w', format="NETCDF4")
     return nc
 
-def write(wisps_data, filename):
+def write(wisps_data, filename, global_attrs={}):
     """
     Writes a list of Wisps_data to NetCDF file
     """
     print "\nWriting\n"
+    start_time = time.time()
     # Get all dimenesions in the list.
     # Will error out if dimensions arn't correct.
     nc = open_nc(filename)
@@ -40,7 +44,22 @@ def write(wisps_data, filename):
     # Write the data by calling its write_to_nc function
     for d in wisps_data:
         d.write_to_nc(nc)
+    write_global_attributes(nc, global_attrs)
     nc.close()
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print "elapsed time to write variables:", elapsed_time
+    print "approximately", elapsed_time/len(wisps_data), "seconds per variable"
+
+def write_global_attributes(nc, extra_globals):
+    """Writes the global attributes as defined in netcdf.yml . 
+    Additionally, it adds time specific information. 
+    """
+    nc_globals = util.read_globals()
+    nc_globals.update(extra_globals)
+    for name,value in nc_globals.iteritems():
+        setattr(nc, name, value)
 
 def get_dimensions(wisps_data):
     """
@@ -64,7 +83,7 @@ def get_dimensions(wisps_data):
             if d not in count:
                 count[d] = shape[c]
             elif count[d] != shape[c]:
-                print "Problem: dimension", d, "is not consisitant with other" \
+                print "Problem: dimension", d, "is not consistant with other " \
                         "dimensions in list"
                 raise ValueError
     return count

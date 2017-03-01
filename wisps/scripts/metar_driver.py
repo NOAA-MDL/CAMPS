@@ -46,6 +46,8 @@ def main(control_file=None):
     def_path = control['station_defs']
     val_path = control['valid_stations']
     pickle = control['pickle']
+    num_procs = control['num_processors']
+    os.environ['NUM_PROCS'] = str(num_procs)
     
     if log_file:
         out_log = open(log_file, 'w+')
@@ -130,19 +132,24 @@ def main(control_file=None):
     wisps_obj.add_source('METAR')
     wisps_data.append(wisps_obj)
 
- 
-    writer.write(wisps_data, filename)
+    extra_globals = get_globals()
+    writer.write(wisps_data, filename, extra_globals)
     print "writing complete. Closing nc file"
     if log_file:
         out_log.close()
+
+def get_globals():
+    return {"source" : "Data from METAR with MDL Quality Control"}
 
 def add_time(start, end, stride=None):
     time = []
     if stride == None: 
         stride = Time.ONE_HOUR
     pt = Time.PhenomenonTime(start, end, stride)
-    rt = Time.ResultTime(start, end, stride) # Result time will be now
-    vt = Time.ValidTime(start, end, stride) # Valid Time will be forever
+    # Result time will be PhenomenonTime
+    rt = Time.ResultTime(start, end, stride,timedelta(seconds=0) ) 
+    # Valid Time will be forever
+    vt = Time.ValidTime(start, end, stride) 
         
     time.append(pt)
     time.append(rt)
@@ -151,16 +158,18 @@ def add_time(start, end, stride=None):
 
 def pack_station_names(names):
     w_obj = Wisps_data('station')
-    
+    max_chars = max([len(i) for i in names])
+    names = [ name+('_'*(max_chars - len(name))) for name in names]
     station_name_arr = np.array([])
     for name in names:
         char_arr = np.array(list(name), 'c')
-        if len(station_name_arr) == 0:
+        if len(station_name_arr) == 0: #if it's the first station
             station_name_arr = char_arr
         else:
             station_name_arr = np.vstack((station_name_arr,char_arr))
-    w_obj.set_dimensions(tuple(['number_of_stations','num_charactars']))
+    w_obj.set_dimensions(tuple(['number_of_stations','num_characters']))
     w_obj.add_data(station_name_arr)
+    w_obj.add_metadata("fill_value", '_')
     return w_obj
     
 

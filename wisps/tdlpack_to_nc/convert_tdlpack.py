@@ -84,6 +84,15 @@ def write_model_to_netcdf(filepath, var_dict):
     for i in var:
         pdb.set_trace()
 
+def get_obs_type(all_names):
+    """Returns the observation type based on all_names
+    """
+    if len(all_names) > 10000: # It's mesonet
+        return 'MESONET'
+    if len(all_names) > 1300: # It's metar
+        return 'METAR'
+    return "MARINE"
+
 def write_obs_to_netcdf(filepath, point_dict):
     """
     Writes a Point dictionary of objects to a netcdf file.
@@ -99,37 +108,40 @@ def write_obs_to_netcdf(filepath, point_dict):
     all_points = sorted_point_dict.values()
     all_names = sorted_point_dict.keys()
     temp_obs = sorted_point_dict.values()[0].dates
-    start_date = temp_obs[0]
-    end_date = temp_obs[-1]
-
+    start_date = str(int(temp_obs[0]))
+    end_date = str(int(temp_obs[-1]))
+    print "start date:", start_date
+    print "end date:", end_date
+    #TODO: find better way to do this
+    ob_type = get_obs_type(all_names)
     all_obj = []
     for p in all_predictors:
         try:
             nc_var_name = mosID_lookup[p]
         except KeyError: 
-            print p.name + " is not in mosID->netcdf lookup table. Skipping."
+            print p + " is not in mosID->netcdf lookup table. Skipping."
             continue
         print "Creating : ", nc_var_name
         temp_obs = []
+        print 'num_stations:', len(all_names)
         for v in all_points:
-            cur_data = v.predictors[p]
-            if len(temp_obs) == 0:
-                temp_obs = cur_data
-            else:
-                temp_obs = np.vstack((temp_obs,cur_data))
+            temp_obs.append(v.predictors[p])
+        temp_obs = np.vstack(temp_obs)
+
         obj = Wisps_data(nc_var_name)
         obj.set_dimensions()
         if nc_var_name == 'observation_time':
             temp_obs = temp_obs[0,:]
         obj.add_data(temp_obs)
-        obj.add_source('METAR')
+        obj.add_source(ob_type)
+        obj.time = metar_driver.add_time(start_date, end_date)
         obj.change_data_type()
         #obj.time = metar_driver.add_time(start_date, end_date)
         
         all_obj.append(obj)
 
     obj = metar_driver.pack_station_names(all_names)
-    obj.add_source('METAR')
+    obj.add_source(ob_type)
     all_obj.append(obj)
     print "Writing to", filepath
     writer.write(all_obj, filepath)
@@ -187,19 +199,35 @@ def convert_model(filepath, out_dir="./"):
             cur_dict = alt_var_dict
 
         if name not in cur_dict:
-            cur_dict[name] = data
+            #cur_dict[name] = data
+            cur_dict[name] = [data]
         else:
             try:
-                cur_dict[name] = np.dstack((cur_dict[name],data))
+                #cur_dict[name] = np.dstack((cur_dict[name],data))
+                cur_dict[name].append(data) 
             except Exception as e:
                 pdb.set_trace()
         if i % 50 == 0:
             print i, len(data)
+    print 'stacking_arrays'
     pdb.set_trace()
+    for i in var_dict.keys():
+        var_dict[i] = np.dstack(var_dict[i])
+
     return var_dict
 
 
 def convert_obs(filepath, out_dir="./"):
+    """Given a path to a tdlpack file that has observations, 
+    converts file into a wisps formatted netcdf file. 
+
+    Note: In tdlpack there is a separate record for every
+    different variable and time-step. For observations each
+    record will contain a 1D array in the 'values' member, 
+    which are of dimension station. The record also has the
+    station list in the 'ccall' member.
+    
+    """
     if not os.path.isfile(filepath):
         print "file: " +filepath+ " Not found"
         return
@@ -224,15 +252,18 @@ def convert_obs(filepath, out_dir="./"):
             time_index += 1
             cur_date = r.date
         record = r.values
+        str_id = str(r.id[0])      
+        #pdb.set_trace()
+        # r.ccall is a list of all stations for current record
         for i,call in enumerate(r.ccall):
             if call not in point_dict:
                 new_point = point(call,obs_types,num_timesteps)
-                new_point.dates[time_index] = r.date
+                new_point.dates[time_index] = cur_date
                 point_dict[call] = new_point
 
-            cur_point = point_dict[call]
-            str_id = str(r.id[0])
-            cur_point.predictors[str_id][time_index] = record[i]
+            cur_point = point_dict[call] # O(1)
+            cur_point.dates[time_index] = cur_date #not necessarily needed, could make shorter
+            cur_point.predictors[str_id][time_index] = record[i] #O(1)
 
     write_obs_to_netcdf(out_dir + os.path.basename(filepath)+".nc", point_dict)
 

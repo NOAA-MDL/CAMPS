@@ -1,4 +1,5 @@
 import logging
+import os
 import qc_general
 from qc_error import qc_error
 from multiprocessing import Pool
@@ -10,8 +11,8 @@ def qc_weather(station_list):
     QC present weather and visibility.
     """
     all_errors = []
-    pool = Pool()
-    pool = Pool(16)
+    num_processors = int(os.getenv('NUM_PROCS', 8))
+    pool = Pool(num_processors)
     all_errors = pool.map(qc_weather_st,station_list)
     pool.close()
     pool.join()

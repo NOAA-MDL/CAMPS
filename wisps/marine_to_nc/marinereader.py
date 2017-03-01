@@ -33,7 +33,6 @@ class marinereader():
    #         print "Error reading csv file"
    #         print e
         return self.station_list
-
     
     def parse_file(self, marine_reader, start_date, end_date):
         """

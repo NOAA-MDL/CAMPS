@@ -234,14 +234,18 @@ class Time(nc_writable):
         return name
 
     def get_name(self, nc_handle):
+        """Looks for a match in Time variables.
+        Returns a tuple containing the [0] - name of the variable
+        and [1] - a boolean indicating if it already existed.
+        """
         all_vars = nc_handle.variables
         varkeys = all_vars.keys()
         match = lambda var: re.match(r'^'+self.name+'\d*$',var,re.I)
         time_vars = filter(match,varkeys)
-        for name in time_vars:
+        for name in reversed(time_vars):
             var = all_vars[name]
             # Check for a data match
-            if np.all(np.equal(var[:], self.data)):
+            if np.array_equal(var[:], self.data):
                 return (name,True)
         if len(time_vars) == 0:
             name = self.name
@@ -249,8 +253,6 @@ class Time(nc_writable):
             name = self.name + str(len(time_vars))
         return (name,False)
 
-
-            
     def get_stride(self, as_timedelta=False):
         size = len(self.data)
         if size <= 1:
@@ -269,8 +271,14 @@ class Time(nc_writable):
         setattr(nc_var, 'units', 'seconds')
 
     def get_dimension_name(self):
-        """ Provides a way accessing the name of the time dimension """
-        return 'time'
+        """Provides a way for accessing the name of the time dimension."""
+        return 'default_time_coordinate_size'
+
+    def get_bounded_dimension_name(self):
+        """Provides a way for accessing the name of the start and end 
+        dimension.
+        """
+        return 'begin_end_size'
 
     def get_start_time(self):
         return epoch_to_datetime(int(self.data[0]))
@@ -336,7 +344,7 @@ class ValidTime(Time):
         """Initializes the data array.
         offset can be:
         a function that is applied to the data array, 
-        a deltatime duration, 
+        a timedelta duration, 
         a datetime fixed date, or 
         a 0 representing an unlimited valid time
         """
@@ -347,7 +355,7 @@ class ValidTime(Time):
     def add_offset(self, offset):
         """Offset can be:
         a function that is applied to the data array, 
-        a deltatime duration, 
+        a timedelta duration, 
         a datetime fixed date, or 
         a 0 representing an unlimited valid time
         """
@@ -359,15 +367,50 @@ class ValidTime(Time):
                 self.data[i] = offset(value)
 
         elif o_type is timedelta:
+            start_time = self.data.copy()
+            end_time = self.data.copy()
             for i,value in enumerate(self.data):
-                self.data[i] += offset.total_seconds()
+                end_time[i] += offset.total_seconds()
+            self.data = np.vstack((start_time,end_time))
 
         elif o_type is datetime:
-            self.data[:] = epoch_time(offset)
-                
+            end_time = np.zeros(self.data.shape)
+            end_time[:] = epoch_time(offset)
+            start_time = self.data 
+            self.data = self.data.vstack((start_time, end_time))
+        # Assume data is valid indefinitely 
         elif o_type is int and offset == 0:
-            min_int = -sys.maxint - 1
-            self.data[:] = min_int
+            #min_int = -sys.maxint - 1
+            start_time = self.data.copy()
+            end_time = np.zeros(self.data.shape)
+            end_time[:] = FILL_VALUE
+            self.data = np.vstack((start_time, end_time))
+
+    def write_to_nc(self, nc_handle):
+        """Adds the netCDF Variable representation of the Time.
+        If Time variable already exists, it will return None.
+        Additional Time variables of same type will have consecutive 
+        integers appended on the end of the variable name.
+        """
+        time_dim = self.get_dimension_name()
+        bounded_dim = self.get_bounded_dimension_name()
+        if time_dim not in nc_handle.dimensions:
+            nc_handle.createDimension(time_dim,len(self.data[0]))
+
+        if bounded_dim not in nc_handle.dimensions:
+            nc_handle.createDimension(bounded_dim, 2)
+        # 
+        name,exists = self.get_name(nc_handle)
+        if not exists:
+            nc_time = nc_handle.createVariable(
+                    name,  
+                    int,                         
+                    dimensions=(bounded_dim, time_dim),
+                    fill_value=FILL_VALUE) 
+            nc_time[:] = self.data
+            self.add_common_metadata(nc_time)
+        return name
+
 
 class ResultTime(Time):
     """Class representing the Result time.
@@ -383,12 +426,21 @@ class ResultTime(Time):
         self.append_result(result_time)
         
     def append_result(self, result_time):
+        """Adds the Result Time.
+        """
+
+        ###
+        # Below is what you would need if it was the time this variable was
+        # created. Keeping in case we change our mind.
+        ##
+        #if result_time is None:
+        #    #Return current time rounded to the next hour
+        #    r = datetime.now()
+        #    r = datetime(year=r.year, month=r.month,day=r.day, hour=r.hour+1)
+        #    self.data[:] = epoch_time(r)
         o_type = type(result_time)
         if result_time is None:
-            #Return current time rounded to the next hour
-            r = datetime.now()
-            r = datetime(year=r.year, month=r.month,day=r.day, hour=r.hour+1)
-            self.data[:] = epoch_time(r)
+            pass
         elif o_type is timedelta:
             for i,value in enumerate(self.data):
                 self.data[i] = epoch_time(datetime.now() + result_time)
@@ -424,16 +476,21 @@ class LeadTime(Time):
     forecast_reference_time to the
     Phenomenon time
     """
-    def __init__(self, forecast_ref_time, phenom_time):
+#    def __init__(self, forecast_ref_time, phenom_time):
+    def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR, lead=None):
         """
         Initializes the data array
         """
         self.name = "LeadTime"
+        super(LeadTime,self).__init__(start_time, end_time, stride)       
+        if lead is timedelta:
+            self.data[:] = lead.total_seconds()
+        self.data[:] = lead
         
-        is_ref_time = type(forecast_ref_time) is ForecastReferenceTime
-        is_phenom_time = type(phenom_tim) is PhenomenonTime
-        if is_ref_time and is_phenom_time:
-            self.data = phenom_time - forecast_ref_time
+        #is_ref_time = type(forecast_ref_time) is ForecastReferenceTime
+        #is_phenom_time = type(phenom_tim) is PhenomenonTime
+        #if is_ref_time and is_phenom_time:
+        #    self.data = phenom_time - forecast_ref_time
 
 class BoundedTime(Time):
     """Class reproesenting the Bounded time. 
@@ -484,4 +541,22 @@ class BoundedTime(Time):
         except:
             pass
 
+def alt_arr_equal(arr1, arr2, confidence='LOW'):
+    """
+    Determines if two arrays are equal. 
+    Confidence can be 'LOW', 'MEDIUM', or 'HIGH'
+    """
+    len_arr1 = len(arr1)
+    len_arr2 = len(arr2)
+    if len_arr1 != len_arr2:
+        return False
+    if confidence == 'LOW':
+        first_eq = arr1[0] == arr2[0]
+        last_eq = arr1[-1] == arr2[-1]
+        return first_eq and last_eq
+    elif confidence == 'MEDIUM' :
+        pass
+
+    elif confidence == 'HIGH' :
+        pass
 

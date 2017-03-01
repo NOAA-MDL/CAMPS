@@ -50,14 +50,14 @@ class Wisps_data(nc_writable):
         Checks metadata to see if this has plev.
         """
         if coord_str in self.metadata:
-            return self.metadata[coord_str] == 'plev'
+            return self.metadata[coord_str][:4] == 'plev'
 
     def has_elev(self):
         """ 
         Checks metadata to see if this has elev.
         """
         if coord_str in self.metadata:
-            return self.metadata[coord_str] == 'elev'
+            return self.metadata[coord_str][:4] == 'elev'
     
     def has_bounds(self):
         """ 
@@ -166,7 +166,7 @@ class Wisps_data(nc_writable):
         """
         Attempts to force the datatype to change for this data
         """
-        if data_type:
+        if data_type is not None:
             self.data = self.data.astype(data_type)
         else:
             self.data = self.data.astype(self.get_data_type())
@@ -242,41 +242,56 @@ class Wisps_data(nc_writable):
         return var in self.metadata
 
     def get_variable_name(self):
+        """Returns a uniqueish vairable name such that it looks like,
+        <dataSource>_<observedProperty>_<duration>_<verticalCoord>_<fcstReferenceTime>_<fcstLeadTime>_<########>
+        """
+        # Write dataSource
         name = ""
         try:
             name += self.metadata['LE_Source']
         except:
             name += '_'
         name += '_'
+
+        # Write observedProperty
         try:
             name += self.get_observedProperty()
         except:
             pass
-            #name += '_'
         name += '_'
+
+        # Write duration
         if self.has_time_bounds():
             bounds = self.get_time_bounds()
             name += str(bounds.get_duration())
         else:
             name += 'instant'
+        name += '_'
+
+        # Write verticalCoordinate
         if self.has_plev() or self.has_elev():
             level = self.get_coordinate()
             if type(level) is tuple:
                 level = level[0]
             name += str(level)
-        name += '_'
+        else:
+            name += '_'
+
+        # Write fcstReferenceTime
         try:
             name += str(self.metadata['ForecastReferenceTime'])
         except:
             pass
             #name += '_'
         name += '_'
+
+        # Write fcstLeadTime
+        try:
+            name += str(self.metadata['LeadTime'])
+        except:
+            pass
         
-
         return name
-            
-
-
 
     def get_coord_name(self, nc_handle, coord_name, is_bounds=False):
         """
@@ -486,6 +501,8 @@ class Wisps_data(nc_writable):
         # If not, create them.
         self.create_dimensions(nc_handle)
 
+        fill_value = self.get_fill_value()
+
         # Get a variable name and make it unique if needed
         variable_name = self.get_variable_name()
         if variable_name in nc_handle.variables:
@@ -494,20 +511,19 @@ class Wisps_data(nc_writable):
                 counter += 1
             variable_name = variable_name + '_' + str(counter)
 
+        # Get the chunksize
+        chunksize = self.get_chunk_size(5)
+
         # Create the variable 
-        variable_name = self.get_variable_name()
-        counter = 1
-        while variable_name in nc_handle.variables:
-            variable_name = variable_name + '_' + str(counter)
-            counter += 1
         nc_var = nc_handle.createVariable( 
                 variable_name,
                 self.data.dtype, 
                 tuple(self.dimensions), 
+                #chunksizes=chunksize,
                 zlib=True, 
-                complevel=7, 
+                complevel=4, 
                 shuffle=False, 
-                fill_value=FILL_VALUE)
+                fill_value=fill_value)
 
         # Add the metadata
         self.add_nc_metadata(nc_var)
@@ -519,6 +535,17 @@ class Wisps_data(nc_writable):
         self.add_nc_data(nc_var)
 
         return nc_handle
+
+    def get_chunk_size(self, num_partitions):
+        dtype = self.data.dtype
+        shape = list(self.data.shape)
+        itemsize = np.dtype(dtype).itemsize
+
+        for i in range(len(shape)):
+            #shape[i] *= itemsize
+            shape[i] = shape[i] * itemsize / num_partitions
+
+        return tuple(shape)
 
     def check_correct_shape(self):
         # Check that the dimensions are correct for the shape of the data
@@ -539,8 +566,15 @@ class Wisps_data(nc_writable):
 
     def add_nc_metadata(self, nc_var):
         for name,value in self.metadata.iteritems():
-            if name != 'name':
+            if name != 'name' and name != 'fill_value':
                 setattr(nc_var, name, value)
+
+    def get_fill_value(self):
+        try :
+            fill_value = self.metadata['fill_value']
+        except KeyError:
+            fill_value = FILL_VALUE
+        return fill_value
 
     def get_process_str(self):
         """

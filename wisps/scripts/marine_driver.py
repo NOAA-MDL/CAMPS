@@ -19,18 +19,27 @@ import metar_to_nc.qc_main as qc
 import registry.util as cfg
 import registry.db.db as db
 
-def main():
+def main(control_file=None):
     """
     Main function for converting marine CSV file to WISPS netCED file
     """
     # Read Control
-    control = cfg.read_marine_control()
+    if control_file:
+        control = cfg.read_yaml(control_file)
+    else:
+        control = cfg.read_marine_control()
     in_dir = control['input_directory']
     in_file = control['input_filename']
     out_dir = control['output_directory']
     out_file = control['output_filename']
     start_date = control['start_date']
     end_date = control['end_date']
+    log_file = control['log_file']
+
+    if log_file:
+        out_log = open(log_file, 'w')
+        sys.stdout = out_log
+        sys.stderr = out_log
 
     in_path = in_dir + in_file
     out_path = out_dir + out_file + '.nc'
@@ -76,6 +85,8 @@ def main():
     obj_list.append(obj)
 
     writer.write(obj_list, out_path)
+    if out_log:
+        out_log.close()
 
 def pack_station_names(names):
     w_obj = Wisps_data('station')
@@ -87,6 +98,6 @@ def pack_station_names(names):
             station_name_arr = char_arr
         else:
             station_name_arr = np.vstack((station_name_arr,char_arr))
-    w_obj.set_dimensions(tuple(['number_of_stations','num_charactars']))
+    w_obj.set_dimensions(tuple(['number_of_stations','num_characters']))
     w_obj.add_data(station_name_arr)
     return w_obj

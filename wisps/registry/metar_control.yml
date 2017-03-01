@@ -14,7 +14,10 @@ debug_level : "INFO"
 
 # Log file that records the status of a run.
 # Set log_file to None or "" to print to stdout.
-log_file : ""
+log_file : "/scratch3/NCEPDEV/mdl/Riley.Conroy/testOut/log"
+
+# Specify the number of processors to be used during the run
+num_processors : 16
 
 # Provides all stations with colon delimeted information about the station,
 # including lat, lon, long name.

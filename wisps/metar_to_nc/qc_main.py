@@ -1,3 +1,4 @@
+import sys, os
 import qc_clouds
 import qc_precip   
 import qc_temp     
@@ -74,12 +75,17 @@ def qc(station_dict):
     all_errors = sorted(all_errors, key=lambda err: err.station_name)
 
     data_date = station_list[0].hours[43][0:6] 
-    with open('all_errors'+data_date, 'w+') as err_file:
+    # Find the directory of the log file append the path
+    if sys.stdout.name == '<stdout>':
+        filename = 'all_errors'+data_date
+    else:
+        path = os.path.dirname(sys.stdout.name)
+        filename = path + '/all_errors'+data_date
+    print "allErrors located :", filename
+
+    with open(filename, 'w+') as err_file:
         for i in all_errors:
             err_file.write(str(i))
-
-    #pdb.set_trace()
-
 
     return station_dict
 

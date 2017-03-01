@@ -49,8 +49,11 @@ def var_editing(stdscr):
         stdscr.addstr(STARTY+1, 0,"You're creating a new variable!", curses.color_pair(3))
     stdscr.refresh()
     while True: # enter or carriage return exits
-        char = stdscr.getch()
-        if char == 10 or char == 13 or ord(char) == 'q': # enter or carriage return exits
+        try:
+            char = stdscr.getch()
+        except:
+            break
+        if char == 10 or char == 13 or char == ord('q'): # enter or carriage return exits
             break
         #elif char == 127 or char == 8 or char == 263: #backspace
         elif char == curses.KEY_DOWN:

@@ -1,4 +1,5 @@
 import logging
+import os
 import qc_general
 import pdb
 from multiprocessing import Pool
@@ -10,7 +11,8 @@ def qc_clouds(station_list):
     errors = []
     all_errors = []
     pool = Pool()
-    pool = Pool(8)
+    num_processors = int(os.getenv('NUM_PROCS', 8))
+    pool = Pool(num_processors)
     all_errors = pool.map(qc_clouds_st,station_list)
     pool.close()
     pool.join()
