@@ -28,7 +28,7 @@ class Wisps_data(nc_writable):
     """
 
  
-    def __init__(self, name):
+    def __init__(self, name, autofill=True):
         """
         Initializes object properties and adds metadata from the database
         coresponding to the name.
@@ -39,7 +39,9 @@ class Wisps_data(nc_writable):
         self.processes = []
         self.metadata = {}
         self.time = []
-        self.add_db_metadata()
+        self.properties = {}
+        if autofill:
+            self.add_db_metadata()
 
         # Coordinates
         #self.plev = get_plev()
@@ -89,12 +91,19 @@ class Wisps_data(nc_writable):
         """Returns the value of the coordinate data if it has 
         one. If this variable is a bounds, return a tuple of the bounds"""
         if self.has_bounds():
-            coord1 = db.get_property(self.name, 'coord_val1')
-            coord2 = db.get_property(self.name, 'coord_val2')
+            try:
+                coord1 = self.properties['coord_val1']
+                coord2 = self.properties['coord_val2']
+            except:    
+                coord1 = db.get_property(self.name, 'coord_val1')
+                coord2 = db.get_property(self.name, 'coord_val2')
             coord1 = int(coord1)
             coord2 = int(coord2)
             return (coord1, coord2)
-        coord = db.get_property(self.name, 'coord_val')
+        try: 
+            coord = self.properties['coord_val']
+        except:
+            coord = db.get_property(self.name, 'coord_val')
         coord = int(coord)
         return coord
 
@@ -142,7 +151,10 @@ class Wisps_data(nc_writable):
         database for this variable name. Return value if available,
         otherwise throw ValueError.
         """
-        return db.get_property(self.name, 'data_type')
+        try:
+            return self.properties['data_type']
+        except: 
+            return db.get_property(self.name, 'data_type')
 
     def get_dimensions(self):
         """Check if dimensions is defined in the properties
@@ -214,9 +226,15 @@ class Wisps_data(nc_writable):
 
     def add_leadTime(self, value):
         """
+        Sets the LeadTime_hour attribute to 'value'.
+        """
+        self.metadata['LeadTime_hour'] = value
+
+    def add_fcstTime(self, value):
+        """
         Sets the LE_Source attribute to 'value'.
         """
-        self.metadata['LeadTime'] = value
+        self.metadata['FcstTime_hour'] = value
 
     def add_plev_attributes(self, plev_var):
         """
@@ -274,20 +292,19 @@ class Wisps_data(nc_writable):
             if type(level) is tuple:
                 level = level[0]
             name += str(level)
-        else:
-            name += '_'
+        name += '_'
 
         # Write fcstReferenceTime
         try:
-            name += str(self.metadata['ForecastReferenceTime'])
+            name += str(self.metadata['FcstTime_hour'])
         except:
             pass
-            #name += '_'
         name += '_'
 
-        # Write fcstLeadTime
+
+        # Write LeadTime
         try:
-            name += str(self.metadata['LeadTime'])
+            name += str(self.metadata['LeadTime_hour'])
         except:
             pass
         
@@ -379,14 +396,13 @@ class Wisps_data(nc_writable):
         """
         Writes the Time bounds variable
         """
-        #pdb.set_trace()
-        hours = db.get_property(self.name, 'hours')
+        try:
+            hours = self.properties['hours']
+        except:
+            hours = db.get_property(self.name, 'hours')
         hours = int(hours)
         b_time = Time.BoundedTime(self.time[0].get_start_time(), self.time[0].get_end_time(), offset=hours)
         self.time.append(b_time)
-
-
-
 
     def write_plev_bounds(self, nc_handle):
         """
@@ -489,7 +505,8 @@ class Wisps_data(nc_writable):
         # to write to the file
         for t in self.time:
             time_name = t.write_to_nc(nc_handle)
-            time_type = type(t).__name__
+            #time_type = type(t).__name__
+            time_type = t.name
             self.metadata[time_type] = time_name
 
         for p in self.processes:

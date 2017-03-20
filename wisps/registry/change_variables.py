@@ -78,7 +78,6 @@ def display_help(stdscr):
         time.sleep(1)
     clear(stdscr)
     
-
 def search_nc(all_vars, subset):
     possible_matches = []
     for name,metadata in all_vars.iteritems():
@@ -100,7 +99,6 @@ def loading(stdscr):
     clear(stdscr)
     stdscr.addstr(STARTY,0, "   Loading... ", curses.A_STANDOUT)
     stdscr.refresh()
-
 
 def search(stdscr):
     loading(stdscr)

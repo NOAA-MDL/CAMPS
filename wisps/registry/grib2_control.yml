@@ -1,12 +1,17 @@
 # location of wgrib2
 wgrib2 : "/apps/wgrib2/0.1.9.5.1/bin/wgrib2"
 grbindex : "/scratch3/NCEPDEV/nwprod/NWPROD.WCOSS/util/exec/grb2index"
-datadir : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160707/"
+
+#Optionally make this a list to iterate over multiple datadirs
+datadir : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160708/"
 outpath : "/scratch3/NCEPDEV/mdl/Riley.Conroy/output/"
 nonpcp_file : "/home/Riley.Conroy/dev/wisps/wisps/registry/mdl_gfs_nonpcp.wgrib2"
 pcp_file : "/home/Riley.Conroy/dev/wisps/wisps/registry/mdl_gfs_pcp.wgrib2"
+    
+# Output gribfile will look like : 'mdl.gfs47.{forecast_hour}.{grib_file_identifier}.pgrb2
+grib_file_identifier : "201607"
 
-log : "log.log"
+log : "" #"log.log"
 
 # 47km nps
 projection : "nps:255.0000:60.0000 210.0000:297:47625.0000 2.8320:169:47625.0000"

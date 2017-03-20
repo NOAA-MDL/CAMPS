@@ -80,19 +80,19 @@ def test_plev():
     passed("test_plev") 
 
 def test_has_coord():
-    temp = Wisps_data('test_plev')
+    temp = Wisps_data('geopotential_height_instant_1000')
     assert temp.has_plev()
     assert not temp.has_elev()
     assert not temp.has_bounds()
-    temp = Wisps_data('test_time_bounds')
+    temp = Wisps_data('precipitation_amount_6_hour')
     assert not temp.has_plev()
     assert not temp.has_elev()
     assert temp.has_time_bounds()
     assert not temp.has_elev_bounds()
-    temp = Wisps_data('test_elev_bounds')
-    assert not temp.has_plev()
-    assert temp.has_elev()
-    assert temp.has_elev_bounds()
+#    temp = Wisps_data('2_metre_temperature_instant_2')
+#    assert not temp.has_plev()
+#    assert temp.has_elev()
+#    assert temp.has_elev_bounds()
     passed("test_coord")
     
 

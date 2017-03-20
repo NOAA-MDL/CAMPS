@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python
 # Add a relative path
 import sys, os
 file_dir = os.path.dirname(os.path.realpath(__file__))
@@ -12,6 +12,7 @@ from netCDF4 import Dataset
 from datetime import datetime 
 from datetime import timedelta
 from collections import OrderedDict
+import multiprocessing
 #import metar_to_nc.util as util
 from metar_to_nc.util import *
 import metar_to_nc.qc_main as qc
@@ -19,6 +20,7 @@ import registry.util as cfg
 from data_mgmt.Wisps_data import Wisps_data
 import data_mgmt.Time as Time
 import data_mgmt.writer as writer
+import pdb
 
 
 
@@ -35,13 +37,16 @@ def main(control_file=None):
     # Read control file and assign vales
     if control_file:
         control = cfg.read_yaml(control_file)
+        print "Reading Control File", control_file
     else:
         control = cfg.read_metar_control()
+        print "Reading Default Control File"
     data_dir = control['METAR_data_directory']
     year = control['year']
     month = control['month']
     debug_level = control['debug_level']
     log_file = control['log_file']
+    err_file = control['err_file']
     output_dir = control['nc_output_directory']
     def_path = control['station_defs']
     val_path = control['valid_stations']
@@ -49,6 +54,8 @@ def main(control_file=None):
     num_procs = control['num_processors']
     os.environ['NUM_PROCS'] = str(num_procs)
     
+    num_procs = check_num_procs(num_procs)
+
     if log_file:
         out_log = open(log_file, 'w+')
 
@@ -72,7 +79,7 @@ def main(control_file=None):
         save_object(stations, 'stations.pkl')
 
     # Quality control the list of stations
-    stations = qc.qc(stations)
+    stations = qc.qc(stations, err_file)
 
     # Take off the start and end times from the arrays
     remove_time_buffer(stations)
@@ -138,7 +145,16 @@ def main(control_file=None):
     if log_file:
         out_log.close()
 
+def check_num_procs(num_procs):
+    max_cpu_count = multiprocessing.cpu_count()
+    if num_procs > max_cpu_count:
+        print "More processors specified than available"
+        print "defaulting to number of processors available:", max_cpu_count
+        return max_cpu_count
+    return num_procs
+
 def get_globals():
+    """Returns a dictionary of global attributes for metar QC"""
     return {"source" : "Data from METAR with MDL Quality Control"}
 
 def add_time(start, end, stride=None):
@@ -171,5 +187,7 @@ def pack_station_names(names):
     w_obj.add_data(station_name_arr)
     w_obj.add_metadata("fill_value", '_')
     return w_obj
-    
-
+   
+print __name__
+if __name__ == "__main__":
+    main()

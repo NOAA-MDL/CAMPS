@@ -6,7 +6,7 @@
 
 input_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/"
 input_filename : "nbd201305.txt.qc.final"
-output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/output"
+output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/output/"
 output_filename : "nbd201305"
 start_date : ""
 end_date : "2013060100"
@@ -15,7 +15,7 @@ end_date : "2013060100"
 debug_level : "INFO"  
 
 # Log file that records the status of a run
-log_file : "log.log"
+log_file : ""
 
 # Provides all stations with colon delimeted information about the station,
 # including lat, lon, long name.

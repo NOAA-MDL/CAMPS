@@ -3,18 +3,25 @@
 
 # This will process the entire date
 year : 2013
-month : 12     # Where 1 is January and 12 is December
-#METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/metar/"
-METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/testObs/"
+month : 02     # Where 1 is January and 12 is December
 
-nc_output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/output/"
+# Optional start day and stride.
+day : null
+stride  : null # in hours
+
+METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/metar_sub/"
+nc_output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/testOut/"
 
 # Can be DEBUG, INFO, WARNING, ERROR, CRITICAL.
 debug_level : "INFO"  
 
 # Log file that records the status of a run.
-# Set log_file to None or "" to print to stdout.
-log_file : "/scratch3/NCEPDEV/mdl/Riley.Conroy/testOut/log"
+# Set log_file to null or "" to print to stdout.
+log_file : ""
+
+# Log file that records the status of a run.
+# Set log_file to null or "" to print to default filename.
+err_file : "myerrlog"
 
 # Specify the number of processors to be used during the run
 num_processors : 16

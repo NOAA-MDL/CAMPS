@@ -67,7 +67,7 @@ def qc_precip(station_list):
             if precip_3h[i_3h] > precip_6h[i_6h]: 
                 precip_3h[i_3h] = MISSING_VALUE
                 precip_6h[i_6h] = MISSING_VALUE
-                if precip_3h[i_3h] != MISSING_VALUE and precip_3h[i_3h] > 9.00:
+                if precip_3h[i_3h] != MISSING_VALUE and precip_3h[i_3h] > 900:
                     errors.append(qc_error(
                        station_name=station.name,date_of_error=date_3h,\
                        error_code=9700,old_data_value=precip_3h[i_3h],\
@@ -75,7 +75,7 @@ def qc_precip(station_list):
                        "3 hour precip out of range. > 9" \
                        ))
                     precip_3h[i_3h] = MISSING_VALUE
-                if precip_6h[i_6h] != MISSING_VALUE and precip_6h[i_6h] > 12.00:
+                if precip_6h[i_6h] != MISSING_VALUE and precip_6h[i_6h] > 1200:
                     errors.append(qc_error(
                        station_name=station.name,date_of_error=date_6h,\
                        error_code=9700,old_data_value=precip_6h[i_6h],\
@@ -100,7 +100,7 @@ def qc_precip(station_list):
                     precip_6h[i+j] = undef_amount
                 if precip_24h[i+j] == -9:
                     precip_24h[i+j] = undef_amount
-                if p1[j] != MISSING_VALUE and p1[j] > 3.75:
+                if p1[j] != MISSING_VALUE and p1[j] > 375:
                     errors.append(qc_error(
                        station_name=station.name,date_of_error=date,\
                        error_code=9700,old_data_value=p1[j],\

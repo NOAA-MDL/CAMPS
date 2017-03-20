@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python
 # Add a relative path
 import sys, os
 file_dir = os.path.dirname(os.path.realpath(__file__))
@@ -85,7 +85,7 @@ def main(control_file=None):
     obj_list.append(obj)
 
     writer.write(obj_list, out_path)
-    if out_log:
+    if log_file:
         out_log.close()
 
 def pack_station_names(names):
@@ -101,3 +101,7 @@ def pack_station_names(names):
     w_obj.set_dimensions(tuple(['number_of_stations','num_characters']))
     w_obj.add_data(station_name_arr)
     return w_obj
+
+
+if __name__ == "__main__":
+    main()

@@ -33,62 +33,67 @@ def reduce_grib(control=None):
     projection = control['projection']
     nonpcp_file = control['nonpcp_file']
     pcp_file = control['pcp_file']
+    outfile_identifier = control['grib_file_identifier']
    
     # projections
     gfs47a, gfs47b, gfs47c = projection.split(" ")
    
-    # Find ALL files in the datadir
-    files = os.listdir(datadir)
+    if datadir is not list:
+        datadir = [datadir]
+    for gfs_dir in datadir:
+        # Find ALL files in the datadir
+        files = os.listdir(gfs_dir)
 
-    # Just get the gfs files
-    match_string = r'^...\.t\d\dz\.pgrb2\.0p25\.f\d\d\d$'
-    files = filter(lambda f: re.match(match_string, f, re.I), files)
-    
-    # Only get those files that are every third projection hour
-    files = filter(lambda f: int(f[-3:]) % 3 == 0 and int(f[-3:])<=96, files)
-
-    print "number of files:", files
-    forecast_hour = files[0][5:7]
-    outfile = outpath + 'mdl.gfs47.'+forecast_hour+'.pgrb2'
-
-    for gfs_file in files:
-        infile = datadir + gfs_file
-        print infile
+        # Just get the gfs files
+        match_string = r'^...\.t\d\dz\.pgrb2\.0p25\.f\d\d\d$'
+        files = filter(lambda f: re.match(match_string, f, re.I), files)
         
-        PIPE = subprocess.PIPE
-        get_inv_cmd = [wgrib2, infile]
-        non_pcp_cmd = [wgrib2, infile,                       # Specify infile
-                       "-i",                                 # Use Inventory
-                       "-new_grid_winds", "grid",            # new_grid wind orientation ('grid' or 'earth')
-                       "-new_grid_interpolation", "bilinear",# new_grid interpolation ('bilinear','bicubic','neighbor', or 'budget')
-                       "-append",                            # add to existing file if exist
-                       "-new_grid", gfs47a, gfs47b, gfs47c,  # new_grid to specifications
-                       outfile]
-        
-        pcp_cmd = [wgrib2, infile,                       # Specify infile
-                       "-i",                                 # Use Inventory
-                       "-new_grid_winds", "grid",            # new_grid wind orientation ('grid' or 'earth')
-                       "-new_grid_interpolation", "budget",# new_grid interpolation ('bilinear','bicubic','neighbor', or 'budget')
-                       "-append",                            # add to existing file if exist
-                       "-new_grid", gfs47a, gfs47b, gfs47c,  # new_grid to specifications
-                       outfile]
-        
-    #    p1 = Popen(get_inv_cmd, stdout=PIPE)
-    #    p2 = Popen(['grep','-f', nonpcp_file],stdin=p1.stdout, stdout=PIPE)
-    #    p3 = Popen(non_pcp_cmd, stdin=p2.stdout)
-    #    p1.stdout.close()
-    #    p2.stdout.close()
+        # Only get those files that are every third projection hour
+        files = filter(lambda f: int(f[-3:]) % 3 == 0 and int(f[-3:])<=96, files)
 
-        ## OR
+        print "number of files:", files
+        forecast_hour = files[0][5:7]
+        outfile_name = 'mdl.gfs47.' + forecast_hour + "." + outfile_identifier + '.pgrb2'
+        outfile = outpath + outfile_name
 
-        # Do nonPCP
-        cmd = " ".join(get_inv_cmd) + " | grep -f "+nonpcp_file+" | " + " ".join(non_pcp_cmd)
-        subprocess.check_output(cmd, shell=True)
-        # Do PCP
-        cmd = " ".join(get_inv_cmd) + " | grep -f "+pcp_file+" | " + " ".join(pcp_cmd)
-        subprocess.check_output(cmd, shell=True)
+        for gfs_file in files:
+            infile = gfs_dir + gfs_file
+            print infile
+            
+            PIPE = subprocess.PIPE
+            get_inv_cmd = [wgrib2, infile]
+            non_pcp_cmd = [wgrib2, infile,                       # Specify infile
+                           "-i",                                 # Use Inventory
+                           "-new_grid_winds", "grid",            # new_grid wind orientation ('grid' or 'earth')
+                           "-new_grid_interpolation", "bilinear",# new_grid interpolation ('bilinear','bicubic','neighbor', or 'budget')
+                           "-append",                            # add to existing file if exist
+                           "-new_grid", gfs47a, gfs47b, gfs47c,  # new_grid to specifications
+                           outfile]
+            
+            pcp_cmd = [wgrib2, infile,                       # Specify infile
+                           "-i",                                 # Use Inventory
+                           "-new_grid_winds", "grid",            # new_grid wind orientation ('grid' or 'earth')
+                           "-new_grid_interpolation", "budget",# new_grid interpolation ('bilinear','bicubic','neighbor', or 'budget')
+                           "-append",                            # add to existing file if exist
+                           "-new_grid", gfs47a, gfs47b, gfs47c,  # new_grid to specifications
+                           outfile]
+            
+        #    p1 = Popen(get_inv_cmd, stdout=PIPE)
+        #    p2 = Popen(['grep','-f', nonpcp_file],stdin=p1.stdout, stdout=PIPE)
+        #    p3 = Popen(non_pcp_cmd, stdin=p2.stdout)
+        #    p1.stdout.close()
+        #    p2.stdout.close()
 
-        return outfile
+            ## OR
+
+            # Do nonPCP
+            cmd = " ".join(get_inv_cmd) + " | grep -f "+nonpcp_file+" | " + " ".join(non_pcp_cmd)
+            subprocess.check_output(cmd, shell=True)
+            # Do PCP
+            cmd = " ".join(get_inv_cmd) + " | grep -f "+pcp_file+" | " + " ".join(pcp_cmd)
+            subprocess.check_output(cmd, shell=True)
+
+    return outfile
    
 def get_forecast_hash(grb):
     """
@@ -166,12 +171,11 @@ def convert_grib2(filename):
                 name = lookup[name]
             except:
                 print 'Warning:', name, 'not in grib2 lookup table'
-            stacked = np.array([])
+            stacked = []
             example_grb = values[0] # example grib of variable type
             dtype = np.dtype('float32')
             for grb in values:
-                if len(stacked) == 0:
-                    stacked = grb.values
+                if len(stacked) == 0: # grab the precision
                     if grb.changeDecimalPrecision == 0:
                         dtype = np.dtype('int16')
                         #print grb.name
@@ -179,8 +183,8 @@ def convert_grib2(filename):
                         #print grb.decimalPrecision
                         #print grb.setBitsPerValue
                         #print ""
-                else:
-                    stacked = np.dstack((stacked,grb.values))
+                stacked.append(grb.values)
+            stacked = np.dstack(stacked)
 
             # If it's only one cycle, add a 1 dimensional time component
             if len(stacked.shape) == 2:
@@ -191,9 +195,10 @@ def convert_grib2(filename):
 
             obj = Wisps_data(name)
             obj.add_source('GFS')
-            obj.add_leadTime(filename[-8:-6])
+            obj.add_fcstTime(filename[-8:-6])
+            obj.add_leadTime(hour)
             obj.add_metadata('ForecastReferenceTime', hour)
-            obj.dimensions = ['lat','lon','time']
+            obj.dimensions = ['lat','lon','default_time_coordinate_size']
             try:
                 obj.add_data(stacked) 
                 obj.change_data_type(dtype)
@@ -209,7 +214,6 @@ def convert_grib2(filename):
             ptime = get_PhenomenonTime(values)
             obj.time.append(ptime)
 
-
             # Add ValidTime
             vtime = get_ValidTime(values)
             obj.time.append(vtime)
@@ -220,11 +224,11 @@ def convert_grib2(filename):
 
             # Add ForecastReferenceTime
             ftime = get_ForecastReferenceTime(values)
-            obj.time.append(rtime)
+            obj.time.append(ftime)
 
             # Add LeadTime
             ltime = get_LeadTime(values)
-            #obj.time.append(ltime)
+            obj.time.append(ltime)
 
 
     # Make longitude and latitude variables

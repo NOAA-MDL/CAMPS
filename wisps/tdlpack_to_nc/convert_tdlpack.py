@@ -186,18 +186,25 @@ def convert_model(filepath, out_dir="./"):
     """
     Converts TDL pack at location filepath to netcdf.
     """
+    fcst_time = filepath[-3:-1]
+    mosPL_lookup = cfg.read_gfs_tdlpack_lookup()
+    num_lats = 169
+    num_lons = 297
+    print "Opening TDLPack file"
     records = ptdl.TdlpackDecode(filepath)
+    print "Finished Reading"
     var_dict = {} # forecast time <= 192
     alt_var_dict = {} # forecast time > 192
-    pdb.set_trace()
+    records_length = len(records)
+    start_date = records[0].date
+    end_date = records[-1].date
     for i,r in enumerate(records):
-        name = r.plain_language.strip()
         data = r.unpackData()
+        name = get_name(r)
         if r.product_definition_section[10] <= 192:
             cur_dict = var_dict
         else:
             cur_dict = alt_var_dict
-
         if name not in cur_dict:
             #cur_dict[name] = data
             cur_dict[name] = [data]
@@ -207,15 +214,39 @@ def convert_model(filepath, out_dir="./"):
                 cur_dict[name].append(data) 
             except Exception as e:
                 pdb.set_trace()
-        if i % 50 == 0:
-            print i, len(data)
+        if i % 1000 == 0:
+            print i, "Of", records_length, "Records"
+    print len(var_dict), "unique variables"
     print 'stacking_arrays'
-    pdb.set_trace()
+    wisps_objs = []
     for i in var_dict.keys():
+        num_days = len(var_dict[i])
         var_dict[i] = np.dstack(var_dict[i])
+        var_dict[i] = np.reshape(var_dict[i], (num_lats, num_lons, num_days))
+        wisps_name = mosPL_lookup[i[0]]
+        lead_hours = name[1]
+        obj = Wisps_data(wisps_name)
+        obj.set_dimensions(('latitude','longitude','time'))
+        obj.add_source("GFS")
+        obj.add_leadTime(lead_hours)
+        obj.add_fcstTime(fcst_time)
+        obj.data = var_dict[i]
+        wisps_objs.append(obj)
+
+    writer.write(wisps_objs, '/scratch3/NCEPDEV/mdl/Riley.Conroy/output/test.nc')
 
     return var_dict
 
+
+def create_wisps_objs(var_dict):
+    for var in var_dict.keys():
+        pass
+
+def get_name(record):
+        name = record.plain_language.strip()
+        projection = record.product_definition_section[12]
+        #return name+"_"+str(projection).zfill(3)
+        return (name, projection)
 
 def convert_obs(filepath, out_dir="./"):
     """Given a path to a tdlpack file that has observations, 

@@ -80,12 +80,19 @@ def read_marine_control():
     """
     return read_yaml(CONFIG_PATH+"marine_control.yml")
 
+
 def read_grib2_control():
     """
     Reads the grib2 control file that provides 
     directory locations for the observations.
     """
     return read_yaml(CONFIG_PATH+"grib2_control.yml")
+
+def read_gfs_tdlpack_lookup():
+    """
+    Reads and returns mosPlainLanguage > NetCDF variables yaml file.
+    """
+    return read_yaml(CONFIG_PATH+"mosPlainLanguage_to_nc.yml")
 
 def read_grib2_lookup():
     """

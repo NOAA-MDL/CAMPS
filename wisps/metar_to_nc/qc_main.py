@@ -12,7 +12,7 @@ import pdb
 import time
 
 
-def qc(station_dict):
+def qc(station_dict, err_file=None):
     all_errors = []
 
     print "starting QC"
@@ -76,11 +76,15 @@ def qc(station_dict):
 
     data_date = station_list[0].hours[43][0:6] 
     # Find the directory of the log file append the path
+    if not err_file:
+        err_file = 'all_errors' + data_date
+        
     if sys.stdout.name == '<stdout>':
-        filename = 'all_errors'+data_date
+        filename =  err_file
     else:
         path = os.path.dirname(sys.stdout.name)
-        filename = path + '/all_errors'+data_date
+        filename = path + '/' + err_file
+
     print "allErrors located :", filename
 
     with open(filename, 'w+') as err_file:

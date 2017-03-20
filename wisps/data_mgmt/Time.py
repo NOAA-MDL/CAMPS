@@ -6,6 +6,16 @@ from nc_writable import nc_writable
 import re
 import pdb
 
+##
+#class Time()
+#class PhenomenonTime(Time)
+#class ValidTime(Time)
+#class ResultTime(Time)
+#class ForecastReferenceTime(Time)
+#class LeadTime(Time)
+#class BoundedTime(Time)
+##
+
 # Common amounts of time in seconds
 ONE_MINUTE = 60
 ONE_HOUR = ONE_MINUTE*60
@@ -465,7 +475,8 @@ class ForecastReferenceTime(Time):
         """
         super(ForecastReferenceTime,self).__init__(start_time, end_time, stride)       
         self.name = 'forecast_reference_time'
-        self.append_reference_time(reference_time)
+        if reference_time is not None:
+            self.append_reference_time(reference_time)
        
     def append_reference_time(self, result_time):
         self.data[:] = result_time
@@ -481,8 +492,8 @@ class LeadTime(Time):
         """
         Initializes the data array
         """
-        self.name = "LeadTime"
         super(LeadTime,self).__init__(start_time, end_time, stride)       
+        self.name = "LeadTime"
         if lead is timedelta:
             self.data[:] = lead.total_seconds()
         self.data[:] = lead

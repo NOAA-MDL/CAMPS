@@ -14,7 +14,6 @@ import time
 import numpy as np
 import logging
 import copy
-import qc_main as qc
 import registry.util as cfg
 
 
@@ -115,18 +114,13 @@ def convert_to_numpy(station_list):
                 print "numpy can't convert the array: " + predictor
     return station_list
             
-# HERE:
-# Read control file to find file 
-# to find the:
-# data directory
-# year and month
-# other things
-
-def read_obs(data_dir, year, month, def_path, val_path):
+def read_obs(data_dir, year, month, def_path, val_path, day=None, stride=None):
     """
-    Reads the observations from a given year and month. 
+    Reads the observations from a given year and month (optionally day and stride)
     Uses a metarreader to get the data fromthe ASCII files
     """
+    if not day:
+        day = 1 # start of the month
     # Define the extra time needed to be added to the 
     # start and end of the time period, due to QC
     one_hour = timedelta(hours=1)
@@ -136,17 +130,18 @@ def read_obs(data_dir, year, month, def_path, val_path):
     print "Reading observations"
     reader = metarreader(def_path, val_path)
     #start of given month
-    start_time = datetime(year, month, 1, 0)
+    start_time = datetime(year, month, day, 0)
     start_time = start_time - start_buffer
     current_time = copy.copy(start_time)
-    #end_time = datetime(year, month, 3, 0)  #less than a month 
-
-    if month == 12:
-        year += 1
-        month = 0
-
-    end_time = datetime(year, month+1, 1, 0) #full month
+    if stride:
+        end_time = start_time + timedelta(hours=stride)
+    else:
+        if month == 12:
+            year += 1
+            month = 0
+        end_time = datetime(year, month+1, 1, 0) #full month
     end_time = end_time + end_buffer
+    print "Start Time:", start_time
     number_of_timesteps = 0 
     init_time = time.time()
     while current_time <= end_time:
