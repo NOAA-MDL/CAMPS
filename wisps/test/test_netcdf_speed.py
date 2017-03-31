@@ -8,6 +8,49 @@ from subprocess import call
 
 filename = '/scratch3/NCEPDEV/mdl/Riley.Conroy/test.nc'
 
+
+def test_var_number1():
+    all_arrs = []
+
+    nc = Dataset('/scratch3/NCEPDEV/mdl/Riley.Conroy/output/ncTest/small.nc',
+            mode='w', format="NETCDF4")
+    nc.createDimension('a', 10)
+    nc.createDimension('b', 10)
+    for j in range(10000):
+         
+        data = np.random.rand(10,10)
+        var = nc.createVariable('testVar'+str(j),
+        datatype=float, 
+        dimensions=('a','b')
+        #zlib=True
+        )
+        var[:] = data
+        nc.close
+
+def test_var_number():
+    all_arrs = []
+
+    for i in [1,10,50,100,200,500,1000,5000,10000]:
+        nc = Dataset('/scratch3/NCEPDEV/mdl/Riley.Conroy/output/ncTest/numVarsIs'+str(i)+'.nc',
+                mode='w', format="NETCDF4")
+        length = 100000/(10*i)
+        print "numvars:", i
+        nc.createDimension('a', 10)
+        nc.createDimension('b', length)
+        for j in range(i):
+             
+            data = np.random.rand(10,length)
+            var = nc.createVariable('testVar'+str(j),
+            datatype=float, 
+            dimensions=('a','b'),
+            zlib=False,
+            shuffle=False
+            )
+            var[:] = data
+        nc.close
+            
+            
+
 def get_2d_array(xsize, ysize):
     return np.random.rand(xsize,ysize)
 
@@ -84,7 +127,7 @@ def test_write_var():
     var[:] = array
     call(['rm','-f',filename])
 
-test_num_vars()
+#test_num_vars()
 
 #print "writing 2D"
 #test_write_2d()

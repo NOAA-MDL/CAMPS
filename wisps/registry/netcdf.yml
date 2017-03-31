@@ -9,6 +9,7 @@
 ########################################
 globals:
   institution : "NOAA/National Weather Service"
+  Conventions : "CF-1.1"
   version : "WISPS-0.1"
   history : "Generated on NOAA's Weather and Climate Operational Supercomputing System"
   references : ""
@@ -20,7 +21,8 @@ globals:
 ## Dimensions
 ## -------
 ##
-## Defines the Dimensions of the netcdf files. 
+## Defines the possible Dimensions of the netcdf files. 
+## These are merely suggestions.
 ## Only the dimensions used in a variable 
 ## will be written to the netcdf file.
 ##
@@ -1191,7 +1193,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 1000"
-      standard_name : "temperature_instant_1000"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1203,7 +1205,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 300"
-      standard_name : "temperature_instant_300"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1214,7 +1216,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 3000"
-      standard_name : "temperature_instant_3000"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1225,7 +1227,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 500"
-      standard_name : "temperature_instant_500"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1237,7 +1239,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 600"
-      standard_name : "temperature_instant_600"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1249,7 +1251,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 700"
-      standard_name : "temperature_instant_700"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1308,7 +1310,7 @@ variables :
     coord_val : 925
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
-      long_name : "temperature instant 925"
+      long_name : "temperature instant 925 mb"
       standard_name : "temperature"
       units : "K"
       valid_min : ""
@@ -1320,8 +1322,8 @@ variables :
     coord_val : 950
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
-      long_name : "temperature instant 950"
-      standard_name : "temperature_instant_950"
+      long_name : "temperature at 950 mb"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1332,8 +1334,8 @@ variables :
     coord_val : 975
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
-      long_name : "temperature instant 975"
-      standard_name : "temperature_instant_975"
+      long_name : "temperature at 975 mb"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1344,7 +1346,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/TotalPrecip"
       long_name : "total precipitation 3hr accum surface"
-      standard_name : "total_precipitation_3hr_accum_surface"
+      standard_name : "precipitation_amount"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -1354,7 +1356,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/TotalPrecip"
       long_name : "total precipitation 6hr accum surface"
-      standard_name : "total_precipitation_6hr_accum_surface"
+      standard_name : "precipitation_amount"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -1875,7 +1877,7 @@ variables :
     dimensions : [] 
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Gust"
-      long_name : "wind speed of gust instant surface"
+      long_name : "wind speed of gust at surface"
       standard_name : "wind_speed_of_gust"
       units : "m/s"
       valid_min : ""

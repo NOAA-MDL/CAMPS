@@ -16,7 +16,7 @@ import logging
 import copy
 import registry.util as cfg
 
-
+met_to_nc = cfg.read_metar_nc_lookup()
 def save_object(obj, filename):
     with open(filename, 'wb') as output:
         pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
@@ -49,7 +49,7 @@ def get_data_type(predictor, nc_struct):
     value for data_type should be a standard numpy data type.
     e.g. uint16, int8, _int, float, etc. 
     """
-    predictor = cfg.metar_to_nc[predictor]
+    predictor = met_to_nc[predictor]
     if predictor in nc_struct.variables:
         predictor_config = nc_struct.variables[predictor]
         if 'data_type' in predictor_config:

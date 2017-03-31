@@ -10,6 +10,7 @@ from netCDF4 import Dataset
 from Wisps_data import Wisps_data
 import time
 import pdb
+import logging
 
 
 """
@@ -17,22 +18,26 @@ Module to handle writing Wisps netCDF data
 """
 
 
-def open_nc(filename):
-    """
-    Opens a netCDF file for writing and returns a Dataset object
-    """
-    nc = Dataset(filename, mode='w', format="NETCDF4")
-    return nc
 
-def write(wisps_data, filename, global_attrs={}):
+def write(wisps_data, filename, global_attrs={}, overwrite=True):
     """
-    Writes a list of Wisps_data to NetCDF file
+    Writes a list of Wisps_data to NetCDF file.
+    wisps_data is expected to be a list of Wisps_data objects.
+    filename is the filename to write to. 
+    global_attrs are additional global attributes to add to the file. 
+    overwite specifies whether a file should new or appended to.
     """
-    print "\nWriting\n"
+    logging.info("\nWriting\n")
+    if type(wisps_data) is not list:
+        wisps_data = list(wisps_data)
     start_time = time.time()
+    if overwrite:
+        m = 'w'
+    else:
+        m = 'a'
+    nc = Dataset(filename, mode=m, format="NETCDF4")
     # Get all dimenesions in the list.
     # Will error out if dimensions arn't correct.
-    nc = open_nc(filename)
     try:
         dims = get_dimensions(wisps_data)
         # Write dimensions
@@ -40,17 +45,28 @@ def write(wisps_data, filename, global_attrs={}):
             nc.createDimension(d_name, size)
     except:
         pass
-
     # Write the data by calling its write_to_nc function
     for d in wisps_data:
         d.write_to_nc(nc)
+    global_attrs['primary_variables'] = get_primary_variables(wisps_data)
     write_global_attributes(nc, global_attrs)
     nc.close()
 
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print "elapsed time to write variables:", elapsed_time
-    print "approximately", elapsed_time/len(wisps_data), "seconds per variable"
+    logging.debug("elapsed time to write variables:" + str(elapsed_time))
+    logging.debug("approximately " +
+            str(elapsed_time/len(wisps_data)) + 
+            " seconds per variable")
+
+def get_primary_variables(w_list):
+    """Return space-separated primary variables 
+    """
+    PV_str = ""
+    for w in w_list:
+        PV_str += " " + w.get_variable_name()
+    return PV_str
+
 
 def write_global_attributes(nc, extra_globals):
     """Writes the global attributes as defined in netcdf.yml . 
@@ -76,15 +92,15 @@ def get_dimensions(wisps_data):
         dims = i.dimensions
         shape = i.data.shape
         if len(dims) != len(shape):
-            print "Problem: shape of data and number of dimensions dont match"
-            print "Problem: with,",i.name
+            logging.error("Problem: shape of data and number of dimensions dont match")
+            logging.error("Problem: with, " + i.name)
             raise ValueError
         for c,d in enumerate(dims):
             if d not in count:
                 count[d] = shape[c]
             elif count[d] != shape[c]:
-                print "Problem: dimension", d, "is not consistant with other " \
-                        "dimensions in list"
+                logging.error("Dimension" + d + "is not consistant with other " +
+                        "dimensions in list")
                 raise ValueError
     return count
 

@@ -8,14 +8,11 @@ sys.path.insert(0, path)
 import time
 import numpy as np
 import logging
-import copy
 from data_mgmt.Wisps_data import Wisps_data
 import data_mgmt.writer as writer
 from netCDF4 import Dataset
-from datetime import datetime 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from marine_to_nc.marinereader import marinereader
-import metar_to_nc.qc_main as qc
 import registry.util as cfg
 import registry.db.db as db
 
@@ -35,11 +32,19 @@ def main(control_file=None):
     start_date = control['start_date']
     end_date = control['end_date']
     log_file = control['log_file']
+    debug_level = control['debug_level']
 
     if log_file:
         out_log = open(log_file, 'w')
         sys.stdout = out_log
         sys.stderr = out_log
+    try:
+        logging.getLogger('').handlers = []
+        level = logging.getLevelName(debug_level)
+        logging.basicConfig(level=level)
+    except:
+        print "Logging setup failed"
+        raise
 
     in_path = in_dir + in_file
     out_path = out_dir + out_file + '.nc'
@@ -104,4 +109,7 @@ def pack_station_names(names):
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main(control_file=sys.argv[1])
+    except IndexError:
+        main()

@@ -36,7 +36,7 @@ def get_procedures(nc_variable, procedures_dict):
     proc_list = []
     
     for p in procedures:
-        print "procedure name is " + p
+        logging.info("procedure name is " + p)
         try:
             proc = procedures_dict[p]
             proc_list.append(proc)
@@ -55,7 +55,7 @@ def get_times(nc_variable, time_dict):
         try:
             time_vars.append(time_dict[time])
         except:
-            print "time Not in NC"
+            loggin.warning("time Not in NC")
     except:
         #no phenomenonTime
         pass
@@ -64,7 +64,7 @@ def get_times(nc_variable, time_dict):
         try:
             time_vars.append(time_dict[time])
         except:
-            print "time Not in NC"
+            loggin.warning("time Not in NC")
     except:
         #no validTime
         pass
@@ -73,7 +73,7 @@ def get_times(nc_variable, time_dict):
         try:
             time_vars.append(time_dict[time])
         except:
-            print "time Not in NC"
+            loggin.warning("time Not in NC")
     except:
         #no ForecastReferenceTime
         pass
@@ -82,7 +82,7 @@ def get_times(nc_variable, time_dict):
         try:
             time_vars.append(time_dict[time])
         except:
-            print "time Not in NC"
+            loggin.warning("time Not in NC")
     except:
         #no resultTime
         pass
@@ -91,7 +91,7 @@ def get_times(nc_variable, time_dict):
         try:
             time_vars.append(time_dict[time])
         except:
-            print "time Not in NC"
+            loggin.warning("time Not in NC")
     except:
         #no leadTime
         pass
@@ -108,7 +108,7 @@ def get_coordinate(nc_variable, coordinate_dict):
         try:
             return coordinate_dict[coord_name]
         except:
-            print "coord_name not in nc file"
+            loggin.warning("coord_name not in nc file")
     except:
         pass # no coordinate
 def removeTime(attrs):
@@ -143,7 +143,6 @@ def create_wisps_data(nc_variable, procedures_dict, time_dict, coordinate_dict):
     try:
         OM_observedProperty = nc_variable.OM_observedProperty
     except AttributeError:
-        print "ERROR: No OM_observedProperty metadata in ", nc_variable.name
         logging.error("No OM_observedProperty metadata in " + nc_variable.name)
         raise
 

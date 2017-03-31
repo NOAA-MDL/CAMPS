@@ -7,6 +7,23 @@ import pdb
 
 db_dir = os.path.dirname(os.path.realpath(__file__)) + '/'
 db_name = 'wisps.db'
+
+def connect(db):
+    """
+    Returns sqlite3.Connection object for a given database
+    housed in the db directory.
+    """
+    return sqlite3.connect(db_dir + db, detect_types=sqlite3.PARSE_DECLTYPES)
+
+conn = connect(db_name)
+c = conn.cursor()
+
+def create_db(table_name, dictionary):
+    """
+    Creates a database based off of dictionary
+    """
+    pass
+
 def create_new_metadata_db():
     """
     Deletes old metadata table and replaces it with a new table 
@@ -71,12 +88,6 @@ def create_new_properties_db():
     conn.commit()
     conn.close()
 
-def connect(db):
-    """
-    Returns sqlite3.Connection object for a given database
-    housed in the db directory.
-    """
-    return sqlite3.connect(db_dir + db, detect_types=sqlite3.PARSE_DECLTYPES)
 
 def get_metadata(name, attr):
     """
@@ -85,8 +96,8 @@ def get_metadata(name, attr):
     str name : name of predictor. e.g. wind_speed
     """
     db = 'metadata'
-    conn = connect(db_name)
-    c = conn.cursor()
+    #conn = connect(db_name)
+    #c = conn.cursor()
     c.execute("PRAGMA table_info(metadata)")
     name_arr = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]
@@ -109,8 +120,8 @@ def get_property(name, attr):
     str name : name of predictor. e.g. wind_speed
     """
     db = 'properties'
-    conn = connect(db_name)
-    c = conn.cursor()
+    #conn = connect(db_name)
+    #c = conn.cursor()
     c.execute("PRAGMA table_info("+db+")")
     name_arr = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]
@@ -132,8 +143,8 @@ def get_all_metadata(name):
     str name : name of the variable.
     """
     defined_attr = {}
-    conn = connect(db_name)
-    c = conn.cursor()
+    #conn = connect(db_name)
+    #c = conn.cursor()
     c.execute("PRAGMA table_info(metadata)")
     attr_names = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]
@@ -178,8 +189,8 @@ def print_from(db, name):
     their associated values for a given variable
     name.
     """
-    conn = connect(db_name)
-    c = conn.cursor()
+    #conn = connect(db_name)
+    #c = conn.cursor()
     c.execute("PRAGMA table_info("+db+")")
     name_arr = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]

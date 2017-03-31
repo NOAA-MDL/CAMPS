@@ -1,21 +1,22 @@
+import sys,os
 import logging
+import inspect
 import yaml
-import sys
-import os
 """
 Module that abstracts the reading of the yaml configuration file held in config directory
 """
 
+CONFIG_PATH = os.path.dirname(os.path.realpath(__file__)) + "/"
+_cache = {}
 class nc_struct():
     def __init__(self):
         self.dimensions = {}
         self.global_attributes = {}
         self.variables = {}
 
-CONFIG_PATH = os.path.dirname(os.path.realpath(__file__)) + "/"
 def read_yaml(filename):
     """Reads the contents of a yaml file and returns the value"""
-    logging.info("reading yaml config. Filename: "+filename)
+    logging.info("reading yaml config. File: "+filename)
     try:
         with open(filename, 'r') as stream:
             try:
@@ -31,22 +32,52 @@ def read_yaml(filename):
         logging.error("Error:" + str(err))
         raise
 
+def read_cache():
+    """checks whether the function's data has been chached or not.
+    If it has, returns the values. otherwise, returns None.
+    """
+    func_name = inspect.currentframe().f_back.f_code.co_name
+    try:
+        return _cache[func_name]
+    except KeyError:
+        return None
+
+def write_cache(data):
+    """
+    Caches data associated with calling function's name
+    to prevent re-reading a file.
+    """
+    func_name = inspect.currentframe().f_back.f_code.co_name
+    _cache[func_name] = data
 
 def read_dimensions():
     """
     Reads and returns dimension definitions
     """
-    nc_struct = read_yaml(CONFIG_PATH+"netcdf.yml")
-    # Just get the variables
-    return nc_struct['dimensions']
+    return read_nc_meta()['dimensions']
 
 def read_globals():
     """
     Reads and returns global attributes definitions
     """
-    nc_struct = read_yaml(CONFIG_PATH+"netcdf.yml")
-    # Just get the variables
-    return nc_struct['globals']
+    return read_nc_meta()['globals']
+
+def read_variables():
+    """
+    returns structured configuration of all WISPS supported variables
+    """
+    return read_nc_meta()['variables']
+
+def read_nc_meta():
+    """Reads netcdf.yml file that contains the metadata for
+    common variables
+    """
+    data = read_cache()
+    if data:
+        return data
+    data = read_yaml(CONFIG_PATH+"netcdf.yml")
+    write_cache(data)
+    return data
 
 def read_nc_config():
     """ 
@@ -58,20 +89,19 @@ def read_nc_config():
     nc.variables = read_variables()
     return nc
 
-def read_variables():
-    """
-    returns structured configuration of all WISPS supported variables
-    """
-    nc_struct = read_yaml(CONFIG_PATH+"netcdf.yml")
-    # Just get the variables
-    return nc_struct['variables']
+
 
 def read_metar_control():
     """
     Reads the metar control file that provides time ranges and 
     directory locations for the observations.
     """
-    return read_yaml(CONFIG_PATH+"metar_control.yml")
+    data = read_cache()
+    if data:
+        return data
+    data = read_yaml(CONFIG_PATH+"metar_control.yml")
+    write_cache(data)
+    return data
 
 def read_marine_control():
     """
@@ -108,9 +138,16 @@ def read_mosID_lookup():
 
 def read_metar_lookup():
     """ 
-    Returns the lookup table for METAR -> NetCDF variables.
+    Returns the lookup table for NetCDF -> METAR variables.
     """
     return read_yaml(CONFIG_PATH+"nc_to_metar.yml")
+
+def read_metar_nc_lookup():
+    """ 
+    Returns the lookup table for METAR -> NetCDF variables.
+    """
+    nc_to_metar = read_metar_lookup()
+    return {v: k for k, v in nc_to_metar.iteritems()}
 
 def read_marine_lookup():
     """ 
@@ -118,6 +155,10 @@ def read_marine_lookup():
     """
     return read_yaml(CONFIG_PATH+"marine_to_nc.yml")
 
-nc_to_metar = read_metar_lookup()
-metar_to_nc = {v: k for k, v in nc_to_metar.iteritems()}
+def read_observedProperties():
+    """ 
+    Returns the set of all observedProperties.
+    """
+    return read_yaml(CONFIG_PATH+"ObservedProperties.yml")
 
+#ncvars = read_nc_config().variables

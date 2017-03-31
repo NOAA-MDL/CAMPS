@@ -6,6 +6,7 @@ path = os.path.abspath(file_dir + relative_path)
 sys.path.insert(0, path)
 import numpy as np
 import Location
+import logging
 from nc_writable import nc_writable 
 from Process import Process
 from netCDF4 import Dataset
@@ -119,7 +120,7 @@ class Wisps_data(nc_writable):
         Adds a Process object to the Processes list.
         """
         if process.__class__ is not Process:
-            print process, "is not a Process object"
+            logging.error(process + "is not a Process object")
             raise TypeError
         self.processes.append(process)
         return self
@@ -130,17 +131,17 @@ class Wisps_data(nc_writable):
         sets it to objects 'data' instance variable.
         """
         if not isinstance(data, type(np.array([]))):
-            print type(data), "is not a numpy array"
+            logging.error(type(data) + "is not a numpy array")
             raise ValueError
         if len(self.dimensions) == 0:
             try:
                 set_dimensions()
             except:
-                print 'set_dimensions failed'
+                loggin.warning('set_dimensions failed')
         if len(data.shape) != len(self.dimensions):
             #pdb.set_trace()
-            print "number of dimensions of data is not " \
-                    "equal to number of object dimensions"
+            logging.error("number of dimensions of data is not " 
+                    "equal to number of object dimensions")
             raise ValueError
 
         self.data = data
@@ -158,9 +159,11 @@ class Wisps_data(nc_writable):
 
     def get_dimensions(self):
         """Check if dimensions is defined in the properties
-        database for this varibale name. Return value if available,
+        database for this variable name. Return value if available,
         otherwise throw ValueError.
         """
+        #var = cfg.read_variables()[self.name]
+        #var = cfg.ncvars[self.name]
         var = cfg.read_variables()[self.name]
         dimensions = var['dimensions']
         return dimensions
@@ -192,10 +195,10 @@ class Wisps_data(nc_writable):
             dimensions = self.get_dimensions()
             dimensions = tuple(dimensions)
         if type(dimensions) is not tuple:
-            print type(dimensions), "is not of type tuple"
+            logging.error(type(dimensions), "is not of type tuple")
             raise TypeError
         if len(self.dimensions) > 0:
-            print "Warning: overwriting dimensions"
+            loggin.warning("overwriting dimensions")
         self.dimensions = dimensions
         return self
 
@@ -208,7 +211,7 @@ class Wisps_data(nc_writable):
         try :
             meta_dict = db.get_all_metadata(self.name)
         except ValueError :
-            print "WARNING: '"+ self.name+ "' not defined in metadata db"
+            loggin.warning(+ self.name+ "' not defined in metadata db")
         self.metadata = meta_dict
 
     def add_metadata(self, key, value):
@@ -494,7 +497,10 @@ class Wisps_data(nc_writable):
         Adds a netCDF variable to the nc_handle. 
         Includes the data and metadata associated with the object.
         """
-        print "writing", self.name
+        logging.info("writing " + self.name)
+        # This will include all netcdf variables that in some way help
+        # describe this variable.
+        ancillary_variables = ""
         
         # Writes the elev, plev, and bounds variables if they exist
         success = self.write_coordinate(nc_handle)
@@ -505,17 +511,18 @@ class Wisps_data(nc_writable):
         # to write to the file
         for t in self.time:
             time_name = t.write_to_nc(nc_handle)
-            #time_type = type(t).__name__
-            time_type = t.name
-            self.metadata[time_type] = time_name
+            ancillary_variables += time_name + " "
 
         for p in self.processes:
             p.write_to_nc(nc_handle)
+            ancillary_variables += p.name + " "
+
+        self.metadata['ancillary_variables'] = ancillary_variables
         
         self.check_correct_shape()
 
         # Check if dimensions are defined in the netCDF file.
-        # If not, create them.
+        # If they are not, create them.
         self.create_dimensions(nc_handle)
 
         fill_value = self.get_fill_value()
@@ -567,8 +574,8 @@ class Wisps_data(nc_writable):
     def check_correct_shape(self):
         # Check that the dimensions are correct for the shape of the data
         if len(self.data.shape) != len(self.dimensions):
-            print "dimensions of data not equal to dimensions attribute"
-            print "Will not write", self.name
+            logging.error("dimensions of data not equal to dimensions attribute")
+            logging.error("Will not write "+ self.name)
             raise ValueError
 
 

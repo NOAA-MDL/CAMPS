@@ -9,11 +9,9 @@ sys.path.insert(0, path)
 import numpy as np
 import logging
 from netCDF4 import Dataset
-from datetime import datetime 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from collections import OrderedDict
 import multiprocessing
-#import metar_to_nc.util as util
 from metar_to_nc.util import *
 import metar_to_nc.qc_main as qc
 import registry.util as cfg
@@ -58,24 +56,31 @@ def main(control_file=None):
 
     if log_file:
         out_log = open(log_file, 'w+')
-
         sys.stdout = out_log
         sys.stderr = out_log
 
-    print "Starting main"
+    try:
+        logging.getLogger('').handlers = []
+        level = logging.getLevelName(debug_level)
+        logging.basicConfig(level=level)
+    except:
+        print "Logging setup failed"
+        raise
+
+    logging.info("Starting main")
 
     # This will read the CSV files and put them into stations
     reader = read_obs(data_dir, year, month, def_path, val_path)
 
     # Convert all arrays to numpy arrays
-    print "Converting station arrays to numpy arrays"
+    logging.info("Converting station arrays to numpy arrays")
     stations = reader.station_list
     stations = convert_to_numpy(stations)
     fix_rounding_errors(stations)
 
     # Optionally pickle and save
     if pickle:
-        print "Pickling"
+        logging.info("Pickling")
         save_object(stations, 'stations.pkl')
 
     # Quality control the list of stations
@@ -99,24 +104,25 @@ def main(control_file=None):
     # formats each observation into a 2D array with
     # dimensions of # of stations and time
     if pickle:
-        print "Pickling"
+        logging.info("Pickling")
         save_object(stations, 'postqc.pkl')
-    print "Construct 2D arrays"
+    logging.info("Construct 2D arrays")
     wisps_data = []
     example_station = stations.values()[0]
     obs = example_station.observations.keys()
     obs.remove('TIME')
     start_time = example_station.hours[0]
     end_time = example_station.hours[-1]
-    print "start time", start_time
-    print "end time", end_time
+    logging.info("start time: " + start_time)
+    logging.info("end time:   " + end_time)
+    met_to_nc = cfg.read_metar_nc_lookup()
     for metar_name in obs:
         # Set the observation name to the standard WISPS name
         try :
-            observation_name = cfg.metar_to_nc[metar_name]
+            observation_name = met_to_nc[metar_name]
         except :
-            print "ERROR: cannot find the netcdf equivalent of " +metar_name +\
-                    "in METAR lookup table. Skipping."
+            logging.error("Cannot find the netcdf equivalent of " +metar_name +
+                    "in METAR lookup table. Skipping.")
             continue
         # Loop through the stations and stitch together the current observation
         temp_obs = []
@@ -126,7 +132,7 @@ def main(control_file=None):
                 temp_obs = station_data
             else:
                 temp_obs = np.vstack((temp_obs, station_data)) # takes tuple arg
-        print observation_name
+        logging.info(observation_name)
         wisps_obj = Wisps_data(observation_name)
         wisps_obj.set_dimensions()
         wisps_obj.add_data(temp_obs)
@@ -141,15 +147,15 @@ def main(control_file=None):
 
     extra_globals = get_globals()
     writer.write(wisps_data, filename, extra_globals)
-    print "writing complete. Closing nc file"
+    logging.info("writing complete. Closing nc file")
     if log_file:
         out_log.close()
 
 def check_num_procs(num_procs):
     max_cpu_count = multiprocessing.cpu_count()
     if num_procs > max_cpu_count:
-        print "More processors specified than available"
-        print "defaulting to number of processors available:", max_cpu_count
+        loggin.warning("More processors specified than available")
+        loggin.warning("defaulting to number of processors available: " + max_cpu_count)
         return max_cpu_count
     return num_procs
 
@@ -163,7 +169,7 @@ def add_time(start, end, stride=None):
         stride = Time.ONE_HOUR
     pt = Time.PhenomenonTime(start, end, stride)
     # Result time will be PhenomenonTime
-    rt = Time.ResultTime(start, end, stride,timedelta(seconds=0) ) 
+    rt = Time.ResultTime(start, end, stride) 
     # Valid Time will be forever
     vt = Time.ValidTime(start, end, stride) 
         
@@ -187,7 +193,9 @@ def pack_station_names(names):
     w_obj.add_data(station_name_arr)
     w_obj.add_metadata("fill_value", '_')
     return w_obj
-   
-print __name__
+
 if __name__ == "__main__":
-    main()
+    try:
+        main(control_file=sys.argv[1])
+    except IndexError:
+        main()

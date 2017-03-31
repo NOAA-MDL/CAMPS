@@ -2,8 +2,9 @@
 wgrib2 : "/apps/wgrib2/0.1.9.5.1/bin/wgrib2"
 grbindex : "/scratch3/NCEPDEV/nwprod/NWPROD.WCOSS/util/exec/grb2index"
 
-#Optionally make this a list to iterate over multiple datadirs
-datadir : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160708/"
+# Optionally make this a list to iterate over multiple datadirs
+datadir : ["/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160707/",
+    "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160708/"]
 outpath : "/scratch3/NCEPDEV/mdl/Riley.Conroy/output/"
 nonpcp_file : "/home/Riley.Conroy/dev/wisps/wisps/registry/mdl_gfs_nonpcp.wgrib2"
 pcp_file : "/home/Riley.Conroy/dev/wisps/wisps/registry/mdl_gfs_pcp.wgrib2"
@@ -11,11 +12,16 @@ pcp_file : "/home/Riley.Conroy/dev/wisps/wisps/registry/mdl_gfs_pcp.wgrib2"
 # Output gribfile will look like : 'mdl.gfs47.{forecast_hour}.{grib_file_identifier}.pgrb2
 grib_file_identifier : "201607"
 
-log : "" #"log.log"
+# Specify "" or None to output log to stdout
+log : "" 
+# Can be DEBUG, INFO, WARNING, ERROR, CRITICAL
+debug_level : "INFO"  
 
 # 47km nps
 projection : "nps:255.0000:60.0000 210.0000:297:47625.0000 2.8320:169:47625.0000"
-    
+   
+
+# Historical remappings 
 #   gfs95 = "nps:255.0000:60.0000 210.0000:149:95250.0000 2.8320:85:95250.0000"
 #   gfs95old = "nps:255.0000:60.0000 212.9360:137:95250.0000 6.9870:81:95250.0000"
 #   gfs80pac = "mercator:20.0000 129.9058:105:80000.0000:209.5289 -19.3309:71:80000.0000:32.0658"

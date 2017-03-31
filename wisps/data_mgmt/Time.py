@@ -188,7 +188,12 @@ class Time(nc_writable):
         and lead time arrays.
         """
         self.data = np.array([], dtype=int)
-        self.name = "time"
+        self.metadata = {}
+        try:
+            self.metadata['wisps_role'] = self.name
+        except:
+            self.name = "time"
+            self.metadata['wisps_role'] = self.name
         if start_time and end_time:
             self.init_time_data(start_time, end_time, stride)
         
@@ -230,17 +235,30 @@ class Time(nc_writable):
         """
         time_dim = self.get_dimension_name()
         if time_dim not in nc_handle.dimensions:
-            nc_handle.createDimension(time_dim, (len(self.data)))
-        # 
+            if len(self.data.shape) == 2:
+                nc_handle.createDimension(time_dim,len(self.data[1]))
+            else:
+                nc_handle.createDimension(time_dim,len(self.data))
+        dim_tuple = (time_dim)
+
+        if len(self.data.shape) == 2:
+            bounded_dim = self.get_bounded_dimension_name()
+            if bounded_dim not in nc_handle.dimensions:
+                nc_handle.createDimension(bounded_dim, 2)
+            dim_tuple = (bounded_dim,time_dim)
+
         name,exists = self.get_name(nc_handle)
         if not exists:
             nc_time = nc_handle.createVariable(
                     name,  
                     int,                         
-                    dimensions=(time_dim),
+                    dimensions=dim_tuple,
                     fill_value=FILL_VALUE) 
             nc_time[:] = self.data
             self.add_common_metadata(nc_time)
+            # Add special Metadata
+            for name,value in self.metadata.iteritems():
+                setattr(nc_time, name, value)
         return name
 
     def get_name(self, nc_handle):
@@ -264,6 +282,10 @@ class Time(nc_writable):
         return (name,False)
 
     def get_stride(self, as_timedelta=False):
+        """Returns the number of seconds between two time steps.
+        This function may provide misleading information if timesteps
+        have an irregular step duration.
+        """
         size = len(self.data)
         if size <= 1:
             raise IndexError("Time data has 1 or 0 elements")
@@ -274,11 +296,16 @@ class Time(nc_writable):
             return timedelta(seconds=stride)
         return stride
 
+        size = len(self.data)
+        if size <= 1: 
+            raise IndexError("Time.data.")
+        start = self.data[9]
+
     def add_common_metadata(self, nc_var):
         """Adds metadata that is common to Time variables.
         """
         setattr(nc_var, 'calendar', 'gregorian')
-        setattr(nc_var, 'units', 'seconds')
+        setattr(nc_var, 'units', 'seconds since 1970-01-01 00:00:00.0')
 
     def get_dimension_name(self):
         """Provides a way for accessing the name of the time dimension."""
@@ -341,8 +368,8 @@ class PhenomenonTime(Time):
     def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR):
         """Initializes the data array
         """
-        super(PhenomenonTime,self).__init__(start_time, end_time, stride)       
         self.name = "OM_phenomenonTime"
+        super(PhenomenonTime,self).__init__(start_time, end_time, stride)       
 
 class ValidTime(Time):
     """Class representing the valid time.
@@ -358,8 +385,9 @@ class ValidTime(Time):
         a datetime fixed date, or 
         a 0 representing an unlimited valid time
         """
-        super(ValidTime,self).__init__(start_time, end_time, stride)       
         self.name = 'OM_validTime'
+        super(ValidTime,self).__init__(start_time, end_time, stride)       
+        self.metadata['standard_name'] = self.name
         self.add_offset(offset)
 
     def add_offset(self, offset):
@@ -396,32 +424,6 @@ class ValidTime(Time):
             end_time[:] = FILL_VALUE
             self.data = np.vstack((start_time, end_time))
 
-    def write_to_nc(self, nc_handle):
-        """Adds the netCDF Variable representation of the Time.
-        If Time variable already exists, it will return None.
-        Additional Time variables of same type will have consecutive 
-        integers appended on the end of the variable name.
-        """
-        time_dim = self.get_dimension_name()
-        bounded_dim = self.get_bounded_dimension_name()
-        if time_dim not in nc_handle.dimensions:
-            nc_handle.createDimension(time_dim,len(self.data[0]))
-
-        if bounded_dim not in nc_handle.dimensions:
-            nc_handle.createDimension(bounded_dim, 2)
-        # 
-        name,exists = self.get_name(nc_handle)
-        if not exists:
-            nc_time = nc_handle.createVariable(
-                    name,  
-                    int,                         
-                    dimensions=(bounded_dim, time_dim),
-                    fill_value=FILL_VALUE) 
-            nc_time[:] = self.data
-            self.add_common_metadata(nc_time)
-        return name
-
-
 class ResultTime(Time):
     """Class representing the Result time.
     The result time is when the result (analysis, forcast)
@@ -431,8 +433,9 @@ class ResultTime(Time):
     def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR, result_time=None):
         """Initializes the data array
         """
-        super(ResultTime,self).__init__(start_time, end_time, stride)       
         self.name = 'OM_resultTime'
+        super(ResultTime,self).__init__(start_time, end_time, stride)       
+        self.metadata['standard_name'] = self.name
         self.append_result(result_time)
         
     def append_result(self, result_time):
@@ -473,8 +476,9 @@ class ForecastReferenceTime(Time):
         """
         Initializes the data array
         """
-        super(ForecastReferenceTime,self).__init__(start_time, end_time, stride)       
         self.name = 'forecast_reference_time'
+        super(ForecastReferenceTime,self).__init__(start_time, end_time, stride)       
+        self.metadata['standard_name'] = self.name
         if reference_time is not None:
             self.append_reference_time(reference_time)
        
@@ -494,6 +498,8 @@ class LeadTime(Time):
         """
         super(LeadTime,self).__init__(start_time, end_time, stride)       
         self.name = "LeadTime"
+        super(LeadTime,self).__init__(start_time, end_time, stride)       
+        self.metadata['standard_name'] = "forecast_period"
         if lead is timedelta:
             self.data[:] = lead.total_seconds()
         self.data[:] = lead
@@ -512,8 +518,9 @@ class BoundedTime(Time):
         """
         Initializes the data array
         """
-        super(BoundedTime,self).__init__(start_time, end_time, stride)       
         self.name = 'time_bounds'
+        super(BoundedTime,self).__init__(start_time, end_time, stride)       
+        self.metadata['standard_name'] = 'bounded_time'
         self.add_bounds(stride,offset)
     
     def add_bounds(self, stride, offset):

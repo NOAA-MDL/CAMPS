@@ -37,8 +37,7 @@ def reduce_grib(control=None):
    
     # projections
     gfs47a, gfs47b, gfs47c = projection.split(" ")
-   
-    if datadir is not list:
+    if type(datadir) is not list:
         datadir = [datadir]
     for gfs_dir in datadir:
         # Find ALL files in the datadir
@@ -50,13 +49,14 @@ def reduce_grib(control=None):
         
         # Only get those files that are every third projection hour
         files = filter(lambda f: int(f[-3:]) % 3 == 0 and int(f[-3:])<=96, files)
-
-        print "number of files:", files
-        forecast_hour = files[0][5:7]
-        outfile_name = 'mdl.gfs47.' + forecast_hour + "." + outfile_identifier + '.pgrb2'
-        outfile = outpath + outfile_name
+        
+        if len(files) > 0:
+            print "number of files:", files
+            forecast_hour = files[0][5:7]
+            outfile_name = 'mdl.gfs47.' + forecast_hour + "." + outfile_identifier + '.pgrb2'
 
         for gfs_file in files:
+            outfile = outpath + outfile_name
             infile = gfs_dir + gfs_file
             print infile
             

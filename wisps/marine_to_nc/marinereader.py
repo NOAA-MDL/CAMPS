@@ -3,14 +3,14 @@ import csv
 import os
 import pdb
 
+
 class marinereader():
     """
     Class to read Marine CSV text files.
     """
+
     obs_type = "marine"
-     
-    # Specify input filename.
-    # Specify output directory -- will append data to filename.
+
     def __init__(self, filename="undefined"):
         """
         Initializes class variables.
@@ -22,16 +22,16 @@ class marinereader():
 
     def read(self, start_date=None, end_date=None):
         """
-        Reads the file stored in self.filename and 
+        Reads the file stored in self.filename and
         stores the results as a station list dictionary.
         """
     #    try:
         with open(self.filename, "r") as marine_file:
-            marine_reader = csv.reader(marine_file, delimiter=":" ) 
+            marine_reader = csv.reader(marine_file, delimiter=":") 
             self.parse_file(marine_reader, start_date, end_date)
-   #     except Exception as e:
-   #         print "Error reading csv file"
-   #         print e
+    #     except Exception as e:
+    #         print "Error reading csv file"
+    #         print e
         return self.station_list
     
     def parse_file(self, marine_reader, start_date, end_date):
