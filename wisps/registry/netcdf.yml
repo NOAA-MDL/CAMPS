@@ -181,6 +181,7 @@ variables :
   air_temperature :
     data_type : int16
     dimensions : [*nstations,*time]
+    coord_val : 2
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "dry bulb temperature"
@@ -188,18 +189,19 @@ variables :
       valid_max : 130 
       standard_name : "air_temperature"
       units : "degrees F"
-      comment : "N/A"
+      coordinates : "elev"
   dew_point_temperature :
     data_type : int16
     dimensions : [*nstations,*time]
+    coord_val : 2
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/DewPt"
       long_name : "dew point temperature"
       standard_name : "dew_point_temperature"
       valid_min : -85
       valid_max :  80
+      coordinates : "elev"
       units : "degrees F"
-      comment : "N/A"
   present_weather_group_1 :
     data_type : uint16
     dimensions : [*nstations,*time]
@@ -240,10 +242,10 @@ variables :
       valid_min : 0
       valid_max : 40
       standard_name : "visibility_in_air"
-      comment : "N/A"
   wind_from_direction :
     data_type : int16
     dimensions : [*nstations,*time]
+    coord_val : 2
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/WindDir"
       long_name : "wind direction"
@@ -251,29 +253,33 @@ variables :
       valid_min : 0
       valid_max : 360
       standard_name : "wind_from_direction"
+      coordinates : "elev"
       comment : "Wind direction is set to 0 if winds are variable."
   wind_speed :
     data_type : int16 
     dimensions : [*nstations,*time]
+    coord_val : 2
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/WSpd"
       long_name : "wind speed"
       valid_min : 0
       valid_max : 75
       units : "knot"
+      coordinates : "elev"
       standard_name : "wind_speed"
       comment : "Wind speed is set to -9 if winds are variable."
   wind_speed_of_gust :
     data_type : int16
     dimensions : [*nstations,*time]
+    coord_val : 2
     attribute :
       OM_observedProperty : "StatPP/Data/Met/Moment/Gust"
       long_name : "wind speed of gust"
+      coordinates : "elev"
       valid_min : 0
       valid_max : 200
       standard_name : "wind_speed_of_gust"
       units : "knot"
-      comment : "N/A"
   air_pressure_at_sea_level :
     data_type : float32
     dimensions : [*nstations,*time]
@@ -295,7 +301,6 @@ variables :
       valid_max : 32
       units : "mm Hg"
       standard_name : "altimiter_range"
-      comment : "N/A"
   cloud_amount_layer_1 :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -315,7 +320,6 @@ variables :
       long_name : "cloud height layer 1"
       units : "feet"
       standard_name : "cloud_height_layer"
-      comment : "N/A"
   cloud_amount_layer_2  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -335,7 +339,6 @@ variables :
       long_name : "cloud height layer 2"
       units : "feet"
       standard_name : "cloud_height_layer"
-      comment : "N/A"
   cloud_amount_layer_3  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -355,7 +358,6 @@ variables :
       long_name : "cloud height layer 3"
       units : "feet"
       standard_name : "cloud_height_layer"
-      comment : "N/A"
   cloud_amount_layer_4  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -375,7 +377,6 @@ variables :
       long_name : "cloud height layer 4"
       units : "feet"
       standard_name : "cloud_height_layer"
-      comment : "N/A"
   cloud_amount_layer_5  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -386,7 +387,6 @@ variables :
       valid_max : 10
       standard_name : "cloud_amount_layer"
       units : "coded"
-      comment : "N/A"
   cloud_height_layer_5  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -395,7 +395,6 @@ variables :
       long_name : "cloud height layer 5"
       units : "feet"
       standard_name : "cloud_height_layer"
-      comment : "N/A"
   cloud_amount_layer_6  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -406,7 +405,6 @@ variables :
       valid_max : 10
       standard_name : "cloud_amount_layer"
       units : "coded"
-      comment : "N/A"
   cloud_height_layer_6  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -415,7 +413,6 @@ variables :
       long_name : "cloud height layer 6"
       units : "feet"
       standard_name : "cloud_height_layer"
-      comment : "N/A"
   precipitation_amount_1_hour  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -440,7 +437,7 @@ variables :
       OM_observedProperty : "StatPP/Data/Met/Moist/TotalPrecip"
       standard_name : "precipitation_amount"
       long_name : "3-hour precipitation amount"
-      cell_methods : "time_projection:sum"
+      cell_methods : "default_time_coordinate_size :sum"
       bounds : "time_bounds"
       valid_min : 0
       valid_max : 9
@@ -456,7 +453,7 @@ variables :
       long_name : "6-hour precipitation amount"
       valid_min : 0
       valid_max : 12
-      cell_methods : "time_projection:sum"
+      cell_methods : "default_time_coordinate_size :sum"
       bounds : "time_bounds"
       units : "inches"
       scale_factor : 100
@@ -470,7 +467,7 @@ variables :
       long_name : "24-hour precipitation amount"
       valid_min : 0
       valid_max : 24
-      cell_methods : "time_projection:sum"
+      cell_methods : "default_time_coordinate_size :sum"
       bounds : "time_bounds"
       scale_factor : 100
       units : "inches"
@@ -484,53 +481,77 @@ variables :
   temperature_6_hour_maximum  :
     data_type : int16
     dimensions : [*nstations,*time]
+    coord_val : 2
+    hours : 6
     attribute : 
       standard_name : "air_temperature"
       OM_observedProperty : "StatPP/Data/Met/temperature_6_hour_maximum"
+      coordinates : "elev"
       long_name : "6-hour maximum temperature"
+      cell_methods :  "default_time_coordinate_size : maximum"
       units : "Fahrenheit"
       comment : "Minimum and maximum values depend on season and region"
   temperature_6_hour_minimum  :
     data_type : int16
     dimensions : [*nstations,*time]
+    coord_val : 2
+    hours : 6
     attribute : 
       standard_name : "air_temperature"
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      coordinates : "elev"
+      cell_methods :  "default_time_coordinate_size : minimum"
       long_name : "6-hour minimum temperature"
       units : "Fahrenheit"
       comment : "Minimum and maximum values depend on season and region"
   temperature_1_hour_minimum  :
     data_type : int16
     dimensions : [*nstations,*time]
+    coord_val : 2
+    hours : 1
     attribute : 
       standard_name : "air_temperature"
+      coordinates : "elev"
+      cell_methods :  "default_time_coordinate_size : minimum"
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "1-hour minimum temperature"
       units : "Fahrenheit"
   temperature_1_hour_maximum  :
     data_type : int16
     dimensions : [*nstations,*time]
+    coord_val : 2
+    hours : 1
     attribute : 
       standard_name : "air_temperature"
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      coordinates : "elev"
+      cell_methods :  "default_time_coordinate_size : maximum"
       long_name : "1-hour minimum temperature"
       units : "Fahrenheit"
   calendar_day_maximum_temperature  :
     data_type : int16
     dimensions : [*nstations,*time]
+    coord_val : 2
+    hours : 24
     attribute : 
       standard_name : "air_temperature"
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      coordinates : "elev"
+      cell_methods :  "default_time_coordinate_size : maximum"
       long_name : "Calendar day maximum temperature"
       units : "degrees F"
       comment : "Minimum and maximum values depend on season and region"
   calendar_day_minimum_temperature  :
     data_type : int16
     dimensions : [*nstations,*time]
+    coord_val : 2
+    hours : 24
     attribute : 
       standard_name : "air_temperature"
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      coordinates : "elev"
       long_name : "calendar day minimum temperature"
+      cell_methods :  "default_time_coordinate_size : minimum"
       units : "degrees F"
       comment : "Minimum and maximum values depend on season and region"
   snow_depth_on_ground :

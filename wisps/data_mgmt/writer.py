@@ -12,7 +12,6 @@ import time
 import pdb
 import logging
 
-
 """
 Module to handle writing Wisps netCDF data
 """

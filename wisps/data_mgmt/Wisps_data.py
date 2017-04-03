@@ -53,14 +53,14 @@ class Wisps_data(nc_writable):
         Checks metadata to see if this has plev.
         """
         if coord_str in self.metadata:
-            return self.metadata[coord_str][:4] == 'plev'
+            return 'plev' in self.metadata[coord_str]
 
     def has_elev(self):
         """ 
         Checks metadata to see if this has elev.
         """
         if coord_str in self.metadata:
-            return self.metadata[coord_str][:4] == 'elev'
+            return 'elev' in self.metadata[coord_str]
     
     def has_bounds(self):
         """ 
@@ -137,7 +137,7 @@ class Wisps_data(nc_writable):
             try:
                 set_dimensions()
             except:
-                loggin.warning('set_dimensions failed')
+                logging.warning('set_dimensions failed')
         if len(data.shape) != len(self.dimensions):
             #pdb.set_trace()
             logging.error("number of dimensions of data is not " 
@@ -198,7 +198,7 @@ class Wisps_data(nc_writable):
             logging.error(type(dimensions), "is not of type tuple")
             raise TypeError
         if len(self.dimensions) > 0:
-            loggin.warning("overwriting dimensions")
+            logging.warning("overwriting dimensions")
         self.dimensions = dimensions
         return self
 
@@ -211,7 +211,7 @@ class Wisps_data(nc_writable):
         try :
             meta_dict = db.get_all_metadata(self.name)
         except ValueError :
-            loggin.warning(+ self.name+ "' not defined in metadata db")
+            logging.warning("'" +self.name+ "' not defined in metadata db")
         self.metadata = meta_dict
 
     def add_metadata(self, key, value):

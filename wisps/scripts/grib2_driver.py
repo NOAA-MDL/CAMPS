@@ -26,10 +26,8 @@ def main(control_file=None):
             for k,v in default.iteritems():
                 print "#",k,":",v
             return
-            
     else:
         control = cfg.read_grib2_control()
-
     log_file = control['log']
     debug_level = control['debug_level']
     out_log = None
@@ -51,7 +49,6 @@ def main(control_file=None):
 
     if log_file:
         out_log.close()
-
 
 if __name__ == "__main__":
     try:

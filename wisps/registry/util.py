@@ -15,7 +15,7 @@ class nc_struct():
         self.variables = {}
 
 def read_yaml(filename):
-    """Reads the contents of a yaml file and returns the value"""
+    """Reads the contents of a yaml file and returns the value."""
     logging.info("reading yaml config. File: "+filename)
     try:
         with open(filename, 'r') as stream:
@@ -52,25 +52,25 @@ def write_cache(data):
 
 def read_dimensions():
     """
-    Reads and returns dimension definitions
+    Reads and returns dimension definitions.
     """
     return read_nc_meta()['dimensions']
 
 def read_globals():
     """
-    Reads and returns global attributes definitions
+    Reads and returns global attributes definitions.
     """
     return read_nc_meta()['globals']
 
 def read_variables():
     """
-    returns structured configuration of all WISPS supported variables
+    returns structured configuration of all WISPS supported variables.
     """
     return read_nc_meta()['variables']
 
 def read_nc_meta():
     """Reads netcdf.yml file that contains the metadata for
-    common variables
+    common variables.
     """
     data = read_cache()
     if data:
@@ -88,8 +88,6 @@ def read_nc_config():
     nc.global_attributes = read_globals()
     nc.variables = read_variables()
     return nc
-
-
 
 def read_metar_control():
     """
