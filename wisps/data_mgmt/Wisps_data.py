@@ -91,7 +91,7 @@ class Wisps_data(nc_writable):
     def get_coordinate(self):
         """Returns the value of the coordinate data if it has 
         one. If this variable is a bounds, return a tuple of the bounds"""
-        if self.has_bounds():
+        if self.has_elev_bounds() or self.has_plev_bounds():
             try:
                 coord1 = self.properties['coord_val1']
                 coord2 = self.properties['coord_val2']
@@ -139,7 +139,6 @@ class Wisps_data(nc_writable):
             except:
                 logging.warning('set_dimensions failed')
         if len(data.shape) != len(self.dimensions):
-            #pdb.set_trace()
             logging.error("number of dimensions of data is not " 
                     "equal to number of object dimensions")
             raise ValueError
@@ -298,12 +297,12 @@ class Wisps_data(nc_writable):
         name += '_'
 
         # Write fcstReferenceTime
-        try:
-            name += str(self.metadata['FcstTime_hour'])
-        except:
-            pass
-        name += '_'
-
+#        try:
+#            name += str(self.metadata['FcstTime_hour'])
+#        except:
+#            pass
+#        name += '_'
+#
 
         # Write LeadTime
         try:
@@ -358,19 +357,20 @@ class Wisps_data(nc_writable):
         it's own variable and calls the assosiated function.
         A bounds function will always supercede the non-bounds function.
         """
+        success = False
         if self.has_plev_bounds():
-            return self.write_plev_bounds(nc_handle)
-        elif self.has_plev():
-            return self.write_plev(nc_handle)
+            success = self.write_plev_bounds(nc_handle)
         elif self.has_elev_bounds():
-            return self.write_elev_bounds(nc_handle)
+            success = self.write_elev_bounds(nc_handle)
+        elif self.has_plev():
+            success = self.write_plev(nc_handle)
         elif self.has_elev():
-            return self.write_elev(nc_handle)
+            success = self.write_elev(nc_handle)
 
         if self.has_time_bounds():
-            return self.write_time_bounds(nc_handle)
+            success = self.write_time_bounds(nc_handle)
 
-        return False
+        return success
     
     def write_elev_bounds(self, nc_handle):
         """
@@ -525,6 +525,9 @@ class Wisps_data(nc_writable):
         # If they are not, create them.
         self.create_dimensions(nc_handle)
 
+        # Check if the dimension sizes are in agreement
+        self.check_dimensions(nc_handle)
+
         fill_value = self.get_fill_value()
 
         # Get a variable name and make it unique if needed
@@ -549,16 +552,19 @@ class Wisps_data(nc_writable):
                 shuffle=False, 
                 fill_value=fill_value)
 
+
         # Add the metadata
         self.add_nc_metadata(nc_var)
 
         # Write the processes attribute string
         process_str = self.get_process_str()
         setattr(nc_var, "OM_procedure", process_str)
+
          
         self.add_nc_data(nc_var)
 
         return nc_handle
+
 
     def get_chunk_size(self, num_partitions):
         dtype = self.data.dtype
@@ -585,12 +591,35 @@ class Wisps_data(nc_writable):
         """
         try:
             nc_var[:] = self.data
-        except Exception as e:
+        except IndexError as e:
             print e
+
+    def check_dimensions(self, nc_handle):
+        """Check data dimension shape is equal to the nc handle dimension.
+        """
+        shape = self.data.shape
+        for index,(dim,size) in enumerate(zip(self.dimensions,shape)):
+            nc_dim_size = len(nc_handle.dimensions[dim])
+            if size != nc_dim_size: 
+                # Find if one has already been created
+                try: 
+                    count = 1
+                    while True:
+                        alt_dim_name = dim + "_alt" + str(count)
+                        count += 1
+                        nc_dim_size = len(nc_handle.dimensions[alt_dim_name])
+                        if size == nc_dim_size:
+                            self.dimensions[index] = alt_dim_name
+                            break
+                except KeyError:
+                    self.dimensions[index] = alt_dim_name
+                    self.create_dimension(nc_handle,alt_dim_name)
 
     def add_nc_metadata(self, nc_var):
         for name,value in self.metadata.iteritems():
             if name != 'name' and name != 'fill_value':
+                if type(value) is unicode: # To prevent 'string' prefix
+                    value = str(value)
                 setattr(nc_var, name, value)
 
     def get_fill_value(self):

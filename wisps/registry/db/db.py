@@ -18,11 +18,71 @@ def connect(db):
 conn = connect(db_name)
 c = conn.cursor()
 
-def create_db(table_name, dictionary):
+def create_variable_db():
     """
-    Creates a database based off of dictionary
+    Creates a variable database based off of dictionary
     """
-    pass
+    table_name = 'variable'
+    conn = connect(db_name)
+    c = conn.cursor()
+    c.execute('DROP TABLE IF EXISTS ' + table_name )
+    # Create the table
+    fields = get_variable_fields()
+    types = get_variable_types()
+    column_names_str = "("
+    for f,t in zip(fields,types):
+        column_names_str += f 
+        column_names_str += " " + t + ", "
+    column_names_str = column_names_str[0:-2] + ")"
+    print column_names_str
+    sql = 'CREATE TABLE ' + table_name +' '+ column_names_str
+    c.execute(sql)
+
+def get_variable_fields():
+    return ['property'   , 'source'         , 'leadtime'       , 'start' ,
+            'end'        , 'duration'       , 'duration_method', 'vert_coord1', 
+            'vert_coord2', 'vert_method'    , 'filename']
+def get_variable_types():
+    return ['TEXT'       , 'TEXT'           , 'BIGINT'         , 'BIGINT', 
+            'BIGINT'     , 'BIGINT'         , 'TEXT'           , 'INTEGER',
+            'INTEGER'    , 'TEXT'           , 'TEXT']
+
+def insert_variable(property, source, leadtime, start, end, duration, duration_method, vert_coord1, vert_coord2, vert_method, filename):
+    """ Inserts variable metadata information into the table. 
+    Requires arguments in the following order:
+    property, 
+    source,
+    leadtime, 
+    start, 
+    end, 
+    duration, 
+    duration_method, 
+    vert_coord1, 
+    vert_coord2, 
+    vert_method, 
+    filename
+    """
+    #var_db = 'variables.db'
+    table_name = 'variable'
+    #conn = connect(db_name)
+    #c = conn.cursor()
+    fields_string = ('?,'*len(get_variable_fields()))[:-1]
+    sql = "INSERT INTO "+ table_name + " VALUES (" + fields_string + ")"
+    sql_values = [
+    property, 
+    source,
+    leadtime, 
+    start, 
+    end, 
+    duration, 
+    duration_method, 
+    vert_coord1, 
+    vert_coord2, 
+    vert_method, 
+    filename ]
+    c.execute(sql, sql_values)
+    conn.commit()
+    conn.close()
 
 def create_new_metadata_db():
     """
@@ -88,6 +148,29 @@ def create_new_properties_db():
     conn.commit()
     conn.close()
 
+def get_variable(**kwargs):
+    """
+    Returns the value of of the attribute for 
+    the name.
+    str name : name of predictor. e.g. wind_speed
+    """
+    db = 'metadata'
+    #conn = connect(db_name)
+    #c = conn.cursor()
+    c.execute("PRAGMA table_info(metadata)")
+    name_arr = c.fetchall()
+    # The name of the column is at index 1. hence, ele[1]
+    name_arr = [ele[1] for ele in name_arr]
+    print name_arr
+    try :
+        index = name_arr.index(attr)
+        sql = "SELECT "+attr+" FROM "+db+" WHERE name = '"+name+"'"
+        c.execute(sql)
+        return c.fetchone()[0]
+    except ValueError as err:
+        print attr + " is not a known metadata attribute"
+        return False
+    conn.close()
 
 def get_metadata(name, attr):
     """

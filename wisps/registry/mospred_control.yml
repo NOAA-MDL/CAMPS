@@ -1,0 +1,33 @@
+# Specify period of interest
+start :
+    year : 2013
+    month : 02     # Where 1 is January and 12 is December
+    day : null
+    stride : null
+end :
+    year : 2015
+    month : 02     # Where 1 is January and 12 is December
+    day : null
+    stride : null
+
+output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/testOut/"
+
+# Can be DEBUG, INFO, WARNING, ERROR, CRITICAL.
+debug_level : "INFO"  
+
+# Log file that records the status of a run.
+# Set log_file to null or "" to print to stdout.
+log_file : ""
+
+# Specify the number of processors to be used during the run
+num_processors : 16
+
+# Provides all stations with colon delimeted information about the station,
+# including lat, lon, long name.
+station_defs : "/home/Riley.Conroy/dev/wisps_dev/iolib/config/station.tbl"
+
+# Provides a list of all stations that will be used in observations
+valid_stations : "/home/Riley.Conroy/dev/wisps_dev/iolib/config/metar.lst"
+
+predictor_file : "/home/Riley.Conroy/dev/wisps/wisps/registry"
+

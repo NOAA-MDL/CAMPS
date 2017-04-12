@@ -34,6 +34,10 @@ dimensions :
   plev : &plev 'pressure_level'
   elev : &elev 'elevation'
   chars : &chars 'num_characters'
+  lead_time : &lead 'lead_times'
+  lat : &lat 'lat'
+  lon : &lon 'lon'
+  
 
 ########################################
 ##
@@ -310,7 +314,7 @@ variables :
       units : "coded"
       valid_min : 0
       valid_max : 10
-      standard_name : "cloud_amount_layer"
+      standard_name : "cloud_area_fraction_in_atmosphere_layer"
       comment : "Enumeration can be found at:"
   cloud_height_layer_1  :
     data_type : int16
@@ -319,7 +323,7 @@ variables :
       OM_observedProperty : "StatPP/Data/Met/cloud_height_layer_1"
       long_name : "cloud height layer 1"
       units : "feet"
-      standard_name : "cloud_height_layer"
+      standard_name : "convective_cloud_base_height"
   cloud_amount_layer_2  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -329,7 +333,7 @@ variables :
       valid_min : 0
       valid_max : 10
       units : "coded"
-      standard_name : "cloud_amount_layer"
+      standard_name : "cloud_area_fraction_in_atmosphere_layer"
       comment : "Enumeration can be found at:"
   cloud_height_layer_2  :
     data_type : int16
@@ -338,7 +342,7 @@ variables :
       OM_observedProperty : "StatPP/Data/Met/cloud_height_layer_2"
       long_name : "cloud height layer 2"
       units : "feet"
-      standard_name : "cloud_height_layer"
+      standard_name : "convective_cloud_base_height"
   cloud_amount_layer_3  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -348,7 +352,7 @@ variables :
       valid_min : 0
       units : "coded"
       valid_max : 10
-      standard_name : "cloud_amount_layer"
+      standard_name : "cloud_area_fraction_in_atmosphere_layer"
       comment : "Enumeration can be found at:"
   cloud_height_layer_3  :
     data_type : int16
@@ -357,7 +361,7 @@ variables :
       OM_observedProperty : "StatPP/Data/Met/cloud_height_layer_3"
       long_name : "cloud height layer 3"
       units : "feet"
-      standard_name : "cloud_height_layer"
+      standard_name : "convective_cloud_base_height"
   cloud_amount_layer_4  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -367,7 +371,7 @@ variables :
       valid_min : 0
       valid_max : 10
       units : "coded"
-      standard_name : "cloud_amount_layer"
+      standard_name : "cloud_area_fraction_in_atmosphere_layer"
       comment : "Enumeration can be found at:"
   cloud_height_layer_4  :
     data_type : int16
@@ -376,7 +380,7 @@ variables :
       OM_observedProperty : "StatPP/Data/Met/cloud_height_layer_4"
       long_name : "cloud height layer 4"
       units : "feet"
-      standard_name : "cloud_height_layer"
+      standard_name : "convective_cloud_base_height"
   cloud_amount_layer_5  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -385,7 +389,7 @@ variables :
       long_name : "cloud amount layer 5"
       valid_min : 0
       valid_max : 10
-      standard_name : "cloud_amount_layer"
+      standard_name : "cloud_area_fraction_in_atmosphere_layer"
       units : "coded"
   cloud_height_layer_5  :
     data_type : int16
@@ -394,7 +398,7 @@ variables :
       OM_observedProperty : "StatPP/Data/Met/cloud_height_layer_5"
       long_name : "cloud height layer 5"
       units : "feet"
-      standard_name : "cloud_height_layer"
+      standard_name : "convective_cloud_base_height"
   cloud_amount_layer_6  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -403,7 +407,7 @@ variables :
       long_name : "cloud amount layer 6"
       valid_min : 0
       valid_max : 10
-      standard_name : "cloud_amount_layer"
+      standard_name : "cloud_area_fraction_in_atmosphere_layer"
       units : "coded"
   cloud_height_layer_6  :
     data_type : int16
@@ -412,7 +416,7 @@ variables :
       OM_observedProperty : "StatPP/Data/Met/cloud_height_layer_6"
       long_name : "cloud height layer 6"
       units : "feet"
-      standard_name : "cloud_height_layer"
+      standard_name : "convective_cloud_base_height"
   precipitation_amount_1_hour  :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -477,6 +481,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/duration_of_sunshine"
       long_name : "minutes of sunshine"
+      standard_name : "duration_of_sunshine"
       units : "minutes"
   temperature_6_hour_maximum  :
     data_type : int16
@@ -489,6 +494,7 @@ variables :
       coordinates : "elev"
       long_name : "6-hour maximum temperature"
       cell_methods :  "default_time_coordinate_size : maximum"
+      bounds : "time_bounds"
       units : "Fahrenheit"
       comment : "Minimum and maximum values depend on season and region"
   temperature_6_hour_minimum  :
@@ -501,6 +507,7 @@ variables :
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       coordinates : "elev"
       cell_methods :  "default_time_coordinate_size : minimum"
+      bounds : "time_bounds"
       long_name : "6-hour minimum temperature"
       units : "Fahrenheit"
       comment : "Minimum and maximum values depend on season and region"
@@ -513,6 +520,7 @@ variables :
       standard_name : "air_temperature"
       coordinates : "elev"
       cell_methods :  "default_time_coordinate_size : minimum"
+      bounds : "time_bounds"
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "1-hour minimum temperature"
       units : "Fahrenheit"
@@ -525,6 +533,7 @@ variables :
       standard_name : "air_temperature"
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       coordinates : "elev"
+      bounds : "time_bounds"
       cell_methods :  "default_time_coordinate_size : maximum"
       long_name : "1-hour minimum temperature"
       units : "Fahrenheit"
@@ -537,6 +546,7 @@ variables :
       standard_name : "air_temperature"
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       coordinates : "elev"
+      bounds : "time_bounds"
       cell_methods :  "default_time_coordinate_size : maximum"
       long_name : "Calendar day maximum temperature"
       units : "degrees F"
@@ -551,6 +561,7 @@ variables :
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       coordinates : "elev"
       long_name : "calendar day minimum temperature"
+      bounds : "time_bounds"
       cell_methods :  "default_time_coordinate_size : minimum"
       units : "degrees F"
       comment : "Minimum and maximum values depend on season and region"
@@ -569,12 +580,14 @@ variables :
       OM_observedProperty : "StatPP/Data/Met/snowfall_amount"
       long_name : "snowfall amount"
       units : "inches"
+      standard_name : "snowfall_amount"
       comment : "amount of snowfall that has fallen in the past hour. must be > .5 inches"
   sattelite_cloud_amount_category_GOES_E :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/sattelite_cloud_amount_category_GOES_E"
+      standard_name : "cloud_area_fraction"
       long_name : "satellite cloud amount category from GOES-East"
       units : "coded"
   sattelite_effective_cloud_amount_GOES_E :
@@ -583,12 +596,14 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/sattelite_effective_cloud_amount_GOES_E"
       long_name : "sattelite effective cloud amount from GOES-East"
+      standard_name : "cloud_area_fraction"
       units : "coded"
   sattelite_cloud_amount_category_GOES_W :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/sattelite_cloud_amount_category_GOES_W"
+      standard_name : "cloud_area_fraction"
       long_name : "sattelite cloud amount from GOES-West"
   sattelite_effective_cloud_amount_GOES_W :
     data_type : int16
@@ -603,6 +618,7 @@ variables :
     attribute : 
       standard_name : "sea_water_temperature"
       OM_observedProperty : "StatPP/Data/Met/water_temperature"
+      standard_name : "sea_surface_skin_temperature"
       long_name : "water temperature"
       units : "degrees F"
   wave_height :
@@ -612,6 +628,7 @@ variables :
       OM_observedProperty : "StatPP/Data/Met/wave_height"
       long_name : "wave_height"
       units : "centimeters"
+      standard_name : "sea_surface_swell_significant_height"
       comment : "average height of highest 1/3"
   average_wave_period :
     data_type : int16
@@ -620,6 +637,7 @@ variables :
       OM_observedProperty : "StatPP/Data/Met/average_wave_period"
       long_name : "average wave period"
       units : "seconds"
+      standard_name : "sea_surface_swell_wave_period"
       comment : "Average wave period in a 20 minute period"
   dominant_wave_period :
     data_type : int16
@@ -627,6 +645,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/dominant_wave_period"
       long_name : "average wave period"
+      standard_name : "sea_surface_swell_wave_period"
       units : "seconds"
   albedo_3hr_avg :
     data_type : float32
@@ -634,7 +653,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/albedo_3hr_avg"
       long_name : "albedo 3hr avg"
-      standard_name : "albedo_3hr_avg"
+      standard_name : "surface_albedo"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -644,7 +663,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/albedo"
       long_name : "albedo 6hr avg"
-      standard_name : "albedo_6hr_avg"
+      standard_name : "surface_albedo"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -654,7 +673,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/best_4layer_lifted_index"
       long_name : "best 4layer lifted index instant"
-      standard_name : "best_4layer_lifted_index"
+      standard_name : "temperature_difference_between_ambient_air_and_air_lifted_adiabatically"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -744,7 +763,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/convective_available_potential_energy"
       long_name : "convective available potential energy instant"
-      standard_name : "convective_available_potential_energy"
+      standard_name : "atmosphere_convective_available_potential_energy"
       units : "J/kg"
       valid_min : ""
       valid_max : ""
@@ -754,7 +773,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/convective_inhibition"
       long_name : "convective inhibition instant"
-      standard_name : "convective_inhibition"
+      standard_name : "atmosphere_convective_inhibition"
       units : "J/kg"
       valid_min : ""
       valid_max : ""
@@ -764,7 +783,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/convective_precipitation_3hr_accum"
       long_name : "convective precipitation 3hr accum surface"
-      standard_name : "convective_precipitation_3hr_accum_surface"
+      standard_name : "convective_precipitation_amount"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -774,7 +793,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/convective_precipitation_6hr_accum"
       long_name : "convective precipitation 6hr accum surface"
-      standard_name : "convective_precipitation_6hr_accum_surface"
+      standard_name : "convective_precipitation_amount"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -785,7 +804,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 1000"
-      standard_name : "geopotential_height_1000"
+      standard_name : "geopotential_height"
       units : "gpm"
       valid_min : ""
       valid_max : ""
@@ -797,7 +816,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 300"
-      standard_name : "geopotential_height_300"
+      standard_name : "geopotential_height"
       units : "gpm"
       valid_min : ""
       valid_max : ""
@@ -809,7 +828,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 500"
-      standard_name : "geopotential_height_500"
+      standard_name : "geopotential_height"
       units : "gpm"
       valid_min : ""
       valid_max : ""
@@ -821,7 +840,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 600"
-      standard_name : "geopotential_height_600"
+      standard_name : "geopotential_height"
       units : "gpm"
       valid_min : ""
       valid_max : ""
@@ -833,7 +852,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 700"
-      standard_name : "geopotential_height_700"
+      standard_name : "geopotential_height"
       units : "gpm"
       valid_min : ""
       valid_max : ""
@@ -845,7 +864,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 750"
-      standard_name : "geopotential_height_750"
+      standard_name : "geopotential_height"
       units : "gpm"
       valid_min : ""
       valid_max : ""
@@ -857,7 +876,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 800"
-      standard_name : "geopotential_height_800"
+      standard_name : "geopotential_height"
       units : "gpm"
       valid_min : ""
       valid_max : ""
@@ -869,7 +888,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 850"
-      standard_name : "geopotential_height_instant_850"
+      standard_name : "geopotential_height"
       units : "gpm"
       valid_min : ""
       valid_max : ""
@@ -881,7 +900,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 900"
-      standard_name : "geopotential_height_900"
+      standard_name : "geopotential_height"
       units : "gpm"
       valid_min : ""
       valid_max : ""
@@ -893,7 +912,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 925"
-      standard_name : "geopotential_height_instant_925"
+      standard_name : "geopotential_height"
       units : "gpm"
       valid_min : ""
       valid_max : ""
@@ -905,7 +924,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 950"
-      standard_name : "geopotential_height_instant_950"
+      standard_name : "geopotential_height"
       units : "gpm"
       valid_min : ""
       valid_max : ""
@@ -917,7 +936,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 975"
-      standard_name : "geopotential_height_instant_975"
+      standard_name : "geopotential_height"
       units : "gpm"
       valid_min : ""
       valid_max : ""
@@ -928,7 +947,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/planetary_boundary_layer_height"
       long_name : "planetary boundary layer height instant"
-      standard_name : "planetary_boundary_layer_height_instant"
+      standard_name : "atmosphere_boundary_layer_thickness"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -938,7 +957,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/PWat"
       long_name : "precipitable water instant surface"
-      standard_name : "precipitable_water_instant_surface"
+      standard_name : "lwe_thickness_of_atmosphere_mass_content_of_water_vapor"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -948,7 +967,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/Pres"
       long_name : "pressure reduced to msl instant"
-      standard_name : "pressure_reduced_to_msl_instant"
+      standard_name : "air_pressure"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -958,7 +977,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant surface"
-      standard_name : "relative_humidity_instant_surface"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -969,7 +988,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 1000"
-      standard_name : "relative_humidity_instant_1000"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -980,7 +999,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 2"
-      standard_name : "relative_humidity_instant_2"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -991,7 +1010,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 300"
-      standard_name : "relative_humidity_instant_300"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1001,7 +1020,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 3000"
-      standard_name : "relative_humidity_instant_3000"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1012,7 +1031,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 500"
-      standard_name : "relative_humidity_instant_500"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1024,7 +1043,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 600"
-      standard_name : "relative_humidity_instant_600"
+      standard_name : "relative_humidity"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -1036,7 +1055,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 700"
-      standard_name : "relative_humidity_instant_700"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1048,7 +1067,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 750"
-      standard_name : "relative_humidity_instant_750"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1060,7 +1079,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 800"
-      standard_name : "relative_humidity_instant_800"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1072,7 +1091,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 850"
-      standard_name : "relative_humidity_instant_850"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1084,7 +1103,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 900"
-      standard_name : "relative_humidity_instant_900"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1096,7 +1115,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 925"
-      standard_name : "relative_humidity_instant_925"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1108,7 +1127,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 950"
-      standard_name : "relative_humidity_instant_950"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1120,7 +1139,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 975"
-      standard_name : "relative_humidity_instant_975"
+      standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1131,7 +1150,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/storm_relative_helicity"
       long_name : "storm relative helicity instant 3000"
-      standard_name : "storm_relative_helicity_instant_3000"
+      standard_name : "product_of_eastward_wind_and_upward_air_velocity"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -1140,8 +1159,8 @@ variables :
     dimensions : [] 
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/lifted_index"
-      long_name : "lifted index instant surface"
-      standard_name : "lifted_index_instant_surface"
+      long_name : "lifted index from surface"
+      standard_name : "temperature_difference_between_ambient_air_and_air_lifted_adiabatically_from_the_surface"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -1151,7 +1170,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Mass/Pres"
       long_name : "pressure instant surface"
-      standard_name : "pressure_instant_surface"
+      standard_name : "air_pressure"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -1161,7 +1180,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "maximum temperature 3hr max 2"
-      standard_name : "maximum_temperature_3hr_max_2"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1171,7 +1190,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "maximum temperature 6hr max 2"
-      standard_name : "maximum_temperature_6hr_max_2"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1181,7 +1200,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "minimum temperature 3hr min 2"
-      standard_name : "minimum_temperature_3hr_min_2"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1191,7 +1210,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "minimum temperature 6hr min 2"
-      standard_name : "minimum_temperature_6hr_min_2"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1202,7 +1221,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "2 metre temperature instant 2"
-      standard_name : "2_metre_temperature_instant_2"
+      standard_name : "air_temperature"
       coordinates: "elev"
       units : "K"
       valid_min : ""
@@ -1284,7 +1303,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 750"
-      standard_name : "temperature"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1296,7 +1315,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 800"
-      standard_name : "temperature"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1308,7 +1327,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 850"
-      standard_name : "temperature"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1320,7 +1339,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 900"
-      standard_name : "temperature"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1332,7 +1351,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 925 mb"
-      standard_name : "temperature"
+      standard_name : "air_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1385,9 +1404,9 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/U_wind_speed"
+      OM_observedProperty : "StatPP/Data/Met/MomentUwind"
       long_name : "U wind speed instant 10m"
-      standard_name : "U_wind_speed_instant_10m"
+      standard_name : "northward_wind"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -1395,9 +1414,9 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/V_wind_speed"
+      OM_observedProperty : "StatPP/Data/Met/MomentVwind"
       long_name : "V wind speed instant 10m"
-      standard_name : "V_wind_speed_instant_10m"
+      standard_name : "eastward_wind"
       units : ""
       valid_min : ""
       valid_max : ""
@@ -1407,7 +1426,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant surface"
-      standard_name : "u_component_of_wind_instant_surface"
+      standard_name : "northward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1418,7 +1437,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 1000"
-      standard_name : "u_component_of_wind_instant_1000"
+      standard_name : "northward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1430,7 +1449,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 300"
-      standard_name : "u_component_of_wind_instant_300"
+      standard_name : "northward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1442,7 +1461,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 500"
-      standard_name : "u_component_of_wind_instant_500"
+      standard_name : "northward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1454,7 +1473,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 600"
-      standard_name : "u_component_of_wind_instant_600"
+      standard_name : "northward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1466,7 +1485,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 700"
-      standard_name : "u_component_of_wind_instant_700"
+      standard_name : "northward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1478,7 +1497,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 750"
-      standard_name : "u_component_of_wind_instant_750"
+      standard_name : "northward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1490,7 +1509,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 800"
-      standard_name : "u_component_of_wind_instant_800"
+      standard_name : "northward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1502,7 +1521,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 850"
-      standard_name : "u_component_of_wind_instant_850"
+      standard_name : "northward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1514,7 +1533,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 900"
-      standard_name : "u_component_of_wind_instant_900"
+      standard_name : "northward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1526,7 +1545,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 925"
-      standard_name : "u_component_of_wind_instant_925"
+      standard_name : "northward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1538,7 +1557,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 950"
-      standard_name : "u_component_of_wind_instant_950"
+      standard_name : "northward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1550,7 +1569,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 975"
-      standard_name : "u_component_of_wind_instant_975"
+      standard_name : "northward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1571,7 +1590,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant surface"
-      standard_name : "v_component_of_wind_instant_surface"
+      standard_name : "eastward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1580,9 +1599,9 @@ variables :
     dimensions : [] 
     coord_val : 1000
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind_"
+      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 1000"
-      standard_name : "v_component_of_wind_instant_1000"
+      standard_name : "eastward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1594,7 +1613,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 300"
-      standard_name : "v_component_of_wind_instant_300"
+      standard_name : "eastward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1606,7 +1625,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 500"
-      standard_name : "v_component_of_wind_instant_500"
+      standard_name : "eastward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1618,7 +1637,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 600"
-      standard_name : "v_component_of_wind_instant_600"
+      standard_name : "eastward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1630,7 +1649,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 700"
-      standard_name : "v_component_of_wind_instant_700"
+      standard_name : "eastward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1642,7 +1661,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 750"
-      standard_name : "v_component_of_wind_instant_750"
+      standard_name : "eastward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1654,7 +1673,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 800"
-      standard_name : "v_component_of_wind_instant_800"
+      standard_name : "eastward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1666,7 +1685,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 850"
-      standard_name : "v_component_of_wind_instant_850"
+      standard_name : "eastward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1678,7 +1697,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 900"
-      standard_name : "v_component_of_wind_instant_900"
+      standard_name : "eastward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1690,7 +1709,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 925"
-      standard_name : "v_component_of_wind_instant_925"
+      standard_name : "eastward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1702,7 +1721,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 950"
-      standard_name : "v_component_of_wind_instant_950"
+      standard_name : "eastward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1714,7 +1733,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 975"
-      standard_name : "v_component_of_wind_instant_975"
+      standard_name : "eastward_wind"
       units : "m/s"
       valid_min : ""
       valid_max : ""
@@ -1725,7 +1744,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant surface"
-      standard_name : "vertical_velocity_instant_surface"
+      standard_name : "upward_air_velocity"
       units : "Pa/s"
       valid_min : ""
       valid_max : ""
@@ -1736,7 +1755,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 1000"
-      standard_name : "vertical_velocity_instant_1000"
+      standard_name : "upward_air_velocity"
       units : "Pa/s"
       valid_min : ""
       valid_max : ""
@@ -1748,7 +1767,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 300"
-      standard_name : "vertical_velocity_instant_300"
+      standard_name : "upward_air_velocity"
       units : "Pa/s"
       valid_min : ""
       valid_max : ""
@@ -1760,7 +1779,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 500"
-      standard_name : "vertical_velocity_instant_500"
+      standard_name : "upward_air_velocity"
       units : "Pa/s"
       valid_min : ""
       valid_max : ""
@@ -1772,7 +1791,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 600"
-      standard_name : "vertical_velocity_instant_600"
+      standard_name : "upward_air_velocity"
       units : "Pa/s"
       valid_min : ""
       valid_max : ""
@@ -1784,7 +1803,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 700"
-      standard_name : "vertical_velocity_instant_700"
+      standard_name : "upward_air_velocity"
       units : "Pa/s"
       valid_min : ""
       valid_max : ""
@@ -1796,7 +1815,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 750"
-      standard_name : "vertical_velocity_instant_750"
+      standard_name : "upward_air_velocity"
       units : "Pa/s"
       valid_min : ""
       valid_max : ""
@@ -1808,7 +1827,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 800"
-      standard_name : "vertical_velocity_instant_800"
+      standard_name : "upward_air_velocity"
       units : "Pa/s"
       valid_min : ""
       valid_max : ""
@@ -1820,7 +1839,7 @@ variables :
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 850"
-      standard_name : "vertical_velocity_instant_850"
+      standard_name : "upward_air_velocity"
       units : "Pa/s"
       valid_min : ""
       valid_max : ""
@@ -1831,8 +1850,8 @@ variables :
     coord_val : 900
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
-      long_name : "vertical velocity instant 900"
-      standard_name : "vertical_velocity_instant_900"
+      long_name : "vertical velocity 900"
+      standard_name : "upward_air_velocity"
       units : "Pa/s"
       valid_min : ""
       valid_max : ""
@@ -1843,8 +1862,8 @@ variables :
     coord_val : 925
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
-      long_name : "vertical velocity instant 925"
-      standard_name : "vertical_velocity"
+      long_name : "vertical velocity 925 mb"
+      standard_name : "upward_air_velocity"
       units : "Pa/s"
       valid_min : ""
       valid_max : ""
@@ -1855,8 +1874,8 @@ variables :
     coord_val : 950
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
-      long_name : "vertical velocity"
-      standard_name : "vertical_velocity"
+      long_name : "vertical velocity at 950 mb"
+      standard_name : "upward_air_velocity"
       units : "Pa/s"
       valid_min : ""
       valid_max : ""
@@ -1867,8 +1886,8 @@ variables :
     coord_val : 975
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
-      long_name : "vertical velocity instant 975"
-      standard_name : "vertical_velocity"
+      long_name : "vertical velocity at 975mb"
+      standard_name : "upward_air_velocity"
       units : "Pa/s"
       valid_min : ""
       valid_max : ""
@@ -1878,8 +1897,8 @@ variables :
     dimensions : [] 
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/VolSoilMoist"
-      long_name : "volumetric soil moisture content instant"
-      standard_name : "volumetric_soil_moisture_content"
+      long_name : "volumetric soil moisture content"
+      standard_name : "soil_moisture_content"
       units : "Proportion"
       valid_min : ""
       valid_max : ""
@@ -1888,8 +1907,8 @@ variables :
     dimensions : [] 
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/water_equivalent_of_accumulated_snow_depth"
-      long_name : "water equivalent of accumulated snow depth instant"
-      standard_name : "water_equivalent_of_accumulated_snow_depth"
+      long_name : "water equivalent of accumulated snow depth"
+      standard_name : "liquid_water_content_of_surface_snow"
       units : ""
       valid_min : ""
       valid_max : ""

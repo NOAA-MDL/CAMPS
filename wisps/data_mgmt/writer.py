@@ -76,6 +76,23 @@ def write_global_attributes(nc, extra_globals):
     for name,value in nc_globals.iteritems():
         setattr(nc, name, value)
 
+def update_variable_db(w_obj):
+    """Adds a new entry to the variable database
+    """
+    db.insert_variable(
+    property,
+    source,
+    leadtime,
+    start,
+    end,
+    duration,
+    duration_method,
+    vert_coord1,
+    vert_coord2,
+    vert_method,
+    filename)
+
+
 def get_dimensions(wisps_data):
     """
     Checks if each object's dimensions have the same length.
@@ -102,4 +119,5 @@ def get_dimensions(wisps_data):
                         "dimensions in list")
                 raise ValueError
     return count
+
 
