@@ -40,5 +40,3 @@ class Process(nc_writable):
     def get_attribute(self, key):
         """Returns value of attribute key"""
         return self.attributes[key]
-
-

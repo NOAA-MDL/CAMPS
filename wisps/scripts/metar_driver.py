@@ -1,25 +1,24 @@
 #!/usr/bin/env python
 # Add a relative path
-import sys, os
+import sys
+import os
+import numpy as np
+import logging
+from collections import OrderedDict
+import multiprocessing
+import pdb
 file_dir = os.path.dirname(os.path.realpath(__file__))
 relative_path = "/.."
 path = os.path.abspath(file_dir + relative_path)
 sys.path.insert(0, path)
-
-import numpy as np
-import logging
 from netCDF4 import Dataset
 from datetime import datetime, timedelta
-from collections import OrderedDict
-import multiprocessing
 from metar_to_nc.util import *
 import metar_to_nc.qc_main as qc
 import registry.util as cfg
 from data_mgmt.Wisps_data import Wisps_data
 import data_mgmt.Time as Time
 import data_mgmt.writer as writer
-import pdb
-
 
 
 def main(control_file=None):
@@ -51,7 +50,7 @@ def main(control_file=None):
     pickle = control['pickle']
     num_procs = control['num_processors']
     os.environ['NUM_PROCS'] = str(num_procs)
-    
+
     num_procs = check_num_procs(num_procs)
 
     if log_file:
@@ -118,20 +117,22 @@ def main(control_file=None):
     met_to_nc = cfg.read_metar_nc_lookup()
     for metar_name in obs:
         # Set the observation name to the standard WISPS name
-        try :
+        try:
             observation_name = met_to_nc[metar_name]
-        except :
-            logging.error("Cannot find the netcdf equivalent of " +metar_name +
-                    "in METAR lookup table. Skipping.")
+        except:
+            logging.error("Cannot find the netcdf equivalent of " +
+                          metar_name +
+                          "in METAR lookup table. Skipping.")
             continue
         # Loop through the stations and stitch together the current observation
         temp_obs = []
         for station_name, cur_station in stations.iteritems():
             station_data = cur_station.get_obs(metar_name)
-            if len(temp_obs) == 0: #If the first station
+            if len(temp_obs) == 0:  # If the first station
                 temp_obs = station_data
             else:
-                temp_obs = np.vstack((temp_obs, station_data)) # takes tuple arg
+                temp_obs = np.vstack(
+                    (temp_obs, station_data))  # takes tuple arg
         logging.info(observation_name)
         wisps_obj = Wisps_data(observation_name)
         wisps_obj.set_dimensions()
@@ -151,48 +152,54 @@ def main(control_file=None):
     if log_file:
         out_log.close()
 
+
 def check_num_procs(num_procs):
     max_cpu_count = multiprocessing.cpu_count()
     if num_procs > max_cpu_count:
         loggin.warning("More processors specified than available")
-        loggin.warning("defaulting to number of processors available: " + max_cpu_count)
+        loggin.warning(
+            "defaulting to number of processors available: " + max_cpu_count)
         return max_cpu_count
     return num_procs
 
+
 def get_globals():
     """Returns a dictionary of global attributes for metar QC"""
-    return {"source" : "Data from METAR with MDL Quality Control"}
+    return {"source": "Data from METAR with MDL Quality Control"}
+
 
 def add_time(start, end, stride=None):
     time = []
-    if stride == None: 
+    if stride is None:
         stride = Time.ONE_HOUR
     pt = Time.PhenomenonTime(start, end, stride)
     # Result time will be PhenomenonTime
-    rt = Time.ResultTime(start, end, stride) 
+    rt = Time.ResultTime(start, end, stride)
     # Valid Time will be forever
-    vt = Time.ValidTime(start, end, stride) 
-        
+    vt = Time.ValidTime(start, end, stride)
+
     time.append(pt)
     time.append(rt)
     time.append(vt)
     return time
 
+
 def pack_station_names(names):
     w_obj = Wisps_data('station')
     max_chars = max([len(i) for i in names])
-    names = [ name+('_'*(max_chars - len(name))) for name in names]
+    names = [name + ('_' * (max_chars - len(name))) for name in names]
     station_name_arr = np.array([])
     for name in names:
         char_arr = np.array(list(name), 'c')
-        if len(station_name_arr) == 0: #if it's the first station
+        if len(station_name_arr) == 0:  # if it's the first station
             station_name_arr = char_arr
         else:
-            station_name_arr = np.vstack((station_name_arr,char_arr))
-    w_obj.set_dimensions(tuple(['number_of_stations','num_characters']))
+            station_name_arr = np.vstack((station_name_arr, char_arr))
+    w_obj.set_dimensions(tuple(['number_of_stations', 'num_characters']))
     w_obj.add_data(station_name_arr)
     w_obj.add_metadata("fill_value", '_')
     return w_obj
+
 
 if __name__ == "__main__":
     try:

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import sys, os
+import sys
+import os
 file_dir = os.path.dirname(os.path.realpath(__file__))
 relative_path = "/../.."
 path = os.path.abspath(file_dir + relative_path)
@@ -12,6 +13,7 @@ import pickle
 import cProfile
 import re
 
+
 def test_obs_driver():
     metar_driver.main()
 
@@ -23,10 +25,12 @@ def test_qc():
 
     qc_main.qc(mmk)
 
+
 def test_alt():
     with open('stations.pkl', 'rb') as input:
         mmk = pickle.load(input)
         metar_driver.test_alt(mmk)
+
 
 def alt_func():
     with open('postqc.pkl', 'rb') as input:
@@ -35,6 +39,6 @@ def alt_func():
 
 
 
-#test_alt()
+# test_alt()
 metar_driver.main()
-#alt_func()
+# alt_func()

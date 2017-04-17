@@ -7,16 +7,19 @@ from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool
 
 MISSING_VALUE = 9999
+
+
 def qc_pressure(station_list):
     all_errors = []
     num_processors = int(os.getenv('NUM_PROCS', 8))
     pool = Pool(num_processors)
-    all_errors = pool.map(qc_pressure_st,station_list)
+    all_errors = pool.map(qc_pressure_st, station_list)
     pool.close()
     pool.join()
     return all_errors
-    #print "pressure"
-    #for station in station_list:
+    # print "pressure"
+    # for station in station_list:
+
 
 def qc_pressure_st(station):
 
@@ -25,35 +28,32 @@ def qc_pressure_st(station):
     altimeter = station.get_obs("ALT")
     station_type = station.get_obs("TYPE")
 
-    #scale factor is 10
+    # scale factor is 10
 
-    errors = qc_general.check_bounds(pressure,875,1075)
+    errors = qc_general.check_bounds(pressure, 875, 1075)
     qc_error.set_all_attr(errors, "error_code", 9601)
     qc_error.set_all_attr(errors, "station_name", station.name)
     all_errors += errors
 
     tolerance = 3.4
 
-    errors = qc_general.check_consistency(pressure,station_type,tolerance)
+    errors = qc_general.check_consistency(pressure, station_type, tolerance)
     qc_error.set_all_attr(errors, "error_code", 9603)
     qc_error.set_all_attr(errors, "station_name", station.name)
     all_errors += errors
 
-    #scale factor is 100
+    # scale factor is 100
 
     tolerance = .1
 
-    errors = qc_general.check_bounds(altimeter,24,32)
+    errors = qc_general.check_bounds(altimeter, 24, 32)
     qc_error.set_all_attr(errors, "error_code", 9602)
     qc_error.set_all_attr(errors, "station_name", station.name)
     all_errors += errors
-    
-    errors = qc_general.check_consistency(altimeter,station_type,tolerance)
+
+    errors = qc_general.check_consistency(altimeter, station_type, tolerance)
     qc_error.set_all_attr(errors, "error_code", 9604)
     qc_error.set_all_attr(errors, "station_name", station.name)
     all_errors += errors
 
-    return all_errors 
-
-
-
+    return all_errors

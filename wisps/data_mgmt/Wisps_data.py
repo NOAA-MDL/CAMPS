@@ -1,18 +1,17 @@
-import sys, os
-#sys.path.insert(0,os.path.abspath('..'))
+import sys
+import os
+import numpy as np
+import pdb
+import re
+import logging
+from netCDF4 import Dataset
 file_dir = os.path.dirname(os.path.realpath(__file__))
 relative_path = "/.."
 path = os.path.abspath(file_dir + relative_path)
 sys.path.insert(0, path)
-import numpy as np
-import Location
-import logging
-from nc_writable import nc_writable 
+from nc_writable import nc_writable
 from Process import Process
-from netCDF4 import Dataset
-import Time 
-import pdb
-import re
+import Time
 import registry.util as cfg
 import registry.db.db as db
 
@@ -20,15 +19,15 @@ import registry.db.db as db
 FILL_VALUE = 9999
 coord_str = 'coordinates'
 
+
 class Wisps_data(nc_writable):
     """
     WISPS data object for storing metadata and accompanied objects
-    that describe the variable. This class will attempt to 
-    gather information from the database on a given property, but 
+    that describe the variable. This class will attempt to
+    gather information from the database on a given property, but
     any gaps will need to be provided by the user
     """
 
- 
     def __init__(self, name, autofill=True):
         """
         Initializes object properties and adds metadata from the database
@@ -36,7 +35,7 @@ class Wisps_data(nc_writable):
         """
         self.name = name
         self.data = np.array([])
-        self.dimensions = [] # The name of the dimensions
+        self.dimensions = []  # The name of the dimensions
         self.processes = []
         self.metadata = {}
         self.time = []
@@ -45,25 +44,22 @@ class Wisps_data(nc_writable):
             self.add_db_metadata()
 
         # Coordinates
-        #self.plev = get_plev()
-        #self.
-        
     def has_plev(self):
-        """ 
+        """
         Checks metadata to see if this has plev.
         """
         if coord_str in self.metadata:
             return 'plev' in self.metadata[coord_str]
 
     def has_elev(self):
-        """ 
+        """
         Checks metadata to see if this has elev.
         """
         if coord_str in self.metadata:
             return 'elev' in self.metadata[coord_str]
-    
+
     def has_bounds(self):
-        """ 
+        """
         Checks metadata to see if this variable has a bounds attribute.
         """
         return 'bounds' in self.metadata
@@ -89,19 +85,19 @@ class Wisps_data(nc_writable):
             return self.metadata['bounds'] == 'elev_bounds'
 
     def get_coordinate(self):
-        """Returns the value of the coordinate data if it has 
+        """Returns the value of the coordinate data if it has
         one. If this variable is a bounds, return a tuple of the bounds"""
         if self.has_elev_bounds() or self.has_plev_bounds():
             try:
                 coord1 = self.properties['coord_val1']
                 coord2 = self.properties['coord_val2']
-            except:    
+            except:
                 coord1 = db.get_property(self.name, 'coord_val1')
                 coord2 = db.get_property(self.name, 'coord_val2')
             coord1 = int(coord1)
             coord2 = int(coord2)
             return (coord1, coord2)
-        try: 
+        try:
             coord = self.properties['coord_val']
         except:
             coord = db.get_property(self.name, 'coord_val')
@@ -116,7 +112,7 @@ class Wisps_data(nc_writable):
                 return i
 
     def add_process(self, process):
-        """ 
+        """
         Adds a Process object to the Processes list.
         """
         if process.__class__ is not Process:
@@ -139,8 +135,8 @@ class Wisps_data(nc_writable):
             except:
                 logging.warning('set_dimensions failed')
         if len(data.shape) != len(self.dimensions):
-            logging.error("number of dimensions of data is not " 
-                    "equal to number of object dimensions")
+            logging.error("number of dimensions of data is not "
+                          "equal to number of object dimensions")
             raise ValueError
 
         self.data = data
@@ -153,7 +149,7 @@ class Wisps_data(nc_writable):
         """
         try:
             return self.properties['data_type']
-        except: 
+        except:
             return db.get_property(self.name, 'data_type')
 
     def get_dimensions(self):
@@ -161,8 +157,6 @@ class Wisps_data(nc_writable):
         database for this variable name. Return value if available,
         otherwise throw ValueError.
         """
-        #var = cfg.read_variables()[self.name]
-        #var = cfg.ncvars[self.name]
         var = cfg.read_variables()[self.name]
         dimensions = var['dimensions']
         return dimensions
@@ -185,9 +179,9 @@ class Wisps_data(nc_writable):
         else:
             self.data = self.data.astype(self.get_data_type())
 
-    def set_dimensions(self,dimensions=None):
+    def set_dimensions(self, dimensions=None):
         """
-        Given a tuple of String dimensions, sets object to the 
+        Given a tuple of String dimensions, sets object to the
         dimensions.
         """
         if not dimensions:
@@ -203,14 +197,14 @@ class Wisps_data(nc_writable):
 
     def add_db_metadata(self):
         """
-        Reads the metadata database and copies the metadata to 
+        Reads the metadata database and copies the metadata to
         this object.
         """
         meta_dict = {}
-        try :
+        try:
             meta_dict = db.get_all_metadata(self.name)
-        except ValueError :
-            logging.warning("'" +self.name+ "' not defined in metadata db")
+        except ValueError:
+            logging.warning("'" + self.name + "' not defined in metadata db")
         self.metadata = meta_dict
 
     def add_metadata(self, key, value):
@@ -244,7 +238,7 @@ class Wisps_data(nc_writable):
         """
         setattr(plev_var, 'long name', 'pressure')
         setattr(plev_var, 'units', 'hPa')
-        setattr(plev_var, 'standard name','air_pressure')
+        setattr(plev_var, 'standard name', 'air_pressure')
         setattr(plev_var, 'positive', 'down')
         setattr(plev_var, 'axis', 'Z')
 
@@ -254,7 +248,7 @@ class Wisps_data(nc_writable):
         """
         setattr(elev_var, 'long name', 'height above surface')
         setattr(elev_var, 'units', 'm')
-        setattr(elev_var, 'standard name','height')
+        setattr(elev_var, 'standard name', 'height')
         setattr(elev_var, 'positive', 'up')
         setattr(elev_var, 'axis', 'Z')
 
@@ -309,7 +303,6 @@ class Wisps_data(nc_writable):
             name += str(self.metadata['LeadTime_hour'])
         except:
             pass
-        
         return name
 
     def get_coord_name(self, nc_handle, coord_name, is_bounds=False):
@@ -323,14 +316,14 @@ class Wisps_data(nc_writable):
         all_vars = nc_handle.variables
         # Find all plev variables already written
         for v in all_vars.keys():
-            if re.match(r'^'+coord_name+'\d+$',  v, re.I):
+            if re.match(r'^' + coord_name + '\d+$',  v, re.I):
                 # Check if coordinate already exists
                 if is_bounds:
                     first_num_matches = coord_data[0] == all_vars[v][1]
                     second_num_matches = coord_data[1] == all_vars[v][1]
                     if first_num_matches and second_num_matches:
                         return (already_exists, v)
-                else: 
+                else:
                     first_num_matches = coord_data == all_vars[v][0]
                     if coord_data == all_vars[v][0]:
                         already_exists = True
@@ -350,10 +343,10 @@ class Wisps_data(nc_writable):
         for d in self.dimensions:
             if d not in dims:
                 self.create_dimension(nc_handle, d)
-    
+
     def write_coordinate(self, nc_handle):
         """
-        Determines which coordinate needs to be written to 
+        Determines which coordinate needs to be written to
         it's own variable and calls the assosiated function.
         A bounds function will always supercede the non-bounds function.
         """
@@ -371,19 +364,19 @@ class Wisps_data(nc_writable):
             success = self.write_time_bounds(nc_handle)
 
         return success
-    
+
     def write_elev_bounds(self, nc_handle):
         """
-        Writes the elev_bounds variable. 
+        Writes the elev_bounds variable.
         """
         elev = 'elev'
         nv = 'nv'
         # Turn the data into a numpy array and
         # Reshape so that it has a shape of 1,2 for elev,nv
         coord_data = self.get_coordinate()
-        coord_data = np.array(coord_data).reshape(1,2)
+        coord_data = np.array(coord_data).reshape(1, 2)
 
-        exists,name = self.get_coord_name(nc_handle,'elev_bounds')
+        exists, name = self.get_coord_name(nc_handle, 'elev_bounds')
         self.metadata[coord_str] = name
         if not exists:
             if elev not in nc_handle.dimensions:
@@ -391,10 +384,11 @@ class Wisps_data(nc_writable):
             if nv not in nc_handle.dimensions:
                 nc_handle.createDimension(nv, 2)
             elev_var = nc_handle.createVariable(name, int, (elev, nv))
-            # Probably need this defined: self.add_elev_bounds_attributes(elev_var)
+            # Probably need this defined:
+            # self.add_elev_bounds_attributes(elev_var)
             elev_var[:] = coord_data
         return True
-    
+
     def write_time_bounds(self, nc_handle):
         """
         Writes the Time bounds variable
@@ -404,21 +398,24 @@ class Wisps_data(nc_writable):
         except:
             hours = db.get_property(self.name, 'hours')
         hours = int(hours)
-        b_time = Time.BoundedTime(self.time[0].get_start_time(), self.time[0].get_end_time(), offset=hours)
+        b_time = Time.BoundedTime(self.time[0].get_start_time(
+        ), self.time[0].get_end_time(), offset=hours)
         self.time.append(b_time)
 
     def write_plev_bounds(self, nc_handle):
         """
-        Writes the pressure level variable. 
+        Writes the pressure level variable.
         """
         plev = 'plev'
         nv = 'nv'
         # Turn the data into a numpy array and
         # Reshape so that it has a shape of 1,2 for plev,nv
         coord_data = self.get_coordinate()
-        coord_data = np.array(coord_data).reshape(1,2)
+        coord_data = np.array(coord_data).reshape(1, 2)
 
-        exists,name = self.get_coord_name(nc_handle,'plev_bounds')
+        # Determine if the variable already exists.
+        # Return the existing name, or a new one.
+        exists, name = self.get_coord_name(nc_handle, 'plev_bounds')
         self.metadata[coord_str] = name
         if not exists:
             if plev not in nc_handle.dimensions:
@@ -426,19 +423,19 @@ class Wisps_data(nc_writable):
             if nv not in nc_handle.dimensions:
                 nc_handle.createDimension(nv, 2)
             plev_var = nc_handle.createVariable(name, int, (plev, nv))
-            # Probably need this defined: self.add_plev_bounds_attributes(plev_var)
+            # Probably need this defined:
+            # self.add_plev_bounds_attributes(plev_var)
             plev_var[:] = coord_data
         return True
-    
 
     def write_elev(self, nc_handle):
         """
-        Writes the pressure level variable. 
+        Writes the pressure level variable.
         Changes the name to plev[n] where n a number
         when there are multiple plev variables.
         """
         elev = 'elev'
-        exists,name = self.get_coord_name(nc_handle,elev)
+        exists, name = self.get_coord_name(nc_handle, elev)
         self.metadata[coord_str] = name
         if not exists:
             if elev not in nc_handle.dimensions:
@@ -450,11 +447,11 @@ class Wisps_data(nc_writable):
 
     def write_plev(self, nc_handle):
         """
-        Writes the pressure level variable. 
+        Writes the pressure level variable.
         Changes the name to plev[n] where n a number
         when there are multiple plev variables.
         """
-        exists,name = self.get_coord_name(nc_handle,'plev')
+        exists, name = self.get_coord_name(nc_handle, 'plev')
         self.metadata[coord_str] = name
         if not exists:
             if 'plev' not in nc_handle.dimensions:
@@ -493,18 +490,18 @@ class Wisps_data(nc_writable):
         nc_handle.createDimension(dimension_name, dim_length)
 
     def write_to_nc(self, nc_handle):
-        """ 
-        Adds a netCDF variable to the nc_handle. 
+        """
+        Adds a netCDF variable to the nc_handle.
         Includes the data and metadata associated with the object.
         """
         logging.info("writing " + self.name)
         # This will include all netcdf variables that in some way help
         # describe this variable.
         ancillary_variables = ""
-        
+
         # Writes the elev, plev, and bounds variables if they exist
         success = self.write_coordinate(nc_handle)
-        if success: # modify the shape of the data to accommodate coordinate.
+        if success:  # modify the shape of the data to accommodate coordinate.
             self.reshape(self.metadata[coord_str])
 
         # Tell the Process objects and Time Objects
@@ -518,7 +515,7 @@ class Wisps_data(nc_writable):
             ancillary_variables += p.name + " "
 
         self.metadata['ancillary_variables'] = ancillary_variables
-        
+
         self.check_correct_shape()
 
         # Check if dimensions are defined in the netCDF file.
@@ -534,24 +531,23 @@ class Wisps_data(nc_writable):
         variable_name = self.get_variable_name()
         if variable_name in nc_handle.variables:
             counter = 1
-            while variable_name+'_'+str(counter) in nc_handle.variables:
+            while variable_name + '_' + str(counter) in nc_handle.variables:
                 counter += 1
             variable_name = variable_name + '_' + str(counter)
 
         # Get the chunksize
         chunksize = self.get_chunk_size(5)
 
-        # Create the variable 
-        nc_var = nc_handle.createVariable( 
-                variable_name,
-                self.data.dtype, 
-                tuple(self.dimensions), 
-                #chunksizes=chunksize,
-                zlib=True, 
-                complevel=4, 
-                shuffle=False, 
-                fill_value=fill_value)
-
+        # Create the variable
+        nc_var = nc_handle.createVariable(
+            variable_name,
+            self.data.dtype,
+            tuple(self.dimensions),
+            # chunksizes=chunksize,
+            zlib=True,
+            complevel=4,
+            shuffle=False,
+            fill_value=fill_value)
 
         # Add the metadata
         self.add_nc_metadata(nc_var)
@@ -560,11 +556,9 @@ class Wisps_data(nc_writable):
         process_str = self.get_process_str()
         setattr(nc_var, "OM_procedure", process_str)
 
-         
         self.add_nc_data(nc_var)
 
         return nc_handle
-
 
     def get_chunk_size(self, num_partitions):
         dtype = self.data.dtype
@@ -572,7 +566,7 @@ class Wisps_data(nc_writable):
         itemsize = np.dtype(dtype).itemsize
 
         for i in range(len(shape)):
-            #shape[i] *= itemsize
+            # shape[i] *= itemsize
             shape[i] = shape[i] * itemsize / num_partitions
 
         return tuple(shape)
@@ -580,10 +574,10 @@ class Wisps_data(nc_writable):
     def check_correct_shape(self):
         # Check that the dimensions are correct for the shape of the data
         if len(self.data.shape) != len(self.dimensions):
-            logging.error("dimensions of data not equal to dimensions attribute")
-            logging.error("Will not write "+ self.name)
+            logging.error(
+                "dimensions of data not equal to dimensions attribute")
+            logging.error("Will not write " + self.name)
             raise ValueError
-
 
     def add_nc_data(self, nc_var):
         """
@@ -598,11 +592,18 @@ class Wisps_data(nc_writable):
         """Check data dimension shape is equal to the nc handle dimension.
         """
         shape = self.data.shape
-        for index,(dim,size) in enumerate(zip(self.dimensions,shape)):
+        # Loop through dimension
+        for index, (dim, size) in enumerate(zip(self.dimensions, shape)):
             nc_dim_size = len(nc_handle.dimensions[dim])
-            if size != nc_dim_size: 
+            if size != nc_dim_size:
                 # Find if one has already been created
-                try: 
+                for nc_dim in nc_handle.dimensions.keys():
+                    nc_dim_size = len(nc_handle.dimensions[nc_dim])
+                    if dim in nc_dim and nc_dim_size == size:
+                        self.dimensions[index] = nc_dim
+                        return
+                # Or create an new one
+                try:
                     count = 1
                     while True:
                         alt_dim_name = dim + "_alt" + str(count)
@@ -610,20 +611,20 @@ class Wisps_data(nc_writable):
                         nc_dim_size = len(nc_handle.dimensions[alt_dim_name])
                         if size == nc_dim_size:
                             self.dimensions[index] = alt_dim_name
-                            break
+                            return
                 except KeyError:
                     self.dimensions[index] = alt_dim_name
-                    self.create_dimension(nc_handle,alt_dim_name)
+                    self.create_dimension(nc_handle, alt_dim_name)
 
     def add_nc_metadata(self, nc_var):
-        for name,value in self.metadata.iteritems():
+        for name, value in self.metadata.iteritems():
             if name != 'name' and name != 'fill_value':
-                if type(value) is unicode: # To prevent 'string' prefix
+                if type(value) is unicode:  # To prevent 'string' prefix
                     value = str(value)
                 setattr(nc_var, name, value)
 
     def get_fill_value(self):
-        try :
+        try:
             fill_value = self.metadata['fill_value']
         except KeyError:
             fill_value = FILL_VALUE
@@ -658,24 +659,23 @@ class Wisps_data(nc_writable):
         return self
 
     def __str__(self):
-        obj_str  = "\n***** " + self.name + " ******\n*\n"
+        obj_str = "\n***** " + self.name + " ******\n*\n"
         obj_str += "* dtype               : " + str(self.data.dtype) + "\n"
         obj_str += "* processes           : " + self.get_process_str() + "\n"
         obj_str += "* dimensions          : " + str(self.dimensions) + "\n"
         if coord_str in self.metadata:
-            obj_str += "* level               : " + str(self.get_coordinate()) + "\n"
+            obj_str += "* level               : " + \
+                str(self.get_coordinate()) + "\n"
         obj_str += "Metadata:\n"
-        for k,v in self.metadata.iteritems():
+        for k, v in self.metadata.iteritems():
             num_chars = len(k)
             obj_str += "* " + k
-            obj_str += " "*(20-num_chars)
-            obj_str += ": " +str(v)+"\n"
-            
+            obj_str += " " * (20 - num_chars)
+            obj_str += ": " + str(v) + "\n"
+
         obj_str += "Data: \n"
         obj_str += str(self.data)
-        
+
         return obj_str
 
     __repr__ = __str__
-
-

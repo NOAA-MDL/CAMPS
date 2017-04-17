@@ -1,5 +1,7 @@
-import sys, os
-relative_path = os.path.abspath(os.path.dirname(os.path.realpath(__file__))+"/..")
+import sys
+import os
+relative_path = os.path.abspath(
+    os.path.dirname(os.path.realpath(__file__)) + "/..")
 sys.path.insert(0, relative_path)
 import sqlite3
 import util as cfg
@@ -8,6 +10,7 @@ import pdb
 db_dir = os.path.dirname(os.path.realpath(__file__)) + '/'
 db_name = 'wisps.db'
 
+
 def connect(db):
     """
     Returns sqlite3.Connection object for a given database
@@ -15,8 +18,10 @@ def connect(db):
     """
     return sqlite3.connect(db_dir + db, detect_types=sqlite3.PARSE_DECLTYPES)
 
+
 conn = connect(db_name)
 c = conn.cursor()
+
 
 def create_variable_db():
     """
@@ -25,27 +30,31 @@ def create_variable_db():
     table_name = 'variable'
     conn = connect(db_name)
     c = conn.cursor()
-    c.execute('DROP TABLE IF EXISTS ' + table_name )
+    c.execute('DROP TABLE IF EXISTS ' + table_name)
     # Create the table
     fields = get_variable_fields()
     types = get_variable_types()
     column_names_str = "("
-    for f,t in zip(fields,types):
-        column_names_str += f 
+    for f, t in zip(fields, types):
+        column_names_str += f
         column_names_str += " " + t + ", "
     column_names_str = column_names_str[0:-2] + ")"
     print column_names_str
-    sql = 'CREATE TABLE ' + table_name +' '+ column_names_str
+    sql = 'CREATE TABLE ' + table_name + ' ' + column_names_str
     c.execute(sql)
 
+
 def get_variable_fields():
-    return ['property'   , 'source'         , 'leadtime'       , 'start' ,
-            'end'        , 'duration'       , 'duration_method', 'vert_coord1', 
-            'vert_coord2', 'vert_method'    , 'filename']
+    return ['property', 'source', 'leadtime', 'start',
+            'end', 'duration', 'duration_method', 'vert_coord1',
+            'vert_coord2', 'vert_method', 'filename']
+
+
 def get_variable_types():
-    return ['TEXT'       , 'TEXT'           , 'BIGINT'         , 'BIGINT', 
-            'BIGINT'     , 'BIGINT'         , 'TEXT'           , 'INTEGER',
-            'INTEGER'    , 'TEXT'           , 'TEXT']
+    return ['TEXT', 'TEXT', 'BIGINT', 'BIGINT',
+            'BIGINT', 'BIGINT', 'TEXT', 'INTEGER',
+            'INTEGER', 'TEXT', 'TEXT']
+
 
 def insert_variable(property, source, leadtime, start, end, duration, duration_method, vert_coord1, vert_coord2, vert_method, filename):
     """ Inserts variable metadata information into the table. 
@@ -66,23 +75,24 @@ def insert_variable(property, source, leadtime, start, end, duration, duration_m
     table_name = 'variable'
     #conn = connect(db_name)
     #c = conn.cursor()
-    fields_string = ('?,'*len(get_variable_fields()))[:-1]
-    sql = "INSERT INTO "+ table_name + " VALUES (" + fields_string + ")"
+    fields_string = ('?,' * len(get_variable_fields()))[:-1]
+    sql = "INSERT INTO " + table_name + " VALUES (" + fields_string + ")"
     sql_values = [
-    property, 
-    source,
-    leadtime, 
-    start, 
-    end, 
-    duration, 
-    duration_method, 
-    vert_coord1, 
-    vert_coord2, 
-    vert_method, 
-    filename ]
+        property,
+        source,
+        leadtime,
+        start,
+        end,
+        duration,
+        duration_method,
+        vert_coord1,
+        vert_coord2,
+        vert_method,
+        filename]
     c.execute(sql, sql_values)
     conn.commit()
     conn.close()
+
 
 def create_new_metadata_db():
     """
@@ -95,14 +105,14 @@ def create_new_metadata_db():
     column_names_str = get_column_names_string(attr_names)
     conn = connect(db_name)
     c = conn.cursor()
-    c.execute('DROP TABLE IF EXISTS ' + table_name )
+    c.execute('DROP TABLE IF EXISTS ' + table_name)
     # Create the table
-    sql = 'CREATE TABLE ' + table_name +' '+ column_names_str
+    sql = 'CREATE TABLE ' + table_name + ' ' + column_names_str
     c.execute(sql)
     # Fill the table
-    fields_string = ('?,'*len(attr_names))[:-1]
+    fields_string = ('?,' * len(attr_names))[:-1]
     for name, values in variables.iteritems():
-        sql = "INSERT INTO "+ table_name + " VALUES (" + fields_string + ")"
+        sql = "INSERT INTO " + table_name + " VALUES (" + fields_string + ")"
         sql_values = []
         for attr_name in attr_names:
             if attr_name == 'name':
@@ -116,6 +126,7 @@ def create_new_metadata_db():
     conn.commit()
     conn.close()
 
+
 def create_new_properties_db():
     """
     Deletes old properties table and replaces it with a new table 
@@ -127,14 +138,14 @@ def create_new_properties_db():
     column_names_str = get_column_names_string(properties)
     conn = connect(db_name)
     c = conn.cursor()
-    c.execute('DROP TABLE IF EXISTS ' + table_name )
+    c.execute('DROP TABLE IF EXISTS ' + table_name)
     # Create the table
-    sql = 'CREATE TABLE ' + table_name +' '+ column_names_str
+    sql = 'CREATE TABLE ' + table_name + ' ' + column_names_str
     c.execute(sql)
     # Fill the table
-    fields_string = ('?,'*len(properties))[:-1]
+    fields_string = ('?,' * len(properties))[:-1]
     for name, values in variables.iteritems():
-        sql = "INSERT INTO "+ table_name + " VALUES (" + fields_string + ")"
+        sql = "INSERT INTO " + table_name + " VALUES (" + fields_string + ")"
         sql_values = []
         for property_name in properties:
             if property_name == 'name':
@@ -147,6 +158,7 @@ def create_new_properties_db():
 
     conn.commit()
     conn.close()
+
 
 def get_variable(**kwargs):
     """
@@ -162,15 +174,16 @@ def get_variable(**kwargs):
     # The name of the column is at index 1. hence, ele[1]
     name_arr = [ele[1] for ele in name_arr]
     print name_arr
-    try :
+    try:
         index = name_arr.index(attr)
-        sql = "SELECT "+attr+" FROM "+db+" WHERE name = '"+name+"'"
+        sql = "SELECT " + attr + " FROM " + db + " WHERE name = '" + name + "'"
         c.execute(sql)
         return c.fetchone()[0]
     except ValueError as err:
         print attr + " is not a known metadata attribute"
         return False
     conn.close()
+
 
 def get_metadata(name, attr):
     """
@@ -186,15 +199,16 @@ def get_metadata(name, attr):
     # The name of the column is at index 1. hence, ele[1]
     name_arr = [ele[1] for ele in name_arr]
     print name_arr
-    try :
+    try:
         index = name_arr.index(attr)
-        sql = "SELECT "+attr+" FROM "+db+" WHERE name = '"+name+"'"
+        sql = "SELECT " + attr + " FROM " + db + " WHERE name = '" + name + "'"
         c.execute(sql)
         return c.fetchone()[0]
     except ValueError as err:
         print attr + " is not a known metadata attribute"
         return False
     conn.close()
+
 
 def get_property(name, attr):
     """
@@ -205,19 +219,20 @@ def get_property(name, attr):
     db = 'properties'
     #conn = connect(db_name)
     #c = conn.cursor()
-    c.execute("PRAGMA table_info("+db+")")
+    c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]
     name_arr = [ele[1] for ele in name_arr]
-    try :
+    try:
         index = name_arr.index(attr)
-        sql = "SELECT "+attr+" FROM "+db+" WHERE name = '"+name+"'"
+        sql = "SELECT " + attr + " FROM " + db + " WHERE name = '" + name + "'"
         c.execute(sql)
         return c.fetchone()[0]
     except ValueError as err:
-        print attr + " is not a known property attribute or "+name+" not defined"
+        print attr + " is not a known property attribute or " + name + " not defined"
         return False
     conn.close()
+
 
 def get_all_metadata(name):
     """
@@ -232,17 +247,18 @@ def get_all_metadata(name):
     attr_names = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]
     attr_names = [ele[1] for ele in attr_names]
-    sql = "SELECT * FROM metadata WHERE name = '"+name+"'"
+    sql = "SELECT * FROM metadata WHERE name = '" + name + "'"
     c.execute(sql)
     attr_values = c.fetchone()
     if(attr_values is None):
         print name, "not in metadata db"
         raise ValueError
         return False
-    for key,val in zip(attr_names, attr_values):
+    for key, val in zip(attr_names, attr_values):
         if val is not None and val != "":
             defined_attr[key] = val
     return defined_attr
+
 
 def get_data_type(name):
     """Check if data_type is defined in the properties
@@ -251,6 +267,7 @@ def get_data_type(name):
     """
     return db.get_property(self.name, 'data_type')
 
+
 def get_dimensions_type(name):
     """Check if dimensions is defined in the properties
     database for this varibale name. Return value if available,
@@ -258,13 +275,16 @@ def get_dimensions_type(name):
     """
     return db.get_property(self.name, 'data_type')
 
+
 def print_properties(name):
     db = "properties"
     print_from(db, name)
 
+
 def print_metadata(name):
     db = "metadata"
     print_from(db, name)
+
 
 def print_from(db, name):
     """
@@ -274,21 +294,22 @@ def print_from(db, name):
     """
     #conn = connect(db_name)
     #c = conn.cursor()
-    c.execute("PRAGMA table_info("+db+")")
+    c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]
     name_arr = [ele[1] for ele in name_arr]
-    sql = "SELECT * FROM "+db+" WHERE name = '"+name+"'"
+    sql = "SELECT * FROM " + db + " WHERE name = '" + name + "'"
     c.execute(sql)
     metadata = c.fetchone()
     if metadata == None:
-        print "No variable named " +name
+        print "No variable named " + name
         return
     print "Metadata for " + name
-    print("%5s %15s %15s" % ('num', db+' name', 'value'))
+    print("%5s %15s %15s" % ('num', db + ' name', 'value'))
     print "- - - - - - - - - - - - - - - - - - - - - - -"
     for i, value in enumerate(metadata):
         print("%5d %15s %15s" % (i, name_arr[i], value))
+
 
 def get_dictionary_attribute_keys(variables):
     """
@@ -296,24 +317,25 @@ def get_dictionary_attribute_keys(variables):
     returns an set of the results. 
     Parsing the config is specific to the nc_vars yaml file.
     """
-    # if there's more that one data type for the same variable, 
+    # if there's more that one data type for the same variable,
     # then use the least common denomenator. e.g. float are favored over ints
 
     # Add name manually
-    all_attributes = {'name':str}
-    for i in variables.values():  
+    all_attributes = {'name': str}
+    for i in variables.values():
         try:
             attributes = i['attribute']
         except KeyError:
             print "keyword 'attribute' not in ", i
-            raise 
-        for name,value in attributes.iteritems():
+            raise
+        for name, value in attributes.iteritems():
             if name in all_attributes and all_attributes[name] is float:
-                pass # to keep the float. Because we prefer floats.
+                pass  # to keep the float. Because we prefer floats.
             else:
                 all_attributes[name] = type(value)
 
     return all_attributes
+
 
 def get_dictionary_properties_keys(variables):
     """
@@ -321,18 +343,19 @@ def get_dictionary_properties_keys(variables):
     returns an set of the results. 
     Parsing the config is specific to the nc_vars yaml file.
     """
-    # if there's more that one data type for the same variable, 
+    # if there's more that one data type for the same variable,
     # then use the least common denomenator. e.g. float are favored over ints
-    all_properties = {'name':str}
-    for i in variables.values():  
-        for name,value in i.iteritems():
+    all_properties = {'name': str}
+    for i in variables.values():
+        for name, value in i.iteritems():
             if name != 'attribute' and name != 'dimensions':
                 if name in all_properties and all_properties[name] is int:
-                    pass #because we prefer floats
+                    pass  # because we prefer floats
                 else:
                     all_properties[name] = type(value)
 
     return all_properties
+
 
 def get_column_names_string(names):
     """
@@ -340,7 +363,7 @@ def get_column_names_string(names):
     given a set of names. Assumes all columns are of type 'text'
     """
     db_names = "("
-    for name,dtype in names.iteritems():
+    for name, dtype in names.iteritems():
         if dtype is float:
             db_names = db_names + str(name) + " REAL, "
         elif dtype is int:
@@ -349,5 +372,3 @@ def get_column_names_string(names):
             db_names = db_names + str(name) + " TEXT, "
     db_names = db_names[:-2] + ")"
     return db_names
-    
-

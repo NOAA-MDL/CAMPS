@@ -1,20 +1,23 @@
 #!/usr/bin/env python
 # Add a relative path
-import sys, os
+import sys
+import os
+import time
+import numpy as np
+import logging
+from netCDF4 import Dataset
 file_dir = os.path.dirname(os.path.realpath(__file__))
 relative_path = "/.."
 path = os.path.abspath(file_dir + relative_path)
 sys.path.insert(0, path)
-import time
-import numpy as np
-import logging
 from data_mgmt.Wisps_data import Wisps_data
+import data_mgmt.Time as Time
 import data_mgmt.writer as writer
-from netCDF4 import Dataset
 from datetime import datetime, timedelta
 from marine_to_nc.marinereader import marinereader
 import registry.util as cfg
 import registry.db.db as db
+
 
 def main(control_file=None):
     """
@@ -64,21 +67,23 @@ def main(control_file=None):
     multi_d = []
     for name, observations in reader.station_list.iteritems():
         reader.station_list[name] = np.array(observations)
-        multi_d = multi_d + [reader.station_list[name]] 
-   
+        multi_d = multi_d + [reader.station_list[name]]
+
     # Package data into Wisps_data object. Write data
     observations = reader.observations
     multi_d = np.array(multi_d)
     station_names = reader.station_list.keys()
     obj_list = []
-    for i,observation_name in enumerate(observations):
-        ob_arr = multi_d[:,:,i] 
+    for i, observation_name in enumerate(observations):
+        ob_arr = multi_d[:, :, i]
         std_name = marine_convert[observation_name]
         try:
             std_var = nc_vars[std_name]
             obj = Wisps_data(std_name)
             ob_arr = ob_arr.astype(std_var['data_type'])
             obj.set_dimensions(tuple(std_var['dimensions']))
+            phenom_time = get_phenom_time(reader.dates)
+            obj.time.append(phenom_time)
             obj.add_data(ob_arr)
             obj.add_source("MARINE")
             obj_list.append(obj)
@@ -93,17 +98,25 @@ def main(control_file=None):
     if log_file:
         out_log.close()
 
+
+def get_phenom_time(dates):
+    """Returns phenom time from list of dates"""
+    start_date = dates[0]
+    end_date = dates[-1]
+    return Time.PhenomenonTime(start_date, end_date)
+
+
 def pack_station_names(names):
     w_obj = Wisps_data('station')
-    
+
     station_name_arr = np.array([])
     for name in names:
         char_arr = np.array(list(name), 'c')
         if len(station_name_arr) == 0:
             station_name_arr = char_arr
         else:
-            station_name_arr = np.vstack((station_name_arr,char_arr))
-    w_obj.set_dimensions(tuple(['number_of_stations','num_characters']))
+            station_name_arr = np.vstack((station_name_arr, char_arr))
+    w_obj.set_dimensions(tuple(['number_of_stations', 'num_characters']))
     w_obj.add_data(station_name_arr)
     return w_obj
 

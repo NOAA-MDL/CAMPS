@@ -19,6 +19,7 @@ class marinereader():
         self.obs_time = None
         self.observations = []
         self.station_list = {}
+        self.dates = []
 
     def read(self, start_date=None, end_date=None):
         """
@@ -27,28 +28,28 @@ class marinereader():
         """
     #    try:
         with open(self.filename, "r") as marine_file:
-            marine_reader = csv.reader(marine_file, delimiter=":") 
+            marine_reader = csv.reader(marine_file, delimiter=":")
             self.parse_file(marine_reader, start_date, end_date)
     #     except Exception as e:
     #         print "Error reading csv file"
     #         print e
         return self.station_list
-    
+
     def parse_file(self, marine_reader, start_date, end_date):
         """
-        Takes an csv reader argument where each iteratable item contains 
+        Takes an csv reader argument where each iteratable item contains
         an array representing the observation of a station at a given hour
         """
         # The first line contains the names of the observations
         # Remove first 4 elements (date/station name information)
-        self.observations = marine_reader.next()[4:]  
+        self.observations = marine_reader.next()[4:]
 
         # The second line does indicate anything important
         marine_reader.next()
-        
-        # csv file has an extra ':' at the end. 
-        # I should probably preprocess them
-        self.observations.pop() 
+
+        # csv file has an extra ':' at the end. Remove it.
+        # Future: preprocess them off
+        self.observations.pop()
 
         # Remove whitespace around variables
         self.observations = strip_array(self.observations)
@@ -57,11 +58,13 @@ class marinereader():
         cur_date = "99999"
         n_records = 0
 
-        # Loop through the file. Each row is line of the csv file parsed into a list.
+        # Loop through the file. Each row is line of the csv file parsed into a
+        # list.
         for row in marine_reader:
             year_month_day = row.pop(0)
-            if year_month_day != '99999999': # the file's last entry is an empty 99999999
-                obs_hour = row.pop(0) 
+            # the file's last entry is an empty 99999999
+            if year_month_day != '99999999':
+                obs_hour = row.pop(0)
                 obs_minute = row.pop(0)
                 if obs_minute == '99':
                     obs_minute = "00"
@@ -73,15 +76,18 @@ class marinereader():
                     self.fill_empty_records(n_records)
                     n_records += 1
                     cur_date = date
+                    self.dates.append(cur_date)
 
                 # If the end date is hit. Work is done. Exit.
-                if(end_date != None and end_date == date):
+                if(end_date is not None and end_date == date):
+                    self.dates.pop()
                     return self.station_list
-                
-                # Otherwise, append the station data to the end of the station's data
+
+                # Otherwise, append the station data to the end of the
+                # station's data
                 station_name = row.pop(0)
                 station_name = station_name.strip(' ')
-                row.pop()     #remove last null element
+                row.pop()  # remove last null element
                 row = strip_array(row)
 
                 if station_name not in self.station_list:
@@ -91,29 +97,30 @@ class marinereader():
 
     def fill_empty_records(self, n_records, num_obs=14):
         """
-        Method to append empty records to station_list up to 
-        n_records. If only 1 record is in a station, fills records from previous dates
+        Method to append empty records to station_list up to
+        n_records. If only 1 record is in a station,
+        fills records from previous dates.
         """
         empty_record = ['9999'] * num_obs
-        for station_name,observations in self.station_list.iteritems():
+        for station_name, observations in self.station_list.iteritems():
             r_len = len(observations)
 
             # If there are two entries for the same period
             if r_len > n_records:
                 self.station_list[station_name].pop()
-            else: 
+            else:
                 # Fill empty records
                 for i in range(r_len, n_records):
                     self.station_list[station_name].append(empty_record)
-                    # Fill before record when it's the station's first record added
-                    if r_len == 1: 
+                    # Fill before record when it's the station's first record
+                    # added
+                    if r_len == 1:
                         self.station_list[station_name].reverse()
-    
+
 
 def strip_array(arr):
     """
     Strips whitespace out of an array of strings.
-    Will fail if not given a string list.
+    Will throw TypeError if not given a string list.
     """
     return [word.strip(' ') for word in arr]
-

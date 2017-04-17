@@ -1,16 +1,8 @@
 #!/usr/bin/env python
-import sys, os
-file_dir = os.path.dirname(os.path.realpath(__file__))
-relative_path = "/.."
-path = os.path.abspath(file_dir + relative_path)
-sys.path.insert(0, path)
-
-from subprocess import call 
+import sys
+import os
+from subprocess import call
 from subprocess import Popen
-from data_mgmt.Wisps_data import Wisps_data
-import data_mgmt.writer as writer
-import data_mgmt.Time as Time
-import registry.util as yamlutil
 import subprocess
 import pygrib
 import pdb
@@ -18,10 +10,20 @@ import re
 import numpy as np
 from datetime import timedelta
 from multiprocessing import Pool
+from multiprocessing.dummy import Pool as ThreadPool
 from shutil import rmtree
 import time
+file_dir = os.path.dirname(os.path.realpath(__file__))
+relative_path = "/.."
+path = os.path.abspath(file_dir + relative_path)
+sys.path.insert(0, path)
+from data_mgmt.Wisps_data import Wisps_data
+import data_mgmt.writer as writer
+import data_mgmt.Time as Time
+import registry.util as yamlutil
 
 max_lead_times = 400
+
 
 def reduce_grib(control=None):
     """Reads grib2 files, changes the map projection and
@@ -30,7 +32,7 @@ def reduce_grib(control=None):
     # Init
     if control is None:
         control = yamlutil.read_grib2_control()
-  
+
     wgrib2 = control['wgrib2']
     grbindex = control['grbindex']
     datadir = control['datadir']
@@ -41,7 +43,7 @@ def reduce_grib(control=None):
     outfile_identifier = control['grib_file_identifier']
     num_processors = control['num_processors']
     remove_infile = control['remove_infile']
-   
+
     # projections
     gfs47a, gfs47b, gfs47c = projection.split(" ")
     if type(datadir) is not list:
@@ -53,16 +55,19 @@ def reduce_grib(control=None):
         # Just get the gfs files
         match_string = r'^...\.t\d\dz\.pgrb2\.0p25\.f\d\d\d$'
         files = filter(lambda f: re.match(match_string, f, re.I), files)
-        
+
         # Only get those files that are every third projection hour
-        files = filter(lambda f: int(f[-3:]) % 3 == 0 and int(f[-3:])<=max_lead_times, files)
-        
+        files = filter(lambda f: int(f[-3:]) % 3 ==
+                       0 and int(f[-3:]) <= max_lead_times, files)
+
         if len(files) > 0:
             print "number of files:", files
             forecast_hour = files[0][5:7]
-            outfile_name = 'mdl.gfs47.' + forecast_hour + "." + outfile_identifier + '.pgrb2'
+            outfile_name = 'mdl.gfs47.' + \
+                forecast_hour + "." + \
+                outfile_identifier + '.pgrb2'
             outfile = outpath + outfile_name
-            
+
             tmp_dir = outpath + 'tmp/'
         if os.path.exists(tmp_dir):
             rmtree(tmp_dir)
@@ -75,42 +80,56 @@ def reduce_grib(control=None):
             print infile
             tmp_outfile = tmp_dir + os.path.basename(infile)
             tmp_outfiles.append(tmp_outfile)
-            #print tmp_outfile
-            
+            # print tmp_outfile
+
             PIPE = subprocess.PIPE
             get_inv_cmd = [wgrib2, infile]
-            non_pcp_cmd = [wgrib2, infile,                       # Specify infile
-                           "-i",                                 # Use Inventory
-                           "-new_grid_winds", "grid",            # new_grid wind orientation ('grid' or 'earth')
-                           "-new_grid_interpolation", "bilinear",# new_grid interpolation ('bilinear','bicubic','neighbor', or 'budget')
-                           "-append",                            # add to existing file if exist
-                           "-new_grid", gfs47a, gfs47b, gfs47c,  # new_grid to specifications
-                           tmp_outfile]
-            
-            pcp_cmd = [wgrib2, infile,                       # Specify infile
-                           "-i",                                 # Use Inventory
-                           "-new_grid_winds", "grid",            # new_grid wind orientation ('grid' or 'earth')
-                           "-new_grid_interpolation", "budget",# new_grid interpolation ('bilinear','bicubic','neighbor', or 'budget')
-                           "-append",                            # add to existing file if exist
-                           "-new_grid", gfs47a, gfs47b, gfs47c,  # new_grid to specifications
+            non_pcp_cmd = [wgrib2, infile,  # Specify infile
+                           # Use Inventory
+                           "-i",
+                           # new_grid wind orientation ('grid' or 'earth')
+                           "-new_grid_winds", "grid",
+                           # new_grid interpolation:
+                           # ('bilinear','bicubic','neighbor', or 'budget')
+                           "-new_grid_interpolation", "bilinear",
+                           # add to existing file if exist
+                           "-append",
+                           # new_grid to specifications
+                           "-new_grid", gfs47a, gfs47b, gfs47c,
                            tmp_outfile]
 
+            pcp_cmd = [wgrib2, infile,  # Specify infile
+                       # Use Inventory
+                       "-i",
+                       # new_grid wind orientation ('grid' or 'earth')
+                       "-new_grid_winds", "grid",
+                       # new_grid interpolation:
+                       # ('bilinear','bicubic','neighbor', or 'budget')
+                       "-new_grid_interpolation", "budget",
+                       # add to existing file if exist
+                       "-append",
+                       # new_grid to specifications
+                       "-new_grid", gfs47a, gfs47b, gfs47c,
+                       tmp_outfile]
 
-        #    p1 = Popen(get_inv_cmd, stdout=PIPE)
-        #    p2 = Popen(['grep','-f', nonpcp_file],stdin=p1.stdout, stdout=PIPE)
-        #    p3 = Popen(non_pcp_cmd, stdin=p2.stdout)
-        #    p1.stdout.close()
-        #    p2.stdout.close()
+        # p1 = Popen(get_inv_cmd, stdout=PIPE)
+        # p2 = Popen(['grep','-f', nonpcp_file],stdin=p1.stdout,
+        #       stdout=PIPE)
+        # p3 = Popen(non_pcp_cmd, stdin=p2.stdout)
+        # p1.stdout.close()
+        # p2.stdout.close()
 
-            ## OR
+            # OR
 
             # nonPCP
-            npcp_cmd = " ".join(get_inv_cmd) + " | grep -f "+nonpcp_file+" | " + " ".join(non_pcp_cmd)
+            npcp_cmd = " ".join(get_inv_cmd) + " | grep -f " + \
+                nonpcp_file + " | " + " ".join(non_pcp_cmd)
             # PCP
-            pcp_cmd = " ".join(get_inv_cmd) + " | grep -f "+pcp_file+" | " + " ".join(pcp_cmd) 
+            pcp_cmd = " ".join(get_inv_cmd) + " | grep -f " + \
+                pcp_file + " | " + " ".join(pcp_cmd)
 
             commands.append((npcp_cmd, pcp_cmd))
-        print "starting multiprocessing on",num_processors," cores."
+        print "starting multiprocessing on", num_processors, " cores."
         start = time.time()
         pool = Pool(num_processors)
         ret = pool.map(process_commands, commands)
@@ -124,38 +143,40 @@ def reduce_grib(control=None):
 
     return outfile
 
+
 def process_commands(*cmds):
     for cmd in cmds:
         subprocess.check_output(cmd, shell=True)
-   
+
+
 def get_forecast_hash(grb):
     """
     Returns a semi-unique identifier for each variable.
     """
     if 'lengthOfTimeRange' in grb.keys():
         fcst_hash = str(grb.name) + '_' \
-                + str(grb.lengthOfTimeRange) + 'hr' + '_' \
-                + str(grb.stepTypeInternal) + '_'\
-                + str(grb.level)
+            + str(grb.lengthOfTimeRange) + 'hr' + '_' \
+            + str(grb.stepTypeInternal) + '_'\
+            + str(grb.level)
         return fcst_hash
 
     if grb.name == 'Volumetric soil moisture content':
         fcst_hash = str(grb.name) + '_' \
-                + str(grb.stepTypeInternal) + '_'\
-                + str(grb.scaledValueOfFirstFixedSurface) +'-'\
-                + str(grb.scaledValueOfSecondFixedSurface)
+            + str(grb.stepTypeInternal) + '_'\
+            + str(grb.scaledValueOfFirstFixedSurface) + '-'\
+            + str(grb.scaledValueOfSecondFixedSurface)
         return fcst_hash
 
-
     fcst_hash = str(grb.name) + '_' \
-            + str(grb.stepTypeInternal) + '_'\
-            + str(grb.level)
+        + str(grb.stepTypeInternal) + '_'\
+        + str(grb.level)
 
     return fcst_hash
 
+
 def convert_grib2(filename):
     """
-    Converts grib file into Wisps Data and writes 
+    Converts grib file into Wisps Data and writes
     to netCDF.
     """
     # Load lookup table first
@@ -176,10 +197,9 @@ def convert_grib2(filename):
         if not lead_times[grb.forecastTime]:
             lead_times[grb.forecastTime] = {}
 
-
         fcst_hash = get_forecast_hash(grb)
         # Pull out the grb dictionary at the Lead Time
-        # NOTE: 'lead_times' is modified since 
+        # NOTE: 'lead_times' is modified since
         #       all_vars is a ptr to a lead_times dict
         all_vars = lead_times[grb.forecastTime]
         if fcst_hash not in all_vars:
@@ -194,39 +214,39 @@ def convert_grib2(filename):
     year = tmp_grb.year
     month = tmp_grb.month
 
-    all_objs = [] # Collection of Wisps_data objects
+    all_objs = []  # Collection of Wisps_data objects
     print "Creating Wisps-data objects for variables at each projection"
 
     # Loop through each forcast hour.
-    # Will typically only do something every third forecast hour, but is not limited.
+    # Will typically only do something every third forecast hour, but is not
+    # limited.
     data_dict = {}
     for hour in range(max_lead_times):
         all_vars = lead_times[hour]
 
         # To be on the safe side, instead of striding every 3 hours,
         # It will skip the loop if there're no values in the hour.
-        if all_vars == None:
+        if all_vars is None:
             continue
         # Loop through each variable in every forecast hour
         print "Creating variables for lead time:", hour
-        for name,values in all_vars.iteritems():
+        for name, values in all_vars.iteritems():
             # Convert name to the proper wisps name in the db/netcdf.yml
-            if hour == 0:
-                print values[0]
             try:
                 name = lookup[name]
             except:
                 print 'Warning:', name, 'not in grib2 lookup table'
 
-            stacked = [] # Array to hold stacked grids for every day
-            valid = [] # Holds valid time data
-            dtype = np.dtype('float32') # Default
-            example_grb = values[0] # example grib of current variable
+            stacked = []  # Array to hold stacked grids for every day
+            valid = []  # Holds valid time data
+            dtype = np.dtype('float32')  # Default
+            example_grb = values[0]  # example grib of current variable
             if example_grb.changeDecimalPrecision == 0:
                 dtype = np.dtype('int16')
             for grb in values:
                 stacked.append(grb.values)
-                valid.append(str(grb.validityDate) + str(grb.validityTime).zfill(4))
+                valid.append(str(grb.validityDate) +
+                             str(grb.validityTime).zfill(4))
             stacked = np.dstack(stacked)
             valid = np.array(valid)
 
@@ -244,45 +264,45 @@ def convert_grib2(filename):
                 data_dict[name]['valid_time'].append(valid)
             else:
                 data_dict[name] = {
-                        'data' : [stacked], 
-                        'lead_time' : [example_grb.forecastTime],
-                        'valid_time' : [valid]
-                        }
+                    'data': [stacked],
+                    'lead_time': [example_grb.forecastTime],
+                    'valid_time': [valid]
+                }
 
     # Get standard dimension names
     dimensions = yamlutil.read_dimensions()
-    lat  = dimensions['lat']
-    lon  = dimensions['lon']
-    lead_time_dim  = dimensions['lead_time']
-    time  = dimensions['time']
-    
+    lat = dimensions['lat']
+    lon = dimensions['lon']
+    lead_time_dim = dimensions['lead_time']
+    time = dimensions['time']
+
     fcst_time = filename[10:12]
     values = lead_times[0].values()[0]
 
-    for name, grb_dict in data_dict.iteritems():    
+    for name, grb_dict in data_dict.iteritems():
         stacked = grb_dict['data']
         stacked = np.array(stacked)
-        stacked = np.swapaxes(stacked,0,2)
-        stacked = np.swapaxes(stacked,0,1)
+        stacked = np.swapaxes(stacked, 0, 2)
+        stacked = np.swapaxes(stacked, 0, 1)
         lead_time = grb_dict['lead_time']
-        lead_time = np.array([x*Time.ONE_HOUR for x in lead_time])
+        lead_time = np.array([x * Time.ONE_HOUR for x in lead_time])
         valid_time = np.vstack(grb_dict['valid_time'])
-        for i,arr in enumerate(valid_time):
-            for j,val in enumerate(arr):
-                valid_time[i,j] = Time.epoch_time(val)
+        for i, arr in enumerate(valid_time):
+            for j, val in enumerate(arr):
+                valid_time[i, j] = Time.epoch_time(val)
         phenom_time = valid_time
 
         obj = Wisps_data(name)
         obj.add_source('GFS')
         obj.add_fcstTime(fcst_time)
-        #obj.add_leadTime(hour)
+        # obj.add_leadTime(hour)
         obj.add_metadata('ForecastReferenceTime', fcst_time)
-        obj.dimensions = [lat,lon,lead_time_dim,time]
+        obj.dimensions = [lat, lon, lead_time_dim, time]
         try:
-            obj.add_data(stacked) 
+            obj.add_data(stacked)
             obj.change_data_type(dtype)
             all_objs.append(obj)
-        except: 
+        except:
             print 'not an numpy array'
 
         if example_grb.startStep != example_grb.endStep:
@@ -309,31 +329,33 @@ def convert_grib2(filename):
         ltime = get_LeadTime(lead_time)
         obj.time.append(ltime)
 
-
     # Make longitude and latitude variables
     lat = Wisps_data('latitude')
     lon = Wisps_data('longitude')
     lat.add_source('GFS')
     lon.add_source('GFS')
-    lat.dimensions = ['lat','lon']
-    lon.dimensions = ['lat','lon']
+    lat.dimensions = ['lat', 'lon']
+    lon.dimensions = ['lat', 'lon']
     lat_lon_data = tmp_grb.latlons()
     lat.data = lat_lon_data[0]
     lon.data = lat_lon_data[1]
     all_objs.append(lat)
     all_objs.append(lon)
 
-    outfile = outpath + get_output_filename(year,month)
+    outfile = outpath + get_output_filename(year, month)
     writer.write(all_objs, outfile)
+
 
 def get_dtype(grb):
     pass
+
 
 def get_output_filename(year, month):
     """Returns a string representing the netcdf filename of gfs model data"""
     year = str(year)
     month = str(month).zfill(2)
-    return 'gfs00'+year+month+'00.nc'
+    return 'gfs00' + year + month + '00.nc'
+
 
 def get_fcst_time(fcst_time_str):
     """
@@ -349,15 +371,17 @@ def get_fcst_time(fcst_time_str):
 
     if len(matches) == 1:
         bounded = False
-        return (bounded,matches[0])
+        return (bounded, matches[0])
     if len(matches) == 2:
         bounded = True
         return (bounded, matches[1])
 
+
 def get_PhenomenonTime(grbs, deep_check=False):
     """Get the Phenomenon Times for a collection of related grbs"""
     if deep_check:
-        # Search all grbs to ensure the stride is consistant and dates are in order
+        # Search all grbs to ensure the stride is consistant and dates are in
+        # order
         pass
     start_date = str(grbs[0].dataDate)
     start_hour = str(grbs[0].hour).zfill(2)
@@ -371,12 +395,14 @@ def get_PhenomenonTime(grbs, deep_check=False):
     start = start + ftime
     end = end + ftime
     stride = Time.ONE_DAY
-    return Time.PhenomenonTime(start,end,stride)
+    return Time.PhenomenonTime(start, end, stride)
+
 
 def get_LeadTime(lead_time_data, deep_check=False):
     """Get the Lead Times from a collection of related grbs"""
     return Time.LeadTime(data=lead_time_data)
-    
+
+
 def get_ValidTime(grbs, deep_check=False):
     """Get the Valid Times for a collection of related grbs"""
     # refer to grb attribute: validityDate and validityTime
@@ -388,8 +414,9 @@ def get_ValidTime(grbs, deep_check=False):
     start = start_date + start_hour
     end = end_date + end_hour
     stride = Time.ONE_DAY
-    offset = timedelta(seconds=(grbs[0].forecastTime*Time.ONE_HOUR))
-    return Time.ValidTime(start,end,stride,offset)
+    offset = timedelta(seconds=(grbs[0].forecastTime * Time.ONE_HOUR))
+    return Time.ValidTime(start, end, stride, offset)
+
 
 def get_ResultTime(grbs, deep_check=False):
     """Get the Result Times for a collection of related grbs"""
@@ -401,12 +428,14 @@ def get_ResultTime(grbs, deep_check=False):
     start = start_date + start_hour
     end = end_date + end_hour
     stride = Time.ONE_DAY
-    return Time.ResultTime(start,end,stride)
+    return Time.ResultTime(start, end, stride)
+
 
 def get_ForecastReferenceTime(grbs, deep_check=False):
     """Get the ForecastReference Times for a collection of related grbs"""
     if deep_check:
-        # Search all grbs to ensure the stride is consistant and dates are in order
+        # Search all grbs to ensure the stride is consistant and dates are in
+        # order
         pass
     start_date = str(grbs[0].dataDate)
     start_hour = str(grbs[0].hour).zfill(2)
@@ -416,11 +445,12 @@ def get_ForecastReferenceTime(grbs, deep_check=False):
     start = start_date + start_hour
     end = end_date + end_hour
     stride = Time.ONE_DAY
-    return Time.PhenomenonTime(start,end,stride)
+    return Time.PhenomenonTime(start, end, stride)
+
 
 def get_grbs(grbs):
     """
-    Parse the grib headers and return an object with relavent attributes. 
+    Parse the grib headers and return an object with relavent attributes.
     grib keys are:
 
     'parametersVersion'
@@ -606,7 +636,7 @@ def get_grbs(grbs):
     counter = 0
     for grb in grbs:
         print counter
-        counter +=1
+        counter += 1
         grb_info = type('', (), {})()  # Create empty object
         grb_inv = str(grb).split(':')
         grb_info.name = grb_inv[1]
@@ -620,6 +650,5 @@ def get_grbs(grbs):
         forecasts.append(grb_info)
     return forecasts
 
-#reduce_grib()
-#convert_grib2('/scratch3/NCEPDEV/mdl/Riley.Conroy/output/mdl.gfs47.06.pgrb2')
-
+# reduce_grib()
+# convert_grib2('/scratch3/NCEPDEV/mdl/Riley.Conroy/output/mdl.gfs47.06.pgrb2')

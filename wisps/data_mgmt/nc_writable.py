@@ -3,6 +3,8 @@ from netCDF4 import Dataset
 
 """Interface enforcing a method to produce a netcdf variable object
 """
+
+
 class nc_writable(object):
 
     __metaclass__ = ABCMeta
