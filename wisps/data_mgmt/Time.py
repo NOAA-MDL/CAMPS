@@ -5,12 +5,12 @@ import re
 import pdb
 from datetime import datetime
 from datetime import timedelta
+from nc_writable import nc_writable
 file_dir = os.path.dirname(os.path.realpath(__file__))
 relative_path = "/.."
 path = os.path.abspath(file_dir + relative_path)
 sys.path.insert(0, path)
 import registry.util as cfg
-from nc_writable import nc_writable
 
 ##
 # class Time()
@@ -83,9 +83,13 @@ def str_to_datetime(time):
         day = 1
     try:
         hour = int(time[8:10])
-    except:
+    except Exception:
         hour = 0
-    return datetime(year, month, day, hour)
+    try:
+        minute = int(time[10:12])
+    except Exception:
+        minute = 0
+    return datetime(year, month, day, hour, minute)
 
 
 def epoch_to_datetime(seconds):
@@ -97,9 +101,9 @@ def epoch_time(time):
     """Return hours array as seconds since the epoch,
     where time can be a datetime or str
     """
-    if type(time) is not datetime and type(time) is not str:
+    if type(time) is not datetime and type(time) is not str and type(time) is not np.string_:
         raise TypeError("argument is not of type datetime or str")
-    if type(time) is str:
+    if type(time) is str or type(time) is np.string_:
         time = str_to_datetime(time)
     epoch = datetime.utcfromtimestamp(0)
 
@@ -122,72 +126,14 @@ def num_timesteps(start_time, end_time, stride=timedelta(hours=1)):
     return timesteps
 
 
-# Common amounts of time in seconds
-ONE_MINUTE = 60
-ONE_HOUR = ONE_MINUTE * 60
-ONE_DAY = ONE_HOUR * 24
-
-# Common time interpretation functions
+def get_time_dim_name():
+    """Provides a way for accessing the name of the time dimension."""
+    return cfg.read_dimensions()['time']
 
 
-def parse_ISO_standard_time(time):
-    """
-    Given a string that is the ISO standard representation of time,
-    Return a the epoch time.
-    """
-    pass
-
-
-def parse_development_sample(sample_str):
-    """
-    Given a string with an ISO interval representation,
-    such as 2014-04-01/2014-09-30, returns tuple of 2 datetimes
-    where index 0 = the start date, and index 1 = the end date
-    """
-    start, end = sample_string.split("/")
-    dt_start = datetime(year=start[:4], month=start[5:7], day=start[8:])
-    dt_end = datetime(year=end[:4], month=end[5:7], day=end[8:])
-    return (dt_start, dt_end)
-
-
-def parse_forecast_reference_time(forecast_str):
-    """
-    Given a string of type YYYY-MM-DDTFF,
-    returns the FF component, which represents the
-    forcast reference time, as a tuple. Where
-    index 0 = number of hours
-    index 1 = number of seconds, and
-    """
-    hours = forecast_str[11:]
-    hours = int(hour)
-    seconds = hour * ONE_HOUR
-    return (hour, seconds)
-
-
-def datetime_to_str(time):
-    """
-    Assumed that time is a datetime object.
-    hours are represented YYYYMMDDHH
-    """
-    return str(time.year).zfill(4) + \
-        str(time.month).zfill(2) + \
-        str(time.day).zfill(2) + \
-        str(time.hour).zfill(2)
-
-
-def str_to_datetime(time):
-    """
-    Assumed that time is in form YYYYMMDDHH, which is the format of the
-    self.hours array.
-    """
-    year = int(time[:4])
-    month = int(time[4:6])
-    day = int(time[6:8])
-    hour = int(time[8:10])
-    minute = 0
-    if len(time) > 10:
-        minute = int(time[10:12])
-    return datetime(year, month, day, hour, minute)
+def get_lead_dim_name():
+    """Provides a way for accessing the name of the time dimension."""
+    return cfg.read_dimensions()['lead_time']
 
 
 def epoch_to_datetime(seconds):
@@ -195,24 +141,25 @@ def epoch_to_datetime(seconds):
     return datetime.utcfromtimestamp(seconds)
 
 
-def epoch_time(time):
-    """Return hours array as seconds since the epoch """
-    if type(time) is not datetime and type(time) is not str and not np.string_:
-        raise TypeError("argument is not of type datetime or str")
-    if type(time) is str or type(time) is np.string_:
-        time = str_to_datetime(time)
-    epoch = datetime.utcfromtimestamp(0)
-
-    def unix_time(dt): return (dt - epoch).total_seconds()
-    seconds_since_epoch = unix_time(time)
-    return seconds_since_epoch
+#def epoch_time(time):
+#    """Return hours array as seconds since the epoch """
+#    if type(time) is not datetime and type(time) is not str and not np.string_:
+#        raise TypeError("argument is not of type datetime or str")
+#    if type(time) is str or type(time) is np.string_:
+#        time = str_to_datetime(time)
+#    epoch = datetime.utcfromtimestamp(0)
+#
+#    def unix_time(dt): return (dt - epoch).total_seconds()
+#    seconds_since_epoch = unix_time(time)
+#    return seconds_since_epoch
 
 
 class Time(nc_writable):
     """Baseclass representing time.
     """
 
-    def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR):
+    #def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR):
+    def __init__(self, **kwargs):
         """Initializes the valid_time, result_time, phenomenon_time,
         and lead time arrays.
         """
@@ -223,7 +170,14 @@ class Time(nc_writable):
         except:
             self.name = "time"
             self.metadata['wisps_role'] = self.name
-        if start_time and end_time:
+
+        if 'start_time' in kwargs:
+            start_time = kwargs['start_time']
+            end_time = kwargs['end_time']
+            try:
+                stride = kwargs['stride']
+            except:
+                stride = ONE_HOUR
             self.init_time_data(start_time, end_time, stride)
 
     def init_time_data(self, start_date, end_date, stride):
@@ -255,32 +209,16 @@ class Time(nc_writable):
         for i in range(size):
             self.data[i] = epoch_time(cur_date)
             cur_date += stride
-
+    
     def write_to_nc(self, nc_handle):
         """Adds the netCDF Variable representation of the Time.
         If Time variable already exists, it will return None.
         Additional Time variables of same type will have consecutive
         integers appended on the end of the variable name.
         """
-
-        time_dim = self.get_dimension_name()
-        if time_dim not in nc_handle.dimensions:
-            if len(self.data.shape) == 2:
-                nc_handle.createDimension(time_dim, len(self.data[1]))
-            else:
-                nc_handle.createDimension(time_dim, len(self.data))
-        dim_tuple = (time_dim)
-
-        if len(self.data.shape) == 2:
-            bounded_dim = self.get_bounded_dimension_name()
-            if bounded_dim not in nc_handle.dimensions:
-                nc_handle.createDimension(bounded_dim, 2)
-            dim_tuple = (bounded_dim, time_dim)
-        else:
-            alt_dim = self.check_dimensions(nc_handle)
-            if alt_dim:
-                time_dim = alt_dim
-                dim_tuple = (time_dim)
+        dim_tuple = self.get_dimensions() 
+        self.create_missing_dimensions(nc_handle, dim_tuple)
+        dim_tuple = self.check_dimensions(nc_handle, dim_tuple)
 
         name, exists = self.get_name(nc_handle)
         if not exists:
@@ -295,6 +233,23 @@ class Time(nc_writable):
             for meta_name, value in self.metadata.iteritems():
                 setattr(nc_time, meta_name, value)
         return name
+
+    def get_dimensions(self):
+        """Return a tuple of dimension names. 
+        Will account for data with different shapes.
+        """
+        dim_tuple = (get_time_dim_name(),)
+        assert len(dim_tuple) == len(self.data.shape)
+        return dim_tuple
+
+    def create_missing_dimensions(self, nc_handle, dimensions):
+        """given iterable list of dimensions, 
+        creates dimensions.
+        """
+        for i,dim in enumerate(dimensions):
+            if dim not in nc_handle.dimensions:
+                nc_handle.createDimension(dim, self.data.shape[i])
+
 
     def get_name(self, nc_handle):
         """Looks for a match in Time variables.
@@ -325,8 +280,13 @@ class Time(nc_writable):
         size = len(self.data)
         if size <= 1:
             raise IndexError("Time data has 1 or 0 elements")
-        start = self.data[0]
-        end = self.data[1]
+        if len(self.data.shape) == 2:
+            start = self.data[0][0]
+            end = self.data[1][0]
+        else:
+            sample_data = self.data.flatten()
+            start = sample_data[0]
+            end = sample_data[1]
         stride = end - start
         if as_timedelta:
             return timedelta(seconds=stride)
@@ -337,11 +297,47 @@ class Time(nc_writable):
             raise IndexError("Time.data.")
         start = self.data[9]
 
-    def check_dimensions(self, nc_handle):
+    def _search_equal_size(self, nc_dimensions, dim, size):
+        """Searches for a dimension that equals the size of the dim.
+        """
+        for nc_dim in nc_dimensions.keys():
+            if dim in nc_dim and len(nc_dimensions[nc_dim]) == size:
+                return nc_dim
+            
+    def is_duration(self):
+        """Returns if the current object is a type of duration
+        """
+        return False
+
+    def check_dimensions(self, nc_handle, dim_tuple):
         """Check data dimension shape is equal to the nc handle dimension.
         """
+        dim_list = list(dim_tuple)
         shape = self.data.shape
-        time_dim = self.get_dimension_name()
+        nc_dims = nc_handle.dimensions
+        for i, (dim, size) in enumerate(zip(dim_list,shape)):
+            nc_len = nc_dims[dim] 
+            count = 0
+            if size != nc_len:
+                name = self._search_equal_size(nc_dims, dim, size)
+                if name is not None: 
+                    dim_list[i] = name
+                else: # It hasn't been created yet, so create it.
+                    count = 0
+                    stride = self.get_stride()
+                    hours = int(stride/3600)
+                    name = dim + '_' + str(hours) + 'hr'
+                    alt_name = name
+                    while alt_name in nc_dims:
+                        count += 1
+                        alt_name = name + '_' + str(count)
+                    nc_handle.createDimension(alt_name, size)
+                    dim_list[i] = alt_name
+
+        return tuple(dim_list)
+
+        shape = self.data.shape
+        time_dim = get_time_dim_name()
         nc_dim_size = len(nc_handle.dimensions[time_dim])
         size = shape[0]
         if size != nc_dim_size:
@@ -361,7 +357,6 @@ class Time(nc_writable):
                     nc_dim_size = len(nc_handle.dimensions[alt_dim_name])
                     if size == nc_dim_size:
                         return alt_dim_name
-                        break
             except KeyError:
                 nc_handle.createDimension(alt_dim_name, size)
                 return alt_dim_name
@@ -372,9 +367,6 @@ class Time(nc_writable):
         setattr(nc_var, 'calendar', 'gregorian')
         setattr(nc_var, 'units', 'seconds since 1970-01-01 00:00:00.0')
 
-    def get_dimension_name(self):
-        """Provides a way for accessing the name of the time dimension."""
-        return cfg.read_dimensions()['time']
 
     def get_bounded_dimension_name(self):
         """Provides a way for accessing the name of the start and end
@@ -395,8 +387,8 @@ class Time(nc_writable):
             return self
 
     def __str__(self):
-        ret_str = self.name = "\n"
-        if len(self.data > 0):
+        ret_str = self.name + "\n"
+        if len(self.data) > 0 and len(self.data.shape) == 1:
             ret_str += "start_time: "
             ret_str += str(epoch_to_datetime(self.data[0])) + "\n"
             ret_str += "end_time:   "
@@ -409,6 +401,15 @@ class Time(nc_writable):
             ret_str += "  ....\n"
             ret_str += str(epoch_to_datetime(self.data[-2])) + ", "
             ret_str += str(epoch_to_datetime(self.data[-1])) + "]"
+        elif len(self.data) > 0 and len(self.data.shape) == 2:
+            ret_str += "Shape:  "
+            ret_str += str(self.data.shape) + "\n"
+            ret_str += "Data: \n"
+            ret_str += "[" + str(epoch_to_datetime(self.data[0][0])) + ", "
+            ret_str += str(epoch_to_datetime(self.data[0][1])) + ",\n"
+            ret_str += "  ....\n"
+            ret_str += str(epoch_to_datetime(self.data[-1][-2])) + ", "
+            ret_str += str(epoch_to_datetime(self.data[-1][-1])) + "]"
 
             return ret_str
 
@@ -431,11 +432,40 @@ class PhenomenonTime(Time):
     A period of time.
     """
 
-    def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR):
+    #def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR):
+    def __init__(self, **kwargs):
         """Initializes the data array
         """
         self.name = "OM_phenomenonTime"
-        super(PhenomenonTime, self).__init__(start_time, end_time, stride)
+        if 'start_time' in kwargs:
+            start_time = kwargs['start_time']
+            end_time = kwargs['end_time']
+            try:
+                stride = kwargs['stride']
+            except:
+                stride = ONE_HOUR
+
+            super(PhenomenonTime, self).__init__(start_time=start_time,
+                                                 end_time=end_time,
+                                                 stride=stride)
+        elif 'data' in kwargs:
+            super(PhenomenonTime, self).__init__()
+            self.data = kwargs['data']
+
+    def get_dimensions(self):
+        """Return a tuple of dimension names. 
+        Will account for data with different shapes.
+        """
+        num_dims = len(self.data.shape)
+        if num_dims == 1:
+            dim_tuple = (get_time_dim_name(),)
+        elif num_dims == 2:
+            dim_tuple = (get_lead_dim_name(), get_time_dim_name())
+        else:
+            raise AssertionError("more than 2 dimensions describing time")
+
+        assert len(dim_tuple) == len(self.data.shape)
+        return dim_tuple
 
 
 class ValidTime(Time):
@@ -444,7 +474,7 @@ class ValidTime(Time):
     Must be a period of time.
     """
 
-    def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR, offset=0):
+    def __init__(self, **kwargs): #start_time=None, end_time=None, stride=ONE_HOUR, offset=0):
         """Initializes the data array.
         offset can be:
         a function that is applied to the data array,
@@ -453,9 +483,26 @@ class ValidTime(Time):
         a 0 representing an unlimited valid time
         """
         self.name = 'OM_validTime'
-        super(ValidTime, self).__init__(start_time, end_time, stride)
+        if 'start_time' in kwargs:
+            start_time = kwargs['start_time']
+            end_time = kwargs['end_time']
+            try:
+                stride = kwargs['stride']
+            except:
+                stride = ONE_HOUR
+            super(ValidTime, self).__init__(start_time=start_time,
+                                          end_time=end_time,
+                                          stride=stride)
+        elif 'data' in kwargs:
+            super(ValidTime, self).__init__()
+            self.data = kwargs['data']
+            offset = 0
+        if 'offset' in kwargs:
+            offset = kwargs['offset']
+            self.add_offset(offset)
+
         self.metadata['standard_name'] = 'time'
-        self.add_offset(offset)
+
 
     def add_offset(self, offset):
         """Offset can be:
@@ -482,7 +529,7 @@ class ValidTime(Time):
             end_time = np.zeros(self.data.shape)
             end_time[:] = epoch_time(offset)
             start_time = self.data
-            self.data = self.data.vstack((start_time, end_time))
+            self.data = np.vstack((start_time, end_time))
         # Assume data is valid indefinitely
         elif o_type is int and offset == 0:
             # min_int = -sys.maxint - 1
@@ -490,6 +537,20 @@ class ValidTime(Time):
             end_time = np.zeros(self.data.shape)
             end_time[:] = FILL_VALUE
             self.data = np.vstack((start_time, end_time))
+
+    def get_dimensions(self):
+        """Return a tuple of dimension names. 
+        Will account for data with different shapes.
+        """
+        if len(self.data.shape) == 2:
+            dim_tuple = (self.get_bounded_dimension_name(),
+                         get_time_dim_name())
+        elif len(self.data.shape) == 3:
+            dim_tuple = (get_lead_dim_name(),
+                         get_time_dim_name(),
+                         self.get_bounded_dimension_name())
+        assert len(dim_tuple) == len(self.data.shape)
+        return dim_tuple
 
 
 class ResultTime(Time):
@@ -499,13 +560,27 @@ class ResultTime(Time):
     Must be an instant in time.
     """
 
-    def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR, result_time=None):
+    def __init__(self, **kwargs): # start_time=None, end_time=None, stride=ONE_HOUR, result_time=None):
         """Initializes the data array
         """
         self.name = 'OM_resultTime'
-        super(ResultTime, self).__init__(start_time, end_time, stride)
+        if 'start_time' in kwargs:
+            start_time = kwargs['start_time']
+            end_time = kwargs['end_time']
+            try:
+                stride = kwargs['stride']
+            except:
+                stride = ONE_HOUR
+            super(ResultTime, self).__init__(start_time=start_time,
+                                        end_time=end_time,
+                                        stride=stride)
+        if 'data' in kwargs:
+            super(ResultTime, self).__init__()
+            self.data = kwargs['data']
         self.metadata['standard_name'] = 'time'
-        self.append_result(result_time)
+        if 'result_time' in kwargs:
+            result_time = kwargs['result_time']
+            self.append_result(result_time)
 
     def append_result(self, result_time):
         """Adds the Result Time.
@@ -542,19 +617,30 @@ class ForecastReferenceTime(Time):
     made.
     """
 
-    def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR, reference_time=None):
+    def __init__(self, **kwargs): #start_time=None, end_time=None, stride=ONE_HOUR, reference_time=None):
         """
         Initializes the data array
         """
         self.name = 'forecast_reference_time'
-        super(ForecastReferenceTime, self).__init__(
-            start_time, end_time, stride)
+        if 'start_time' in kwargs:
+            start_time = kwargs['start_time']
+            end_time = kwargs['end_time']
+            try:
+                stride = kwargs['stride']
+            except:
+                stride = ONE_HOUR
+            super(ForecastReferenceTime, self).__init__(start_time=start_time,
+                                                    end_time=end_time,
+                                                    stride=stride)
+        elif 'data' in kwargs:
+            super(ForecastReferenceTime, self).__init__()
+            self.data = kwargs['data']
         self.metadata['standard_name'] = self.name
-        if reference_time is not None:
-            self.append_reference_time(reference_time)
+        if 'reference_time' in kwargs:
+            self.append_reference_time(kwargs['reference_time'])
 
-    def append_reference_time(self, result_time):
-        self.data[:] = result_time
+    def append_reference_time(self, ref_time):
+        self.data[:] = ref_time
 
 
 class LeadTime(Time):
@@ -574,29 +660,36 @@ class LeadTime(Time):
         stride = ONE_HOUR
         start_time = None
         end_time = None
-        try:
+        if 'start_time' in kwargs:
             start_time = kwargs['start_time']
             end_time = kwargs['end_time']
-            stride = kwargs['stride']
-        except KeyError:
-            pass
-        if 'lead' in kwargs and kwargs['lead'] is timedelta:
-            self.data[:] = lead.total_seconds()
-            self.data[:] = lead
-        super(LeadTime, self).__init__(start_time, end_time, stride)
-        self.metadata['standard_name'] = "forecast_period"
-        self.metadata['units'] = 'seconds'
-        if 'data' in kwargs:
+            try:
+                stride = kwargs['stride']
+            except:
+                stride = ONE_HOUR
+            super(LeadTime, self).__init__(start_time=start_time,
+                                        end_time=end_time,
+                                        stride=stride)
+            if 'lead' in kwargs and kwargs['lead'] is timedelta:
+                lead = kwargs['lead']
+                self.data[:] = lead.total_seconds()
+        elif 'data' in kwargs:
+            super(LeadTime, self).__init__()
             self.data = kwargs['data']
+
+        self.metadata['standard_name'] = "forecast_period"
 
         # is_ref_time = type(forecast_ref_time) is ForecastReferenceTime
         # is_phenom_time = type(phenom_tim) is PhenomenonTime
         # if is_ref_time and is_phenom_time:
         #    self.data = phenom_time - forecast_ref_time
-
-    def get_dimension_name(self):
-        """Provides a way for accessing the name of the time dimension for leadtime."""
-        return cfg.read_dimensions()['lead_time']
+    def get_dimensions(self):
+        """Return a tuple of dimension names. 
+        Will account for data with different shapes.
+        """
+        dim_tuple = (get_lead_dim_name(),)
+        assert len(dim_tuple) == len(self.data.shape)
+        return dim_tuple
 
 
 class BoundedTime(Time):
@@ -605,14 +698,30 @@ class BoundedTime(Time):
     separated duration
     """
 
-    def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR, offset=None):
+    def __init__(self, **kwargs):#start_time=None, end_time=None, stride=ONE_HOUR, offset=None):
         """
         Initializes the data array
         """
         self.name = 'time_bounds'
-        super(BoundedTime, self).__init__(start_time, end_time, stride)
+        if 'start_time' in kwargs:
+            start_time = kwargs['start_time']
+            end_time = kwargs['end_time']
+            try:
+                stride = kwargs['stride']
+            except:
+                stride = ONE_HOUR
+            super(BoundedTime, self).__init__(start_time=start_time,
+                                        end_time=end_time,
+                                        stride=stride)
+        if 'data' in kwargs:
+            super(BoundedTime, self).__init__()
+            self.data = kwargs['data']
+
+        offset=None
+        if 'offset' in kwargs:
+            offset = kwargs['offset']
+            self.add_bounds(stride, offset)
         self.metadata['standard_name'] = 'bounded_time'
-        self.add_bounds(stride, offset)
 
     def add_bounds(self, stride, offset):
         """

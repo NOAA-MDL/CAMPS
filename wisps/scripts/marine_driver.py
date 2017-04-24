@@ -82,8 +82,8 @@ def main(control_file=None):
             obj = Wisps_data(std_name)
             ob_arr = ob_arr.astype(std_var['data_type'])
             obj.set_dimensions(tuple(std_var['dimensions']))
-            phenom_time = get_phenom_time(reader.dates)
-            obj.time.append(phenom_time)
+            times = get_time(reader.dates)
+            obj.time = times
             obj.add_data(ob_arr)
             obj.add_source("MARINE")
             obj_list.append(obj)
@@ -99,11 +99,16 @@ def main(control_file=None):
         out_log.close()
 
 
-def get_phenom_time(dates):
+def get_time(dates):
     """Returns phenom time from list of dates"""
     start_date = dates[0]
     end_date = dates[-1]
-    return Time.PhenomenonTime(start_date, end_date)
+    return [
+            Time.PhenomenonTime(start_time=start_date, end_time=end_date),
+            Time.ResultTime(start_time=start_date, end_time=end_date),
+            # Valid Time will be forever
+            Time.ValidTime(start_time=start_date, end_time=end_date)
+            ]
 
 
 def pack_station_names(names):

@@ -14,10 +14,11 @@ def test_synoptic():
                  "2016010405", "2016010406", "2016010406", "2016010407", "2016010408"]
     test_1h_array = np.array([35, 70, 35, 35, 35, 35, 35, 35, 35, 35])
     test_6h_array = np.array([35, 35, 35, 35, 35, 35, 35, 35, 35, 35])
-    assert_result = np.array([35, 35, 35, 35, 35, 35, 70, 35, 35, 35])
+    station_type = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+    assert_result = np.array([35, 35, 35, 35, 35, 35, 9999, 35, 35, 35])
 
     # pdb.set_trace()
-    check_6hour_max(test_1h_array, test_6h_array, test_hour)
+    check_6hour_max(test_1h_array, test_6h_array, test_hour, station_type)
     np.testing.assert_array_equal(test_6h_array, assert_result)
     print "PASSED test 1"
     # Changed anomaly to not the first or last index
@@ -76,27 +77,28 @@ def test_consistancy():
     print "## Testing consistency QC ##"
     print "############################"
     test_array = np.array([35, 35, 35, 35, 100, 35])
+    station_type = np.array([2, 2, 2, 2, 2, 2])
     assert_result = np.array([35, 35, 35, 35, 9999, 35])
-    check_consistency(test_array, 10)
+    check_consistency(test_array, station_type, 10)
     np.testing.assert_array_equal(test_array, assert_result)
     print "PASSED test 1"
 
     test_array = np.array([9999, 35, 35, 35, 35, 9999])
     assert_result = np.array([9999, 35, 35, 35, 35, 9999])
-    check_consistency(test_array, 10)
+    check_consistency(test_array, station_type, 10)
     np.testing.assert_array_equal(test_array, assert_result)
     print "PASSED test 2"
 
     # wierd case, but this is what it should give
     test_array = np.array([35, 35, 120, 9999, -120, 35])
     assert_result = np.array([35, 35, 120, 9999, -120, 35])
-    check_consistency(test_array, 10)
+    check_consistency(test_array, station_type, 10)
     np.testing.assert_array_equal(test_array, assert_result)
     print "PASSED test 3"
 
     test_array = np.array([31, 42, 53, 64, 75, 86])
     assert_result = np.array([31, 42, 53, 64, 75, 86])
-    check_consistency(test_array, 10)
+    check_consistency(test_array, station_type,  10)
     np.testing.assert_array_equal(test_array, assert_result)
     print "PASSED test 4"
 

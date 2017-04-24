@@ -31,6 +31,7 @@ dimensions :
     #time : &time 'time_projection'
   time : &time 'default_time_coordinate_size'
   nstations : &nstations 'number_of_stations'
+  num_vert : &nv 'nv' #number of verticies
   plev : &plev 'pressure_level'
   elev : &elev 'elevation'
   chars : &chars 'num_characters'
@@ -1015,11 +1016,13 @@ variables :
   relative_humidity_instant_2 :
     data_type : float32
     dimensions : [] 
+    coord_val : 2
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 2"
       standard_name : "relative_humidity"
       units : "K"
+      coordinates : "elev"
       valid_min : ""
       valid_max : ""
   relative_humidity_instant_300 :
@@ -1032,15 +1035,18 @@ variables :
       standard_name : "relative_humidity"
       units : "K"
       valid_min : ""
+      coordinates : "plev"
       valid_max : ""
   relative_humidity_instant_3000 :
     data_type : float32
     dimensions : [] 
+    coord_val : 3000
     attribute : 
       OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 3000"
       standard_name : "relative_humidity"
       units : "K"
+      coordinates : "elev"
       valid_min : ""
       valid_max : ""
   relative_humidity_instant_500 :

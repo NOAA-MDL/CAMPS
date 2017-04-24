@@ -172,11 +172,11 @@ def add_time(start, end, stride=None):
     time = []
     if stride is None:
         stride = Time.ONE_HOUR
-    pt = Time.PhenomenonTime(start, end, stride)
+    pt = Time.PhenomenonTime(start_time=start, end_time=end, stride=stride)
     # Result time will be PhenomenonTime
-    rt = Time.ResultTime(start, end, stride)
+    rt = Time.ResultTime(start_time=start, end_time=end, stride=stride)
     # Valid Time will be forever
-    vt = Time.ValidTime(start, end, stride)
+    vt = Time.ValidTime(start_time=start, end_time=end, stride=stride)
 
     time.append(pt)
     time.append(rt)

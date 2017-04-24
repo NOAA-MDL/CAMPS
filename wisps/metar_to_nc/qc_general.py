@@ -49,7 +49,7 @@ def check_consistency(in_array, type_array, tolerance=10):
                     "within " + str(tolerance)
                 )
                 errors.append(new_error)
-                in_array[counter] = MISSING_VALUE
+                in_array[counter+1] = MISSING_VALUE
     return errors
 
 

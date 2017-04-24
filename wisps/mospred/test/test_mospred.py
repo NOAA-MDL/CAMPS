@@ -9,15 +9,16 @@ import parse_pred as pp
 
 def test_separate_entries():
     ret = pp.separate_entries("1600h")
-    assert ret == (5760000)
+    assert ret == {'time' : 5760000}
     ret = pp.separate_entries("1600 hours")
-    assert ret == (5760000)
+    assert ret == {'time' : 5760000}
     ret = pp.separate_entries("1600 hours average")
-    assert ret == (5760000, "mean")
+    assert ret == {'time' : 5760000, 'cell_method' : 'mean'}
     ret = pp.separate_entries("7days average")
-    assert ret == (604800, "mean")
+    assert ret == {'time' : 604800, 'cell_method' : "mean"}
     ret = pp.separate_entries("1600s average")
-    assert ret == (1600, "mean")
+    print ret
+    assert ret == {"time" : 1600, 'cell_method' : "mean"}
 
 
 def test_get_cell_method():

@@ -58,7 +58,7 @@ def separate_entries(in_str):
         time = groups[0] * mult
     if len(groups) == 3 and groups[2]:
         cell_method_name = cell_method(groups[2])
-        return {'time': time, 'cell_method': cell_method_name)
+        return {'time': time, 'cell_method': cell_method_name}
     return {'time': time}
 
 

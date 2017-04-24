@@ -236,9 +236,9 @@ class Wisps_data(nc_writable):
         """
         Adds Common Plev attributes.
         """
-        setattr(plev_var, 'long name', 'pressure')
+        setattr(plev_var, 'long_name', 'pressure')
         setattr(plev_var, 'units', 'hPa')
-        setattr(plev_var, 'standard name', 'air_pressure')
+        setattr(plev_var, 'standard_name', 'air_pressure')
         setattr(plev_var, 'positive', 'down')
         setattr(plev_var, 'axis', 'Z')
 
@@ -246,13 +246,14 @@ class Wisps_data(nc_writable):
         """
         Adds Common elev attributes.
         """
-        setattr(elev_var, 'long name', 'height above surface')
+        setattr(elev_var, 'long_name', 'height above surface')
         setattr(elev_var, 'units', 'm')
-        setattr(elev_var, 'standard name', 'height')
+        setattr(elev_var, 'standard_name', 'height')
         setattr(elev_var, 'positive', 'up')
         setattr(elev_var, 'axis', 'Z')
 
     def in_metadata(self, var):
+        """Boolean weather var is in metadata dictionary"""
         return var in self.metadata
 
     def get_variable_name(self):
@@ -398,8 +399,8 @@ class Wisps_data(nc_writable):
         except:
             hours = db.get_property(self.name, 'hours')
         hours = int(hours)
-        b_time = Time.BoundedTime(self.time[0].get_start_time(
-        ), self.time[0].get_end_time(), offset=hours)
+        b_time = Time.BoundedTime(start_time=self.time[0].get_start_time(
+        ), end_time=self.time[0].get_end_time(), offset=hours)
         self.time.append(b_time)
 
     def write_plev_bounds(self, nc_handle):
@@ -531,9 +532,9 @@ class Wisps_data(nc_writable):
         variable_name = self.get_variable_name()
         if variable_name in nc_handle.variables:
             counter = 1
-            while variable_name + '_' + str(counter) in nc_handle.variables:
+            while variable_name + str(counter) in nc_handle.variables:
                 counter += 1
-            variable_name = variable_name + '_' + str(counter)
+            variable_name = variable_name + str(counter)
 
         # Get the chunksize
         chunksize = self.get_chunk_size(5)

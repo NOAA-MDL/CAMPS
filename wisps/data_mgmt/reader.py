@@ -1,11 +1,14 @@
 import os
 from netCDF4 import Dataset
 from Wisps_data import Wisps_data
+import Time
 from Process import Process
 import pdb
 import logging
 logging.basicConfig(level=logging.INFO)
 
+
+ancil_name = 'ancillary_variables'
 
 def read(*filenames):
     """Function to read a netCDF file of given
@@ -30,6 +33,49 @@ def read(*filenames):
             wisps_data.append(w_obj)
     return wisps_data
 
+def fetch(filename, name):
+    """
+    Returns a Wisps_data object from netcdf file
+    """
+    nc = Dataset(filename, mode='r', format="NETCDF4")
+    var = nc.variables[name]
+    ancil_vars = var.getncattr(ancil_name).split(' ')
+    name = var.getncattr("OM_observedProperty")
+    w_obj = Wisps_data(name, autofill=False)
+    # Get Time
+    time = []
+    for v in ancil_vars:
+        if 'Time' in v or '_time' in v:
+            nc_time = nc.variables[v]
+            t_obj = create_time(nc_time)
+            w_obj.time.append(t_obj)
+            
+    # Get vertCoord
+    coord_vars = var.getncattr('coordinates').split(' ')
+    for v in coord_vars:
+        pass
+
+
+    p_string = var.getncattr('OM_procedure')
+    procedures = parse_processes_string(p_string)
+    #for i in 
+    return (var,w_obj)
+
+def create_time(nc_variable):
+    """
+    Given a netcdf4 variable, create Time representation.
+    """
+    time_switch = {
+            'OM_phenomenonTime' : Time.PhenomenonTime,
+            'OM_validTime' : Time.ValidTime,
+            'OM_resultTime' : Time.ResultTime,
+            'forecast_reference_time' : Time.ForecastReferenceTime,
+            'LeadTime' : Time.LeadTime,
+            'time_bounds' : Time.BoundedTime
+            }
+    role = nc_variable.getncattr("wisps_role")
+    t_class = time_switch[role]
+    return t_class(data=nc_variable[:])
 
 def get_procedures(nc_variable, procedures_dict):
     """
@@ -116,7 +162,7 @@ def get_coordinate(nc_variable, coordinate_dict):
         except:
             loggin.warning("coord_name not in nc file")
     except:
-        pass  # no coordinate
+        return None  # no coordinate
 
 
 def removeTime(attrs):

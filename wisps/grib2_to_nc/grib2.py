@@ -290,12 +290,12 @@ def convert_grib2(filename):
         for i, arr in enumerate(valid_time):
             for j, val in enumerate(arr):
                 valid_time[i, j] = Time.epoch_time(val)
-        phenom_time = valid_time
 
+        valid_time = valid_time.astype(int)
+        phenom_time = valid_time
         obj = Wisps_data(name)
         obj.add_source('GFS')
         obj.add_fcstTime(fcst_time)
-        # obj.add_leadTime(hour)
         obj.add_metadata('ForecastReferenceTime', fcst_time)
         obj.dimensions = [lat, lon, lead_time_dim, time]
         try:
@@ -310,16 +310,25 @@ def convert_grib2(filename):
             pass
 
         # Add PhenomononTime
-        ptime = get_PhenomenonTime(values)
+        #ptime = get_PhenomenonTime(values)
+        #obj.time.append(ptime)
+        ptime = Time.PhenomenonTime(data=phenom_time)
         obj.time.append(ptime)
 
-        # Add ValidTime
-        vtime = get_ValidTime(values)
-        obj.time.append(vtime)
 
         # Add ResultTime
         rtime = get_ResultTime(values)
         obj.time.append(rtime)
+
+        # Add ValidTime
+        vstart = valid_time.copy() 
+        vend = valid_time.copy()
+        for i,j in enumerate(vstart[0]): 
+            vstart[:,i] = rtime.data[i]
+        valid_time = np.dstack((vstart, vend))
+        vtime = Time.ValidTime(data=valid_time)
+        #vtime = get_ValidTime(values)
+        obj.time.append(vtime)
 
         # Add ForecastReferenceTime
         ftime = get_ForecastReferenceTime(values)
@@ -395,7 +404,7 @@ def get_PhenomenonTime(grbs, deep_check=False):
     start = start + ftime
     end = end + ftime
     stride = Time.ONE_DAY
-    return Time.PhenomenonTime(start, end, stride)
+    return Time.PhenomenonTime(start_time=start, end_time=end, stride=stride)
 
 
 def get_LeadTime(lead_time_data, deep_check=False):
@@ -415,7 +424,7 @@ def get_ValidTime(grbs, deep_check=False):
     end = end_date + end_hour
     stride = Time.ONE_DAY
     offset = timedelta(seconds=(grbs[0].forecastTime * Time.ONE_HOUR))
-    return Time.ValidTime(start, end, stride, offset)
+    return Time.ValidTime(start_time=start, end_time=end, stride=stride, offset=offset)
 
 
 def get_ResultTime(grbs, deep_check=False):
@@ -428,7 +437,7 @@ def get_ResultTime(grbs, deep_check=False):
     start = start_date + start_hour
     end = end_date + end_hour
     stride = Time.ONE_DAY
-    return Time.ResultTime(start, end, stride)
+    return Time.ResultTime(start_time=start, end_time=end, stride=stride)
 
 
 def get_ForecastReferenceTime(grbs, deep_check=False):
@@ -445,7 +454,7 @@ def get_ForecastReferenceTime(grbs, deep_check=False):
     start = start_date + start_hour
     end = end_date + end_hour
     stride = Time.ONE_DAY
-    return Time.PhenomenonTime(start, end, stride)
+    return Time.ForecastReferenceTime(start_time=start, end_time=end, stride=stride)
 
 
 def get_grbs(grbs):
