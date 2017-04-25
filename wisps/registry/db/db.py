@@ -45,13 +45,13 @@ def create_variable_db():
 
 
 def get_variable_fields():
-    return ['property', 'source', 'leadtime', 'start',
+    return ['property', 'source', 'start',
             'end', 'duration', 'duration_method', 'vert_coord1',
             'vert_coord2', 'vert_method', 'filename']
 
 
 def get_variable_types():
-    return ['TEXT', 'TEXT', 'BIGINT', 'BIGINT',
+    return ['TEXT', 'TEXT', 'BIGINT', 
             'BIGINT', 'BIGINT', 'TEXT', 'INTEGER',
             'INTEGER', 'TEXT', 'TEXT']
 
@@ -166,17 +166,21 @@ def get_variable(**kwargs):
     the name.
     str name : name of predictor. e.g. wind_speed
     """
-    db = 'metadata'
-    #conn = connect(db_name)
-    #c = conn.cursor()
-    c.execute("PRAGMA table_info(metadata)")
+    db = 'variable'
+    attr = 'filename'
+    c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]
     name_arr = [ele[1] for ele in name_arr]
     print name_arr
+    # Construct a 'WHERE' string from kwargs
+    where_str = ""
+    for k,v in kwargs.iteritems():
+        where_str += k + " = '" + v + "' AND "
+    where_str = where_str[0:-4] # Remove 'AND'
     try:
         index = name_arr.index(attr)
-        sql = "SELECT " + attr + " FROM " + db + " WHERE name = '" + name + "'"
+        sql = "SELECT " + attr + " FROM " + db + " WHERE " + where_str
         c.execute(sql)
         return c.fetchone()[0]
     except ValueError as err:
@@ -192,9 +196,7 @@ def get_metadata(name, attr):
     str name : name of predictor. e.g. wind_speed
     """
     db = 'metadata'
-    #conn = connect(db_name)
-    #c = conn.cursor()
-    c.execute("PRAGMA table_info(metadata)")
+    c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]
     name_arr = [ele[1] for ele in name_arr]
@@ -217,8 +219,6 @@ def get_property(name, attr):
     str name : name of predictor. e.g. wind_speed
     """
     db = 'properties'
-    #conn = connect(db_name)
-    #c = conn.cursor()
     c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]

@@ -33,7 +33,7 @@ def read(*filenames):
             wisps_data.append(w_obj)
     return wisps_data
 
-def fetch(filename, name):
+def read_var(filename, name):
     """
     Returns a Wisps_data object from netcdf file
     """
@@ -42,6 +42,14 @@ def fetch(filename, name):
     ancil_vars = var.getncattr(ancil_name).split(' ')
     name = var.getncattr("OM_observedProperty")
     w_obj = Wisps_data(name, autofill=False)
+
+    # Fill metadata dict
+    metadata_exceptions = ['_FillValue']
+    metadata_keys = var.ncattrs()
+    for key in metadata_keys:
+        if key not in metadata_exceptions:
+            value = var.getncattr(key)
+            w_obj.add_metadata(key, value)
     # Get Time
     time = []
     for v in ancil_vars:
@@ -51,14 +59,30 @@ def fetch(filename, name):
             w_obj.time.append(t_obj)
             
     # Get vertCoord
-    coord_vars = var.getncattr('coordinates').split(' ')
-    for v in coord_vars:
-        pass
+    coord_vars = ""
+    try:
+        coord_vars = var.getncattr('coordinates').split(' ')
+    except:
+        pass # No coordinate
+    for c in coord_vars:
+        nc_coord = nc.variables[c]
+        coord_len = len(nc_coord[:])
+        assert coord_len > 0 and coord_len <= 2
+        if coord_len == 2: # It's bounded
+            w_obj.properties['coord_val1'] = nc_coord[0]
+            w_obj.properties['coord_val2'] = nc_coord[1]
+        elif coord_len == 1:
+            w_obj.properties['coord_val'] = nc_coord[0]
 
-
+    # Get Processes
     p_string = var.getncattr('OM_procedure')
     procedures = parse_processes_string(p_string)
     #for i in 
+    
+    # Add Dimensions
+    w_obj.dimensions = var.dimensions
+    # Store data
+    w_obj.data = var[:]
     return (var,w_obj)
 
 def create_time(nc_variable):

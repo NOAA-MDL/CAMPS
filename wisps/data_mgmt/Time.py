@@ -387,7 +387,9 @@ class Time(nc_writable):
             return self
 
     def __str__(self):
-        ret_str = self.name + "\n"
+        ret_str = "** " + self.name + " **" + "\n"
+        ret_str += "Shape:  "
+        ret_str += str(self.data.shape) + "\n"
         if len(self.data) > 0 and len(self.data.shape) == 1:
             ret_str += "start_time: "
             ret_str += str(epoch_to_datetime(self.data[0])) + "\n"
@@ -402,16 +404,14 @@ class Time(nc_writable):
             ret_str += str(epoch_to_datetime(self.data[-2])) + ", "
             ret_str += str(epoch_to_datetime(self.data[-1])) + "]"
         elif len(self.data) > 0 and len(self.data.shape) == 2:
-            ret_str += "Shape:  "
-            ret_str += str(self.data.shape) + "\n"
             ret_str += "Data: \n"
             ret_str += "[" + str(epoch_to_datetime(self.data[0][0])) + ", "
             ret_str += str(epoch_to_datetime(self.data[0][1])) + ",\n"
             ret_str += "  ....\n"
             ret_str += str(epoch_to_datetime(self.data[-1][-2])) + ", "
             ret_str += str(epoch_to_datetime(self.data[-1][-1])) + "]"
-
-            return ret_str
+        ret_str += "\n"
+        return ret_str
 
     __repr__ = __str__
 
@@ -690,6 +690,21 @@ class LeadTime(Time):
         dim_tuple = (get_lead_dim_name(),)
         assert len(dim_tuple) == len(self.data.shape)
         return dim_tuple
+
+    def __str__(self):
+        ret_str = "** " + self.name + " **" + "\n"
+        ret_str += "Number of lead times: \n"
+        ret_str += str(len(self.data.shape)) + "\n"
+        ret_str += "Data:\n"
+        if len(self.data) > 6:
+            for i in range(3):
+                ret_str += str(self.data[i]/3600)
+                ret_str += "hr,\n"
+            ret_str += "   ...\n"
+            for i in range(-3,0):
+                ret_str += str(self.data[i]/3600)
+                ret_str += "hr,\n"
+        return ret_str
 
 
 class BoundedTime(Time):

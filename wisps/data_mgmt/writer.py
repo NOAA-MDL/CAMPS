@@ -42,6 +42,7 @@ def write(wisps_data, filename, global_attrs={}, overwrite=True):
         for d_name, size in dims.iteritems():
             nc.createDimension(d_name, size)
     except:
+        pdb.set_trace()
         pass
     # Write the data by calling its write_to_nc function
     for d in wisps_data:

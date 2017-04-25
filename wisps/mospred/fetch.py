@@ -12,3 +12,4 @@ def fetch(metadata_dict):
     the files. If the Observed property is recognized as a variable that needs
     to be computed, then a routine will be started to compute variables.
     """
+    pass
