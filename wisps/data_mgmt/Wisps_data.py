@@ -14,6 +14,7 @@ from Process import Process
 import Time
 import registry.util as cfg
 import registry.db.db as db
+import registry.constants as const
 
 
 FILL_VALUE = 9999
@@ -43,20 +44,20 @@ class Wisps_data(nc_writable):
         if autofill:
             self.add_db_metadata()
 
-        # Coordinates
+    # Coordinates
     def has_plev(self):
         """
         Checks metadata to see if this has plev.
         """
-        if coord_str in self.metadata:
-            return 'plev' in self.metadata[coord_str]
+        if const.COORD in self.metadata:
+            return const.PLEV in self.metadata[const.COORD]
 
     def has_elev(self):
         """
         Checks metadata to see if this has elev.
         """
-        if coord_str in self.metadata:
-            return 'elev' in self.metadata[coord_str]
+        if const.COORD in self.metadata:
+            return const.ELEV in self.metadata[const.COORD]
 
     def has_bounds(self):
         """
@@ -86,7 +87,8 @@ class Wisps_data(nc_writable):
 
     def get_coordinate(self):
         """Returns the value of the coordinate data if it has
-        one. If this variable is a bounds, return a tuple of the bounds"""
+        one. If this variable is a bounds, return a tuple of the bounds.
+        Otherwise return None"""
         if self.has_elev_bounds() or self.has_plev_bounds():
             try:
                 coord1 = self.properties['coord_val1']
@@ -97,12 +99,14 @@ class Wisps_data(nc_writable):
             coord1 = int(coord1)
             coord2 = int(coord2)
             return (coord1, coord2)
-        try:
-            coord = self.properties['coord_val']
-        except:
-            coord = db.get_property(self.name, 'coord_val')
-        coord = int(coord)
-        return coord
+        if self.has_plev() or self.has_elev():
+            try:
+                coord = self.properties['coord_val']
+            except:
+                coord = db.get_property(self.name, 'coord_val')
+            coord = int(coord)
+            return coord
+        return None
 
     def get_time_bounds(self):
         if not self.has_time_bounds():
@@ -265,7 +269,7 @@ class Wisps_data(nc_writable):
         try:
             name += self.metadata['LE_Source']
         except:
-            name += '_'
+            pass
         name += '_'
 
         # Write observedProperty
@@ -292,18 +296,18 @@ class Wisps_data(nc_writable):
         name += '_'
 
         # Write fcstReferenceTime
-#        try:
-#            name += str(self.metadata['FcstTime_hour'])
-#        except:
-#            pass
-#        name += '_'
-#
-
-        # Write LeadTime
         try:
-            name += str(self.metadata['LeadTime_hour'])
+            name += str(self.metadata['FcstTime_hour'])
         except:
             pass
+#        name += '_'
+
+
+        # Write LeadTime
+#        try:
+#            name += str(self.metadata['LeadTime_hour'])
+#        except:
+#            pass
         return name
 
     def get_coord_name(self, nc_handle, coord_name, is_bounds=False):
@@ -561,6 +565,61 @@ class Wisps_data(nc_writable):
 
         return nc_handle
 
+    def add_to_database(self, filename):
+        """Add variable to the database for searching.
+        """
+        var_name = self.get_variable_name()
+        # There should always be a phenomenonTime
+        ptime = filter(lambda t: t.name=='OM_phenomenonTime', self.time)[0]
+        start=ptime.get_start_time()
+        end=ptime.get_end_time()
+        try:
+            btime = filter(lambda t: t.name=='time_bounds', self.time)[0]
+            duration = btime.get_duration()
+            time_dim = cfg.read_dimensions()['time']
+            duration_method = self.get_cell_methods()[time_dim]
+        except IndexError:
+            duration = None
+            duration_method = None
+
+        vertical = self.get_coordinate()
+        if type(vertical) is tuple: # then is bounds
+            vert_coord1, vert_coord2 = vertical
+            vert_method = None
+            try:
+                elev_dim = cfg.read_dimensions()['elev']
+                vert_method = self.get_cell_methods()[time_dim]
+            except:
+                pass
+            try:
+                plev_dim = cfg.read_dimensions()['plev']
+                vert_method = self.get_cell_methods()[time_dim]
+            except:
+                pass
+            assert vert_method is not None
+        elif vertical is not None:
+            vert_coord1 = vertical
+            vert_coord2 = None
+            vert_method = None
+        else:
+            vert_coord1 = None
+            vert_coord2 = None
+            vert_method = None
+
+
+        db.insert_variable(property=self.get_observedProperty(),
+                           source=self.metadata['LE_Source'],
+                           start=ptime.get_start_time(),
+                           end=ptime.get_end_time(),
+                           duration=duration,
+                           duration_method=duration_method,
+                           vert_coord1=vert_coord1,
+                           vert_coord2=vert_coord2,
+                           vert_method=vert_method,
+                           filename=filename,
+                           name=var_name)
+                           
+
     def get_chunk_size(self, num_partitions):
         dtype = self.data.dtype
         shape = list(self.data.shape)
@@ -588,6 +647,24 @@ class Wisps_data(nc_writable):
             nc_var[:] = self.data
         except IndexError as e:
             print e
+
+    def get_cell_methods(self):
+        """Return a dictionary representing cell methods, where the
+        key is the coordinate that the cell method modifies, and the 
+        value is the method itself.
+        """
+        if 'cell_methods' not in self.metadata:
+            return None
+        methods_dict = {}
+        cm_str = self.metadata['cell_methods']
+        methods = cm_str.split(",")
+        for method_str in methods:
+            key_val = method_str.split(':')
+            dimension = key_val[0].strip(' ')
+            cell_method = key_val[1].strip(' ')
+            methods_dict[dimension] = cell_method
+        return methods_dict
+
 
     def check_dimensions(self, nc_handle):
         """Check data dimension shape is equal to the nc handle dimension.

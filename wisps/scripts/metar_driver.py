@@ -144,6 +144,7 @@ def main(control_file=None):
 
     wisps_obj = pack_station_names(stations.keys())
     wisps_obj.add_source('METAR')
+    wisps_obj.time=add_time(start_time, end_time)
     wisps_data.append(wisps_obj)
 
     extra_globals = get_globals()

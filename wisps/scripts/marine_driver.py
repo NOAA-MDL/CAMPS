@@ -91,6 +91,7 @@ def main(control_file=None):
             print observation_name, "undefined"
 
     obj = pack_station_names(station_names)
+    obj.time = get_time(reader.dates)
     obj.add_source("MARINE")
     obj_list.append(obj)
 

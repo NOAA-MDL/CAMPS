@@ -28,7 +28,6 @@ globals:
 ##
 ########################################
 dimensions :
-    #time : &time 'time_projection'
   time : &time 'default_time_coordinate_size'
   nstations : &nstations 'number_of_stations'
   num_vert : &nv 'nv' #number of verticies
@@ -428,7 +427,7 @@ variables :
       long_name : "Hourly precipitation amount"
       valid_min : 0
       valid_max : 3.75
-      cell_methods : "time_projection:sum"
+      cell_methods : "default_time_coordinate_size:sum"
       bounds : "time_bounds"
       units : "inches"
       scale_factor : 100

@@ -8,6 +8,7 @@ sys.path.insert(0, relative_path)
 import registry.util as cfg
 import parse_pred
 import procedures
+import fetch
 
 
 def read_predictors(yaml_file):
@@ -33,6 +34,10 @@ def apply_procedures(w_obj, procedures):
 
 
 def parse_variable(entry_dict):
+    """
+    Given a user-provided dictionary representing a desired variable, 
+    format it into a common form.
+    """
     # Check for OM_observedProperty
     if 'Property' not in entry_dict:
         raise LookupError("Property is not defined, and is required")
@@ -61,9 +66,18 @@ def parse_variable(entry_dict):
         duration = dur_dict['time']
         duration_cell_method = dur_dict['cell_method']
     else:
-        duration=0
+        duration=None
+        duration_cell_method=None
 
     # Check Vertical Coordinate
     if 'Vertical_Coordinate' in entry_dict:
         vert_co_dict = parse_pred.vertical_coordinate(
             entry_dict['Vertical_Coordinate'])
+
+    exit_dict = {
+            OM_observedProperty : property
+            
+            }
+
+
+

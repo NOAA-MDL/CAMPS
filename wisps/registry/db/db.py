@@ -38,30 +38,34 @@ def create_variable_db():
     for f, t in zip(fields, types):
         column_names_str += f
         column_names_str += " " + t + ", "
-    column_names_str = column_names_str[0:-2] + ")"
+    column_names_str = column_names_str[0:-2] +  ", PRIMARY KEY (" +",".join(fields)+"))"
     print column_names_str
     sql = 'CREATE TABLE ' + table_name + ' ' + column_names_str
     c.execute(sql)
 
 
 def get_variable_fields():
-    return ['property', 'source', 'start',
-            'end', 'duration', 'duration_method', 'vert_coord1',
-            'vert_coord2', 'vert_method', 'filename']
+    return ['property', 'source', 'start', 'end',
+            'duration', 'duration_method',
+            'vert_coord1', 'vert_coord2', 'vert_method',
+            'filename', 'name']
 
 
 def get_variable_types():
-    return ['TEXT', 'TEXT', 'BIGINT', 
-            'BIGINT', 'BIGINT', 'TEXT', 'INTEGER',
-            'INTEGER', 'TEXT', 'TEXT']
+    return ['TEXT', 'TEXT', 'BIGINT', 'BIGINT',
+            'BIGINT', 'TEXT',
+            'INTEGER', 'INTEGER', 'TEXT',
+            'TEXT', 'TEXT']
 
 
-def insert_variable(property, source, leadtime, start, end, duration, duration_method, vert_coord1, vert_coord2, vert_method, filename):
-    """ Inserts variable metadata information into the table. 
+def insert_variable(property, source, start, end,
+                    duration, duration_method,
+                    vert_coord1, vert_coord2, vert_method,
+                    filename, name):
+    """Inserts variable metadata information into the table. 
     Requires arguments in the following order:
     property, 
     source,
-    leadtime, 
     start, 
     end, 
     duration, 
@@ -69,18 +73,16 @@ def insert_variable(property, source, leadtime, start, end, duration, duration_m
     vert_coord1, 
     vert_coord2, 
     vert_method, 
-    filename
+    filename,
+    name
     """
     #var_db = 'variables.db'
     table_name = 'variable'
-    #conn = connect(db_name)
-    #c = conn.cursor()
     fields_string = ('?,' * len(get_variable_fields()))[:-1]
     sql = "INSERT INTO " + table_name + " VALUES (" + fields_string + ")"
     sql_values = [
         property,
         source,
-        leadtime,
         start,
         end,
         duration,
@@ -88,10 +90,10 @@ def insert_variable(property, source, leadtime, start, end, duration, duration_m
         vert_coord1,
         vert_coord2,
         vert_method,
-        filename]
+        filename,
+        name]
     c.execute(sql, sql_values)
     conn.commit()
-    conn.close()
 
 
 def create_new_metadata_db():
@@ -124,7 +126,6 @@ def create_new_metadata_db():
         c.execute(sql, sql_values)
 
     conn.commit()
-    conn.close()
 
 
 def create_new_properties_db():
@@ -157,7 +158,6 @@ def create_new_properties_db():
         c.execute(sql, sql_values)
 
     conn.commit()
-    conn.close()
 
 
 def get_variable(**kwargs):
@@ -167,26 +167,53 @@ def get_variable(**kwargs):
     str name : name of predictor. e.g. wind_speed
     """
     db = 'variable'
-    attr = 'filename'
     c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]
     name_arr = [ele[1] for ele in name_arr]
-    print name_arr
     # Construct a 'WHERE' string from kwargs
     where_str = ""
     for k,v in kwargs.iteritems():
         where_str += k + " = '" + v + "' AND "
     where_str = where_str[0:-4] # Remove 'AND'
-    try:
-        index = name_arr.index(attr)
-        sql = "SELECT " + attr + " FROM " + db + " WHERE " + where_str
-        c.execute(sql)
-        return c.fetchone()[0]
-    except ValueError as err:
-        print attr + " is not a known metadata attribute"
-        return False
-    conn.close()
+    filename_index = name_arr.index('filename')
+    name_index = name_arr.index('name')
+    sql = "SELECT * FROM " + db + " WHERE " + where_str
+    c.execute(sql)
+    res = c.fetchone()
+    if res:
+        return (res[filename_index], res[name_index])
+
+def get_all_variables(**kwargs):
+    """
+    Returns the value of of the attribute for 
+    the name.
+    str name : name of predictor. e.g. wind_speed
+    """
+    db = 'variable'
+    c.execute("PRAGMA table_info(" + db + ")")
+    name_arr = c.fetchall()
+    # The name of the column is at index 1. hence, ele[1]
+    name_arr = [ele[1] for ele in name_arr]
+    # Construct a 'WHERE' string from kwargs
+    where_str = ""
+    for k,v in kwargs.iteritems():
+        v = str(v)
+        where_str += k + " = '" + v + "' AND "
+    where_str = where_str[0:-4] # Remove 'AND'
+    filename_index = name_arr.index('filename')
+    name_index = name_arr.index('name')
+    sql = "SELECT * FROM " + db + " WHERE " + where_str
+    c.execute(sql)
+    return c.fetchall()
+
+
+def dump_db():
+    db = 'variable'
+    sql = 'SELECT * FROM ' + db
+    c.execute(sql)
+    return c.fetchall()
+
 
 
 def get_metadata(name, attr):
@@ -209,7 +236,6 @@ def get_metadata(name, attr):
     except ValueError as err:
         print attr + " is not a known metadata attribute"
         return False
-    conn.close()
 
 
 def get_property(name, attr):
@@ -231,7 +257,6 @@ def get_property(name, attr):
     except ValueError as err:
         print attr + " is not a known property attribute or " + name + " not defined"
         return False
-    conn.close()
 
 
 def get_all_metadata(name):

@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 import sys
 import os
+import parse_pred
 relative_path = os.path.abspath(
     os.path.dirname(os.path.realpath(__file__)) + "/..")
 sys.path.insert(0, relative_path)
+
 
 
 def fetch(metadata_dict):
@@ -13,3 +15,7 @@ def fetch(metadata_dict):
     to be computed, then a routine will be started to compute variables.
     """
     pass
+
+
+
+

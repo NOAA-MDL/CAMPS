@@ -17,7 +17,8 @@ Module to handle writing Wisps netCDF data
 """
 
 
-def write(wisps_data, filename, global_attrs={}, overwrite=True):
+def write(wisps_data, filename, global_attrs={}, overwrite=True,
+          write_to_db=True):
     """
     Writes a list of Wisps_data to NetCDF file.
     wisps_data is expected to be a list of Wisps_data objects.
@@ -30,10 +31,10 @@ def write(wisps_data, filename, global_attrs={}, overwrite=True):
         wisps_data = list(wisps_data)
     start_time = time.time()
     if overwrite:
-        m = 'w'
+        mode = 'w'
     else:
-        m = 'a'
-    nc = Dataset(filename, mode=m, format="NETCDF4")
+        mode = 'a'
+    nc = Dataset(filename, mode=mode, format="NETCDF4")
     # Get all dimenesions in the list.
     # Will error out if dimensions arn't correct.
     try:
@@ -47,6 +48,7 @@ def write(wisps_data, filename, global_attrs={}, overwrite=True):
     # Write the data by calling its write_to_nc function
     for d in wisps_data:
         d.write_to_nc(nc)
+        d.add_to_database(filename)
     global_attrs['primary_variables'] = get_primary_variables(wisps_data)
     write_global_attributes(nc, global_attrs)
     nc.close()
