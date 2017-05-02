@@ -493,13 +493,15 @@ class ValidTime(Time):
             super(ValidTime, self).__init__(start_time=start_time,
                                           end_time=end_time,
                                           stride=stride)
+            try:
+                offset = kwargs['offset']
+            except:
+                offset = 0
+            self.add_offset(offset)
         elif 'data' in kwargs:
             super(ValidTime, self).__init__()
             self.data = kwargs['data']
             offset = 0
-        if 'offset' in kwargs:
-            offset = kwargs['offset']
-            self.add_offset(offset)
 
         self.metadata['standard_name'] = 'time'
 
