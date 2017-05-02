@@ -1,14 +1,22 @@
 # Specify period of interest
-start :
-    year : 2013
-    month : 02     # Where 1 is January and 12 is December
-    day : null
-    stride : null
-end :
-    year : 2015
-    month : 02     # Where 1 is January and 12 is December
-    day : null
-    stride : null
+#start :
+#    year : 2013
+#    month : 02     # Where 1 is January and 12 is December
+#    day : null
+#    stride : null
+#end :
+#    year : 2015
+#    month : 02     # Where 1 is January and 12 is December
+#    day : null
+#    stride : null
+
+range: ['2013100100-2014033100,24h']
+
+forecast_reference_time : 18 # hour
+
+# Where observation/model data is held.
+# Specify one or many directories
+input_directory : [""]
 
 output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/testOut/"
 

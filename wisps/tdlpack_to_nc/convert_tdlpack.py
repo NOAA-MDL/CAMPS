@@ -115,9 +115,15 @@ def write_obs_to_netcdf(filepath, point_dict):
     sorted_point_dict = OrderedDict(sorted(point_dict.items()))
     all_points = sorted_point_dict.values()
     all_names = sorted_point_dict.keys()
-    temp_obs = sorted_point_dict.values()[0].dates
-    start_date = str(int(temp_obs[0]))
-    end_date = str(int(temp_obs[-1]))
+    start_date = 0
+    end_date = 0
+    i = 0
+    while start_date == 0 or end_date == 0:
+        temp_obs = sorted_point_dict.values()[1].dates
+        start_date = str(int(temp_obs[0]))
+        end_date = str(int(temp_obs[-1]))
+        i += 1
+    pdb.set_trace()
     print "start date:", start_date
     print "end date:", end_date
     # TODO: find better way to do this

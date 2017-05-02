@@ -10,7 +10,7 @@
 globals:
   institution : "NOAA/National Weather Service"
   Conventions : "CF-1.1"
-  version : "WISPS-0.1"
+  version : "WISPS-0.5"
   history : "Generated on NOAA's Weather and Climate Operational Supercomputing System"
   references : ""
   organization : "NOAA/MDL/SMB"

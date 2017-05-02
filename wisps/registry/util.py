@@ -102,6 +102,17 @@ def read_nc_config():
     nc.variables = read_variables()
     return nc
 
+def read_mospred_control():
+    """
+    Reads the metar control file that provides time ranges and
+    directory locations for the observations.
+    """
+    data = read_cache()
+    if data:
+        return data
+    data = read_yaml(CONFIG_PATH + "mospred_control.yml")
+    write_cache(data)
+    return data
 
 def read_metar_control():
     """

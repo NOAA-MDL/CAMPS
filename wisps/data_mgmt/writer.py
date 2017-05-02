@@ -43,12 +43,14 @@ def write(wisps_data, filename, global_attrs={}, overwrite=True,
         for d_name, size in dims.iteritems():
             nc.createDimension(d_name, size)
     except:
-        pdb.set_trace()
         pass
     # Write the data by calling its write_to_nc function
     for d in wisps_data:
         d.write_to_nc(nc)
-        d.add_to_database(filename)
+        try:
+            d.add_to_database(filename)
+        except AttributeError:
+            pass # Variable doesn't have a Phenomenon Time.
     global_attrs['primary_variables'] = get_primary_variables(wisps_data)
     write_global_attributes(nc, global_attrs)
     nc.close()

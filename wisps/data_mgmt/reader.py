@@ -348,3 +348,5 @@ def separate_coordinate_and_data(variables_dict):
             var_dict[name] = var
 
     return (coordinate_dict, var_dict)
+
+

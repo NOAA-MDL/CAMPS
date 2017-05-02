@@ -541,14 +541,14 @@ class Wisps_data(nc_writable):
             variable_name = variable_name + str(counter)
 
         # Get the chunksize
-        chunksize = self.get_chunk_size(5)
+        chunksize = self.get_chunk_size()
 
         # Create the variable
         nc_var = nc_handle.createVariable(
             variable_name,
             self.data.dtype,
             tuple(self.dimensions),
-            # chunksizes=chunksize,
+            chunksizes=chunksize,
             zlib=True,
             complevel=4,
             shuffle=False,
@@ -570,9 +570,16 @@ class Wisps_data(nc_writable):
         """
         var_name = self.get_variable_name()
         # There should always be a phenomenonTime
-        ptime = filter(lambda t: t.name=='OM_phenomenonTime', self.time)[0]
+        try:
+            ptime = filter(lambda t: t.name=='OM_phenomenonTime', self.time)[0]
+        except IndexError:
+            raise AttributeError("No PhenomenonTime")
+        # Returns date in datetime format
+        # Change to YYYYMMDDHHMM
         start=ptime.get_start_time()
+        start = start.strftime("%Y%m%d%H%S")
         end=ptime.get_end_time()
+        end = end.strftime("%Y%m%d%H%S")
         try:
             btime = filter(lambda t: t.name=='time_bounds', self.time)[0]
             duration = btime.get_duration()
@@ -620,16 +627,14 @@ class Wisps_data(nc_writable):
                            name=var_name)
                            
 
-    def get_chunk_size(self, num_partitions):
-        dtype = self.data.dtype
+    def get_chunk_size(self):
         shape = list(self.data.shape)
-        itemsize = np.dtype(dtype).itemsize
+        if len(shape) == 4:
+            shape[2] = 1
+            shape[3] = 1
+            return tuple(shape)
+        return None
 
-        for i in range(len(shape)):
-            # shape[i] *= itemsize
-            shape[i] = shape[i] * itemsize / num_partitions
-
-        return tuple(shape)
 
     def check_correct_shape(self):
         # Check that the dimensions are correct for the shape of the data

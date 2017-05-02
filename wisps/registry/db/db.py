@@ -174,15 +174,24 @@ def get_variable(**kwargs):
     # Construct a 'WHERE' string from kwargs
     where_str = ""
     for k,v in kwargs.iteritems():
-        where_str += k + " = '" + v + "' AND "
+        where_str += k + " = '" + str(v) + "' AND "
     where_str = where_str[0:-4] # Remove 'AND'
     filename_index = name_arr.index('filename')
     name_index = name_arr.index('name')
     sql = "SELECT * FROM " + db + " WHERE " + where_str
     c.execute(sql)
-    res = c.fetchone()
-    if res:
-        return (res[filename_index], res[name_index])
+    res = c.fetchall()
+    for i,values in enumerate(res):
+        res[i] = associate(name_arr, values)
+    return res
+    #if res:
+    #    return (res[filename_index], res[name_index])
+
+def associate(names, values):
+    """Given a list of names and their associated values, 
+    return a dictionary
+    """
+    return dict((x,y) for x, y in zip(names,values))
 
 def get_all_variables(**kwargs):
     """
@@ -236,6 +245,29 @@ def get_metadata(name, attr):
     except ValueError as err:
         print attr + " is not a known metadata attribute"
         return False
+
+def get_by_metadata(**kwargs):
+    """
+    Returns the value of of the attribute for 
+    the name.
+    str name : name of predictor. e.g. wind_speed
+    """
+    db = 'metadata'
+    c.execute("PRAGMA table_info(" + db + ")")
+    name_arr = c.fetchall()
+    # The name of the column is at index 1. hence, ele[1]
+    name_arr = [ele[1] for ele in name_arr]
+    print name_arr
+    # Construct a 'WHERE' string from kwargs
+    where_str = ""
+    for k,v in kwargs.iteritems():
+        where_str += k + " = '" + v + "' AND "
+    where_str = where_str[0:-4] # Remove 'AND'
+    sql = "SELECT * FROM " + db + " WHERE " + where_str
+    c.execute(sql)
+    res = c.fetchone()
+    if res:
+        return res
 
 
 def get_property(name, attr):
