@@ -123,7 +123,6 @@ def write_obs_to_netcdf(filepath, point_dict):
         start_date = str(int(temp_obs[0]))
         end_date = str(int(temp_obs[-1]))
         i += 1
-    pdb.set_trace()
     print "start date:", start_date
     print "end date:", end_date
     # TODO: find better way to do this

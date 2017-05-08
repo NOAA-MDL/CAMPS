@@ -577,9 +577,11 @@ class Wisps_data(nc_writable):
         # Returns date in datetime format
         # Change to YYYYMMDDHHMM
         start=ptime.get_start_time()
-        start = start.strftime("%Y%m%d%H%S")
+        start=Time.epoch_time(start)
+        #start = start.strftime("%Y%m%d%H%S")
         end=ptime.get_end_time()
-        end = end.strftime("%Y%m%d%H%S")
+        end=Time.epoch_time(end)
+        #end = end.strftime("%Y%m%d%H%S")
         try:
             btime = filter(lambda t: t.name=='time_bounds', self.time)[0]
             duration = btime.get_duration()
@@ -616,8 +618,8 @@ class Wisps_data(nc_writable):
 
         db.insert_variable(property=self.get_observedProperty(),
                            source=self.metadata['LE_Source'],
-                           start=ptime.get_start_time(),
-                           end=ptime.get_end_time(),
+                           start=start,
+                           end=end,
                            duration=duration,
                            duration_method=duration_method,
                            vert_coord1=vert_coord1,

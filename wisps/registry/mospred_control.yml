@@ -37,5 +37,5 @@ station_defs : "/home/Riley.Conroy/dev/wisps_dev/iolib/config/station.tbl"
 # Provides a list of all stations that will be used in observations
 valid_stations : "/home/Riley.Conroy/dev/wisps_dev/iolib/config/metar.lst"
 
-predictor_file : "/home/Riley.Conroy/dev/wisps/wisps/registry"
+predictor_file : "/home/Riley.Conroy/dev/wisps/wisps/registry/predictors.yml"
 

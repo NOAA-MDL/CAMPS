@@ -174,7 +174,12 @@ def get_variable(**kwargs):
     # Construct a 'WHERE' string from kwargs
     where_str = ""
     for k,v in kwargs.iteritems():
-        where_str += k + " = '" + str(v) + "' AND "
+        operator = "="
+        if k == "start":
+            operator = ">="
+        elif k == "end":
+            operator = "<="
+        where_str += k + " "+operator+" '" + str(v) + "' AND "
     where_str = where_str[0:-4] # Remove 'AND'
     filename_index = name_arr.index('filename')
     name_index = name_arr.index('name')

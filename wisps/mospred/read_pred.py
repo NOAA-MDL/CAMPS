@@ -26,7 +26,6 @@ def read_predictors(yaml_file):
         else:
             w_objs.append(Wisps_obj)
 
-
 def parse_range(range_str):
     """
     Given a string such as '2013100100-2014033100,24h',

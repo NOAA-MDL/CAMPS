@@ -1,0 +1,8 @@
+
+- Property : 'Temp'
+  Source : 'GFS'
+  LeadTime : '108000s'
+  Vertical_Coordinate : 0
+  Procedure : ['smooth 9pt', 'interp bilinear']
+
+

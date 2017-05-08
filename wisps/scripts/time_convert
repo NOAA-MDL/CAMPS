@@ -1,0 +1,66 @@
+#!/usr/bin/env python
+import sys
+import os
+from netCDF4 import Dataset
+import netCDF4
+import numpy as np
+from datetime import datetime
+import pdb
+
+def main(filename):
+    nc = Dataset(filename, mode='a')
+    variables = nc.variables
+    dimensions = nc.dimensions
+    char_dim = 'readableChars'
+    try:
+        nc.createDimension(char_dim, 19)
+    except ValueError, RuntimeError:
+        pass
+    time_vars = filter(lambda x: 'Time' in x.name or 'time_bound' in x.name, variables.values())
+    etd = np.vectorize(epoch_to_datetime)
+    te = np.vectorize(to_iso)
+    for v in time_vars:
+        print "Converting ", v.name
+        pdb.set_trace()
+        name = get_alt_name(v.name)
+        attr_keys = v.ncattrs()
+        dt_rep = etd(v[:])
+        #dt_rep = map(lambda x: epoch_to_datetime(x), v[:])
+        #iso_rep = map(lambda x: to_iso(x), dt_rep)
+        iso_rep = te(dt_rep)
+        iso_rep_char = netCDF4.stringtochar(np.array(iso_rep, dtype='S19'))
+        new_dims = list(v.dimensions) 
+        new_dims.append(char_dim)
+        new_var = nc.createVariable(name, 'c', tuple(new_dims) )
+        new_var[:] = iso_rep_char
+
+
+def get_alt_name(name):
+    return "Readable_" + name
+
+def to_iso(x):
+    if x is not 9999:
+        return x.isoformat()
+
+def find_dim_name(dims, size):
+    for i in dims.values:
+        if i['size'] == size:
+            return i['name']
+
+def epoch_to_datetime(seconds):
+    """Converts epoch time to datetime"""
+    try:
+        return datetime.utcfromtimestamp(seconds)
+    except:
+        pass 
+
+
+if __name__ == "__main__":
+    try:
+        arg = sys.argv[1]
+    except:
+        print "Please provide argument"
+        print "Usage: time_convert [filename]"
+        sys.exit(0)
+    main(arg)
+
