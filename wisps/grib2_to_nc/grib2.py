@@ -244,9 +244,11 @@ def convert_grib2(filename):
             if example_grb.changeDecimalPrecision == 0:
                 dtype = np.dtype('int16')
             for grb in values:
-                stacked.append(grb.values)
+                # Add to the validTime array
                 valid.append(str(grb.validityDate) +
                              str(grb.validityTime).zfill(4))
+                # Add the 2D actual model data
+                stacked.append(grb.values)
             stacked = np.dstack(stacked)
             valid = np.array(valid)
 
@@ -268,6 +270,9 @@ def convert_grib2(filename):
                     'lead_time': [example_grb.forecastTime],
                     'valid_time': [valid]
                 }
+    ##
+    # Format and Write values to NetCDF file
+    ##
 
     # Get standard dimension names
     dimensions = yamlutil.read_dimensions()
@@ -275,10 +280,13 @@ def convert_grib2(filename):
     lon = dimensions['lon']
     lead_time_dim = dimensions['lead_time']
     time = dimensions['time']
-
+    x_proj = dimensions['x_proj']
+    y_proj = dimensions['y_proj']
+    
+    x_proj_data, y_proj_data = get_projection_data(tmp_grb)
+    
     fcst_time = filename[10:12]
     values = lead_times[0].values()[0]
-
     for name, grb_dict in data_dict.iteritems():
         stacked = grb_dict['data']
         stacked = np.array(stacked)
@@ -297,7 +305,7 @@ def convert_grib2(filename):
         obj.add_source('GFS')
         obj.add_fcstTime(fcst_time)
         obj.add_metadata('ForecastReferenceTime', fcst_time)
-        obj.dimensions = [lat, lon, lead_time_dim, time]
+        obj.dimensions = [y_proj, x_proj, lead_time_dim, time]
         try:
             obj.add_data(stacked)
             obj.change_data_type(dtype)
@@ -343,16 +351,45 @@ def convert_grib2(filename):
     lon = Wisps_data('longitude')
     lat.add_source('GFS')
     lon.add_source('GFS')
-    lat.dimensions = ['lat', 'lon']
-    lon.dimensions = ['lat', 'lon']
+    lat.dimensions = ['y', 'x']
+    lon.dimensions = ['y', 'x']
     lat_lon_data = tmp_grb.latlons()
     lat.data = lat_lon_data[0]
     lon.data = lat_lon_data[1]
     all_objs.append(lat)
     all_objs.append(lon)
 
+    # Make x and y projection variables
+    x_obj = Wisps_data('x_proj')
+    x_obj.add_source('GFS')
+    x_obj.dimensions = ['x']
+    x_obj.data = x_proj_data
+    all_objs.append(x_obj)
+    y_obj = Wisps_data('y_proj')
+    y_obj.add_source('GFS')
+    y_obj.dimensions = ['y']
+    y_obj.data = y_proj_data
+    all_objs.append(y_obj)
+
+
     outfile = outpath + get_output_filename(year, month)
     writer.write(all_objs, outfile)
+
+def get_projection_data(grb):
+    """Retrieves the projection data from grb
+    """
+    x_proj = np.zeros(grb.Nx)
+    y_proj = np.zeros(grb.Ny)
+    prev_val = 0
+    for i in range(grb.Nx):
+        x_proj[i] = prev_val
+        prev_val = prev_val + grb.DxInMetres
+    prev_val = 0
+    for i in range(grb.Ny):
+        y_proj[i] = prev_val 
+        prev_val = prev_val + grb.DyInMetres
+
+    return (x_proj,y_proj)
 
 
 def get_dtype(grb):

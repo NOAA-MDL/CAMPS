@@ -149,7 +149,6 @@ def main(control_file=None):
 
     extra_globals = get_globals()
     writer.write(wisps_data, filename, extra_globals)
-    logging.info("writing complete. Closing nc file")
     if log_file:
         out_log.close()
 
@@ -170,6 +169,9 @@ def get_globals():
 
 
 def add_time(start, end, stride=None):
+    """
+    Create and return Time objects
+    """
     time = []
     if stride is None:
         stride = Time.ONE_HOUR

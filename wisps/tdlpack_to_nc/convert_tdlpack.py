@@ -140,6 +140,8 @@ def write_obs_to_netcdf(filepath, point_dict):
         for v in all_points:
             temp_obs.append(v.predictors[p])
         temp_obs = np.vstack(temp_obs)
+        if nc_var_name == 'observation_time':
+            continue
 
         obj = Wisps_data(nc_var_name)
         obj.set_dimensions()
@@ -147,6 +149,9 @@ def write_obs_to_netcdf(filepath, point_dict):
             temp_obs = temp_obs[0, :]
         obj.add_data(temp_obs)
         obj.add_source(ob_type)
+        if(ob_type == "MESONET"):
+            obj.add_process('MesoObProcStep1')
+            obj.add_process('MesoObProcStep2')
         obj.time = metar_driver.add_time(start_date, end_date)
         obj.change_data_type()
         #obj.time = metar_driver.add_time(start_date, end_date)
@@ -287,21 +292,22 @@ def convert_obs(filepath, out_dir="./"):
     time_index = 0
     cur_date = records[0].date
     init_time = time.time()
+
     for rnum, r in enumerate(records):
         if r.date != cur_date:
+            ########################
             # if int(r.date) % 10 == 0:
             #    ## Time test ##
             #    diff_time = time.time() - init_time
             #    init_time = time.time()
             #    print 'elapsed time:',diff_time
-            #    ## ## ## ## ## ##
+            ########################
             print cur_date
             print time_index
             time_index += 1
             cur_date = r.date
         record = r.values
         str_id = str(r.id[0])
-        # pdb.set_trace()
         # r.ccall is a list of all stations for current record
         for i, call in enumerate(r.ccall):
             if call not in point_dict:

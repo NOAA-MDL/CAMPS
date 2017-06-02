@@ -112,16 +112,15 @@ class Wisps_data(nc_writable):
         if not self.has_time_bounds():
             return None
         for i in self.time:
-            if i.name == 'time_bounds':
+            if i.name == 'OM_phenomenonTimePeriod':
                 return i
 
     def add_process(self, process):
         """
-        Adds a Process object to the Processes list.
+        Adds a Process object to the Processes list or creates one if given a str.
         """
-        if process.__class__ is not Process:
-            logging.error(process + "is not a Process object")
-            raise TypeError
+        if process.__class__ is not Process and type(process) is str:
+            process = Process(process)
         self.processes.append(process)
         return self
 
@@ -367,9 +366,21 @@ class Wisps_data(nc_writable):
 
         if self.has_time_bounds():
             success = self.write_time_bounds(nc_handle)
+            self.add_bounds_process()
+
 
         return success
-
+    
+    def add_bounds_process(self):
+        """Adds a process representing the cell_method"""
+        cell_type = self.metadata['cell_methods'].split(':')[1].strip(' ')
+        if cell_type == 'minimum':
+            self.add_process('BoundsProcMin')
+        elif cell_type == 'maximum':
+            self.add_process('BoundsProcMax')
+        elif cell_type == 'sum':
+            self.add_process('BoundsProcSum')
+    
     def write_elev_bounds(self, nc_handle):
         """
         Writes the elev_bounds variable.
@@ -403,8 +414,11 @@ class Wisps_data(nc_writable):
         except:
             hours = db.get_property(self.name, 'hours')
         hours = int(hours)
-        b_time = Time.BoundedTime(start_time=self.time[0].get_start_time(
-        ), end_time=self.time[0].get_end_time(), offset=hours)
+        #b_time = Time.BoundedTime(start_time=self.time[0].get_start_time(
+        #), end_time=self.time[0].get_end_time(), period=hours)
+        #self.time.append(b_time)
+        b_time = Time.PhenomenonTimePeriod(start_time=self.time[0].get_start_time(
+        ), end_time=self.time[0].get_end_time(), period=hours)
         self.time.append(b_time)
 
     def write_plev_bounds(self, nc_handle):
@@ -563,7 +577,7 @@ class Wisps_data(nc_writable):
 
         self.add_nc_data(nc_var)
 
-        return nc_handle
+        return variable_name
 
     def add_to_database(self, filename):
         """Add variable to the database for searching.
@@ -583,7 +597,7 @@ class Wisps_data(nc_writable):
         end=Time.epoch_time(end)
         #end = end.strftime("%Y%m%d%H%S")
         try:
-            btime = filter(lambda t: t.name=='time_bounds', self.time)[0]
+            btime = filter(lambda t: t.name=='OM_phenomenonTimePeriod', self.time)[0]
             duration = btime.get_duration()
             time_dim = cfg.read_dimensions()['time']
             duration_method = self.get_cell_methods()[time_dim]

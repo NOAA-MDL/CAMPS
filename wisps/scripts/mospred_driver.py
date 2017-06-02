@@ -10,6 +10,7 @@ import mospred.read_pred as read_pred
 import data_mgmt.Time as Time
 from datetime import timedelta
 import mospred.create as create
+import interp
 
 
 def main(control_file=None):
@@ -54,7 +55,9 @@ def main(control_file=None):
         formatted_predictors.append(tmp_pred)
 
     # Now, there's a list of formatted predictors to fetch.
-    # Here, I may want to find metadata matches, so that I can fetch full vars
+    # Here, We may want to find metadata matches, so that We can fetch full vars
+    
+    # Loop through date ranges specified in the control file.
     for date_range in date_range_list:
 
         start,end,stride = read_pred.parse_range(date_range)
@@ -69,7 +72,9 @@ def main(control_file=None):
             for pred in pred_list:
                 variable = fetch(**pred.search_metadata, Time.epoch_time(cur), pred.leadTime)
                 if variable is None:
-                   calculate(pred) 
+                   variable = calculate(pred) 
+
+                # Apply procedures to the variable
             cur += stride
     
 
@@ -78,12 +83,12 @@ def calculate(predictor):
     Given an internal Predictor object, calculate the variable associated with the observed property
     """
     observed_property = predictor['property']
-    function = create.get_function(observed_property)
+    variable_calculation_function = create.get_function(observed_property)
     if function is None:
         err_str = "There is no math function associated with " + observed_property
         err_str += "\nCheck in create.py for function definitions"
         raise RuntimeError(err_str)
-    ret_obj = function() # Pass standard information
+    ret_obj = variable_calculation_function() # Pass standard information
     return ret_obj
     
     
