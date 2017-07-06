@@ -6,6 +6,7 @@ sys.path.insert(0, relative_path)
 import sqlite3
 import util as cfg
 import pdb
+import logging
 
 db_dir = os.path.dirname(os.path.realpath(__file__)) + '/'
 db_name = 'wisps.db'
@@ -180,10 +181,10 @@ def get_variable(**kwargs):
         elif k == "end":
             operator = "<="
         where_str += k + " "+operator+" '" + str(v) + "' AND "
-    where_str = where_str[0:-4] # Remove 'AND'
+    where_str = where_str[0:-4] # Remove trailing 'AND'
     filename_index = name_arr.index('filename')
     name_index = name_arr.index('name')
-    sql = "SELECT * FROM " + db + " WHERE " + where_str
+    sql = "SELECT DISTINCT * FROM " + db + " WHERE " + where_str
     c.execute(sql)
     res = c.fetchall()
     for i,values in enumerate(res):
@@ -218,6 +219,7 @@ def get_all_variables(**kwargs):
     filename_index = name_arr.index('filename')
     name_index = name_arr.index('name')
     sql = "SELECT * FROM " + db + " WHERE " + where_str
+    print sql
     c.execute(sql)
     return c.fetchall()
 
@@ -292,7 +294,7 @@ def get_property(name, attr):
         c.execute(sql)
         return c.fetchone()[0]
     except ValueError as err:
-        print attr + " is not a known property attribute or " + name + " not defined"
+        logging.info(attr + " is not a known property attribute or " + name + " not defined")
         return False
 
 

@@ -1,0 +1,26 @@
+MesoObProcStep1 :
+    process_step : "https://codes.nws.noaa.gov/StatPP/Methods/SfcObs/Mesonet"
+    long_name : 'Mesonet Observation'
+MesoObProcStep2 :
+    process_step : "https://codes.nws.noaa.gov/StatPP/Methods/QC/SfcQC"
+    long_name : 'Mesonet Quality Control'
+BoundsProcMin :
+    process_step : "https://codes.nws.noaa.gov/StatPP/Methods/Arith/Min"
+    long_name : 'Minimum within bounds'
+BoundsProcMax :
+    process_step : "https://codes.nws.noaa.gov/StatPP/Methods/Arith/Max"
+    long_name : 'Maximum within bounds'
+BoundsProcSum :
+    process_step : "https://codes.nws.noaa.gov/StatPP/Methods/Arith/Sum"
+    long_name : 'summation within bounds'
+MetarObProcStep1 :
+    process_step : "https://codes.nws.noaa.gov/StatPP/Methods/SfcObs/METAR"
+    long_name : 'METAR Observation'
+MetarObProcStep2 :
+    process_step : "https://codes.nws.noaa.gov/StatPP/Methods/QC/METARQC"
+    long_name : 'METAR Quality Control'
+
+
+
+
+

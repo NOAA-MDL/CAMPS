@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>  
+<head>
+    <script type="text/javascript" src="d3.v3.min.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="header">
+        <div id='title'>WISPS Extended ncdump</div>
+        <div id='options'>
+            <img id='upload' src='upload.png'></img>
+        </div>
+    </div>
+    <div id="mainWrapper">
+        <div id="vars" class="infoShared">
+            <h3>
+                Select a variable to inspect
+            </h3>
+        </div><div id="infoWrapper" class="infoShared">
+            <div id="desc">
+                <h3 id='metadataHeader'>Metadata</h3>
+                <!--div id='metaKeys'></div>
+                <div id='metaValues'></div-->
+                <table id='metatable'>
+                </table>
+                <button id='fetchButton'>Fetch Data</button>
+            </div>
+            <div id="grabber">
+            </div>
+            <div id="gfxWrapper">
+                <svg id="gfx">
+                    <g id='outerG'>
+                        <g id='moveableG'>
+                        </g>
+                    </g>
+                    <rect id='textbg' width=100 height=20></rect>
+                    <text x=5 y=15 id='gfxText'></text>
+                    <g id='legend'>
+                        <rect id='legendBG' width=100 height=80></rect>
+                        <circle class='time' r='4px' cx=10px cy=10px></circle>
+                        <text x=25px y=13px>Time</text>
+                        <circle class='primary' r='4px' cx=10px cy=30px></circle>
+                        <text x=25px y=33px>Primary</text>
+                        <circle class='secondary' r='4px' cx=10px cy=50px></circle>
+                        <text x=25px y=53px>Coordinate</text>
+                        <circle class='proc' r='4px' cx=10px cy=70px></circle>
+                        <text x=25px y=73px>Process</text>
+                    </g>
+
+                </svg>
+            </div>
+        </div>
+    </div>
+    <div id='uploadForm'>
+        <h3>
+            Upload file.
+        </h3>
+        <input type='file' id='infile' method='post' enctype='multipart/form-data' action='test'></input>
+        <div>OR</div>
+        <h3>
+            Paste output of 'ncdump -h'
+        </h3>
+        <textarea id='dumpText'>
+        </textarea>
+        <button id='textReadButton'>Read Text</button>
+        <hr>
+        <button id='closeUploadForm'>Close</button>
+        
+    </div>
+    <div id='hint'>
+    </div>
+</body>
+</html>

@@ -39,3 +39,12 @@ valid_stations : "/home/Riley.Conroy/dev/wisps_dev/iolib/config/metar.lst"
 
 predictor_file : "/home/Riley.Conroy/dev/wisps/wisps/registry/predictors.yml"
 
+
+
+projparams : 
+        'a': 6371229
+        'b': 6371229
+        'lat_ts': 60.0
+        'lon_0': 255.0
+        'proj': 'stere'
+        'lat_0': 90.0

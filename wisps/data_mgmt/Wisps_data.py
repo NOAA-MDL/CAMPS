@@ -69,9 +69,8 @@ class Wisps_data(nc_writable):
         """
         Checks metadata to see if this variable time bounds.
         """
-        if self.has_bounds():
-            return self.metadata['bounds'] == 'time_bounds'
-
+        return 'hours' in self.properties or db.get_property(self.name, 'hours') is not None
+   
     def has_plev_bounds(self):
         """
         Returns True if metadata indicates variable has plev bounds.
@@ -112,16 +111,49 @@ class Wisps_data(nc_writable):
         if not self.has_time_bounds():
             return None
         for i in self.time:
-            if i.name == 'time_bounds':
+            if i.name == 'OM_phenomenonTimePeriod':
                 return i
+    
+    def get_lead_time(self):
+        """Returns leadTime if it exists."""
+        lead_type = Time.LeadTime
+        return get_time(lead_type)
+
+    def get_result_time(self):
+        """Returns resultTime if it exists."""
+        result_type = Time.ResultTime
+        return get_time(result_type)
+
+    def get_phenom_time(self):
+        """Returns instant or period phenomenon time if it exists"""
+        phenom_type = Time.PhenomenonTime
+        time = self.get_time(phenom_type)
+        if time:
+            return time
+        phenom_period_type = Time.PhenomenonTimePeriod
+        time = self.get_time(phenom_period_type)
+        if time:
+            return time
+        return None
+
+    
+    def get_time(self, time_type):
+        """Returns a time of type time_type or None if there's no such instance
+        """
+        time_arr = filter(lambda time: type(time) is time_type, self.time)
+        if len(time_arr) == 0:
+            return None
+        if len(time_arr) > 1:
+            logging.warning("More than one " + time_type +
+                    " time describing " + self.name)
+        return time_arr[0] 
 
     def add_process(self, process):
         """
-        Adds a Process object to the Processes list.
+        Adds a Process object to the Processes list or creates one if given a str.
         """
-        if process.__class__ is not Process:
-            logging.error(process + "is not a Process object")
-            raise TypeError
+        if process.__class__ is not Process and type(process) is str:
+            process = Process(process)
         self.processes.append(process)
         return self
 
@@ -367,9 +399,21 @@ class Wisps_data(nc_writable):
 
         if self.has_time_bounds():
             success = self.write_time_bounds(nc_handle)
+            self.add_bounds_process()
+
 
         return success
-
+    
+    def add_bounds_process(self):
+        """Adds a process representing the cell_method"""
+        cell_type = self.metadata['cell_methods'].split(':')[1].strip(' ')
+        if cell_type == 'minimum':
+            self.add_process('BoundsProcMin')
+        elif cell_type == 'maximum':
+            self.add_process('BoundsProcMax')
+        elif cell_type == 'sum':
+            self.add_process('BoundsProcSum')
+    
     def write_elev_bounds(self, nc_handle):
         """
         Writes the elev_bounds variable.
@@ -403,9 +447,20 @@ class Wisps_data(nc_writable):
         except:
             hours = db.get_property(self.name, 'hours')
         hours = int(hours)
-        b_time = Time.BoundedTime(start_time=self.time[0].get_start_time(
-        ), end_time=self.time[0].get_end_time(), offset=hours)
+        #b_time = Time.BoundedTime(start_time=self.time[0].get_start_time(
+        #), end_time=self.time[0].get_end_time(), period=hours)
+        #self.time.append(b_time)
+        b_time = Time.PhenomenonTimePeriod(start_time=self.time[0].get_start_time(
+        ), end_time=self.time[0].get_end_time(), period=hours)
         self.time.append(b_time)
+
+        # Remove instant Phenom time if it's there
+        phenom_type = Time.PhenomenonTime
+        for i,t in enumerate(self.time):
+            if type(t) is phenom_type:
+                self.time.pop(i)
+
+        t = self.get_phenom_time()
 
     def write_plev_bounds(self, nc_handle):
         """
@@ -563,7 +618,7 @@ class Wisps_data(nc_writable):
 
         self.add_nc_data(nc_var)
 
-        return nc_handle
+        return variable_name
 
     def add_to_database(self, filename):
         """Add variable to the database for searching.
@@ -571,7 +626,7 @@ class Wisps_data(nc_writable):
         var_name = self.get_variable_name()
         # There should always be a phenomenonTime
         try:
-            ptime = filter(lambda t: t.name=='OM_phenomenonTime', self.time)[0]
+            ptime = self.get_phenom_time()
         except IndexError:
             raise AttributeError("No PhenomenonTime")
         # Returns date in datetime format
@@ -583,7 +638,7 @@ class Wisps_data(nc_writable):
         end=Time.epoch_time(end)
         #end = end.strftime("%Y%m%d%H%S")
         try:
-            btime = filter(lambda t: t.name=='time_bounds', self.time)[0]
+            btime = filter(lambda t: t.name=='OM_phenomenonTimePeriod', self.time)[0]
             duration = btime.get_duration()
             time_dim = cfg.read_dimensions()['time']
             duration_method = self.get_cell_methods()[time_dim]
@@ -702,13 +757,29 @@ class Wisps_data(nc_writable):
                     self.create_dimension(nc_handle, alt_dim_name)
 
     def add_nc_metadata(self, nc_var):
-        for name, value in self.metadata.iteritems():
-            if name != 'name' and name != 'fill_value':
+        for name, value in self.metadata.iteritems(): 
+            if name != 'name' and name != 'fill_value': # skip name and fill_value
                 if type(value) is unicode:  # To prevent 'string' prefix
                     value = str(value)
+                if name == 'OM_observedProperty' and \
+                        db.get_property(self.name, 'feature_of_interest'):
+                    continue
                 setattr(nc_var, name, value)
 
+    def get_source(self):
+        """Return the source metadata attribute.
+        """
+        return self.metadata['LE_Source']
+
+    def is_model(self):
+        """Returns True if the Source is from a model.
+        Currently, 'GFS' and 'NAM'
+        """
+        models = ['NAM', 'GFS']
+        return self.get_source() in models
+
     def get_fill_value(self):
+        """Return fill_value metadata attribute"""
         try:
             fill_value = self.metadata['fill_value']
         except KeyError:

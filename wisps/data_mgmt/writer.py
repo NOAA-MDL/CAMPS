@@ -26,7 +26,7 @@ def write(wisps_data, filename, global_attrs={}, overwrite=True,
     global_attrs are additional global attributes to add to the file.
     overwite specifies whether a file should new or appended to.
     """
-    logging.info("\nWriting\n")
+    logging.info("\nWriting to "+filename+"\n")
     if type(wisps_data) is not list:
         wisps_data = list(wisps_data)
     start_time = time.time()
@@ -45,13 +45,17 @@ def write(wisps_data, filename, global_attrs={}, overwrite=True,
     except:
         pass
     # Write the data by calling its write_to_nc function
+    primary_vars = []
     for d in wisps_data:
-        d.write_to_nc(nc)
+        name = d.write_to_nc(nc)
+        primary_vars.append(name)
         try:
             d.add_to_database(filename)
-        except AttributeError:
-            pass # Variable doesn't have a Phenomenon Time.
-    global_attrs['primary_variables'] = get_primary_variables(wisps_data)
+        except AttributeError as e :
+            logging.info(e)
+            #pass # Variable doesn't have a Phenomenon Time.
+    #global_attrs['primary_variables'] = get_primary_variables(wisps_data)
+    global_attrs['primary_variables'] = ' '.join(primary_vars)
     write_global_attributes(nc, global_attrs)
     nc.close()
 
@@ -61,6 +65,7 @@ def write(wisps_data, filename, global_attrs={}, overwrite=True,
     logging.debug("approximately " +
                   str(elapsed_time / len(wisps_data)) +
                   " seconds per variable")
+    logging.info("writing complete. Closing nc file: "+filename)
 
 
 def get_primary_variables(w_list):

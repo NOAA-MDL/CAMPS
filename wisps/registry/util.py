@@ -91,6 +91,17 @@ def read_nc_meta():
     write_cache(data)
     return data
 
+def read_procedures():
+    """Reads netcdf.yml file that contains the metadata for
+    common variables.
+    """
+    data = read_cache()
+    if data:
+        return data
+    data = read_yaml(CONFIG_PATH + "procedures.yml")
+    write_cache(data)
+    return data
+
 
 def read_nc_config():
     """

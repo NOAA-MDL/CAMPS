@@ -1,0 +1,264 @@
+
+
+* 
+{
+    /*border: red 1px dotted;*/
+}
+body, html
+{
+    padding : 0;
+    margin : 0;
+    overflow : hidden;
+    background-image : radial-gradient(ellipse, #398B8B,  #428F8F);
+    font-family : -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
+}
+.varText
+{
+    /*background : #419D78;*/
+
+
+    background-image: linear-gradient(to top, #419D78, #449F7B);
+   /* box-shadow : 0 0px 3px 0px darkred;*/
+    margin : 4px;
+    border : .25px solid #217D58;
+    color: white;
+    border-radius : 3px;
+    text-align: left;
+    font-size : 1em;
+    padding-left : 4px;
+    padding-right : 4px;
+    text-overflow : elipses;
+    white-space : nowrap;
+    overflow : hidden;
+    cursor : pointer;
+}
+.varText:hover
+{
+    box-shadow : 0 1px 3px 0px black;
+}
+.varText:active
+{
+    box-shadow : 0 0px 1px 0px black;
+}
+hr
+{
+    margin-top : 15px;
+    margin-bottom : 15px;
+}
+#dumpText
+{
+    width : 60%;
+    max-width : 60%;
+    margin : auto;
+    display : block;
+}
+#textReadButton
+{
+    display: block;
+    margin : auto;
+}
+#upload
+{
+    width : 50px;
+    cursor : pointer;
+}
+#uploadForm
+{
+position : fixed;
+top : 10%;
+bottom : 10%;
+left : 10%;
+right : 10%;
+background : #fefefe;
+border : 1px solid #BBB;
+border-radius : 3px;
+text-align : center;
+box-shadow : 0 0 10 0 black;
+visibility : hidden;
+}
+#mainWrapper
+{
+    text-align : center;
+}
+#metadataHeader
+{
+}
+#metaKeys
+{
+    display: inline-block;
+    width : 45%;
+    text-align : left;
+    vertical-align : top;
+}
+#metatable
+{
+    width : 100%;
+    text-align : left;
+    border-collapse : collapse;
+    background : #6E8786;
+}
+td
+{
+    border-right:1px solid #222;
+    padding-left: 3px;
+}
+#metatable>tr:nth-child(odd) td
+{
+    background : #5E7776;
+    
+}
+#metaValues
+{
+    display: inline-block;
+    width : 45%;
+    text-align : left;
+}
+#desc:nth-child(2n+1) .meta
+{
+    background : red;
+}
+.meta 
+{
+}
+#header
+{
+    padding-top : 0px;
+    vertical-align : center;
+    height : 60px;
+    width : 100%;
+    font-size : 40px;
+    color : white;
+    background : #114B5F;
+    box-shadow : 0 0 8px -2px #111;
+}
+#title
+{
+    display : inline;
+    padding-left : 40px;
+}
+#options
+{
+    display : inline;
+    float : right;
+}
+a >img
+{
+    height : 50px;
+}
+#hint
+{
+    display : hidden;
+    position : absolute;
+    background : #ccc;
+    border : 1px #aaa solid;
+    padding-left : 4px;
+    padding-right : 4px;
+    max-width : 200px;
+}
+#infoWrapper
+{
+    display : inline-block;
+    background : none;
+    height : 100%;
+    width : 73%;
+}
+#gfxWrapper
+{
+    background : #5AB1BB;
+    box-shadow: 3px -1px 10px 0px black;
+    height : 50%;
+    margin-top : -5px;
+}
+#grabber
+{
+    background: none;
+    width : 100%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius : 1px;
+    cursor : row-resize;
+    height : 10px;
+}
+.infoShared
+{
+    background : white;
+    float: right
+}
+#vars
+{    
+    height : 100%;
+    width : 26.5%;
+    display : inline-block;
+    vertical-align : top;
+    background : None;
+    overflow-y : auto;
+    float : left
+}
+#desc
+{
+    height : 50%;
+    overflow-y : auto;
+    margin-bottom : -5px;
+}
+#gfx
+{
+    width : 100%;
+    height : 100%;
+}
+.gfxHolder
+{
+    stroke-width : .5px;
+    cursor : pointer;
+}
+#legendBG
+{
+    fill : white;
+    opacity : .6;
+}
+#legend
+{
+    transform : translate(0px, 20px);
+}
+#legend > text
+{
+    font-size : .85em;
+    font-family : monospace;
+}
+.time
+{
+    fill : lightgreen;
+    stroke : green;
+}
+.proc
+{
+    fill : lightblue;
+    stroke : blue;
+}
+.primary
+{
+    fill : orange;
+    stroke : darkorange;
+}
+.secondary
+{
+    fill : pink;
+    stroke : red;
+}
+.connect
+{
+    opacity : .95
+}
+#fetchButton
+{
+    visibility : hidden;
+}
+#gfxText
+{
+    display : none;
+}
+#textbg
+{
+    display : none;
+    fill : white;
+    opacity : .8;
+}

@@ -9,11 +9,22 @@ import data_mgmt.reader as reader
 import pdb
 
 
-def fetch(metadata_dict, time=None, lead_time=None):
-    """
+def fetch(time=None, lead_time=None, **metadata_dict):
+    r"""
     Given a properly formated metadata dictionary, finds the variable amongst
     the files. If the Observed property is recognized as a variable that needs
     to be computed, then a routine will be started to compute variables.
+    
+    Metadata Keys w/ type:
+     'property'        : str
+     'source'          : str
+     'start'           : int
+     'end'             : int
+     'duration'        : int
+     'duration_method' : str
+     'vert_coord1'     : int
+     'vert_coord2'     : int
+     'vert_method'     : str
     """
     # First check if calling the database gives any entries.
     ret = db.get_variable(**metadata_dict)
@@ -33,9 +44,6 @@ def fetch(metadata_dict, time=None, lead_time=None):
         record = ret[0]
         print record
         return reader.read_var(record['filename'], record['name'])
-    
-    
-
 
 def find_date():
     pass

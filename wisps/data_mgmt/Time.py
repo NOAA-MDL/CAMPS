@@ -15,6 +15,7 @@ import registry.util as cfg
 ##
 # class Time()
 # class PhenomenonTime(Time)
+# class PhenomenonTimePeriod(Time)
 # class ValidTime(Time)
 # class ResultTime(Time)
 # class ForecastReferenceTime(Time)
@@ -366,6 +367,7 @@ class Time(nc_writable):
         """
         setattr(nc_var, 'calendar', 'gregorian')
         setattr(nc_var, 'units', 'seconds since 1970-01-01 00:00:00.0')
+        setattr(nc_var, 'standard_name', 'time')
 
 
     def get_bounded_dimension_name(self):
@@ -424,9 +426,125 @@ class Time(nc_writable):
                     return True
         return False
 
+class PhenomenonTimePeriod(Time):
+    """Class representing the Phenomenon Time Period
+    Phenomenon time is colloquially, when the weather happens.
+    It can be either an instant in time or
+    A period of time.
+    """
+
+    def __init__(self, **kwargs):
+        """Initializes the data array
+        """
+        self.name = "OM_phenomenonTimePeriod"
+        if 'start_time' in kwargs:
+            start_time = kwargs['start_time']
+            end_time = kwargs['end_time']
+            try:
+                stride = kwargs['stride']
+            except:
+                stride = ONE_HOUR
+
+            super(PhenomenonTimePeriod, self).__init__(start_time=start_time,
+                                                 end_time=end_time,
+                                                 stride=stride)
+            num_dimensions = len(self.data.shape)
+            if 'period' in kwargs and num_dimensions == 1:
+                period = int(kwargs['period'])
+                # offset is in number of cells
+                # So, if your period starts on the first time period
+                # then offset would be 0.
+                if 'offset' in kwargs:
+                    offset = kwargs['offset']
+                else:
+                    offset = 0
+                data_len = len(self.data)
+
+                # Create an empty 2-D array of length (data_len,2)
+                new_time = np.full((data_len,2), FILL_VALUE, int)
+
+                # Loop through your array
+                for i in range(offset,data_len-period,period):
+                    new_time[i][0] = self.data[i] # First index is start time
+                    new_time[i][1] = self.data[i+period] # Second index is end_time
+                self.diff = new_time[i][1] - new_time[i][0] # Set duration of period (s)
+                # Do last period
+                new_time[i+period][0] = self.data[i+period] 
+                new_time[i+period][1] = self.data[i+period] + self.diff
+                self.duration = self.diff
+
+                self.data = new_time
+
+
+        elif 'data' in kwargs:
+            super(PhenomenonTime, self).__init__()
+            self.data = kwargs['data']
+        self.metadata['wisps_role'] = 'OM_phenomenonTime'
+    
+    def get_duration(self):
+        return self.duration/3600
+
+    def write_to_nc(self, nc_handle):
+        """
+        Writes varibale to netcdf file. Additionally writes begin_end_bounds
+        variable.
+        """
+        name = super(PhenomenonTimePeriod, self).write_to_nc(nc_handle)
+        self.write_begin_end_var(nc_handle)
+        return name
+
+    def get_dimensions(self):
+        """Return a tuple of dimension names. 
+        Will account for data with different shapes.
+        """
+        num_dims = len(self.data.shape)
+        if num_dims == 2:
+            dim_tuple = (get_time_dim_name(),self.get_bounded_dimension_name())
+        elif num_dims == 3:
+            dim_tuple = (get_lead_dim_name(), get_time_dim_name(), self.get_bounded_dimension_name())
+        else:
+            raise AssertionError("more than 3 dimensions describing time")
+
+        assert len(dim_tuple) == len(self.data.shape)
+        return dim_tuple
+
+    def write_begin_end_var(self, nc_handle):
+        """
+        Writes beg_end_bounds variable to netcdf file.
+        """
+        bounds_dim_name = self.get_bounded_dimension_name()
+        if(bounds_dim_name not in nc_handle.variables):
+            bounds_var = nc_handle.createVariable(bounds_dim_name, int, dimensions=())
+            setattr(bounds_var, bounds_dim_name, 'TM_Period:Beginning TM_Period:Ending')
+            setattr(bounds_var, 'long_name', 'time bound description')
+
+    def get_name(self, nc_handle):
+        """Looks for a match in Time variables.
+        Returns a tuple containing the [0] - name of the variable
+        and [1] - a boolean indicating if it already existed.
+        """
+        all_vars = nc_handle.variables
+        varkeys = all_vars.keys()
+
+        def match(var): return re.match(r'^' + self.name + '\d*hr$', var, re.I)
+        time_vars = filter(match, varkeys)
+        for name in reversed(time_vars):
+            var = all_vars[name]
+            # Check for a data match
+            if np.array_equal(var[:], self.data):
+                return (name, True)
+        if len(time_vars) == 0:
+            name = self.name + str(self.diff/3600) + 'hr'
+        else:
+            try:
+                name = self.name + str(self.diff/3600) + 'hr'
+            except:
+                name = self.name + str(len(time_vars))
+        return (name, False)
+
 
 class PhenomenonTime(Time):
-    """Class representing the Phenomenon Time
+    """Class representing the Phenomenon Time Instant
     Phenomenon time is colloquially, when the weather happens.
     It can be either an instant in time or
     A period of time.
@@ -436,7 +554,7 @@ class PhenomenonTime(Time):
     def __init__(self, **kwargs):
         """Initializes the data array
         """
-        self.name = "OM_phenomenonTime"
+        self.name = "OM_phenomenonTimeInstant"
         if 'start_time' in kwargs:
             start_time = kwargs['start_time']
             end_time = kwargs['end_time']
@@ -451,6 +569,7 @@ class PhenomenonTime(Time):
         elif 'data' in kwargs:
             super(PhenomenonTime, self).__init__()
             self.data = kwargs['data']
+        self.metadata['wisps_role'] = 'OM_phenomenonTime'
 
     def get_dimensions(self):
         """Return a tuple of dimension names. 
@@ -587,7 +706,6 @@ class ResultTime(Time):
     def append_result(self, result_time):
         """Adds the Result Time.
         """
-
         ###
         # Below is what you would need if it was the time this variable was
         # created. Keeping in case we change our mind.
@@ -720,6 +838,35 @@ class BoundedTime(Time):
         Initializes the data array
         """
         self.name = 'time_bounds'
+ #       if 'start_time' in kwargs:
+ #           start_time = kwargs['start_time']
+ #           end_time = kwargs['end_time']
+ #           try:
+ #               stride = kwargs['stride']
+ #           except:
+ #               stride = ONE_HOUR
+ #           super(BoundedTime, self).__init__(start_time=start_time,
+ #                                       end_time=end_time,
+ #                                       stride=stride)
+ #       if 'data' in kwargs:
+ #           super(BoundedTime, self).__init__()
+ #           self.data = kwargs['data']
+
+ #       offset=None
+ #       if 'offset' in kwargs:
+ #           offset = kwargs['offset']
+ #           self.add_bounds(stride, offset)
+ #       self.metadata['standard_name'] = 'bounded_time'
+
+
+
+ #       if 'start_time' in kwargs:
+ #           start_time = kwargs['start_time']
+ #           end_time = kwargs['end_time']
+ #           try:
+ #               stride = kwargs['stride']
+ #           except:
+ #               stride = ONE_HOUR
         if 'start_time' in kwargs:
             start_time = kwargs['start_time']
             end_time = kwargs['end_time']
@@ -727,18 +874,43 @@ class BoundedTime(Time):
                 stride = kwargs['stride']
             except:
                 stride = ONE_HOUR
-            super(BoundedTime, self).__init__(start_time=start_time,
-                                        end_time=end_time,
-                                        stride=stride)
-        if 'data' in kwargs:
-            super(BoundedTime, self).__init__()
-            self.data = kwargs['data']
 
-        offset=None
-        if 'offset' in kwargs:
-            offset = kwargs['offset']
-            self.add_bounds(stride, offset)
-        self.metadata['standard_name'] = 'bounded_time'
+            super(BoundedTime, self).__init__(start_time=start_time,
+                                                 end_time=end_time,
+                                                 stride=stride)
+            if 'period' in kwargs and len(self.data.shape) == 1:
+                period = int(kwargs['period'])
+                if 'offset' in kwargs:
+                    offset = kwargs['offset']
+                else:
+                    offset = 0
+                data_len = len(self.data)
+                new_time = np.full((data_len,2), FILL_VALUE, int)
+                for i in range(offset,data_len-period,period):
+                    new_time[i][0] = self.data[i]
+                    new_time[i][1] = self.data[i+period]
+                self.duration = new_time[i][1] - new_time[i][0]
+                new_time[i+period][0] = self.data[i+period]
+                new_time[i+period][1] = self.data[i+period] + self.duration
+
+
+
+                self.data = new_time
+
+    def get_dimensions(self):
+        """Return a tuple of dimension names. 
+        Will account for data with different shapes.
+        """
+        num_dims = len(self.data.shape)
+        if num_dims == 2:
+            dim_tuple = (get_time_dim_name(),self.get_bounded_dimension_name())
+        elif num_dims == 3:
+            dim_tuple = (get_lead_dim_name(), get_time_dim_name(), self.get_bounded_dimension_name())
+        else:
+            raise AssertionError("more than 3 dimensions describing time")
+
+        assert len(dim_tuple) == len(self.data.shape)
+        return dim_tuple
 
     def add_bounds(self, stride, offset):
         """
