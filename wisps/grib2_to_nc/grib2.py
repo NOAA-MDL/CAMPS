@@ -285,7 +285,7 @@ def convert_grib2(filename):
     
     x_proj_data, y_proj_data = get_projection_data(tmp_grb)
     
-    fcst_time = filename[10:12]
+    fcst_time = run_time
     values = lead_times[0].values()[0]
     for name, grb_dict in data_dict.iteritems():
         stacked = grb_dict['data']
@@ -304,7 +304,6 @@ def convert_grib2(filename):
         obj = Wisps_data(name)
         obj.add_source('GFS')
         obj.add_fcstTime(fcst_time)
-        obj.add_metadata('ForecastReferenceTime', fcst_time)
         obj.dimensions = [y_proj, x_proj, lead_time_dim, time]
         try:
             obj.add_data(stacked)

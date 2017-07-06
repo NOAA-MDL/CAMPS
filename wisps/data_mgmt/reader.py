@@ -33,9 +33,10 @@ def read(*filenames):
             wisps_data.append(w_obj)
     return wisps_data
 
-def read_var(filename, name):
+def read_var(filename, name, lead_time=None, phenom_time=None):
     """
-    Returns a Wisps_data object from netcdf file
+    Returns a Wisps_data object from netcdf file. Optionally
+    returns Wisps_data object with only a slice of data.
     """
     nc = Dataset(filename, mode='r', format="NETCDF4")
     var = nc.variables[name]
@@ -82,12 +83,31 @@ def read_var(filename, name):
     # Add Dimensions
     w_obj.dimensions = var.dimensions
     # Store data
-    w_obj.data = var[:]
-    return (var,w_obj)
+    if lead_time is None and phenom_time is None:
+        w_obj.data = var[:]
+    else:
+        w_obj = subset_time(w_obj, var, lead_time, time)
+#    return (var,w_obj)
+    return w_obj
+
+def subset_time(w_obj, nc_var, lead_time, time):
+    """Only pull a slice of data from the netcdf variable if only a portion of time.
+    rework time objects to reflect the subset.
+    """
+    # First, check if it's model data. if it is not and
+    # lead time was requested return obj, throw warning
+    if not w_obj.is_model() and lead_time is not None:
+        logging.warning("Attempt was made to subset lead_time on non-model data")
+        w_obj.data = nc_var[:]
+        return w_obj
+    # Next, search lead_time variable for proper index
+    l_time = w_obj.get_lead_time()
+    p_time = w_obj.get_phenom_time()
+
+
 
 def create_time(nc_variable):
-    """
-    Given a netcdf4 variable, create Time representation.
+    """Given a netcdf4 variable, create Time representation.
     """
     time_switch = {
             'OM_phenomenonTime' : Time.PhenomenonTime,

@@ -448,19 +448,28 @@ class PhenomenonTimePeriod(Time):
             super(PhenomenonTimePeriod, self).__init__(start_time=start_time,
                                                  end_time=end_time,
                                                  stride=stride)
-            if 'period' in kwargs and len(self.data.shape) == 1:
+            num_dimensions = len(self.data.shape)
+            if 'period' in kwargs and num_dimensions == 1:
                 period = int(kwargs['period'])
+                # offset is in number of cells
+                # So, if your period starts on the first time period
+                # then offset would be 0.
                 if 'offset' in kwargs:
                     offset = kwargs['offset']
                 else:
                     offset = 0
                 data_len = len(self.data)
+
+                # Create an empty 2-D array of length (data_len,2)
                 new_time = np.full((data_len,2), FILL_VALUE, int)
+
+                # Loop through your array
                 for i in range(offset,data_len-period,period):
-                    new_time[i][0] = self.data[i]
-                    new_time[i][1] = self.data[i+period]
-                self.diff = new_time[i][1] - new_time[i][0]
-                new_time[i+period][0] = self.data[i+period]
+                    new_time[i][0] = self.data[i] # First index is start time
+                    new_time[i][1] = self.data[i+period] # Second index is end_time
+                self.diff = new_time[i][1] - new_time[i][0] # Set duration of period (s)
+                # Do last period
+                new_time[i+period][0] = self.data[i+period] 
                 new_time[i+period][1] = self.data[i+period] + self.diff
                 self.duration = self.diff
 

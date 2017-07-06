@@ -51,8 +51,9 @@ def write(wisps_data, filename, global_attrs={}, overwrite=True,
         primary_vars.append(name)
         try:
             d.add_to_database(filename)
-        except AttributeError:
-            pass # Variable doesn't have a Phenomenon Time.
+        except AttributeError as e :
+            logging.info(e)
+            #pass # Variable doesn't have a Phenomenon Time.
     #global_attrs['primary_variables'] = get_primary_variables(wisps_data)
     global_attrs['primary_variables'] = ' '.join(primary_vars)
     write_global_attributes(nc, global_attrs)

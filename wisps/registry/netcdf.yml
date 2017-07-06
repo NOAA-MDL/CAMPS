@@ -140,6 +140,7 @@ variables :
     data_type : "c" # NC_CHAR
     dimensions : [*nstations,*chars]
     fill_value : "-"
+    feature_of_interest : True
     attribute : 
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/station_name"
       long_name : "ICAO METAR call letters"
@@ -152,6 +153,7 @@ variables :
     data_type : int8
     dimensions : [*nstations,*time]
     fill_value : 9
+    feature_of_interest : True
     attribute : 
       standard_name : "platform_id"
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/station_type"
@@ -159,6 +161,7 @@ variables :
   latitude :
     #data_type : int16
     data_type : float32
+    feature_of_interest : True
     attribute : 
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/latitude"
       long_name : "latitude"
@@ -170,6 +173,7 @@ variables :
   longitude :
     data_type : float32
     dimensions : [*nstations,*time]
+    feature_of_interest : True
     attribute : 
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/longitude"
       long_name : "longitude"
@@ -180,14 +184,16 @@ variables :
   y_proj :
     #data_type : int16
     data_type : float32
+    feature_of_interest : True
     attribute : 
-      OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/xProj"
-      long_name : "x component of projection"
+      OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/yProj"
+      long_name : "y component of projection"
       units : "unitless"
     dimensions : [*x_proj]
   x_proj :
     #data_type : int16
     data_type : float32
+    feature_of_interest : True
     attribute : 
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/xProj"
       long_name : "x component of projection"
@@ -196,6 +202,7 @@ variables :
   observation_time :
     data_type : int64
     dimensions : [*time]
+    feature_of_interest : True
     attribute : 
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/time/observation_time"
       long_name : *time
@@ -448,7 +455,6 @@ variables :
       valid_min : 0
       valid_max : 3.75
       cell_methods : "default_time_coordinate_size:sum"
-      bounds : "time_bounds"
       units : "in"
       scale_factor : !!float 100
       comment : "A -4 is used to represent a trace amount\n
@@ -462,7 +468,6 @@ variables :
       standard_name : "precipitation_amount"
       long_name : "3-hour precipitation amount"
       cell_methods : "default_time_coordinate_size :sum"
-      bounds : "time_bounds"
       valid_min : 0
       valid_max : 9
       units : "in"
@@ -478,7 +483,6 @@ variables :
       valid_min : 0
       valid_max : 12
       cell_methods : "default_time_coordinate_size :sum"
-      bounds : "time_bounds"
       units : "in"
       scale_factor : !!float 100
   precipitation_amount_24_hour  :
@@ -492,7 +496,6 @@ variables :
       valid_min : 0
       valid_max : 24
       cell_methods : "default_time_coordinate_size :sum"
-      bounds : "time_bounds"
       scale_factor : !!float 100
       units : "in"
   duration_of_sunshine :
@@ -514,7 +517,6 @@ variables :
       coordinates : "elev"
       long_name : "6-hour maximum temperature"
       cell_methods :  "default_time_coordinate_size : maximum"
-      bounds : "time_bounds"
       units : "Fahrenheit"
       comment : "Minimum and maximum values depend on season and region"
   temperature_6_hour_minimum  :
@@ -527,7 +529,6 @@ variables :
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/Temp/Temp"
       coordinates : "elev"
       cell_methods :  "default_time_coordinate_size : minimum"
-      bounds : "time_bounds"
       long_name : "6-hour minimum temperature"
       units : "Fahrenheit"
       comment : "Minimum and maximum values depend on season and region"
@@ -540,7 +541,6 @@ variables :
       standard_name : "air_temperature"
       coordinates : "elev"
       cell_methods :  "default_time_coordinate_size : minimum"
-      bounds : "time_bounds"
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/Temp/Temp"
       long_name : "1-hour minimum temperature"
       units : "Fahrenheit"
@@ -553,7 +553,6 @@ variables :
       standard_name : "air_temperature"
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/Temp/Temp"
       coordinates : "elev"
-      bounds : "time_bounds"
       cell_methods :  "default_time_coordinate_size : maximum"
       long_name : "1-hour minimum temperature"
       units : "Fahrenheit"
@@ -566,7 +565,6 @@ variables :
       standard_name : "air_temperature"
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/Temp/Temp"
       coordinates : "elev"
-      bounds : "time_bounds"
       cell_methods :  "default_time_coordinate_size : maximum"
       long_name : "Calendar day maximum temperature"
       units : "degF"
@@ -581,7 +579,6 @@ variables :
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/Temp/Temp"
       coordinates : "elev"
       long_name : "calendar day minimum temperature"
-      bounds : "time_bounds"
       cell_methods :  "default_time_coordinate_size : minimum"
       units : "degF"
       comment : "Minimum and maximum values depend on season and region"
@@ -1223,7 +1220,7 @@ variables :
     dimensions : [] 
     attribute : 
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/Temp/Temp"
-      long_name : "maximum temperature 3hr max 2"
+      long_name : "maximum temperature 3hr max at 2m"
       standard_name : "air_temperature"
       units : "K"
       valid_min : ""
@@ -1233,7 +1230,7 @@ variables :
     dimensions : [] 
     attribute : 
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/Temp/Temp"
-      long_name : "maximum temperature 6hr max 2"
+      long_name : "maximum temperature 6hr max at 2m"
       standard_name : "air_temperature"
       units : "K"
       valid_min : ""
@@ -1243,7 +1240,7 @@ variables :
     dimensions : [] 
     attribute : 
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/Temp/Temp"
-      long_name : "minimum temperature 3hr min 2"
+      long_name : "minimum temperature 3hr min at 2m"
       standard_name : "air_temperature"
       units : "K"
       valid_min : ""
@@ -1253,7 +1250,7 @@ variables :
     dimensions : [] 
     attribute : 
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/Temp/Temp"
-      long_name : "minimum temperature 6hr min 2"
+      long_name : "minimum temperature 6hr min at 2m "
       standard_name : "air_temperature"
       units : "K"
       valid_min : ""
@@ -1284,7 +1281,7 @@ variables :
     coord_val : 2
     attribute : 
       OM_observedProperty : "https://codes.nws.noaa.gov/Data/Met/Temp/Temp"
-      long_name : "2 metre temperature instant 2"
+      long_name : "2 metre temperature instant 2m"
       standard_name : "air_temperature"
       coordinates: "elev"
       units : "K"

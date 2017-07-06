@@ -140,6 +140,8 @@ def main(control_file=None):
         wisps_obj.add_source('METAR')
         wisps_obj.change_data_type()
         wisps_obj.time = add_time(start_time, end_time)
+        wisps_obj.add_process('MetarObProcStep1')
+        wisps_obj.add_process('MetarObProcStep2')
         wisps_data.append(wisps_obj)
 
     wisps_obj = pack_station_names(stations.keys())
