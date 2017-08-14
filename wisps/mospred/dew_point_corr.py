@@ -12,9 +12,9 @@ import data_mgmt.constants as const
 import metpy.calc as calc
 from metpy.units import units
 
-def dewpoint_corr(dewpt_obj):
+def dewpoint_corr_setup(dewpt_obj):
     """Compute gridded dew point 
-    temperature using pressure, mixing ratio,
+    temperature correction using pressure, mixing ratio,
     or specific humidity on an
     isobaric, constant height, or a sigma surface.
     """

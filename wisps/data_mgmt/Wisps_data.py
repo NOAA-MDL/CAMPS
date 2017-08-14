@@ -108,6 +108,8 @@ class Wisps_data(nc_writable):
         return None
 
     def get_time_bounds(self):
+        """Returns phenomenonTimePeriod if exists.
+        """
         if not self.has_time_bounds():
             return None
         for i in self.time:
@@ -117,12 +119,12 @@ class Wisps_data(nc_writable):
     def get_lead_time(self):
         """Returns leadTime if it exists."""
         lead_type = Time.LeadTime
-        return get_time(lead_type)
+        return self.get_time(lead_type)
 
     def get_result_time(self):
         """Returns resultTime if it exists."""
         result_type = Time.ResultTime
-        return get_time(result_type)
+        return self.get_time(result_type)
 
     def get_phenom_time(self):
         """Returns instant or period phenomenon time if it exists"""
@@ -813,6 +815,13 @@ class Wisps_data(nc_writable):
 
         # Add metadata
         return self
+
+    def __getattr__(self, name):
+        """Returns metadata using '.' operator"""
+        if name in self.metadata:
+            return self.metadata[name]
+        else:
+            raise AttributeError
 
     def __str__(self):
         obj_str = "\n***** " + self.name + " ******\n*\n"

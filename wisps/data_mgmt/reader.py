@@ -33,23 +33,36 @@ def read(*filenames):
             wisps_data.append(w_obj)
     return wisps_data
 
-def read_var(filename, name, lead_time=None, phenom_time=None):
+
+def add_metadata_from_netcdf_variable(nc_var, wisps_obj):
+    """Fill metadata dict in wisps object with relavent 
+    metadata from the netcdf variable.
+    """
+    metadata_exceptions = ['_FillValue']
+    metadata_keys = nc_var.ncattrs()
+    for key in metadata_keys:
+        if key not in metadata_exceptions:
+            value = nc_var.getncattr(key)
+            w_obj.add_metadata(key, value)
+    
+
+def read_var(filepath, name, lead_time=None, phenom_time=None):
     """
     Returns a Wisps_data object from netcdf file. Optionally
     returns Wisps_data object with only a slice of data.
     """
-    nc = Dataset(filename, mode='r', format="NETCDF4")
-    var = nc.variables[name]
-    ancil_vars = var.getncattr(ancil_name).split(' ')
-    name = var.getncattr("OM_observedProperty")
+    nc = Dataset(filepath, mode='r', format="NETCDF4")
+    nc_var = nc.variables[name]
+    ancil_vars = nc_var.getncattr(ancil_name).split(' ')
+    name = nc_var.getncattr("OM_observedProperty")
     w_obj = Wisps_data(name, autofill=False)
 
     # Fill metadata dict
     metadata_exceptions = ['_FillValue']
-    metadata_keys = var.ncattrs()
+    metadata_keys = nc_var.ncattrs()
     for key in metadata_keys:
         if key not in metadata_exceptions:
-            value = var.getncattr(key)
+            value = nc_var.getncattr(key)
             w_obj.add_metadata(key, value)
     # Get Time
     time = []
@@ -62,9 +75,9 @@ def read_var(filename, name, lead_time=None, phenom_time=None):
     # Get vertCoord
     coord_vars = ""
     try:
-        coord_vars = var.getncattr('coordinates').split(' ')
+        coord_vars = nc_var.getncattr('coordinates').split(' ')
     except:
-        pass # No coordinate
+        pass # No coordinate attribute in nc_var
     for c in coord_vars:
         nc_coord = nc.variables[c]
         coord_len = len(nc_coord[:])
@@ -76,17 +89,16 @@ def read_var(filename, name, lead_time=None, phenom_time=None):
             w_obj.properties['coord_val'] = nc_coord[0]
 
     # Get Processes
-    p_string = var.getncattr('OM_procedure')
+    p_string = nc_var.getncattr('OM_procedure')
     procedures = parse_processes_string(p_string)
-    #for i in 
     
     # Add Dimensions
-    w_obj.dimensions = var.dimensions
+    w_obj.dimensions = nc_var.dimensions
     # Store data
     if lead_time is None and phenom_time is None:
-        w_obj.data = var[:]
+        w_obj.data = nc_var[:]
     else:
-        w_obj = subset_time(w_obj, var, lead_time, time)
+        w_obj = subset_time(w_obj, nc_var, lead_time, phenom_time)
 #    return (var,w_obj)
     return w_obj
 
@@ -97,13 +109,30 @@ def subset_time(w_obj, nc_var, lead_time, time):
     # First, check if it's model data. if it is not and
     # lead time was requested return obj, throw warning
     if not w_obj.is_model() and lead_time is not None:
-        logging.warning("Attempt was made to subset lead_time on non-model data")
+        logging.warning("Attempt was made to subset by lead_time on non-model data")
         w_obj.data = nc_var[:]
         return w_obj
-    # Next, search lead_time variable for proper index
-    l_time = w_obj.get_lead_time()
-    p_time = w_obj.get_phenom_time()
 
+    l_time_index = None
+    p_time_index = None
+
+    # Next, search lead_time variable for proper index
+    if lead_time is not None:
+        l_time = w_obj.get_lead_time()
+        l_time_index = l_time.get_index(lead_time)
+    if time is not None:
+        p_time = w_obj.get_phenom_time()
+        p_time_index = p_time.get_index(time)
+
+    if l_time_index and p_time_index:
+        data = nc_var[:,:,l_time_index, p_time_index]
+    elif l_time_index: 
+        data = nc_var[:,:,l_time_index,:]
+    elif p_time_index: 
+        data = nc_var[:,:,:,p_time_index]
+
+    w_obj.data = data
+    return w_obj
 
 
 def create_time(nc_variable):
@@ -125,8 +154,11 @@ def get_procedures(nc_variable, procedures_dict):
     """
     returns the netcdf variables associated with OM_procedure.
     """
-
-    p_string = nc_variable.getncattr('OM_procedure')
+    try:
+        p_string = nc_variable.getncattr('OM_procedure')
+    except AttributeError:
+        print nc_variable
+        return None
     procedures = parse_processes_string(p_string)
     proc_list = []
 
@@ -150,7 +182,7 @@ def get_times(nc_variable, time_dict):
         try:
             time_vars.append(time_dict[time])
         except:
-            loggin.warning("time Not in NC")
+            loggin.warning("time not in NetCDF file")
     except:
         # no phenomenonTime
         pass
@@ -159,7 +191,7 @@ def get_times(nc_variable, time_dict):
         try:
             time_vars.append(time_dict[time])
         except:
-            loggin.warning("time Not in NC")
+            loggin.warning("time not in NetCDF file")
     except:
         # no validTime
         pass
@@ -168,7 +200,7 @@ def get_times(nc_variable, time_dict):
         try:
             time_vars.append(time_dict[time])
         except:
-            loggin.warning("time Not in NC")
+            loggin.warning("time not in NetCDF file")
     except:
         # no ForecastReferenceTime
         pass
@@ -177,7 +209,7 @@ def get_times(nc_variable, time_dict):
         try:
             time_vars.append(time_dict[time])
         except:
-            loggin.warning("time Not in NC")
+            loggin.warning("time not in NetCDF file")
     except:
         # no resultTime
         pass
@@ -186,7 +218,7 @@ def get_times(nc_variable, time_dict):
         try:
             time_vars.append(time_dict[time])
         except:
-            loggin.warning("time Not in NC")
+            loggin.warning("time not in NetCDF file")
     except:
         # no leadTime
         pass
@@ -200,7 +232,7 @@ def get_coordinate(nc_variable, coordinate_dict):
     variable if it exists.
     """
     try:
-        coord_name = nc_variable.getncattr("coordinate")
+        coord_name = nc_variable.getncattr("coordinates")
         try:
             return coordinate_dict[coord_name]
         except:
@@ -254,16 +286,16 @@ def create_wisps_data(nc_variable, procedures_dict, time_dict, coord_dict):
     w_obj.time = times
     w_obj.processes = procedures
     # Add Coordinate value(s)
-    try:
+    if coordinate is not None:
         coord_value = coordinate[:]
-        if len(coord) == 2:  # Then it's a bounded value
+        if len(coord_value) == 2:  # Then it's a bounded value
             w_obj.properties['coord_val1'] = coord_value[0]
             w_obj.properties['coord_val2'] = coord_value[1]
-        elif len(coord) == 1:
+        elif len(coord_value) == 1:
             w_obj.properties['coord_val'] = coord_value[0]
         else:
             logging.error("more than 2 coordinate values in array")
-    except:
+    else:
         logging.debug("no coord for %s", nc_variable.name)
 
     attributes = get_metadata(nc_variable)
@@ -323,12 +355,14 @@ def separate_procedure_and_data(variables_dict):
     """Separates the variables into Processes and data-holding variables.
     Returns the processes and normal variables as a tuple.
     """
-    process_identifier = 'process'
+    #process_identifier = 'process'
+    process_identifier = 'LE_ProcessStep'
     process_dict = {}
     var_dict = {}
 
     for var_name, variable in variables_dict.iteritems():
-        if process_identifier in var_name:
+        #if process_identifier in var_name:
+        if process_identifier in set(variable.ncattrs()):
             process_dict[var_name] = variable
         else:
             var_dict[var_name] = variable
@@ -342,11 +376,17 @@ def separate_time_and_data(variables_dict):
     """
     time_dict = {}
     var_dict = {}
-    time_identifier = 'Time'
-    time_identifier2 = 'time'
+    time_identifiers = ['Time','time','begin_end_size']
+    #time_identifier = 'Time'
+    #time_identifier2 = 'time'
+    matches_identifier = lambda i: i in name, 
     for name, var in variables_dict.iteritems():
-        if time_identifier in name or time_identifier2 in name:
-            time_dict[name] = var
+        for identifier in time_identifiers:
+            if identifier in name:
+                time_dict[name] = var 
+                break
+        #if time_identifier in name or time_identifier2 in name:
+        #    time_dict[name] = var
         else:
             var_dict[name] = var
 

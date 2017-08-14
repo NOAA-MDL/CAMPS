@@ -12,16 +12,14 @@ import data_mgmt.constants as const
 import metpy.calc as calc
 from metpy.units import units
 
-def mixing_ratio_setup(mixrat_obj):
+def wet_bulb_setup(mixrat_obj):
     """Compute gridded mixing ratio using 
     pressure, temperature, and relative humidity (%) 
     on an isobaric, a constant height, or a sigma surface.
     """
-    # Only will work if surface or 2m elevation
     level = mixrat_obj.get_coordinate()
     if level != 2 or level is not None:
         raise ValueError("level is not surface or 2m")
-    # Otherwise, will work on sigma surface and isobarametric surfaces
     # Get temperature, relative humidity, and pressure
     temp = fetch(property='Temp', source='GFS', vert_coord1=level)
     pres = fetch(property='Pres', source='GFS', vert_coord1=None)
@@ -54,7 +52,7 @@ def mixing_ratio_setup(mixrat_obj):
     # 
      
 
-def mixing_ratio(pressure_arr, temperature_arr, rel_hum_arr):
+def wet_bulb(pressure_arr, temperature_arr, rel_hum_arr):
     """Compute the mixing ratio
     """
     #epsilon = const.ratio_of_dry_and_saturated_gas_constant
