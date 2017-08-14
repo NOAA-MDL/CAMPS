@@ -508,6 +508,20 @@ class PhenomenonTimePeriod(Time):
         assert len(dim_tuple) == len(self.data.shape)
         return dim_tuple
 
+    def get_index(self, num_seconds):
+        """Returns index where the lead time data equals num_seconds.
+        Only checks if the start bound is equal to the input argument.
+        Throws error if multiple indicies are found or none are found.
+        """
+        indices = np.where(self.data[0,:] == num_seconds)
+        # indices is returned as tuple; extract first element
+        indices = indices[0]
+        if len(indices) == 0:
+            raise ValueError("lead time not found in LeadTime object.")
+        if len(indices) > 1:
+            raise ValueError("lead time found multiple times in LeadTime object.")
+        return indices[0]
+
     def write_begin_end_var(self, nc_handle):
         """
         Writes beg_end_bounds variable to netcdf file.
@@ -578,13 +592,27 @@ class PhenomenonTime(Time):
         num_dims = len(self.data.shape)
         if num_dims == 1:
             dim_tuple = (get_time_dim_name(),)
-        elif num_dims == 2:
+        elif num_dims == 2: # In the case of model data
             dim_tuple = (get_lead_dim_name(), get_time_dim_name())
         else:
             raise AssertionError("more than 2 dimensions describing time")
 
         assert len(dim_tuple) == len(self.data.shape)
         return dim_tuple
+
+    def get_index(self, num_seconds):
+        """Returns index where the lead time data equals num_seconds.
+        Only checks if the start bound is equal to the input argument.
+        Throws error if multiple indicies are found or none are found.
+        """
+        indices = np.where(self.data[:,0] == num_seconds)
+        # indices is returned as tuple; extract first element
+        indices = indices[0]
+        if len(indices) == 0:
+            raise ValueError("time not found in PhenomenonTime object.")
+        if len(indices) > 1:
+            raise ValueError("lead time found multiple times in PhenomenonTime object.")
+        return indices[0]
 
 
 class ValidTime(Time):
@@ -810,6 +838,19 @@ class LeadTime(Time):
         dim_tuple = (get_lead_dim_name(),)
         assert len(dim_tuple) == len(self.data.shape)
         return dim_tuple
+
+    def get_index(self, num_seconds):
+        """Returns index where the lead time data equals num_seconds.
+        Throws error if multiple indicies are found or none are found.
+        """
+        indices = np.where(self.data == num_seconds)
+        # indices is returned as tuple; extract first element
+        indices = indices[0]
+        if len(indices) == 0:
+            raise ValueError("lead time not found in LeadTime object.")
+        if len(indices) > 1:
+            raise ValueError("lead time found multiple times in LeadTime object.")
+        return indices[0]
 
     def __str__(self):
         ret_str = "** " + self.name + " **" + "\n"

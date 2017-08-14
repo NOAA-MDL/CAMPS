@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 import sys
 import os
+relative_path = os.path.abspath(
+            os.path.dirname(os.path.realpath(__file__)) + "/..")
+sys.path.insert(0, relative_path)
 import getpass
 import curses
 import time
-import util
+import registry.util as util
 
 clipboard = ""
 STARTY = 6

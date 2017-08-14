@@ -41,10 +41,24 @@ predictor_file : "/home/Riley.Conroy/dev/wisps/wisps/registry/predictors.yml"
 
 
 
-projparams : 
-        'a': 6371229
-        'b': 6371229
-        'lat_ts': 60.0
-        'lon_0': 255.0
-        'proj': 'stere'
-        'lat_0': 90.0
+#projparams : 
+#        'a': 6371229
+#        'b': 6371229
+#        'lat_ts': 60.0
+#        'lon_0': 255.0
+#        'proj': 'stere'
+#        'lat_0': 90.0
+#
+dx : 47625
+
+projparams :
+        'a' : 6371229
+        'b' : 6371229
+        'proj' : 'stere' 
+        'lat_0' : 90.0
+        'lon_0' : 255.0
+        'lat_ts' : 60.0 
+        'to_meters' : True
+        'x_0' : 8001120.943743927
+        'y_0' : 8001120.943743927
+#    'over': True

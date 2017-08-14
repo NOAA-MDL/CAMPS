@@ -43,7 +43,9 @@ def fetch(time=None, lead_time=None, **metadata_dict):
     elif num_records_returned == 1:
         record = ret[0]
         print record
-        return reader.read_var(record['filename'], record['name'])
+        filepath = record['filename']
+        nc_variable_name = record['name']
+        return reader.read_var(filepath, nc_variable_name, lead_time, time)
 
 def find_date():
     pass

@@ -14,7 +14,7 @@ from pyproj import Proj
 
 
 
-def interp(x, y, model_values, station_lat, station_lon):
+def interp(x, y, model_values, station_lat, station_lon, method='linear'):
     """
     x - the x coordinate values in projected grid
     y - the y coordinate values in projected grid
@@ -22,33 +22,52 @@ def interp(x, y, model_values, station_lat, station_lon):
     station_lat - 1 or 2 dimensional array of latitude points
     station_lon - 1 or 2 dimensional array of longitude points
     """
-    # Create 2d grid of values
+
+    model_values_1d = model_values.flatten()
+    # Create 2d grid of x and y coordinates
+    # e.g. xx will have shape (len(x),len(y))
     xx, yy = np.meshgrid(x,y)
+    # Must make then make them 1d
     x_1d = xx.flatten()
     y_1d = yy.flatten()
-    points = np.dstack((x_1d, y_1d))[0]
 
-    xix,xiy = reproject(station_lon, station_lat)
+    # Stack then and transpose. griddata expects shape (n, D)
+    # Where n in size of array and D is number of dimensions... or 2
+    points = np.array((x_1d, y_1d)).T
+
+    # The point(s) at which to interpolate
+    xi_x,xi_y = reproject(station_lon, station_lat)
 
     try:
-        grid_z0 = griddata(points, model_values, (station_lon,station_lat), method='linear')
+        grid_z0 = griddata(points, model_values_1d, (xi_x,xi_y), method='linear')
+    except ValueError:
+        
+        print "shape of points", points.shape
+        print "shape of model values", model_values_1d.shape
+        raise
+    except:
+        raise
+
+    return grid_z0
+
     
 
-def reproject(lon, lat):
+def reproject(lon=None, lat=None):
     """
     Given collection of lat and lon, reproject into appropriate grid space.
     """
     # Get projection information
+    assert lon is not None and lat is not None
     control = cfg.read_mospred_control()
     projparams = control['projparams']
     p = Proj(projparams=projparams)
-    x,y = p(lon, lat, inverse=True)
+    x,y = p(lon, lat )
     return (x,y)
 
 
 
-def test():
-    filename = sys.argv[1]
+def test(filename):
+    #filename = sys.argv[1]
     print "opening", filename
     mmk = Dataset(filename, 'r')
     #temp = mmk['TMP_1000mb']
@@ -60,7 +79,7 @@ def test():
             x = mmk['x'][:]
             y = mmk['y'][:]
         except:
-            y = mmk['GFS_xProj_instant__1'][:]
+            y = mmk['GFS_yProj_instant__'][:]
             x = mmk['GFS_xProj_instant__'][:]
         xx, yy = np.meshgrid(x,y)
         xxx = xx.flatten()

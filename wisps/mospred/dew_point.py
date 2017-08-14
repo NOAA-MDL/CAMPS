@@ -25,7 +25,7 @@ def dewpoint(dewpt_obj):
     temp = fetch(property='Temp', source='GFS', vert_coord1=level)
     rel_hum = fetch(property='RelHum', source='GFS', vert_coord1=level)
     
-    # Package into quantity
+    # Package into Pint quantity
     q_temp = units('K') * temp.data
     q_rel_hum = units(None) * rel_hum.data # Dimensionless
 

@@ -8,7 +8,7 @@ sys.path.insert(0, relative_path)
 import registry.util as cfg
 import parse_pred
 import procedures
-from fetch import fetch
+from data_mgmt.fetch import fetch
 import pdb
 
 
