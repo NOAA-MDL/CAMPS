@@ -20,4 +20,5 @@ def test_marine():
     marine_driver.main()
 
 
-test_marine()
+if __name__ == "__main__":
+    test_marine()

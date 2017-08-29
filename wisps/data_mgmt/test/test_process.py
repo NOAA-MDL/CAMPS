@@ -15,4 +15,5 @@ def test_init():
 
 
 
-test_init()
+if __name__ == "__main__":
+    test_init()

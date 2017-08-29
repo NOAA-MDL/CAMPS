@@ -99,8 +99,8 @@ def test_has_coord():
 #    assert temp.has_elev_bounds()
     passed("test_coord")
 
-
-test_has_coord()
-test_variable()
-test_plev()
-test_check_correct_dimension()
+if __name__ == "__main__":
+    test_has_coord()
+    test_variable()
+    test_plev()
+    test_check_correct_dimension()

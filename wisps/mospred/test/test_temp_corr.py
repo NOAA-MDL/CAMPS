@@ -18,6 +18,7 @@ def test_temp_corr():
 
 
 
+if __name__ == "__main__":
 
-test_temp_corr_setup()
-test_temp_corr()
+    test_temp_corr_setup()
+    test_temp_corr()

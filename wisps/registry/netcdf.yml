@@ -1283,13 +1283,25 @@ variables :
       units : "K"
       valid_min : ""
       valid_max : ""
+  2_metre_apparent_temperature_instant_2 :
+    data_type : float32
+    dimensions : [] 
+    coord_val : 2
+    attribute : 
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
+      long_name : "temperature instant at 2m"
+      standard_name : "air_temperature"
+      coordinates: "elev"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
   2_metre_temperature_instant_2 :
     data_type : float32
     dimensions : [] 
     coord_val : 2
     attribute : 
       OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
-      long_name : "2 metre temperature instant 2m"
+      long_name : "temperature instant at 2m"
       standard_name : "air_temperature"
       coordinates: "elev"
       units : "K"

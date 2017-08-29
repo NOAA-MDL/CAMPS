@@ -28,7 +28,7 @@ def test_PhenomenonTime():
 def test_netcdf():
     test_nc = Dataset('test.nc', mode='w')
     ptime = Time.PhenomenonTime(start_time='20160101', end_time='20160202')
-    ptime2 = Time.PhenomenonTime(start_time='20160201' end_time='20160502')
+    ptime2 = Time.PhenomenonTime(start_time='20160201', end_time='20160502')
     ptime3 = Time.PhenomenonTime(start_time='20160101', end_time='20160202')
     ptime3.data[3] = 42
     
@@ -69,7 +69,7 @@ def test_ValidTime():
 def test_get_stride():
     start_time = datetime(2016, 4, 5, 0, 0)
     end_time = datetime(2016, 4, 15, 0, 0)
-    time = Time.Time(start_time=start_time, end_time=end_time, Time.ONE_HOUR)
+    time = Time.Time(start_time=start_time, end_time=end_time, stride=Time.ONE_HOUR)
     stride = time.get_stride(True)
     correct_stride = timedelta(seconds=Time.ONE_HOUR)
     assert correct_stride == stride
@@ -130,10 +130,11 @@ def test_timesteps():
     assert num == 25
 
 
-test_timesteps()
-test_get_stride()
-test_epoch_time()
-test_PhenomenonTime()
-test_ValidTime()
-test_eq()
-test_netcdf()
+if __name__ == "__main__":
+    test_timesteps()
+    test_get_stride()
+    test_epoch_time()
+    test_PhenomenonTime()
+    test_ValidTime()
+    test_eq()
+    test_netcdf()

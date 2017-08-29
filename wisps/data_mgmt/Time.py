@@ -517,7 +517,9 @@ class PhenomenonTimePeriod(Time):
         # indices is returned as tuple; extract first element
         indices = indices[0]
         if len(indices) == 0:
-            raise ValueError("lead time not found in LeadTime object.")
+            err_str = "lead time not found for " + num_seconds + " seconds " +\
+                    "in LeadTime object."
+            raise ValueError(err_str)
         if len(indices) > 1:
             raise ValueError("lead time found multiple times in LeadTime object.")
         return indices[0]

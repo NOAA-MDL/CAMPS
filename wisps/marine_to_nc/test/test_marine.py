@@ -8,4 +8,5 @@ sys.path.insert(0, path)
 
 import marinereader
 
-print "Tested Marine"
+if __name__ == "__main__":
+    print "Tested Marine"
