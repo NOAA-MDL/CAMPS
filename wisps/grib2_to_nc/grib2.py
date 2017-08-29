@@ -35,7 +35,7 @@ def reduce_grib(control=None):
     # If the configuration--a dictionary--is 
     # not passed in as an argument, then use the default control file.
     if control is None:
-        control = yamlutil.read_grib2_control()A
+        control = yamlutil.read_grib2_control()
 
     # Extract configuration 
     wgrib2 = control['wgrib2'] # Location of wgrib2 program.
@@ -58,10 +58,10 @@ def reduce_grib(control=None):
     datadir = convert_to_list(datadir)
 
     if len(datadir) > 10:
-        logging.warning("More than 10 directories to process (%d)", len(datadir)
+        logging.warning("More than 10 directories to process (%d)", len(datadir))
 
     # Remove a old grib file if it exists and the config wants it removed.
-    if remove_infile and os.path.exists(
+    #if remove_infile and os.path.exists(
 
 
 
@@ -76,13 +76,27 @@ def reduce_grib(control=None):
         files = os.listdir(gfs_dir)
 
         # filter out only the the gfs files
-        match_string = r'^...\.t\d\dz\.pgrb2\.0p25\.f\d\d\d$'
-        files = filter(lambda f: re.match(match_string, f, re.I), files)
 
+        # New match string
+        match_string = r'^...\.t\d\dz\.pgrb2\.0p25\.f(\d\d\d)$|^...\.t\d\dz\.pgrbf(\d\d\d?)\.2p5deg$'
+        grb_files = filter(lambda f: re.match(match_string, f, re.I), files)
+
+        #files = filter(lambda f: int(f[-3:]) % 3 ==
+        #               0 and int(f[-3:]) <= max_lead_times, files)
+        
+        files = []
         # Only keep those files that are every third projection hour
-        files = filter(lambda f: int(f[-3:]) % 3 ==
-                       0 and int(f[-3:]) <= max_lead_times, files)
-
+        # This is in a for loop because we need to extract the regex group
+        for filename in grb_files:
+            proj_hour = re.match(match_string, filename, re.I).groups()
+            if proj_hour[0] is not None:
+                proj_hour = proj_hour[0]
+            else:
+                proj_hour = proj_hour[1]
+            if int(proj_hour) % 3 == 0:
+                files.append(filename)
+                
+            
         # If files are found in the directory, construct outfile name
         if len(files) > 0:
             print "number of files:", files
@@ -92,6 +106,8 @@ def reduce_grib(control=None):
                 outfile_identifier + '.pgrb2'
             outfile = outpath + outfile_name
             tmp_dir = outpath + 'tmp/'
+        else:
+            raise OSError("no files in dir")
 
         if os.path.exists(tmp_dir):
             rmtree(tmp_dir)

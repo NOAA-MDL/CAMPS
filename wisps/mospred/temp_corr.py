@@ -6,9 +6,6 @@ relative_path = os.path.abspath(
     os.path.dirname(os.path.realpath(__file__)) + "/..")
 sys.path.insert(0, relative_path)
 from data_mgmt.fetch import *
-
-#import metpy.constants as const
-import data_mgmt.constants as const
 import metpy.calc as calc
 from metpy.units import units
 

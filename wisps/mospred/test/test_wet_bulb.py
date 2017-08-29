@@ -18,6 +18,7 @@ def test_wet_bulb():
 
 
 
+if __name__ == "__main__":
 
-test_wet_bulb_setup()
-test_wet_bulb()
+    test_wet_bulb_setup()
+    test_wet_bulb()

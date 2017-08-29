@@ -1,4 +1,9 @@
-from qc_temp import *
+import os
+import sys
+import re
+relative_path = os.path.abspath(
+        os.path.dirname(os.path.realpath(__file__)) + "/..")
+sys.path.insert(0, relative_path)
 from qc_general import *
 import numpy as np
 import pdb
@@ -141,8 +146,8 @@ def test_bounds():
     np.testing.assert_array_equal(arr, assert_arr)
     print "PASSED test1"
 
-
-test_min_max()
-test_dew_point()
-test_synoptic()
-test_consistancy()
+if __name__ == "__main__":
+    test_min_max()
+    test_dew_point()
+    test_synoptic()
+    test_consistancy()

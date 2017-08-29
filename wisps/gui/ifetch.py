@@ -204,45 +204,46 @@ def display_matches(stdscr, matches, selection):
             return
 
 
-username = getpass.getuser()
-
-stdscr = curses.initscr()
-curses.start_color()
-curses.noecho()
-curses.cbreak()
-stdscr.keypad(True)
-lines = curses.LINES - 1
-cols = curses.COLS - 1
-#center = lambda str_len : int(cols/2) - int(str_len/2) - 1
-curses.curs_set(False)
-
-# Init Color Pairs
-curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
-curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_YELLOW)
-curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_RED)
-curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_GREEN)
-
-s = "Hello " + username + "!"
-stdscr.addstr(1, center(len(s)), s, curses.color_pair(1))
-s = "Welcome to the interactive netcdf variable editor!"
-stdscr.addstr(2, center(len(s)), s)
-s = '-' * cols
-stdscr.addstr(4, 0, s, curses.color_pair(2))
-stdscr.refresh()
-
-ans = 0
-while ans != ord('q'):
-    print_options(stdscr)
-    ans = stdscr.getch()
-    if ans == ord('e'):
-        var_editing(stdscr)
-    elif ans == ord('s'):
-        search(stdscr)
-    elif ans == ord('h'):
-        display_help(stdscr)
-
-# Terminate curses
-curses.nocbreak()
-stdscr.keypad(False)
-curses.echo()
-curses.endwin()
+if __name__ == "__main__":
+    username = getpass.getuser()
+    
+    stdscr = curses.initscr()
+    curses.start_color()
+    curses.noecho()
+    curses.cbreak()
+    stdscr.keypad(True)
+    lines = curses.LINES - 1
+    cols = curses.COLS - 1
+    #center = lambda str_len : int(cols/2) - int(str_len/2) - 1
+    curses.curs_set(False)
+    
+    # Init Color Pairs
+    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
+    curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_YELLOW)
+    curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_RED)
+    curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_GREEN)
+    
+    s = "Hello " + username + "!"
+    stdscr.addstr(1, center(len(s)), s, curses.color_pair(1))
+    s = "Welcome to the interactive netcdf variable editor!"
+    stdscr.addstr(2, center(len(s)), s)
+    s = '-' * cols
+    stdscr.addstr(4, 0, s, curses.color_pair(2))
+    stdscr.refresh()
+    
+    ans = 0
+    while ans != ord('q'):
+        print_options(stdscr)
+        ans = stdscr.getch()
+        if ans == ord('e'):
+            var_editing(stdscr)
+        elif ans == ord('s'):
+            search(stdscr)
+        elif ans == ord('h'):
+            display_help(stdscr)
+    
+    # Terminate curses
+    curses.nocbreak()
+    stdscr.keypad(False)
+    curses.echo()
+    curses.endwin()

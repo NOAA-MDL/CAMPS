@@ -19,4 +19,5 @@ def test_fetch():
     assert w_obj
     
 
-test_fetch()
+if __name__ == "__main__":
+    test_fetch()

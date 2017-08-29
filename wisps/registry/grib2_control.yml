@@ -9,8 +9,10 @@ maximum_lead_hours : 400
 
 # Optionally make this a list to iterate over multiple datadirs
 datadir : [
-        "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160701/",
-        "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160702/"
+    #"/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20131001/",
+    # "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20131002/"
+    "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160701/",
+     "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160702/"
              #     "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160703/",
              #     "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160704/",
              #     "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160705/",

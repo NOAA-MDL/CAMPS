@@ -67,13 +67,14 @@ def test_vertical_coordinate():
     ret = pp.vertical_coordinate('0')
     assert ret['layer1'] == 0
 
+if __name__ == "__main__":
 
-test_separate_entries()
-test_get_cell_method()
-test_observedProperty()
-test_get_time_multiplier()
-test_vertical_coordinate()
-test_parse_range()
-test_get_variable()
-
-print "PASSED mospred"
+    test_separate_entries()
+    test_get_cell_method()
+    test_observedProperty()
+    test_get_time_multiplier()
+    test_vertical_coordinate()
+    test_parse_range()
+    test_get_variable()
+    
+    print "PASSED mospred"

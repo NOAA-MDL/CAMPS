@@ -838,8 +838,11 @@ class Wisps_data(nc_writable):
             obj_str += " " * (20 - num_chars)
             obj_str += ": " + str(v) + "\n"
 
+        obj_str += "\n"
+        obj_str += "Shape: \n" + str(self.data.shape) + "\n"
         obj_str += "Data: \n"
-        obj_str += str(self.data)
+        obj_str += str(self.data)[:20] + '\n'
+        obj_str += str(self.data)[-20:] + '\n'
 
         return obj_str
 
