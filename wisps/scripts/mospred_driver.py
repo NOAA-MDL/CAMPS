@@ -8,10 +8,12 @@ path = os.path.abspath(file_dir + relative_path)
 sys.path.insert(0, path)
 import registry.util as cfg
 import mospred.read_pred as read_pred
+import mospred.util as util
 import data_mgmt.Time as Time
 from datetime import timedelta
 import mospred.create as create
 import mospred.interp
+import mospred.util
 import pdb
 from data_mgmt.fetch import *
 
