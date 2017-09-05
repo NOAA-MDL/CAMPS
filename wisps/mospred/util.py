@@ -52,7 +52,7 @@ def strip_array(arr):
 def read_valid_stations(file_path):
     """
     Reads the valid METAR stations from file defined
-    in control file. Returns them as a list.
+    in control file. Returns them as a set.
     """
     station_list = set()
     with open(file_path, 'r') as f:

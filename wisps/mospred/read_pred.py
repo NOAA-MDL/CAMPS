@@ -36,6 +36,8 @@ def parse_range(range_str):
     if ',' in end:
         end,stride = end.split(',')
         stride = parse_pred.separate_entries(stride)
+        # Stride should not have a cell method
+        stride = stride['time']
     return (start, end, stride)
 
 def apply_procedures(w_obj, procedures):
