@@ -5,6 +5,7 @@
 
 Welcome to WISPS documentation!
 =================================
+These pages will help the community use and integrate into WISPS.
 
 .. toctree::
    :maxdepth: 2
