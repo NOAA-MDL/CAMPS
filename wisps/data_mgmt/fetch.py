@@ -7,6 +7,7 @@ sys.path.insert(0, path)
 import registry.db.db as db
 import data_mgmt.reader as reader
 import pdb
+from os.path import basename
 
 
 def fetch(time=None, lead_time=None, **metadata_dict):
@@ -38,17 +39,28 @@ def fetch(time=None, lead_time=None, **metadata_dict):
         print "Please be more specific"
         raise RuntimeError("too many variables returned")
     elif num_records_returned  == 0:
-        # Calculate it?
+        # Check if another fetch without full URI might yeild results
+        if 'property' in metadata_dict:
+            prop = metadata_dict['property']
+            prop_basename = basename(prop)
+            if prop != prop_basename:
+                metadata_dict['property'] = prop_basename
+                return fetch(time=time,lead_time=lead_time,**metadata_dict)
+        # Otherwise return that nothing was found
         return None
     elif num_records_returned == 1:
         record = ret[0]
-        print record
+        print "Found one Matching record."
         filepath = record['filename']
         nc_variable_name = record['name']
         return reader.read_var(filepath, nc_variable_name, lead_time, time)
 
+
 def find_date():
     pass
 
+def printdict(dict):
+    for k,v in dict.iteritems():
+        print str(k) + " : " + str(v)
 
 

@@ -822,6 +822,8 @@ class Wisps_data(nc_writable):
             return self.metadata[name]
         else:
             raise AttributeError
+    # TODO
+    #def __eq__(self, other):
 
     def __str__(self):
         obj_str = "\n***** " + self.name + " ******\n*\n"

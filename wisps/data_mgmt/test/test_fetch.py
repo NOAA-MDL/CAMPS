@@ -14,10 +14,16 @@ def test_fetch():
     # Create metadata dictionary of variable that should be pulled.
     metadata = {'property':'Temp', 
                 'vert_coord1' : 500}
-    w_obj = fetch.fetch(metadata)
-    pdb.set_trace()
+    w_obj = fetch.fetch(**metadata)
     assert w_obj
+
+    metadata = {'property':'StatPP/Data/Temp', 
+                'vert_coord1' : 500}
+    w_obj2 = fetch.fetch(**metadata)
+    assert w_obj.data.all() == w_obj2.data.all()
     
 
 if __name__ == "__main__":
     test_fetch()
+    print "fetch passed"
+    
