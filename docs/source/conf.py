@@ -48,8 +48,9 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'wisps'
-copyright = u'2017, Riley Conroy'
-author = u'Riley Conroy'
+# copyright = u'2017, [Author]'
+author = u'WISPS Community'
+html_show_copyright = False
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
