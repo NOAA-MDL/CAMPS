@@ -51,14 +51,6 @@ wisps\.scripts\.mospred\_driver module
     :undoc-members:
     :show-inheritance:
 
-wisps\.scripts\.tdlpack\_to\_nc module
---------------------------------------
-
-.. automodule:: wisps.scripts.tdlpack_to_nc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------

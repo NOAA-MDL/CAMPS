@@ -7,9 +7,21 @@ Welcome to WISPS documentation!
 =================================
 These pages will help the community use and integrate into WISPS.
 
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   :glob:
+   
+   overview/index
+   data_encoding
+   application_profile/index
+   data_encoding
+   encoding_parameter
+   modules/wisps
+
+   
 
 
 
@@ -19,5 +31,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-* :doc:`test`
-* :doc:`subtest`

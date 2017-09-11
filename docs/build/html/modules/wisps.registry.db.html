@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>wisps.registry.db package &#8212; wisps 0.5 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="wisps.scripts package" href="wisps.scripts.html" />
+    <link rel="prev" title="wisps.registry package" href="wisps.registry.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="wisps.scripts.html" title="wisps.scripts package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="wisps.registry.html" title="wisps.registry package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="wisps.html" >wisps package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="wisps.registry.html" accesskey="U">wisps.registry package</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="wisps-registry-db-package">
+<h1>wisps.registry.db package<a class="headerlink" href="#wisps-registry-db-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-wisps.registry.db.db">
+<span id="wisps-registry-db-db-module"></span><h2>wisps.registry.db.db module<a class="headerlink" href="#module-wisps.registry.db.db" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wisps.registry.db.db.associate">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">associate</code><span class="sig-paren">(</span><em>names</em>, <em>values</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.associate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of names and their associated values, 
+return a dictionary</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.connect">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">connect</code><span class="sig-paren">(</span><em>db</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns sqlite3.Connection object for a given database
+housed in the db directory.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.create_new_metadata_db">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">create_new_metadata_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.create_new_metadata_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes old metadata table and replaces it with a new table 
+based on the configuration.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.create_new_properties_db">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">create_new_properties_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.create_new_properties_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes old properties table and replaces it with a new table 
+based on the configuration.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.create_variable_db">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">create_variable_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.create_variable_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a variable database based off of dictionary</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.dump_db">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">dump_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.dump_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.get_all_metadata">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">get_all_metadata</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.get_all_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dictionary of attribute names and values 
+that are defined (not None or an empty string) for given variable name.
+str name : name of the variable.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.get_all_variables">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">get_all_variables</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.get_all_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value of of the attribute for 
+the name.
+str name : name of predictor. e.g. wind_speed</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.get_by_metadata">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">get_by_metadata</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.get_by_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value of of the attribute for 
+the name.
+str name : name of predictor. e.g. wind_speed</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.get_column_names_string">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">get_column_names_string</code><span class="sig-paren">(</span><em>names</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.get_column_names_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a sqlite string for column names
+given a set of names. Assumes all columns are of type &#8216;text&#8217;</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.get_data_type">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">get_data_type</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.get_data_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if data_type is defined in the properties
+database for this varibale name. Return value if available,
+otherwise throw ValueError.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.get_dictionary_attribute_keys">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">get_dictionary_attribute_keys</code><span class="sig-paren">(</span><em>variables</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.get_dictionary_attribute_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets all of the unique attribute names for each variable and
+returns an set of the results. 
+Parsing the config is specific to the nc_vars yaml file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.get_dictionary_properties_keys">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">get_dictionary_properties_keys</code><span class="sig-paren">(</span><em>variables</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.get_dictionary_properties_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets all of the unique properties names for each variable and
+returns an set of the results. 
+Parsing the config is specific to the nc_vars yaml file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.get_dimensions_type">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">get_dimensions_type</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.get_dimensions_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if dimensions is defined in the properties
+database for this varibale name. Return value if available,
+otherwise throw ValueError.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.get_metadata">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">get_metadata</code><span class="sig-paren">(</span><em>name</em>, <em>attr</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.get_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value of of the attribute for 
+the name.
+str name : name of predictor. e.g. wind_speed</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.get_property">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">get_property</code><span class="sig-paren">(</span><em>name</em>, <em>attr</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.get_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value of of the attribute for 
+the name.
+str name : name of predictor. e.g. wind_speed</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.get_variable">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">get_variable</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.get_variable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value of of the attribute for 
+the name.
+str name : name of predictor. e.g. wind_speed</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.get_variable_fields">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">get_variable_fields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.get_variable_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.get_variable_types">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">get_variable_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.get_variable_types" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.insert_variable">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">insert_variable</code><span class="sig-paren">(</span><em>property</em>, <em>source</em>, <em>start</em>, <em>end</em>, <em>duration</em>, <em>duration_method</em>, <em>vert_coord1</em>, <em>vert_coord2</em>, <em>vert_method</em>, <em>filename</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.insert_variable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts variable metadata information into the table. 
+Requires arguments in the following order:
+property, 
+source,
+start, 
+end, 
+duration, 
+duration_method, 
+vert_coord1, 
+vert_coord2, 
+vert_method, 
+filename,
+name</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.print_from">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">print_from</code><span class="sig-paren">(</span><em>db</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.print_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints a formatted list of attribute names and 
+their associated values for a given variable
+name.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.print_metadata">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">print_metadata</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.print_metadata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.registry.db.db.print_properties">
+<code class="descclassname">wisps.registry.db.db.</code><code class="descname">print_properties</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.registry.db.db.print_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-wisps.registry.db">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-wisps.registry.db" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">Overview of WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../application_profile/index.html">Proposed Application Profile</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="wisps.html">wisps package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.data_mgmt.html">wisps.data_mgmt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.data_mgmt.test.html">wisps.data_mgmt.test package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.grib2_to_nc.html">wisps.grib2_to_nc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.grib2_to_nc.test.html">wisps.grib2_to_nc.test package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.marine_to_nc.html">wisps.marine_to_nc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.marine_to_nc.test.html">wisps.marine_to_nc.test package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.mathlib.html">wisps.mathlib package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.mathlib.momentum.html">wisps.mathlib.momentum package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.metar_to_nc.html">wisps.metar_to_nc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.metar_to_nc.test.html">wisps.metar_to_nc.test package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.mospred.html">wisps.mospred package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.mospred.test.html">wisps.mospred.test package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="wisps.registry.html">wisps.registry package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">wisps.registry.db package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.scripts.html">wisps.scripts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.scripts.test.html">wisps.scripts.test package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wisps.test.html">wisps.test package</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="wisps.registry.html"
+                        title="previous chapter">wisps.registry package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="wisps.scripts.html"
+                        title="next chapter">wisps.scripts package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/modules/wisps.registry.db.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="wisps.scripts.html" title="wisps.scripts package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="wisps.registry.html" title="wisps.registry package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="wisps.html" >wisps package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="wisps.registry.html" >wisps.registry package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>
