@@ -26,8 +26,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Proposed Application Profile" href="application_profile/index.html" />
-    <link rel="prev" title="Overview of WISPS" href="overview/index.html" /> 
+    <link rel="next" title="Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1" href="application_profile/index.html" />
+    <link rel="prev" title="An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1" href="overview/index.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -40,10 +40,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="application_profile/index.html" title="Proposed Application Profile"
+          <a href="application_profile/index.html" title="Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="overview/index.html" title="Overview of WISPS"
+          <a href="overview/index.html" title="An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">wisps 0.5 documentation</a> &#187;</li> 
       </ul>
@@ -56,6 +56,14 @@
             
   <div class="section" id="data-encoding-for-wisps">
 <h1>Data Encoding for WISPS<a class="headerlink" href="#data-encoding-for-wisps" title="Permalink to this headline">¶</a></h1>
+<p>The Weather Information Statistical Post-processing System intends to foster community involvement, experimentation, and improvement.
+One of the most important tools we can develop to foster these goals is a well-designed, flexible, and supported standards for data exchange.
+The documents below address this important need.</p>
+<p>WISPS has drafted an application profile that embodies a standard-based approach to encoding data and metadata to support the post-processing of NWP output.
+The concepts presented in the <em>Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS)</em> are quite general.
+This document applies to data flies as well as parameter files.</p>
+<p>Other documentation files are planned.
+These include an similar (and smaller) application profile for encoding statistical post-processing parameters, and documents that are specific to encoding data and parameters to support MDL&#8217;s Model Output Statistics (MOS) technique.</p>
 </div>
 
 
@@ -67,35 +75,20 @@
 <h3><a href="index.html">Table Of Contents</a></h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview of WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview/index.html">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Data Encoding for WISPS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="application_profile/index.html">Proposed Application Profile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="application_profile/index.html">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Data Encoding for WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="encoding_parameter.html">Encoding parameter files in WISPS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/wisps.html">wisps package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.data_mgmt.html">wisps.data_mgmt package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.data_mgmt.test.html">wisps.data_mgmt.test package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.grib2_to_nc.html">wisps.grib2_to_nc package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.grib2_to_nc.test.html">wisps.grib2_to_nc.test package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.marine_to_nc.html">wisps.marine_to_nc package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.marine_to_nc.test.html">wisps.marine_to_nc.test package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.mathlib.html">wisps.mathlib package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.mathlib.momentum.html">wisps.mathlib.momentum package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.metar_to_nc.html">wisps.metar_to_nc package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.metar_to_nc.test.html">wisps.metar_to_nc.test package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.mospred.html">wisps.mospred package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.mospred.test.html">wisps.mospred.test package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.registry.html">wisps.registry package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.registry.db.html">wisps.registry.db package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.scripts.html">wisps.scripts package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.scripts.test.html">wisps.scripts.test package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/wisps.test.html">wisps.test package</a></li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="overview/index.html"
-                        title="previous chapter">Overview of WISPS</a></p>
+                        title="previous chapter">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="application_profile/index.html"
-                        title="next chapter">Proposed Application Profile</a></p>
+                        title="next chapter">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -127,10 +120,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="application_profile/index.html" title="Proposed Application Profile"
+          <a href="application_profile/index.html" title="Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1"
              >next</a> |</li>
         <li class="right" >
-          <a href="overview/index.html" title="Overview of WISPS"
+          <a href="overview/index.html" title="An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">wisps 0.5 documentation</a> &#187;</li> 
       </ul>

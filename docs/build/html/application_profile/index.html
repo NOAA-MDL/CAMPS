@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Proposed Application Profile &#8212; wisps 0.5 documentation</title>
+    <title>Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1 &#8212; wisps 0.5 documentation</title>
     
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Coordinates" href="coordinates.html" />
+    <link rel="next" title="4. Coordinates" href="coordinates.html" />
     <link rel="prev" title="Data Encoding for WISPS" href="../data_encoding.html" /> 
   </head>
   <body role="document">
@@ -40,7 +40,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="coordinates.html" title="Coordinates"
+          <a href="coordinates.html" title="4. Coordinates"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../data_encoding.html" title="Data Encoding for WISPS"
@@ -54,20 +54,49 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="proposed-application-profile">
-<h1>Proposed Application Profile<a class="headerlink" href="#proposed-application-profile" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="application-profile-for-encoding-data-in-netcdf-cf-to-inter-operate-with-the-weather-information-statistical-post-processing-system-wisps-v0-1">
+<h1>Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1<a class="headerlink" href="#application-profile-for-encoding-data-in-netcdf-cf-to-inter-operate-with-the-weather-information-statistical-post-processing-system-wisps-v0-1" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="coordinates.html">Coordinates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="description_data.html">Description of the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="enhancements_construction_standard_names.html">Appendix A: Proposed enhancements to Guidlines for Construction of CF Standard Names</a></li>
-<li class="toctree-l1"><a class="reference internal" href="files_components.html">NetCDF-WISPS files and Components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="proposed_standard_names.html">Appendix B: Proposed CF standard names</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quantifying_uncertainty.html">Quantifying Uncertainty</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coordinates.html">4.  Coordinates</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="coordinates.html#geospatial-coordinates">4.1 Geospatial Coordinates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coordinates.html#time-coordinates">4.2 Time Coordinates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="description_data.html">3.  Description of the data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="description_data.html#syntax-for-integration-of-externally-defined-vocabularies">3.1 Syntax for integration of externally-defined vocabularies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description_data.html#primary-and-ancillary-variables">3.2 Primary and ancillary variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description_data.html#observed-property-and-procedure">3.3  Observed property and procedure</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="enhancements_construction_standard_names.html">Appendix A:  Proposed enhancements to Guidelines for Construction of CF Standard Names</a></li>
+<li class="toctree-l1"><a class="reference internal" href="files_components.html">2.  NetCDF-WISPS files and components</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="files_components.html#identification-of-convention">2.1  Identification of convention</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">1.  Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#netcdf-wisps-and-other-standards-conventions">1.1  NetCDF-WISPS and other standards/conventions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="proposed_standard_names.html">Appendix B:  Proposed CF standard names</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quantifying_uncertainty.html">5.1  Event Probabilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html#evaluated-event-probabilities-of-a-continuous-variable">5.1.1  Evaluated Event Probabilities of a continuous variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html#specified-event-probabilities">5.1.2  Specified Event Probabilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quantifying_uncertainty.html#categorical-probabilities-of-a-continuous-variable">5.2  Categorical Probabilities of a continuous variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quantifying_uncertainty.html#parameterized-probability-distributions-of-a-continuous-variable">5.3  Parameterized Probability distributions of a continuous variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">6.  References</a></li>
 </ul>
 </div>
+<p>The Weather Information Statistical Post-processing System (WISPS) is a software infrastructure that supports Statistical Post-processing (StatPP) and is maintained as community code.
+This infrastructure includes conventions and tools for data representation as well as software repositories that facilitate the use of these conventions.
+The purpose of this document is to propose conventions for encoding binary data in WISPS.</p>
+<blockquote>
+<div>NetCDF (CF) is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data
+The conventions for climate and forecast (CF) metadata are designed to promote the processing and sharing of netCDF files
+The conventions define metadata that provide a definitive description of what the data represents, and the spatial and temporal properties of the data.
+(Excerpt from the OGC netCDF standards suite web page, <a class="reference external" href="http://www.opengeospatial.org/standards/netcdf">http://www.opengeospatial.org/standards/netcdf</a>)</div></blockquote>
 </div>
 
 
@@ -79,17 +108,19 @@
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">Overview of WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Proposed Application Profile</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="coordinates.html">Coordinates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="description_data.html">Description of the data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enhancements_construction_standard_names.html">Appendix A: Proposed enhancements to Guidlines for Construction of CF Standard Names</a></li>
-<li class="toctree-l2"><a class="reference internal" href="files_components.html">NetCDF-WISPS files and Components</a></li>
-<li class="toctree-l2"><a class="reference internal" href="introduction.html">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proposed_standard_names.html">Appendix B: Proposed CF standard names</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html">Quantifying Uncertainty</a></li>
-<li class="toctree-l2"><a class="reference internal" href="references.html">References</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="coordinates.html">4.  Coordinates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description_data.html">3.  Description of the data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enhancements_construction_standard_names.html">Appendix A:  Proposed enhancements to Guidelines for Construction of CF Standard Names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="files_components.html">2.  NetCDF-WISPS files and components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">1.  Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proposed_standard_names.html">Appendix B:  Proposed CF standard names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html">5.1  Event Probabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html#categorical-probabilities-of-a-continuous-variable">5.2  Categorical Probabilities of a continuous variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html#parameterized-probability-distributions-of-a-continuous-variable">5.3  Parameterized Probability distributions of a continuous variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="references.html">6.  References</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
@@ -102,7 +133,7 @@
                         title="previous chapter">Data Encoding for WISPS</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="coordinates.html"
-                        title="next chapter">Coordinates</a></p>
+                        title="next chapter">4.  Coordinates</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -134,7 +165,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="coordinates.html" title="Coordinates"
+          <a href="coordinates.html" title="4. Coordinates"
              >next</a> |</li>
         <li class="right" >
           <a href="../data_encoding.html" title="Data Encoding for WISPS"

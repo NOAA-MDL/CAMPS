@@ -25,7 +25,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="5.1 Event Probabilities" href="quantifying_uncertainty.html" />
+    <link rel="prev" title="1. Introduction" href="introduction.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -37,7 +39,14 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="quantifying_uncertainty.html" title="5.1 Event Probabilities"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="1. Introduction"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -47,7 +56,52 @@
           <div class="body" role="main">
             
   <div class="section" id="appendix-b-proposed-cf-standard-names">
-<h1>Appendix B: Proposed CF standard names<a class="headerlink" href="#appendix-b-proposed-cf-standard-names" title="Permalink to this headline">¶</a></h1>
+<h1>Appendix B:  Proposed CF standard names<a class="headerlink" href="#appendix-b-proposed-cf-standard-names" title="Permalink to this headline">¶</a></h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="20%" />
+<col width="22%" />
+<col width="7%" />
+<col width="7%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Standard Name</th>
+<th class="head" colspan="2">Canonical Units</th>
+<th class="head">AMIP</th>
+<th class="head">GRIB</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>probability_distribution_parameter</td>
+<td colspan="2">1</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Description</strong></td>
+<td colspan="4">The value of the named parameter of a
+probability distribution.  The variable will
+normally be an Ancillary variable of the
+distribution variable.  The attribute
+parameter_name names parameter, and the
+attribute parameter_reference refers to an
+authoritative reference for the parameter.</td>
+</tr>
+<tr class="row-even"><td>present_weather_binary_mask</td>
+<td colspan="2">1</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Description</strong></td>
+<td colspan="4">X_binary_mask has 1 where condition X is met, 0
+elsewhere.  1 = the specified present weather
+is observed or forecast, 0 = not.  The
+attribute present_weather_list describes the
+present weather cases that cause 1 or refers
+to that description.</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
@@ -58,13 +112,33 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">Overview of WISPS</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="index.html">Proposed Application Profile</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="coordinates.html">4.  Coordinates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description_data.html">3.  Description of the data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enhancements_construction_standard_names.html">Appendix A:  Proposed enhancements to Guidelines for Construction of CF Standard Names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="files_components.html">2.  NetCDF-WISPS files and components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">1.  Introduction</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Appendix B:  Proposed CF standard names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html">5.1  Event Probabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html#categorical-probabilities-of-a-continuous-variable">5.2  Categorical Probabilities of a continuous variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html#parameterized-probability-distributions-of-a-continuous-variable">5.3  Parameterized Probability distributions of a continuous variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="references.html">6.  References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../encoding_parameter.html">Encoding parameter files in WISPS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/wisps.html">wisps package</a></li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="introduction.html"
+                        title="previous chapter">1.  Introduction</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="quantifying_uncertainty.html"
+                        title="next chapter">5.1  Event Probabilities</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -95,7 +169,14 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="quantifying_uncertainty.html" title="5.1 Event Probabilities"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="1. Introduction"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

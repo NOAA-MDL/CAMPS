@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Overview of WISPS" href="overview/index.html" /> 
+    <link rel="next" title="An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1" href="overview/index.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -39,7 +39,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="overview/index.html" title="Overview of WISPS"
+          <a href="overview/index.html" title="An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1"
              accesskey="N">next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">wisps 0.5 documentation</a> &#187;</li> 
       </ul>
@@ -56,17 +56,23 @@
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview of WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview/index.html">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="overview/index.html#purpose">1.  Purpose</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview/index.html#key-terminology-and-background">2.  Key Terminology and Background</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="data_encoding.html">Data Encoding for WISPS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="application_profile/index.html">Proposed Application Profile</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="application_profile/coordinates.html">Coordinates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="application_profile/description_data.html">Description of the data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="application_profile/enhancements_construction_standard_names.html">Appendix A: Proposed enhancements to Guidlines for Construction of CF Standard Names</a></li>
-<li class="toctree-l2"><a class="reference internal" href="application_profile/files_components.html">NetCDF-WISPS files and Components</a></li>
-<li class="toctree-l2"><a class="reference internal" href="application_profile/introduction.html">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="application_profile/proposed_standard_names.html">Appendix B: Proposed CF standard names</a></li>
-<li class="toctree-l2"><a class="reference internal" href="application_profile/quantifying_uncertainty.html">Quantifying Uncertainty</a></li>
-<li class="toctree-l2"><a class="reference internal" href="application_profile/references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="application_profile/index.html">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="application_profile/coordinates.html">4.  Coordinates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_profile/description_data.html">3.  Description of the data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_profile/enhancements_construction_standard_names.html">Appendix A:  Proposed enhancements to Guidelines for Construction of CF Standard Names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_profile/files_components.html">2.  NetCDF-WISPS files and components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_profile/introduction.html">1.  Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_profile/proposed_standard_names.html">Appendix B:  Proposed CF standard names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_profile/quantifying_uncertainty.html">5.1  Event Probabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_profile/quantifying_uncertainty.html#categorical-probabilities-of-a-continuous-variable">5.2  Categorical Probabilities of a continuous variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_profile/quantifying_uncertainty.html#parameterized-probability-distributions-of-a-continuous-variable">5.3  Parameterized Probability distributions of a continuous variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_profile/references.html">6.  References</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="data_encoding.html">Data Encoding for WISPS</a></li>
@@ -97,9 +103,9 @@
 <h3><a href="#">Table Of Contents</a></h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview of WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview/index.html">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_encoding.html">Data Encoding for WISPS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="application_profile/index.html">Proposed Application Profile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="application_profile/index.html">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_encoding.html">Data Encoding for WISPS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="encoding_parameter.html">Encoding parameter files in WISPS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/wisps.html">wisps package</a></li>
@@ -107,7 +113,7 @@
 
   <h4>Next topic</h4>
   <p class="topless"><a href="overview/index.html"
-                        title="next chapter">Overview of WISPS</a></p>
+                        title="next chapter">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -139,7 +145,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="overview/index.html" title="Overview of WISPS"
+          <a href="overview/index.html" title="An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1"
              >next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">wisps 0.5 documentation</a> &#187;</li> 
       </ul>

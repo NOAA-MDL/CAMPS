@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Introduction &#8212; wisps 0.5 documentation</title>
+    <title>1. Introduction &#8212; wisps 0.5 documentation</title>
     
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="wisps package" href="../modules/wisps.html" />
-    <link rel="prev" title="Proposed Application Profile" href="index.html" /> 
+    <link rel="next" title="Appendix B: Proposed CF standard names" href="proposed_standard_names.html" />
+    <link rel="prev" title="2. NetCDF-WISPS files and components" href="files_components.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -40,13 +40,13 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../modules/wisps.html" title="wisps package"
+          <a href="proposed_standard_names.html" title="Appendix B: Proposed CF standard names"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Proposed Application Profile"
+          <a href="files_components.html" title="2. NetCDF-WISPS files and components"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Proposed Application Profile</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -56,7 +56,23 @@
           <div class="body" role="main">
             
   <div class="section" id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<h1>1.  Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>NetCDF and the CF conventions have served the atmospheric science community quite well.
+Many organizations have applied these frameworks to the problem of StatPP.
+Unfortunately, these organizations have settled on a variety of solutions with limited success in interoperability.
+This document introduces an application profile of the netCDF-CF conventions that provides additional specificity to improve this interoperability.
+An additional benefit will be the assurance that compliant data files contain sufficient metadata to be self-describing for relatively long periods of time.
+Best practices are recommended along with CDL code fragments as examples.</p>
+<p>We introduce the shorthand netCDF-WISPS to describe a file that conforms to this application profile.</p>
+<p>Appendix A proposes some changes to the <a class="reference external" href="http://cfconventions.org/Data/cf-standard-names/docs/guidelines.html">Guidelines for Construction of CF Standard Names</a>.
+In our examples, we illustrate the application of these changes by declaring an attribute named prototype_standard_name as well as the attribute standard_name.
+This conveys our intent while maintaining conformity with the current standard.</p>
+<div class="section" id="netcdf-wisps-and-other-standards-conventions">
+<h2>1.1  NetCDF-WISPS and other standards/conventions<a class="headerlink" href="#netcdf-wisps-and-other-standards-conventions" title="Permalink to this headline">¶</a></h2>
+<p>First and foremost, a netCDF-WISPS file must comply with both the netCDF standard and the associated CF conventions.</p>
+<p>NetCDF-WISPS tries to standardize nomenclature and its representation in metadata by using pre-existing standards from the International Standards Organization (ISO), Open Geospatial Consortium (OGC), and the World Meteorological Organization (WMO).
+The Reference section, below lists the key standards documents that contributed.</p>
+</div>
 </div>
 
 
@@ -68,21 +84,32 @@
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">Overview of WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Proposed Application Profile</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="coordinates.html">4.  Coordinates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description_data.html">3.  Description of the data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enhancements_construction_standard_names.html">Appendix A:  Proposed enhancements to Guidelines for Construction of CF Standard Names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="files_components.html">2.  NetCDF-WISPS files and components</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.  Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proposed_standard_names.html">Appendix B:  Proposed CF standard names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html">5.1  Event Probabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html#categorical-probabilities-of-a-continuous-variable">5.2  Categorical Probabilities of a continuous variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html#parameterized-probability-distributions-of-a-continuous-variable">5.3  Parameterized Probability distributions of a continuous variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="references.html">6.  References</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../encoding_parameter.html">Encoding parameter files in WISPS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/wisps.html">wisps package</a></li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Proposed Application Profile</a></p>
+  <p class="topless"><a href="files_components.html"
+                        title="previous chapter">2.  NetCDF-WISPS files and components</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../modules/wisps.html"
-                        title="next chapter">wisps package</a></p>
+  <p class="topless"><a href="proposed_standard_names.html"
+                        title="next chapter">Appendix B:  Proposed CF standard names</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -114,13 +141,13 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../modules/wisps.html" title="wisps package"
+          <a href="proposed_standard_names.html" title="Appendix B: Proposed CF standard names"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Proposed Application Profile"
+          <a href="files_components.html" title="2. NetCDF-WISPS files and components"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >Proposed Application Profile</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

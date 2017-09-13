@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Description of the data &#8212; wisps 0.5 documentation</title>
+    <title>3. Description of the data &#8212; wisps 0.5 documentation</title>
     
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,7 +25,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Appendix A: Proposed enhancements to Guidelines for Construction of CF Standard Names" href="enhancements_construction_standard_names.html" />
+    <link rel="prev" title="4. Coordinates" href="coordinates.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -37,7 +39,14 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="enhancements_construction_standard_names.html" title="Appendix A: Proposed enhancements to Guidelines for Construction of CF Standard Names"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="coordinates.html" title="4. Coordinates"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -47,7 +56,81 @@
           <div class="body" role="main">
             
   <div class="section" id="description-of-the-data">
-<h1>Description of the data<a class="headerlink" href="#description-of-the-data" title="Permalink to this headline">¶</a></h1>
+<h1>3.  Description of the data<a class="headerlink" href="#description-of-the-data" title="Permalink to this headline">¶</a></h1>
+<p>The reader who is unfamiliar with netCDF-WISPS is encouraged to review WISPS Overview, especially the sections on metadata concepts, as well as the WMO’s Guidelines on Data Modelling for WMO Codes [DMWMO].  These documents provide key foundational information for the conventions that follow.</p>
+<div class="section" id="syntax-for-integration-of-externally-defined-vocabularies">
+<h2>3.1 Syntax for integration of externally-defined vocabularies<a class="headerlink" href="#syntax-for-integration-of-externally-defined-vocabularies" title="Permalink to this headline">¶</a></h2>
+<p>A number of attributes that will be used in netCDF-WISPS have their origins in vocabularies that are external to netCDF and the CF conventions.  Indeed, one of the key motivations in establishing netCDF-WISPS has been to develop a well-defined template for incorporating these very rich external vocabularies into files that conform to netCDF-CF.  Since netCDF-WISPS is intended to support StatPP specifically, the following sections focus on vocabularies that have proven to be useful for this work in the past.</p>
+<div class="section" id="integration-of-iso-standards">
+<h3>3.1.1 Integration of ISO standards<a class="headerlink" href="#integration-of-iso-standards" title="Permalink to this headline">¶</a></h3>
+<p>The WMO, OGC, and ICAO have all adopted the ISO standards for Observations and Measurements and Metadata for key applications.  This applies to products that have been traditionally described as both observations (e.g., analyses, METARs, Pilot Reports) and forecasts (e.g., NWP and StatPP output, TAFs).  Thus, it seems appropriate for us to illustrate the use of these concepts in attribute names.</p>
+<blockquote>
+<div><p>Aside:</p>
+<p>Some find it counter-intuitive to apply the O&amp;M standard when encoding data that are forecasts.  Despite its name, the O&amp;M class named OM_Observation is remarkably well suited to the representation of forecasts as well as observations.  The OM_Observation class provides a framework to describe the event of an observation or measurement.  In O&amp;M, an observation is defined as an event that results in an estimation of the value (the result) of a property (the observed property) of some entity (the feature of interest) using a specified procedure.</p>
+<p>E.g., the procedure that estimates the temperature value at some point on the earth could be a human reading a mercury-in-glass thermometer, an automated observing platform reading a voltage from a sensor, or an NWP system running on a supercomputer.  All three are procedures; all can estimate temperature values.  Thus, one can consider the difference between an observation and a forecast to be a difference in the estimating process used.</p>
+</div></blockquote>
+<p>Model element names that are defined within the ISO Geographic information/Geomatics (ISO Technical Committee [TC] 211) series are assigned to UML classes.  The model element names are case sensitive and contain no whitespace.  They use “terminology...designed to apply across disciplines,” and the terminology does not “correspond precisely with any single discipline.”  This leads to some important variations between ISO standard terminology and common meteorological practice.  These variations are noted elsewhere in this document.  The UML classes are associated with packages within the ISO documents.  “By convention within ISO/TC 211, names of UML classes...include a two or three letter prefix that identifies the International Standard and the UML package in which the class is defined.”  E.g., the Observation and Measurements [O&amp;M] class has the prefix OM; the Lineage class [MD1 and MD2] has the prefix LI; and the Extended Lineage class has the prefix LE.  Examples of model element names include phenomenonTime, procedure, and Source.  We note that capitalization patterns seem to vary somewhat among the documents.</p>
+<p>In netCDF-WISPS, attributes based on these concepts will have names that concatenate the prefix, a single underscore character, and the model element name.  Thus, the attribute based on the model element phenomenonTime (in the Observations and Measurements package) is named OM_phenomenonTime.</p>
+</div>
+<div class="section" id="integration-of-netcdf-u-and-probonto-concepts">
+<h3>3.1.2 Integration of NetCDF-U and Probonto concepts<a class="headerlink" href="#integration-of-netcdf-u-and-probonto-concepts" title="Permalink to this headline">¶</a></h3>
+<p>The OGC published a Discussion Paper named NetCDF Uncertainty Conventions (NetCDF-U) in 2013 [NCU].  The document did not progress past a discussion paper, but a number of the concepts presented seem to be useful to netCDF-WISPS.  The NetCDF-U paper makes references to a project named UncertML to provide an authoritative ontology for probability terms.  As of this writing (February 2017), UncertML appears to be unsupported.  As an alternative, we have chosen to use the ontology of probability distributions named Probonto [PO].  Documentation is available for download at this URL.  The European Bioinformatics Institute hosts an Ontology Lookup Service (OLS; <a class="reference external" href="http://www.ebi.ac.uk/ols/ontologies/probonto">http://www.ebi.ac.uk/ols/ontologies/probonto</a>) that provides online access to Probonto.</p>
+</div>
+<div class="section" id="integration-of-concepts-defined-by-data-producers">
+<h3>3.1.3 Integration of concepts defined by data producers<a class="headerlink" href="#integration-of-concepts-defined-by-data-producers" title="Permalink to this headline">¶</a></h3>
+<p>In many cases, data producers will need to identify concepts that fall exclusively within their provenance.  Examples include data processing techniques that are not widely used, weather element definitions that are not widely accepted,  etc.  For these cases, the data producer should define and publish, in some manner, a number of URIs that identify and document these concepts.  One preferred solution, of course would be for the data producer to make these data web-accessible and machine readable.  The WMO Code Registry (<a class="reference external" href="http://codes.wmo.int">http://codes.wmo.int</a>) and the NWS Code Registry (<a class="reference external" href="https://codes.nws.noaa.gov">https://codes.nws.noaa.gov</a>) both provide these capabilities.</p>
+</div>
+<div class="section" id="integration-of-vocabularies-controlled-by-wmo">
+<h3>3.1.4 Integration of vocabularies controlled by WMO<a class="headerlink" href="#integration-of-vocabularies-controlled-by-wmo" title="Permalink to this headline">¶</a></h3>
+<p>Data producers who use NetCDF-WISPS should give preference to concepts published by the WMO wherever possible.</p>
+</div>
+</div>
+<div class="section" id="primary-and-ancillary-variables">
+<h2>3.2 Primary and ancillary variables<a class="headerlink" href="#primary-and-ancillary-variables" title="Permalink to this headline">¶</a></h2>
+<p>We quote here from NCU:</p>
+<blockquote>
+<div><p>A netCDF file typically contains several variables. Some of these may depend on others, i.e. contain ancillary information referred to or qualifying concepts encoded by other variables...</p>
+<p>Dually, netCDF-U files may declare a primary_variables global attribute, whose value is a white-separated list of variable identifiers.</p>
+<p>The intended use of the primary_variables attribute is to support applications in directly accessing their presumable data of interest, particularly since netCDF-U files are likely to contain a large number of ancillary variables, as in the example below.</p>
+</div></blockquote>
+<p>The sections below will describe a number of best practices that involve ancillary variables and auxiliary coordinate variables.  Most netCDF-WISPS files will contain many ancillary variables that are used to fully describe the complexities of time, properties, and procedures used.  This makes the use of the primary_variables global attribute especially useful.</p>
+<blockquote>
+<div><strong>Best Practice:</strong>  <em>A netCDF-WISPS file should declare a global attribute named primary_variables and assign it the value of a whitespace-separated list of variable identifiers.  This attribute will help data consumers identify presumable data of interest.</em></div></blockquote>
+<div class="highlight-default"><div class="highlight"><pre><span></span>//  global attributes:
+   :primary_variables = “mos_temperature mos_pop06”;
+</pre></div>
+</div>
+</div>
+<div class="section" id="observed-property-and-procedure">
+<h2>3.3  Observed property and procedure<a class="headerlink" href="#observed-property-and-procedure" title="Permalink to this headline">¶</a></h2>
+<p>The CF conventions introduce the attributes standard_name and long_name to standardize the concepts of what is observed/forecast and how it was processed.
+The standard_name is a controlled vocabulary, and long_name is intended to be human-readable.
+NetCDF-WISPS maintains these two attributes and introduces two additional concepts&#8211;OM_observedProperty and OM_procedure.
+Our intent is to facilitate data discovery, provide explicit linkages to widely-accepted standards outside the atmospheric/oceanic/space weather domains, and uses widely-accepted standards to enhance our metadata.
+StatPP applications frequently apply complex procedures to datasets, and this increases the importance of these metadata entries.</p>
+<div class="section" id="om-observedproperty-and-om-procedure">
+<h3>OM_observedProperty and OM_procedure<a class="headerlink" href="#om-observedproperty-and-om-procedure" title="Permalink to this headline">¶</a></h3>
+<p>The O&amp;M definitions of OM_observedProperty and OM_procedure are quite abstract.
+Rather than quote them here, we recall that in O&amp;M an observation is an event that results in an estimation of the value (the result) of a property (OM_observedProperty) of some entity (the feature of interest) using a specified procedure (OM_procedure).
+We declare attributes with the names OM_observedProperty and OM_procedure and assign them values that resolve to URIs that contain complete information.
+(Ideally, the URIs will be web-accessible as well.  We note that many of the WMO code tables for GRIB and BUFR are hosted on the web at <a class="reference external" href="http://codes.wmo.int">http://codes.wmo.int</a>.)</p>
+<p>In simple cases, the OM_observedProperty and OM_procedure may seem to be redundant with standard_name and long_name.
+That said, StatPP applications often define parameters (e.g., sine of the day of the year) that are useful in the development phase, but will not be disseminated.
+In these instances, careful use of OM_observedProperty and OM_procedure can yield a number of benefits.</p>
+<ul>
+<li><p class="first">It can thoroughly document the origins of a variable.</p>
+</li>
+<li><p class="first">It can enhance data exchange among StatPP development organizations.</p>
+</li>
+<li><p class="first">It can improve the quality and utility of data archives.</p>
+<p><strong>Best Practice:</strong>  <em>All primary variables in a netCDF-WISPS dataset should have an attribute named OM_observedProperty declared with a value that is a URI.  This URI will refer to a clear description of the property contained in the variable.  The URI need not describe any procedures performed to obtain the results contained in the variable.  The procedure description is better contained in OM_procedure, below.  Ideally, the URI will be web-accessible.</em></p>
+<p><strong>Best Practice:</strong>  <em>All primary variables in a netCDF-WISPS dataset should have an attribute named OM_procedure declared with a value of the form “(v1 v2 v3 … vn)” where n is a non-zero integer.  The tokens v1, etc. will name ancillary variables whose attributes describe the numbered steps of the procedure.  The names of these attributes should be taken from MD1 and MD2.  The attribute LE_ProcessStep should always appear with a value that is a URI.  This URI will refer to a clear description of that processing step.  Other attributes found in MD1 and MD2 are permitted (e.g., LE_Source, LI_ProcessStep.rationale, LI_ProcessStep.dateTime, LE_Processing.softwareReference, LE_Algorithm.citation.edition, LE_Algorithm.citation.editionDate, LE_Processing.runTimeParameters).</em></p>
+</li>
+</ul>
+<p>Data producers should include sufficient detail in the OM_procedure steps to adequately describe the data contained in the variable and distinguish it from other, similar variables and otherwise identical variables contained in other datasets.
+Judicious use attributes can add key metadata to a netCDF-WISPS database and facilitate collaboration.</p>
+</div>
+</div>
 </div>
 
 
@@ -58,13 +141,33 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">Overview of WISPS</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="index.html">Proposed Application Profile</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="coordinates.html">4.  Coordinates</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.  Description of the data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enhancements_construction_standard_names.html">Appendix A:  Proposed enhancements to Guidelines for Construction of CF Standard Names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="files_components.html">2.  NetCDF-WISPS files and components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">1.  Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proposed_standard_names.html">Appendix B:  Proposed CF standard names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html">5.1  Event Probabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html#categorical-probabilities-of-a-continuous-variable">5.2  Categorical Probabilities of a continuous variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantifying_uncertainty.html#parameterized-probability-distributions-of-a-continuous-variable">5.3  Parameterized Probability distributions of a continuous variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="references.html">6.  References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../encoding_parameter.html">Encoding parameter files in WISPS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/wisps.html">wisps package</a></li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="coordinates.html"
+                        title="previous chapter">4.  Coordinates</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="enhancements_construction_standard_names.html"
+                        title="next chapter">Appendix A:  Proposed enhancements to Guidelines for Construction of CF Standard Names</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -95,7 +198,14 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="enhancements_construction_standard_names.html" title="Appendix A: Proposed enhancements to Guidelines for Construction of CF Standard Names"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="coordinates.html" title="4. Coordinates"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
