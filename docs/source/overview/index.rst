@@ -83,41 +83,23 @@ Some high-level concepts will be reviewed here.
 This will be prefered over defining a new OM_observedProperty.
 The following time-related terms will follow these definitions.  Historically, these terms have not been defined with sufficient precision or used consistently in meteorology.  Ideally, this problem will be addressed early in the lifespan of WISPS.
 
-**The term**
-  forecast_reference_time
-
-*Means this,*
-  The "data time", the time of the analysis from which the forecast was made (from the CF Standard Name Table).  Must be an instant in time.
-
-*Not this.*
-  the time for which the forecast is valid
-
-**The term**
-  OM_phenomenonTime
-
-*Means this,*
-  Colloquially, “when the weather happens.”  Can be either an instant in time or a period of time.
-
-**The term**
-  OM_resultTime
-
-*Means this,*
-  When the result (analysis, forecast) became available to data consumers.  Must be an instant in time.
-
-**The term**
-  OM_validTime
-
-*Means this,*
-  Time of intended use.  Must be a period of time.
-
-*Not this.*
-  the time for which the forecast is valid
-
-**The term**
-  leadTime
-
-*Means this,*
-  Length of time (a duration) from forecast_reference_time to OM_phenomenonTime.  Must be a duration.
-
-*Not this.*
-  an instant in time
++---------------------------+----------------------------------------------------+--------------------------------------------+
+| The term                  | Means this,                                        | Not this.                                  |
++===========================+====================================================+============================================+
+| forecast_reference_time   | The "data time", the time of the analysis from     | the time for which the forecast is valid   |
+|                           | which the forecast was made (from the CF Standard  |                                            |
+|                           | Name Table).  Must be an instant in time.          |                                            |
++---------------------------+----------------------------------------------------+--------------------------------------------+
+| OM_phenomenonTime         | Colloquially, “when the weather happens.”  Can be  |                                            |
+|                           | either an instant in time or a period of time.     |                                            |
++---------------------------+----------------------------------------------------+--------------------------------------------+
+| OM_resultTime             | When the result (analysis, forecast) became        |                                            |
+|                           | available to data consumers.  Must be an instant   |                                            |
+|                           | in time.                                           |                                            |
++---------------------------+----------------------------------------------------+--------------------------------------------+
+| OM_validTime              | Time of intended use.  Must be a period of time.   | the time for which the forecast is valid   |
++---------------------------+----------------------------------------------------+--------------------------------------------+
+| leadTime                  | Length of time (a duration) from                   | an instant in time                         |
+|                           | forecast_reference_time to OM_phenomenonTime.      |                                            |
+|                           |  Must be a duration.                               |                                            |
++---------------------------+----------------------------------------------------+--------------------------------------------+
