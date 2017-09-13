@@ -44,11 +44,11 @@ A **Training Phase**, if present, will use one or more **Statistical Development
 
 Figure 1, below, attempts to capture some of these concepts in a data flow diagram.
 
-.. image StatPPTrainingPhasev0.1.png
+.. image:: StatPPTrainingPhasev0.1.png
 
 Figure 2, below, also captures these concepts, but applies them to the **Production Phase**.
 
-.. image StatPPProductionPhasev0.1.png
+.. image:: StatPPProductionPhasev0.1.png
 
 2.1  Metadata Concepts
 ======================
