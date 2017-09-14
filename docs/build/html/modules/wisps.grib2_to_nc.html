@@ -1,59 +1,191 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>wisps.grib2_to_nc package &#8212; wisps 0.5 documentation</title>
-    
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.5',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="wisps.grib2_to_nc.test package" href="wisps.grib2_to_nc.test.html" />
-    <link rel="prev" title="wisps.data_mgmt.test package" href="wisps.data_mgmt.test.html" /> 
-  </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="wisps.grib2_to_nc.test.html" title="wisps.grib2_to_nc.test package"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="wisps.data_mgmt.test.html" title="wisps.data_mgmt.test package"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="wisps.html" accesskey="U">wisps package</a> &#187;</li> 
-      </ul>
-    </div>  
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>wisps.grib2_to_nc package &mdash; wisps 0.5 documentation</title>
+  
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="wisps 0.5 documentation" href="../index.html"/>
+        <link rel="up" title="wisps package" href="wisps.html"/>
+        <link rel="next" title="wisps.grib2_to_nc.test package" href="wisps.grib2_to_nc.test.html"/>
+        <link rel="prev" title="wisps.data_mgmt.test package" href="wisps.data_mgmt.test.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> wisps
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../application_profile/index.html">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../encoding_parameter.html">Encoding parameter files in WISPS</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="wisps.html">wisps package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="wisps.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="wisps.data_mgmt.html">wisps.data_mgmt package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">wisps.grib2_to_nc package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#wisps-grib2-to-nc-grib2-module">wisps.grib2_to_nc.grib2 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-wisps.grib2_to_nc">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.marine_to_nc.html">wisps.marine_to_nc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.mathlib.html">wisps.mathlib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.metar_to_nc.html">wisps.metar_to_nc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.mospred.html">wisps.mospred package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.registry.html">wisps.registry package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.scripts.html">wisps.scripts package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.test.html">wisps.test package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="wisps.html#module-wisps">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">wisps</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="wisps.html">wisps package</a> &raquo;</li>
+        
+      <li>wisps.grib2_to_nc package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/wisps.grib2_to_nc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="wisps-grib2-to-nc-package">
 <h1>wisps.grib2_to_nc package<a class="headerlink" href="#wisps-grib2-to-nc-package" title="Permalink to this headline">¶</a></h1>
@@ -71,280 +203,8 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-wisps.grib2_to_nc.grib2">
-<span id="wisps-grib2-to-nc-grib2-module"></span><h2>wisps.grib2_to_nc.grib2 module<a class="headerlink" href="#module-wisps.grib2_to_nc.grib2" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.convert_grib2">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">convert_grib2</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.convert_grib2" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts grib file into Wisps Data and writes
-to netCDF.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.convert_to_list">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">convert_to_list</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.convert_to_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert given value to a list 
-of length one if it&#8217;s not already a list.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.get_ForecastReferenceTime">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_ForecastReferenceTime</code><span class="sig-paren">(</span><em>grbs</em>, <em>deep_check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_ForecastReferenceTime" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the ForecastReference Times for a collection of related grbs</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.get_LeadTime">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_LeadTime</code><span class="sig-paren">(</span><em>lead_time_data</em>, <em>deep_check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_LeadTime" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the Lead Times from a collection of related grbs</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.get_PhenomenonTime">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_PhenomenonTime</code><span class="sig-paren">(</span><em>grbs</em>, <em>deep_check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_PhenomenonTime" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the Phenomenon Times for a collection of related grbs</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.get_ResultTime">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_ResultTime</code><span class="sig-paren">(</span><em>grbs</em>, <em>deep_check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_ResultTime" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the Result Times for a collection of related grbs</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.get_ValidTime">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_ValidTime</code><span class="sig-paren">(</span><em>grbs</em>, <em>deep_check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_ValidTime" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the Valid Times for a collection of related grbs</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.get_dtype">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_dtype</code><span class="sig-paren">(</span><em>grb</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_dtype" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.get_fcst_time">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_fcst_time</code><span class="sig-paren">(</span><em>fcst_time_str</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_fcst_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns only the forecast hour from the grib string.
-also returns boundedTime information if it exists.
-assumes that bounded Times will have only 2 hours in the string.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.get_forecast_hash">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_forecast_hash</code><span class="sig-paren">(</span><em>grb</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_forecast_hash" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a semi-unique identifier for each variable.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.get_grbs">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_grbs</code><span class="sig-paren">(</span><em>grbs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_grbs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse the grib headers and return an object with relavent attributes.
-grib keys are:</p>
-<p>&#8216;parametersVersion&#8217;
-&#8216;hundred&#8217;
-&#8216;globalDomain&#8217;
-&#8216;GRIBEditionNumber&#8217;
-&#8216;grib2divider&#8217;
-&#8216;missingValue&#8217;
-&#8216;ieeeFloats&#8217;
-&#8216;section0Length&#8217;
-&#8216;identifier&#8217;
-&#8216;discipline&#8217;
-&#8216;editionNumber&#8217;
-&#8216;totalLength&#8217;
-&#8216;sectionNumber&#8217;
-&#8216;section1Length&#8217;
-&#8216;numberOfSection&#8217;
-&#8216;centre&#8217;
-&#8216;centreDescription&#8217;
-&#8216;subCentre&#8217;
-&#8216;tablesVersion&#8217;
-&#8216;masterDir&#8217;
-&#8216;localTablesVersion&#8217;
-&#8216;significanceOfReferenceTime&#8217;
-&#8216;year&#8217;
-&#8216;month&#8217;
-&#8216;day&#8217;
-&#8216;hour&#8217;
-&#8216;minute&#8217;
-&#8216;second&#8217;
-&#8216;dataDate&#8217;
-&#8216;julianDay&#8217;
-&#8216;dataTime&#8217;
-&#8216;productionStatusOfProcessedData&#8217;
-&#8216;typeOfProcessedData&#8217;
-&#8216;selectStepTemplateInterval&#8217;
-&#8216;selectStepTemplateInstant&#8217;
-&#8216;stepType&#8217;
-&#8216;sectionNumber&#8217;
-&#8216;grib2LocalSectionPresent&#8217;
-&#8216;sectionNumber&#8217;
-&#8216;gridDescriptionSectionPresent&#8217;
-&#8216;section3Length&#8217;
-&#8216;numberOfSection&#8217;
-&#8216;sourceOfGridDefinition&#8217;
-&#8216;numberOfDataPoints&#8217;
-&#8216;numberOfOctectsForNumberOfPoints&#8217;
-&#8216;interpretationOfNumberOfPoints&#8217;
-&#8216;PLPresent&#8217;
-&#8216;gridDefinitionTemplateNumber&#8217;
-&#8216;shapeOfTheEarth&#8217;
-&#8216;scaleFactorOfRadiusOfSphericalEarth&#8217;
-&#8216;scaledValueOfRadiusOfSphericalEarth&#8217;
-&#8216;scaleFactorOfEarthMajorAxis&#8217;
-&#8216;scaledValueOfEarthMajorAxis&#8217;
-&#8216;scaleFactorOfEarthMinorAxis&#8217;
-&#8216;scaledValueOfEarthMinorAxis&#8217;
-&#8216;radius&#8217;
-&#8216;Nx&#8217;
-&#8216;Ny&#8217;
-&#8216;latitudeOfFirstGridPoint&#8217;
-&#8216;latitudeOfFirstGridPointInDegrees&#8217;
-&#8216;longitudeOfFirstGridPoint&#8217;
-&#8216;longitudeOfFirstGridPointInDegrees&#8217;
-&#8216;resolutionAndComponentFlag&#8217;
-&#8216;LaD&#8217;
-&#8216;LaDInDegrees&#8217;
-&#8216;orientationOfTheGrid&#8217;
-&#8216;orientationOfTheGridInDegrees&#8217;
-&#8216;Dx&#8217;
-&#8216;DxInMetres&#8217;
-&#8216;Dy&#8217;
-&#8216;DyInMetres&#8217;
-&#8216;projectionCentreFlag&#8217;
-&#8216;scanningMode&#8217;
-&#8216;iScansNegatively&#8217;
-&#8216;jScansPositively&#8217;
-&#8216;jPointsAreConsecutive&#8217;
-&#8216;alternativeRowScanning&#8217;
-&#8216;iScansPositively&#8217;
-&#8216;scanningMode5&#8217;
-&#8216;scanningMode6&#8217;
-&#8216;scanningMode7&#8217;
-&#8216;scanningMode8&#8217;
-&#8216;gridType&#8217;
-&#8216;sectionNumber&#8217;
-&#8216;section4Length&#8217;
-&#8216;numberOfSection&#8217;
-&#8216;NV&#8217;
-&#8216;neitherPresent&#8217;
-&#8216;productDefinitionTemplateNumber&#8217;
-&#8216;parameterCategory&#8217;
-&#8216;parameterNumber&#8217;
-&#8216;parameterUnits&#8217;
-&#8216;parameterName&#8217;
-&#8216;typeOfGeneratingProcess&#8217;
-&#8216;backgroundProcess&#8217;
-&#8216;generatingProcessIdentifier&#8217;
-&#8216;hoursAfterDataCutoff&#8217;
-&#8216;minutesAfterDataCutoff&#8217;
-&#8216;indicatorOfUnitOfTimeRange&#8217;
-&#8216;stepUnits&#8217;
-&#8216;forecastTime&#8217;
-&#8216;startStep&#8217;
-&#8216;endStep&#8217;
-&#8216;stepRange&#8217;
-&#8216;stepTypeInternal&#8217;
-&#8216;validityDate&#8217;
-&#8216;validityTime&#8217;
-&#8216;typeOfFirstFixedSurface&#8217;
-&#8216;unitsOfFirstFixedSurface&#8217;
-&#8216;nameOfFirstFixedSurface&#8217;
-&#8216;scaleFactorOfFirstFixedSurface&#8217;
-&#8216;scaledValueOfFirstFixedSurface&#8217;
-&#8216;typeOfSecondFixedSurface&#8217;
-&#8216;unitsOfSecondFixedSurface&#8217;
-&#8216;nameOfSecondFixedSurface&#8217;
-&#8216;scaleFactorOfSecondFixedSurface&#8217;
-&#8216;scaledValueOfSecondFixedSurface&#8217;
-&#8216;pressureUnits&#8217;
-&#8216;typeOfLevel&#8217;
-&#8216;level&#8217;
-&#8216;bottomLevel&#8217;
-&#8216;topLevel&#8217;
-&#8216;paramIdECMF&#8217;
-&#8216;paramId&#8217;
-&#8216;shortNameECMF&#8217;
-&#8216;shortName&#8217;
-&#8216;unitsECMF&#8217;
-&#8216;units&#8217;
-&#8216;nameECMF&#8217;
-&#8216;name&#8217;
-&#8216;cfNameECMF&#8217;
-&#8216;cfName&#8217;
-&#8216;cfVarNameECMF&#8217;
-&#8216;cfVarName&#8217;
-&#8216;ifsParam&#8217;
-&#8216;genVertHeightCoords&#8217;
-&#8216;PVPresent&#8217;
-&#8216;sectionNumber&#8217;
-&#8216;section5Length&#8217;
-&#8216;numberOfSection&#8217;
-&#8216;numberOfValues&#8217;
-&#8216;dataRepresentationTemplateNumber&#8217;
-&#8216;packingType&#8217;
-&#8216;referenceValue&#8217;
-&#8216;referenceValueError&#8217;
-&#8216;binaryScaleFactor&#8217;
-&#8216;decimalScaleFactor&#8217;
-&#8216;bitsPerValue&#8217;
-&#8216;typeOfOriginalFieldValues&#8217;
-&#8216;lengthOfHeaders&#8217;
-&#8216;sectionNumber&#8217;
-&#8216;section6Length&#8217;
-&#8216;numberOfSection&#8217;
-&#8216;bitMapIndicator&#8217;
-&#8216;bitmapPresent&#8217;
-&#8216;sectionNumber&#8217;
-&#8216;section7Length&#8217;
-&#8216;numberOfSection&#8217;
-&#8216;codedValues&#8217;
-&#8216;values&#8217;
-&#8216;packingError&#8217;
-&#8216;unpackedError&#8217;
-&#8216;maximum&#8217;
-&#8216;minimum&#8217;
-&#8216;average&#8217;
-&#8216;numberOfMissing&#8217;
-&#8216;standardDeviation&#8217;
-&#8216;skewness&#8217;
-&#8216;kurtosis&#8217;
-&#8216;isConstant&#8217;
-&#8216;changeDecimalPrecision&#8217;
-&#8216;decimalPrecision&#8217;
-&#8216;setBitsPerValue&#8217;
-&#8216;getNumberOfValues&#8217;
-&#8216;scaleValuesBy&#8217;
-&#8216;offsetValuesBy&#8217;
-&#8216;productType&#8217;
-&#8216;section8Length&#8217;</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.get_output_filename">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_output_filename</code><span class="sig-paren">(</span><em>year</em>, <em>month</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_output_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a string representing the netcdf filename of gfs model data</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.get_projection_data">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_projection_data</code><span class="sig-paren">(</span><em>grb</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_projection_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieves the projection data from grb</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.process_commands">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">process_commands</code><span class="sig-paren">(</span><em>*cmds</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.process_commands" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="wisps.grib2_to_nc.grib2.reduce_grib">
-<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">reduce_grib</code><span class="sig-paren">(</span><em>control=None</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.reduce_grib" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads grib2 files, changes the map projection and
-grid extent, and packages the gribs into a single grib2 file</p>
-</dd></dl>
-
+<div class="section" id="wisps-grib2-to-nc-grib2-module">
+<h2>wisps.grib2_to_nc.grib2 module<a class="headerlink" href="#wisps-grib2-to-nc-grib2-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-wisps.grib2_to_nc">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-wisps.grib2_to_nc" title="Permalink to this headline">¶</a></h2>
@@ -352,85 +212,74 @@ grid extent, and packages the gribs into a single grib2 file</p>
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">Overview of WISPS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../application_profile/index.html">Proposed Application Profile</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="wisps.html">wisps package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.data_mgmt.html">wisps.data_mgmt package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.data_mgmt.test.html">wisps.data_mgmt.test package</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">wisps.grib2_to_nc package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.grib2_to_nc.test.html">wisps.grib2_to_nc.test package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.marine_to_nc.html">wisps.marine_to_nc package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.marine_to_nc.test.html">wisps.marine_to_nc.test package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.mathlib.html">wisps.mathlib package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.mathlib.momentum.html">wisps.mathlib.momentum package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.metar_to_nc.html">wisps.metar_to_nc package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.metar_to_nc.test.html">wisps.metar_to_nc.test package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.mospred.html">wisps.mospred package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.mospred.test.html">wisps.mospred.test package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.registry.html">wisps.registry package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.registry.db.html">wisps.registry.db package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.scripts.html">wisps.scripts package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.scripts.test.html">wisps.scripts.test package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wisps.test.html">wisps.test package</a></li>
-</ul>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="wisps.grib2_to_nc.test.html" class="btn btn-neutral float-right" title="wisps.grib2_to_nc.test package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="wisps.data_mgmt.test.html" class="btn btn-neutral" title="wisps.data_mgmt.test package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="wisps.data_mgmt.test.html"
-                        title="previous chapter">wisps.data_mgmt.test package</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="wisps.grib2_to_nc.test.html"
-                        title="next chapter">wisps.grib2_to_nc.test package</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/modules/wisps.grib2_to_nc.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="wisps.grib2_to_nc.test.html" title="wisps.grib2_to_nc.test package"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="wisps.data_mgmt.test.html" title="wisps.data_mgmt.test package"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">wisps 0.5 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="wisps.html" >wisps package</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
 </html>
