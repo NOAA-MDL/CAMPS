@@ -187,8 +187,9 @@ variables :
     feature_of_interest : True
     attribute : 
       OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/yProj"
-      long_name : "y component of projection"
-      units : "unitless"
+      long_name : "y coordinate of projection"
+      standard_name : "projection_y_coordinate"
+      units : "m"
     dimensions : [*x_proj]
   x_proj :
     #data_type : int16
@@ -196,8 +197,9 @@ variables :
     feature_of_interest : True
     attribute : 
       OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/xProj"
-      long_name : "x component of projection"
-      units : "unitless"
+      long_name : "x coordinate of of projection"
+      standard_name : "projection_x_coordinate"
+      units : "m"
     dimensions : [*x_proj]
   observation_time :
     data_type : int64
@@ -2023,3 +2025,31 @@ variables :
       units : "m/s"
       valid_min : ""
       valid_max : ""
+
+  #####
+  ### Map projections
+  #####
+   
+  polar_stereographic :
+    data_type : int
+    feature_of_interest : True
+    attribute :
+      OM_observedProperty : 'projection'
+      grid_mapping_name : "polar_stereographic"
+      straight_vertical_longitude_from_pole : 255.0
+      latitude_of_projection_origin : 90.0
+      standard_parallel : 60.0
+      false_easting : 8001120.943743927
+      false_northing : 8001120.943743927
+
+  #####
+  ### Variables for mospred ###
+  #####
+
+  thickness : 
+    attribute:
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
+      long_name : "Difference of geopotential height"
+      standard_name : "geopotential_height"
+
+

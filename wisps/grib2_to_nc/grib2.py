@@ -334,7 +334,9 @@ def convert_grib2(filename):
     
     x_proj_data, y_proj_data = get_projection_data(tmp_grb)
     
+    #convert to seconds
     fcst_time = run_time
+    fcst_time = fcst_time*60*60 
     values = lead_times[0].values()[0]
     for name, grb_dict in data_dict.iteritems():
         stacked = grb_dict['data']
@@ -395,11 +397,13 @@ def convert_grib2(filename):
         ltime = get_LeadTime(lead_time)
         obj.time.append(ltime)
 
+    all_objs = write_projection_data(all_objs)
+
     # Make longitude and latitude variables
     lat = Wisps_data('latitude')
     lon = Wisps_data('longitude')
-    lat.add_source('GFS')
-    lon.add_source('GFS')
+    #lat.add_source('GFS')
+    #lon.add_source('GFS')
     lat.dimensions = ['y', 'x']
     lon.dimensions = ['y', 'x']
     lat_lon_data = tmp_grb.latlons()
@@ -410,19 +414,34 @@ def convert_grib2(filename):
 
     # Make x and y projection variables
     x_obj = Wisps_data('x_proj')
-    x_obj.add_source('GFS')
+    #x_obj.add_source('GFS')
     x_obj.dimensions = ['x']
     x_obj.data = x_proj_data
     all_objs.append(x_obj)
     y_obj = Wisps_data('y_proj')
-    y_obj.add_source('GFS')
+    #y_obj.add_source('GFS')
     y_obj.dimensions = ['y']
     y_obj.data = y_proj_data
     all_objs.append(y_obj)
 
 
+
+
     outfile = outpath + get_output_filename(year, month)
     writer.write(all_objs, outfile)
+
+def write_projection_data(all_objs):
+    """ Write projection variable and add metadata to all 
+    other variables reflecting that
+    """
+
+    for i in all_objs:
+        i.add_metadata('grid_mapping', 'polar_stereographic')
+    proj = Wisps_data('polar_stereographic')
+    proj.data = None
+    # Make projection variables
+    all_objs.append(proj)
+    return all_objs
 
 def get_projection_data(grb):
     """Retrieves the projection data from grb

@@ -70,6 +70,13 @@ class Wisps_data(nc_writable):
         Checks metadata to see if this variable time bounds.
         """
         return 'hours' in self.properties or db.get_property(self.name, 'hours') is not None
+
+    def is_feature_of_interest(self):
+        """
+        Checks metadata to see if this variable is a feature of interest.
+        """
+        return 'feature_of_interest' in self.properties or db.get_property(self.name, 'feature_of_interest') is not None
+
    
     def has_plev_bounds(self):
         """
@@ -557,6 +564,17 @@ class Wisps_data(nc_writable):
         Includes the data and metadata associated with the object.
         """
         logging.info("writing " + self.name)
+
+        if self.get_observedProperty() == 'projection':
+            nc_var = nc_handle.createVariable(
+                self.get_observedProperty(),
+                int,
+                zlib=True,
+                complevel=4,
+                shuffle=False)
+            return self.get_observedProperty()
+
+   
         # This will include all netcdf variables that in some way help
         # describe this variable.
         ancillary_variables = ""
@@ -600,10 +618,17 @@ class Wisps_data(nc_writable):
         # Get the chunksize
         chunksize = self.get_chunk_size()
 
+#        if self.data is None:
+#            dtype = int
+#        else:
+        dtype = self.data.dtype
+#        pdb.set_trace()
+#        print 'here'
+
         # Create the variable
         nc_var = nc_handle.createVariable(
             variable_name,
-            self.data.dtype,
+            dtype,
             tuple(self.dimensions),
             chunksizes=chunksize,
             zlib=True,
@@ -626,7 +651,10 @@ class Wisps_data(nc_writable):
         """Add variable to the database for searching.
         """
         var_name = self.get_variable_name()
-        # There should always be a phenomenonTime
+        # There should always be a phenomenonTime unless it's a feature of interest
+        if self.is_feature_of_interest():
+            return
+
         try:
             ptime = self.get_phenom_time()
         except IndexError:
@@ -687,6 +715,8 @@ class Wisps_data(nc_writable):
                            
 
     def get_chunk_size(self):
+        if self.data is None:
+            return None
         shape = list(self.data.shape)
         if len(shape) == 4:
             shape[2] = 1
@@ -697,9 +727,11 @@ class Wisps_data(nc_writable):
 
     def check_correct_shape(self):
         # Check that the dimensions are correct for the shape of the data
-        if len(self.data.shape) != len(self.dimensions):
+        if self.data is not None and len(self.data.shape) != len(self.dimensions):
             logging.error(
                 "dimensions of data not equal to dimensions attribute")
+            logging.error('len of shape is: ' + str(len(self.data.shape)))
+            logging.error('len of dims  is: ' + str(len(self.dimensions)))
             logging.error("Will not write " + self.name)
             raise ValueError
 
@@ -733,6 +765,8 @@ class Wisps_data(nc_writable):
     def check_dimensions(self, nc_handle):
         """Check data dimension shape is equal to the nc handle dimension.
         """
+        if self.data is None:
+            return
         shape = self.data.shape
         # Loop through dimension
         for index, (dim, size) in enumerate(zip(self.dimensions, shape)):

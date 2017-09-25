@@ -854,6 +854,14 @@ class LeadTime(Time):
             raise ValueError("lead time found multiple times in LeadTime object.")
         return indices[0]
 
+
+    def add_common_metadata(self, nc_var):
+        """Adds metadata that is common to LeadTime variables.
+        """
+        #setattr(nc_var, 'calendar', 'gregorian')
+        setattr(nc_var, 'units', 'seconds')
+        setattr(nc_var, 'standard_name', 'time')
+
     def __str__(self):
         ret_str = "** " + self.name + " **" + "\n"
         ret_str += "Number of lead times: \n"

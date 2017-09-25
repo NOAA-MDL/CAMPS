@@ -99,6 +99,8 @@ def test_has_coord():
 #    assert temp.has_elev_bounds()
     passed("test_coord")
 
+def test_get_cell_methods():
+
 if __name__ == "__main__":
     test_has_coord()
     test_variable()

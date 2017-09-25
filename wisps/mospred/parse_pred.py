@@ -167,7 +167,7 @@ def vertical_coordinate(in_str):
         elif layer2[1]:
             units = layer2[1]
         else:
-            raise LookupError("units not defined")
+            raise LookupError("units in Vertical_Coordinate not defined")
         vertical_dict['layer1'] = int(layer1[0])
         vertical_dict['layer2'] = int(layer2[0])
         vertical_dict['units'] = units
@@ -177,7 +177,7 @@ def vertical_coordinate(in_str):
         exp = re.compile("^ *(\d+) *([a-z]*) *")
         layer = exp.match(in_str).groups()
         if len(layer) <= 1 or not layer[1]:
-            raise LookupError("units not defined")
+            raise LookupError("units in Vertical_Coordinate not defined")
         vertical_dict['layer1'] = int(layer[0])
         vertical_dict['units'] = layer[1]
 

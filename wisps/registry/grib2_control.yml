@@ -12,13 +12,13 @@ datadir : [
     #"/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20131001/",
     # "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20131002/"
     "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160701/",
-     "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160702/"
-             #     "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160703/",
-             #     "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160704/",
-             #     "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160705/",
-             #     "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160706/",
-             #     "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160707/",
-             #     "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160708/"
+     "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160702/",
+                  "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160703/",
+                  "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160704/",
+                  "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160705/",
+                  "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160706/",
+                  "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160707/",
+                  "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/gfs/20160708/"
             ]
 # Directory where output files are stored
 outpath : "/scratch3/NCEPDEV/mdl/Riley.Conroy/output/"

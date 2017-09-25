@@ -74,7 +74,11 @@ def main(control_file=None):
 
     # Now, there's a list of formatted predictors to fetch.
     # Here, We may want to find metadata matches, so that We can fetch full vars
-    
+   
+    # An array to hold all the computed variables
+    computed_vars = []
+
+
     # Loop through date ranges specified in the control file.
     for date_range in date_range_list:
 
@@ -88,6 +92,8 @@ def main(control_file=None):
         while cur < end: # Main loop
             logging.info("Processing " + str(cur))
             for pred in formatted_predictors:
+
+                # Try to fetch the exact variable asked for
                 variable = fetch(Time.epoch_time(cur), pred.leadTime,**pred.search_metadata)
 
                 # If the call to fetch doesn't find the variable
@@ -96,7 +102,12 @@ def main(control_file=None):
 
                 # Apply procedures to the variable
                 variable = apply_procedures(variable, procedures)
+
+                # Add to output array
+                computed_vars.append(variable)
             cur += stride
+
+
     
 
 def calculate(predictor):
