@@ -2,7 +2,8 @@
 #
 
 # You can set these variables from the command line.
-SPHINXOPTS    =
+SHINXOPTS    =
+#SHINXOPTS    = -t onlymodules
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = wisps
 SOURCEDIR     = source

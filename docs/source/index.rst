@@ -16,9 +16,7 @@ These pages will help the community use and integrate into WISPS.
    
    overview/index
    data_encoding
-   application_profile/index
-   data_encoding
-   encoding_parameter
+   data_encoding_mos
    modules/wisps
 
    

@@ -13,6 +13,7 @@ Application Profile for Encoding Data in netCDF-CF to inter-operate with the Wea
    quantifying_uncertainty
    enhancements_construction_standard_names
    proposed_standard_names
+   references
 
 The Weather Information Statistical Post-processing System (WISPS) is a software infrastructure that supports Statistical Post-processing (StatPP) and is maintained as community code.
 This infrastructure includes conventions and tools for data representation as well as software repositories that facilitate the use of these conventions.
