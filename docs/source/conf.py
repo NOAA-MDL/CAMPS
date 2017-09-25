@@ -18,12 +18,11 @@
 #
 import os
 import sys
-
 sys.path.insert(0, os.path.abspath('../../'))
 print sys.path
 
 import sphinx_rtd_theme
-
+print "tags are", tags.tags
 
 # -- General configuration ------------------------------------------------
 
@@ -34,7 +33,7 @@ import sphinx_rtd_theme
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc']
+extensions = ['sphinx.ext.autodoc', 'rst2pdf.pdfbuilder']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -165,3 +164,20 @@ texinfo_documents = [
 
 
 html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html'], }
+
+
+
+
+pdf_documents = [('index', u'wisps', u'WISPS Documentation', u'WISPS Team'),]
+# index - master document
+# rst2pdf - name of the generated pdf
+# Sample rst2pdf doc - title of the pdf
+# Your Name - author name in the pdf
+
+
+# Only run pdf build on
+if tags.has('nomodules'):
+    print "tags here"
+    exclude_patterns = ["modules/*"]
+if tags.has('onlymodules'):
+    exclude_patterns = ['application_profile/*','overview/*']

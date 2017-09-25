@@ -1,6 +1,21 @@
+
+
+
+
+
 ===============================================
 Data Encoding for WISPS
 ===============================================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+   :glob:
+   
+   application_profile/index
+   sample_data/index
+   encoding_parameter
+   sample_parameter/index
 
 The Weather Information Statistical Post-processing System intends to foster community involvement, experimentation, and improvement.
 One of the most important tools we can develop to foster these goals is a well-designed, flexible, and supported standards for data exchange.
