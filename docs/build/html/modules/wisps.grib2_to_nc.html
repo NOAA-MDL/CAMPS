@@ -104,7 +104,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">wisps.grib2_to_nc package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#wisps-grib2-to-nc-grib2-module">wisps.grib2_to_nc.grib2 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-wisps.grib2_to_nc.grib2">wisps.grib2_to_nc.grib2 module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-wisps.grib2_to_nc">Module contents</a></li>
 </ul>
 </li>
@@ -201,8 +201,280 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="wisps-grib2-to-nc-grib2-module">
-<h2>wisps.grib2_to_nc.grib2 module<a class="headerlink" href="#wisps-grib2-to-nc-grib2-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-wisps.grib2_to_nc.grib2">
+<span id="wisps-grib2-to-nc-grib2-module"></span><h2>wisps.grib2_to_nc.grib2 module<a class="headerlink" href="#module-wisps.grib2_to_nc.grib2" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.convert_grib2">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">convert_grib2</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.convert_grib2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts grib file into Wisps Data and writes
+to netCDF.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.convert_to_list">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">convert_to_list</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.convert_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert given value to a list 
+of length one if it&#8217;s not already a list.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.get_ForecastReferenceTime">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_ForecastReferenceTime</code><span class="sig-paren">(</span><em>grbs</em>, <em>deep_check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_ForecastReferenceTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the ForecastReference Times for a collection of related grbs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.get_LeadTime">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_LeadTime</code><span class="sig-paren">(</span><em>lead_time_data</em>, <em>deep_check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_LeadTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the Lead Times from a collection of related grbs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.get_PhenomenonTime">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_PhenomenonTime</code><span class="sig-paren">(</span><em>grbs</em>, <em>deep_check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_PhenomenonTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the Phenomenon Times for a collection of related grbs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.get_ResultTime">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_ResultTime</code><span class="sig-paren">(</span><em>grbs</em>, <em>deep_check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_ResultTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the Result Times for a collection of related grbs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.get_ValidTime">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_ValidTime</code><span class="sig-paren">(</span><em>grbs</em>, <em>deep_check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_ValidTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the Valid Times for a collection of related grbs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.get_dtype">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_dtype</code><span class="sig-paren">(</span><em>grb</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_dtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.get_fcst_time">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_fcst_time</code><span class="sig-paren">(</span><em>fcst_time_str</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_fcst_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns only the forecast hour from the grib string.
+also returns boundedTime information if it exists.
+assumes that bounded Times will have only 2 hours in the string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.get_forecast_hash">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_forecast_hash</code><span class="sig-paren">(</span><em>grb</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_forecast_hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a semi-unique identifier for each variable.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.get_grbs">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_grbs</code><span class="sig-paren">(</span><em>grbs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_grbs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the grib headers and return an object with relavent attributes.
+grib keys are:</p>
+<p>&#8216;parametersVersion&#8217;
+&#8216;hundred&#8217;
+&#8216;globalDomain&#8217;
+&#8216;GRIBEditionNumber&#8217;
+&#8216;grib2divider&#8217;
+&#8216;missingValue&#8217;
+&#8216;ieeeFloats&#8217;
+&#8216;section0Length&#8217;
+&#8216;identifier&#8217;
+&#8216;discipline&#8217;
+&#8216;editionNumber&#8217;
+&#8216;totalLength&#8217;
+&#8216;sectionNumber&#8217;
+&#8216;section1Length&#8217;
+&#8216;numberOfSection&#8217;
+&#8216;centre&#8217;
+&#8216;centreDescription&#8217;
+&#8216;subCentre&#8217;
+&#8216;tablesVersion&#8217;
+&#8216;masterDir&#8217;
+&#8216;localTablesVersion&#8217;
+&#8216;significanceOfReferenceTime&#8217;
+&#8216;year&#8217;
+&#8216;month&#8217;
+&#8216;day&#8217;
+&#8216;hour&#8217;
+&#8216;minute&#8217;
+&#8216;second&#8217;
+&#8216;dataDate&#8217;
+&#8216;julianDay&#8217;
+&#8216;dataTime&#8217;
+&#8216;productionStatusOfProcessedData&#8217;
+&#8216;typeOfProcessedData&#8217;
+&#8216;selectStepTemplateInterval&#8217;
+&#8216;selectStepTemplateInstant&#8217;
+&#8216;stepType&#8217;
+&#8216;sectionNumber&#8217;
+&#8216;grib2LocalSectionPresent&#8217;
+&#8216;sectionNumber&#8217;
+&#8216;gridDescriptionSectionPresent&#8217;
+&#8216;section3Length&#8217;
+&#8216;numberOfSection&#8217;
+&#8216;sourceOfGridDefinition&#8217;
+&#8216;numberOfDataPoints&#8217;
+&#8216;numberOfOctectsForNumberOfPoints&#8217;
+&#8216;interpretationOfNumberOfPoints&#8217;
+&#8216;PLPresent&#8217;
+&#8216;gridDefinitionTemplateNumber&#8217;
+&#8216;shapeOfTheEarth&#8217;
+&#8216;scaleFactorOfRadiusOfSphericalEarth&#8217;
+&#8216;scaledValueOfRadiusOfSphericalEarth&#8217;
+&#8216;scaleFactorOfEarthMajorAxis&#8217;
+&#8216;scaledValueOfEarthMajorAxis&#8217;
+&#8216;scaleFactorOfEarthMinorAxis&#8217;
+&#8216;scaledValueOfEarthMinorAxis&#8217;
+&#8216;radius&#8217;
+&#8216;Nx&#8217;
+&#8216;Ny&#8217;
+&#8216;latitudeOfFirstGridPoint&#8217;
+&#8216;latitudeOfFirstGridPointInDegrees&#8217;
+&#8216;longitudeOfFirstGridPoint&#8217;
+&#8216;longitudeOfFirstGridPointInDegrees&#8217;
+&#8216;resolutionAndComponentFlag&#8217;
+&#8216;LaD&#8217;
+&#8216;LaDInDegrees&#8217;
+&#8216;orientationOfTheGrid&#8217;
+&#8216;orientationOfTheGridInDegrees&#8217;
+&#8216;Dx&#8217;
+&#8216;DxInMetres&#8217;
+&#8216;Dy&#8217;
+&#8216;DyInMetres&#8217;
+&#8216;projectionCentreFlag&#8217;
+&#8216;scanningMode&#8217;
+&#8216;iScansNegatively&#8217;
+&#8216;jScansPositively&#8217;
+&#8216;jPointsAreConsecutive&#8217;
+&#8216;alternativeRowScanning&#8217;
+&#8216;iScansPositively&#8217;
+&#8216;scanningMode5&#8217;
+&#8216;scanningMode6&#8217;
+&#8216;scanningMode7&#8217;
+&#8216;scanningMode8&#8217;
+&#8216;gridType&#8217;
+&#8216;sectionNumber&#8217;
+&#8216;section4Length&#8217;
+&#8216;numberOfSection&#8217;
+&#8216;NV&#8217;
+&#8216;neitherPresent&#8217;
+&#8216;productDefinitionTemplateNumber&#8217;
+&#8216;parameterCategory&#8217;
+&#8216;parameterNumber&#8217;
+&#8216;parameterUnits&#8217;
+&#8216;parameterName&#8217;
+&#8216;typeOfGeneratingProcess&#8217;
+&#8216;backgroundProcess&#8217;
+&#8216;generatingProcessIdentifier&#8217;
+&#8216;hoursAfterDataCutoff&#8217;
+&#8216;minutesAfterDataCutoff&#8217;
+&#8216;indicatorOfUnitOfTimeRange&#8217;
+&#8216;stepUnits&#8217;
+&#8216;forecastTime&#8217;
+&#8216;startStep&#8217;
+&#8216;endStep&#8217;
+&#8216;stepRange&#8217;
+&#8216;stepTypeInternal&#8217;
+&#8216;validityDate&#8217;
+&#8216;validityTime&#8217;
+&#8216;typeOfFirstFixedSurface&#8217;
+&#8216;unitsOfFirstFixedSurface&#8217;
+&#8216;nameOfFirstFixedSurface&#8217;
+&#8216;scaleFactorOfFirstFixedSurface&#8217;
+&#8216;scaledValueOfFirstFixedSurface&#8217;
+&#8216;typeOfSecondFixedSurface&#8217;
+&#8216;unitsOfSecondFixedSurface&#8217;
+&#8216;nameOfSecondFixedSurface&#8217;
+&#8216;scaleFactorOfSecondFixedSurface&#8217;
+&#8216;scaledValueOfSecondFixedSurface&#8217;
+&#8216;pressureUnits&#8217;
+&#8216;typeOfLevel&#8217;
+&#8216;level&#8217;
+&#8216;bottomLevel&#8217;
+&#8216;topLevel&#8217;
+&#8216;paramIdECMF&#8217;
+&#8216;paramId&#8217;
+&#8216;shortNameECMF&#8217;
+&#8216;shortName&#8217;
+&#8216;unitsECMF&#8217;
+&#8216;units&#8217;
+&#8216;nameECMF&#8217;
+&#8216;name&#8217;
+&#8216;cfNameECMF&#8217;
+&#8216;cfName&#8217;
+&#8216;cfVarNameECMF&#8217;
+&#8216;cfVarName&#8217;
+&#8216;ifsParam&#8217;
+&#8216;genVertHeightCoords&#8217;
+&#8216;PVPresent&#8217;
+&#8216;sectionNumber&#8217;
+&#8216;section5Length&#8217;
+&#8216;numberOfSection&#8217;
+&#8216;numberOfValues&#8217;
+&#8216;dataRepresentationTemplateNumber&#8217;
+&#8216;packingType&#8217;
+&#8216;referenceValue&#8217;
+&#8216;referenceValueError&#8217;
+&#8216;binaryScaleFactor&#8217;
+&#8216;decimalScaleFactor&#8217;
+&#8216;bitsPerValue&#8217;
+&#8216;typeOfOriginalFieldValues&#8217;
+&#8216;lengthOfHeaders&#8217;
+&#8216;sectionNumber&#8217;
+&#8216;section6Length&#8217;
+&#8216;numberOfSection&#8217;
+&#8216;bitMapIndicator&#8217;
+&#8216;bitmapPresent&#8217;
+&#8216;sectionNumber&#8217;
+&#8216;section7Length&#8217;
+&#8216;numberOfSection&#8217;
+&#8216;codedValues&#8217;
+&#8216;values&#8217;
+&#8216;packingError&#8217;
+&#8216;unpackedError&#8217;
+&#8216;maximum&#8217;
+&#8216;minimum&#8217;
+&#8216;average&#8217;
+&#8216;numberOfMissing&#8217;
+&#8216;standardDeviation&#8217;
+&#8216;skewness&#8217;
+&#8216;kurtosis&#8217;
+&#8216;isConstant&#8217;
+&#8216;changeDecimalPrecision&#8217;
+&#8216;decimalPrecision&#8217;
+&#8216;setBitsPerValue&#8217;
+&#8216;getNumberOfValues&#8217;
+&#8216;scaleValuesBy&#8217;
+&#8216;offsetValuesBy&#8217;
+&#8216;productType&#8217;
+&#8216;section8Length&#8217;</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.get_output_filename">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_output_filename</code><span class="sig-paren">(</span><em>year</em>, <em>month</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_output_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string representing the netcdf filename of gfs model data</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.get_projection_data">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">get_projection_data</code><span class="sig-paren">(</span><em>grb</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.get_projection_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the projection data from grb</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.process_commands">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">process_commands</code><span class="sig-paren">(</span><em>*cmds</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.process_commands" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.grib2_to_nc.grib2.reduce_grib">
+<code class="descclassname">wisps.grib2_to_nc.grib2.</code><code class="descname">reduce_grib</code><span class="sig-paren">(</span><em>control=None</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.grib2_to_nc.grib2.reduce_grib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads grib2 files, changes the map projection and
+grid extent, and packages the gribs into a single grib2 file</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-wisps.grib2_to_nc">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-wisps.grib2_to_nc" title="Permalink to this headline">¶</a></h2>
