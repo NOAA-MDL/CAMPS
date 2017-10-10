@@ -410,6 +410,16 @@ class Wisps_data(nc_writable):
             success = self.write_time_bounds(nc_handle)
             self.add_bounds_process()
 
+        if 'coordinates' in self.metadata:
+            coord_str = self.metadata['coordinates']
+            coords_to_add = [coord_str]
+            if 'x' in self.dimensions:
+                coords_to_add.append('x')
+            if 'y' in self.dimensions:
+                coords_to_add.append('y')
+            add_str = ', '.join(coords_to_add)
+            self.metadata['coordinates'] = add_str
+
 
         return success
     
@@ -530,14 +540,26 @@ class Wisps_data(nc_writable):
             plev_var[:] = self.get_coordinate()
         return True
 
-    def reshape(self, coord_name):
+    def reshape(self, nc_handle):
         """
         Reshapes the data when adding the a coordinate dimension.
         """
         # Don't do anything if it's in coordinates of time
-        if 'plev' not in coord_name or 'elev' not in coord_name:
+        try:
+            coord_name = self.metadata[coord_str]
+        except KeyError:
+            logging.warning("no " + coord_str + "metadata")
             return
-        self.dimensions.append(coord_name)
+
+        if 'plev' not in coord_name and 'elev' not in coord_name:
+            return
+
+        vertical_coordinate_name = "level"
+
+        self.dimensions = list(self.dimensions)
+        self.dimensions.append(vertical_coordinate_name)
+        self.dimensions = tuple(self.dimensions)
+
 
         # Change to a list to append extra dimension to shape
         shape = self.data.shape

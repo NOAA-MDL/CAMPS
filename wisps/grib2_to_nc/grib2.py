@@ -106,6 +106,16 @@ def reduce_grib(control=None):
                 outfile_identifier + '.pgrb2'
             outfile = outpath + outfile_name
             tmp_dir = outpath + 'tmp/'
+
+            # Remove previous outfile if requested
+            if remove_infile is True:
+                remove_infile = False
+                try:
+                    logging.info('removing ' + outfile)
+                    os.remove(outfile)
+                except:
+                    pass
+
         else:
             raise OSError("no files in dir")
 

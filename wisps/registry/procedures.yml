@@ -19,6 +19,11 @@ MetarObProcStep1 :
 MetarObProcStep2 :
     process_step : "https://codes.nws.noaa.gov/StatPP/Methods/QC/METARQC"
     long_name : 'METAR Quality Control'
+MarineObProcStep1 :
+    process_step : "https://codes.nws.noaa.gov/StatPP/Methods/QC/MarineQC"
+    long_name : 'METAR Quality Control'
+
+
 
 
 
