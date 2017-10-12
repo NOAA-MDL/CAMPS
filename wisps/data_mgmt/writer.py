@@ -25,10 +25,22 @@ def write(wisps_data, filename, global_attrs={}, overwrite=True,
     filename is the filename to write to.
     global_attrs are additional global attributes to add to the file.
     overwite specifies whether a file should new or appended to.
+
+    Args:
+        wisps_data (:obj:`list` of :obj:`Wisps_data` or :obj:`Wisps_data`):
+            Wisps_data or list of Wisps_data objects to be written to NetCDF file.
+        filename (str): NetCDF filename.
+        global_attrs (dict): Dict of global attributes for NetCDF file.
+        overwrite (bool): If true, write a new file regardless of whether a file 
+            already exists, otherwise append to existing file if possible.
+        write_to_db (bool): write to database
+
+    Returns:
+        True if successful, False otherwise.
     """
     logging.info("\nWriting to "+filename+"\n")
     if type(wisps_data) is not list:
-        wisps_data = list(wisps_data)
+        wisps_data = [wisps_data]
     start_time = time.time()
     if overwrite:
         mode = 'w'

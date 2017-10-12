@@ -16,6 +16,8 @@ import registry.util as cfg
 import registry.db.db as db
 import registry.constants as const
 
+"""Module containing Wisps_data class.
+"""
 
 FILL_VALUE = 9999
 coord_str = 'coordinates'
@@ -23,16 +25,34 @@ coord_str = 'coordinates'
 
 class Wisps_data(nc_writable):
     """
-    WISPS data object for storing metadata and accompanied objects
-    that describe the variable. This class will attempt to
-    gather information from the database on a given property, but
-    any gaps will need to be provided by the user
+    WISPS data object for storing metadata and accompanied objects describing the variable.
+
+    This class will attempt to
+    gather information from the metadata database on a given property, but
+    any gaps will need to be provided by the user. 
+
+    Attributes:
+        name (str): `quick fill` name that can be used to initialize variable from template.
+        data (:obj:`np.array`): n-dimensional numpy array holding variable data.
+        dimensions (:obj:`list` of str): The names of the dimensions--ordered by dimension.
+        processes (:obj:`list` of :obj:`Process`): Process that modify this variable.
+        metadata (dict): Metadata with key-value pairs.
+        time (:obj:`list` of :obj:`Time`): Time objects describing this variable
+        properties (dict): Metadata that will not be written to NetCDF file 
+            that may be used internally.
+
+    Args:
+        name (str): `quick-fill` name that can be used to initialize variable from template.
+        autofill (bool): If there should be an attempt to autofill metadata based on `name`.
+
+    Note:
+        Time objects must have a dimensionality that's compatible with ``data``.
     """
 
     def __init__(self, name, autofill=True):
         """
         Initializes object properties and adds metadata from the database
-        coresponding to the name.
+        coresponding to the name if available.
         """
         self.name = name
         self.data = np.array([])
@@ -305,6 +325,8 @@ class Wisps_data(nc_writable):
         """Returns a uniqueish vairable name such that it looks like,
         <dataSource>_<observedProperty>_<duration>_<verticalCoord>_<fcstReferenceTime>_<fcstLeadTime>_<########>
         """
+        if self.is_feature_of_interest():
+            return self.name
         # Write dataSource
         name = ""
         try:
@@ -390,7 +412,7 @@ class Wisps_data(nc_writable):
             if d not in dims:
                 self.create_dimension(nc_handle, d)
 
-    def write_coordinate(self, nc_handle):
+    def _write_coordinate(self, nc_handle):
         """
         Determines which coordinate needs to be written to
         it's own variable and calls the assosiated function.
@@ -398,16 +420,16 @@ class Wisps_data(nc_writable):
         """
         success = False
         if self.has_plev_bounds():
-            success = self.write_plev_bounds(nc_handle)
+            success = self._write_plev_bounds(nc_handle)
         elif self.has_elev_bounds():
-            success = self.write_elev_bounds(nc_handle)
+            success = self._write_elev_bounds(nc_handle)
         elif self.has_plev():
-            success = self.write_plev(nc_handle)
+            success = self._write_plev(nc_handle)
         elif self.has_elev():
-            success = self.write_elev(nc_handle)
+            success = self._write_elev(nc_handle)
 
         if self.has_time_bounds():
-            success = self.write_time_bounds(nc_handle)
+            success = self._write_time_bounds(nc_handle)
             self.add_bounds_process()
 
         if 'coordinates' in self.metadata:
@@ -433,7 +455,7 @@ class Wisps_data(nc_writable):
         elif cell_type == 'sum':
             self.add_process('BoundsProcSum')
     
-    def write_elev_bounds(self, nc_handle):
+    def _write_elev_bounds(self, nc_handle):
         """
         Writes the elev_bounds variable.
         """
@@ -457,7 +479,7 @@ class Wisps_data(nc_writable):
             elev_var[:] = coord_data
         return True
 
-    def write_time_bounds(self, nc_handle):
+    def _write_time_bounds(self, nc_handle):
         """
         Writes the Time bounds variable
         """
@@ -481,7 +503,7 @@ class Wisps_data(nc_writable):
 
         t = self.get_phenom_time()
 
-    def write_plev_bounds(self, nc_handle):
+    def _write_plev_bounds(self, nc_handle):
         """
         Writes the pressure level variable.
         """
@@ -507,7 +529,7 @@ class Wisps_data(nc_writable):
             plev_var[:] = coord_data
         return True
 
-    def write_elev(self, nc_handle):
+    def _write_elev(self, nc_handle):
         """
         Writes the pressure level variable.
         Changes the name to plev[n] where n a number
@@ -524,7 +546,7 @@ class Wisps_data(nc_writable):
             elev_var[:] = self.get_coordinate()
         return True
 
-    def write_plev(self, nc_handle):
+    def _write_plev(self, nc_handle):
         """
         Writes the pressure level variable.
         Changes the name to plev[n] where n a number
@@ -602,7 +624,7 @@ class Wisps_data(nc_writable):
         ancillary_variables = ""
 
         # Writes the elev, plev, and bounds variables if they exist
-        success = self.write_coordinate(nc_handle)
+        success = self._write_coordinate(nc_handle)
         if success:  # modify the shape of the data to accommodate coordinate.
             self.reshape(self.metadata[coord_str])
 

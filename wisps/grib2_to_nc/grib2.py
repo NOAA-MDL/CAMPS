@@ -423,12 +423,12 @@ def convert_grib2(filename):
     all_objs.append(lon)
 
     # Make x and y projection variables
-    x_obj = Wisps_data('x_proj')
+    x_obj = Wisps_data('x')
     #x_obj.add_source('GFS')
     x_obj.dimensions = ['x']
     x_obj.data = x_proj_data
     all_objs.append(x_obj)
-    y_obj = Wisps_data('y_proj')
+    y_obj = Wisps_data('y')
     #y_obj.add_source('GFS')
     y_obj.dimensions = ['y']
     y_obj.data = y_proj_data
