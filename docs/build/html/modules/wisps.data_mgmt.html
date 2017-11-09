@@ -201,7 +201,7 @@
 <li class="toctree-l1"><a class="reference internal" href="wisps.data_mgmt.test.html">wisps.data_mgmt.test package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#module-wisps.data_mgmt.test.test">wisps.data_mgmt.test.test module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#module-wisps.data_mgmt.test.test_Wisps_data">wisps.data_mgmt.test.test_Wisps_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#wisps-data-mgmt-test-test-wisps-data-module">wisps.data_mgmt.test.test_Wisps_data module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#module-wisps.data_mgmt.test.test_fetch">wisps.data_mgmt.test.test_fetch module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#module-wisps.data_mgmt.test.test_performance">wisps.data_mgmt.test.test_performance module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#module-wisps.data_mgmt.test.test_process">wisps.data_mgmt.test.test_process module</a></li>
@@ -331,6 +331,12 @@ made.</p>
 The lead_time Length of time (a duration) from
 forecast_reference_time to the
 Phenomenon time</p>
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.LeadTime.add_common_metadata">
+<code class="descname">add_common_metadata</code><span class="sig-paren">(</span><em>nc_var</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.LeadTime.add_common_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds metadata that is common to LeadTime variables.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="wisps.data_mgmt.Time.LeadTime.get_dimensions">
 <code class="descname">get_dimensions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.LeadTime.get_dimensions" title="Permalink to this definition">¶</a></dt>
@@ -640,10 +646,28 @@ index 1 = number of seconds, and</p>
 <dt id="wisps.data_mgmt.Wisps_data.Wisps_data">
 <em class="property">class </em><code class="descclassname">wisps.data_mgmt.Wisps_data.</code><code class="descname">Wisps_data</code><span class="sig-paren">(</span><em>name</em>, <em>autofill=True</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wisps.data_mgmt.nc_writable.nc_writable" title="wisps.data_mgmt.nc_writable.nc_writable"><code class="xref py py-class docutils literal"><span class="pre">wisps.data_mgmt.nc_writable.nc_writable</span></code></a></p>
-<p>WISPS data object for storing metadata and accompanied objects
-that describe the variable. This class will attempt to
-gather information from the database on a given property, but
-any gaps will need to be provided by the user</p>
+<p>WISPS data object for storing metadata and accompanied objects describing the variable.</p>
+<p>This class will attempt to
+gather information from the metadata database on a given property, but
+any gaps will need to be provided by the user.</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd><p class="first">name (str): <cite>quick fill</cite> name that can be used to initialize variable from template.
+data (<code class="xref py py-obj docutils literal"><span class="pre">np.array</span></code>): n-dimensional numpy array holding variable data.
+dimensions (<code class="xref py py-obj docutils literal"><span class="pre">list</span></code> of str): The names of the dimensions&#8211;ordered by dimension.
+processes (<code class="xref py py-obj docutils literal"><span class="pre">list</span></code> of <code class="xref py py-obj docutils literal"><span class="pre">Process</span></code>): Process that modify this variable.
+metadata (dict): Metadata with key-value pairs.
+time (<code class="xref py py-obj docutils literal"><span class="pre">list</span></code> of <code class="xref py py-obj docutils literal"><span class="pre">Time</span></code>): Time objects describing this variable
+properties (dict): Metadata that will not be written to NetCDF file</p>
+<blockquote class="last">
+<div>that may be used internally.</div></blockquote>
+</dd>
+<dt>Args:</dt>
+<dd>name (str): <cite>quick-fill</cite> name that can be used to initialize variable from template.
+autofill (bool): If there should be an attempt to autofill metadata based on <cite>name</cite>.</dd>
+<dt>Note:</dt>
+<dd>Time objects must have a dimensionality that&#8217;s compatible with <code class="docutils literal"><span class="pre">data</span></code>.</dd>
+</dl>
 <dl class="method">
 <dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_bounds_process">
 <code class="descname">add_bounds_process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_bounds_process" title="Permalink to this definition">¶</a></dt>
@@ -905,6 +929,12 @@ i.e. A comma separated name of the process enclosed in parens.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.is_feature_of_interest">
+<code class="descname">is_feature_of_interest</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.is_feature_of_interest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks metadata to see if this variable is a feature of interest.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="wisps.data_mgmt.Wisps_data.Wisps_data.is_model">
 <code class="descname">is_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.is_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if the Source is from a model.
@@ -913,7 +943,7 @@ Currently, &#8216;GFS&#8217; and &#8216;NAM&#8217;</p>
 
 <dl class="method">
 <dt id="wisps.data_mgmt.Wisps_data.Wisps_data.reshape">
-<code class="descname">reshape</code><span class="sig-paren">(</span><em>coord_name</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.reshape" title="Permalink to this definition">¶</a></dt>
+<code class="descname">reshape</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.reshape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reshapes the data when adding the a coordinate dimension.</p>
 </dd></dl>
 
@@ -922,48 +952,6 @@ Currently, &#8216;GFS&#8217; and &#8216;NAM&#8217;</p>
 <code class="descname">set_dimensions</code><span class="sig-paren">(</span><em>dimensions=None</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.set_dimensions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a tuple of String dimensions, sets object to the
 dimensions.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.write_coordinate">
-<code class="descname">write_coordinate</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.write_coordinate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines which coordinate needs to be written to
-it&#8217;s own variable and calls the assosiated function.
-A bounds function will always supercede the non-bounds function.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.write_elev">
-<code class="descname">write_elev</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.write_elev" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes the pressure level variable.
-Changes the name to plev[n] where n a number
-when there are multiple plev variables.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.write_elev_bounds">
-<code class="descname">write_elev_bounds</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.write_elev_bounds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes the elev_bounds variable.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.write_plev">
-<code class="descname">write_plev</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.write_plev" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes the pressure level variable.
-Changes the name to plev[n] where n a number
-when there are multiple plev variables.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.write_plev_bounds">
-<code class="descname">write_plev_bounds</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.write_plev_bounds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes the pressure level variable.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.write_time_bounds">
-<code class="descname">write_time_bounds</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.write_time_bounds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes the Time bounds variable</p>
 </dd></dl>
 
 <dl class="method">
@@ -1157,6 +1145,22 @@ wisps_data is expected to be a list of Wisps_data objects.
 filename is the filename to write to.
 global_attrs are additional global attributes to add to the file.
 overwite specifies whether a file should new or appended to.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>wisps_data (<code class="xref py py-obj docutils literal"><span class="pre">list</span></code> of <code class="xref py py-obj docutils literal"><span class="pre">Wisps_data</span></code> or <code class="xref py py-obj docutils literal"><span class="pre">Wisps_data</span></code>):</dt>
+<dd>Wisps_data or list of Wisps_data objects to be written to NetCDF file.</dd>
+</dl>
+<p>filename (str): NetCDF filename.
+global_attrs (dict): Dict of global attributes for NetCDF file.
+overwrite (bool): If true, write a new file regardless of whether a file</p>
+<blockquote>
+<div>already exists, otherwise append to existing file if possible.</div></blockquote>
+<p class="last">write_to_db (bool): write to database</p>
+</dd>
+<dt>Returns:</dt>
+<dd>True if successful, False otherwise.</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">

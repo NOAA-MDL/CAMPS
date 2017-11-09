@@ -2,6 +2,7 @@ Model output
 ============
 
 .. only:: builder_html
+
    This section describes sample model output that can be :download:`downloaded here <./reduced_gfs0020160700.nc>`.
 
 This sample file contains gridded data from 8 runs of the NWS spectral Global Forecast System (GFS) that began at 0600 UTC on 01-08 July 2016.  It is interesting to note that the data are not from consecutive runs of the model.

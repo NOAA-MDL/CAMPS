@@ -174,6 +174,8 @@ pdf_documents = [('index', u'wisps', u'WISPS Documentation', u'WISPS Team'),]
 # Sample rst2pdf doc - title of the pdf
 # Your Name - author name in the pdf
 
+#html_logo = 'wisps.png'
+
 
 # Only run pdf build on
 if tags.has('nomodules'):

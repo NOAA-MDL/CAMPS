@@ -204,9 +204,11 @@ Past experience has shown that statistical post-processing is capable of modifyi
 <p>Many StatPP applications use some form of <strong>Statistical Pre-processing</strong> step where NWP output from multiple runs is captured in a <strong>StatPP Archive</strong>.  This <strong>Statistical Pre-processing</strong> captures the data needed for the <strong>Training Phase</strong>.  Often, NWP output is transformed in ways that facilitate statistical training.  In general, if a <strong>Statistical Pre-processing</strong> step is required in the <strong>Training Phase</strong>, that same step will also appear in the <strong>Production Step</strong>.</p>
 <p>A <strong>Training Phase</strong>, if present, will use one or more <strong>Statistical Development Engines</strong> to note discrepancies between past NWP output and a selected <strong>Proxy for Truth</strong>.  These discrepancies are then captured in a set of <strong>StatPP Parameters</strong> which can be used in the <strong>Production Phase</strong>.</p>
 <p>Figure 1, below, attempts to capture some of these concepts in a data flow diagram.</p>
-<img alt="../_images/StatPPTrainingPhasev0.1.png" src="../_images/StatPPTrainingPhasev0.1.png" />
+<img alt="a data flow diagram of a generic statistical post-processing training phase" src="../_images/StatPPTrainingPhasev0.1.png" />
+<p>A data flow diagram of the training phase of a generic statistical post-processing technique</p>
 <p>Figure 2, below, also captures these concepts, but applies them to the <strong>Production Phase</strong>.</p>
-<img alt="../_images/StatPPProductionPhasev0.1.png" src="../_images/StatPPProductionPhasev0.1.png" />
+<img alt="a data flow diagram of a generic statistical post-processing implementation phase" src="../_images/StatPPProductionPhasev0.1.png" />
+<p>A data flow diagram of the implementation phase of a generic statistical post-processing technique</p>
 <div class="section" id="metadata-concepts">
 <h3>2.1  Metadata Concepts<a class="headerlink" href="#metadata-concepts" title="Permalink to this headline">¶</a></h3>
 <p>It is a truism among StatPP developers that they spend 10% of their time in science, 10% in statistics, and 80% in bookkeeping.

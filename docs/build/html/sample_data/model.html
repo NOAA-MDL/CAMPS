@@ -180,6 +180,52 @@
             
   <div class="section" id="model-output">
 <h1>Model output<a class="headerlink" href="#model-output" title="Permalink to this headline">¶</a></h1>
+<p>This section describes sample model output that can be <a class="reference download internal" href="../_downloads/reduced_gfs0020160700.nc" download=""><code class="xref download docutils literal"><span class="pre">downloaded</span> <span class="pre">here</span></code></a>.</p>
+<p>This sample file contains gridded data from 8 runs of the NWS spectral Global Forecast System (GFS) that began at 0600 UTC on 01-08 July 2016.  It is interesting to note that the data are not from consecutive runs of the model.
+Rather, the data have been stratified by model cycle time.
+Many statistical post-processing techniques stratify their data in this manner to accommodate the varying error characteristics of the model runs.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">NOTE:  This file was modified from the original in a number of ways.
+Most of the modifications were intended to make the file smaller and easier to review.
+Zero values were inserted into large portions of the data arrays.
+The first 20 rows and 20 columns contain the original data.
+A little more than half of the variables were removed from the file.
+The remaining variables should be sufficient to illustrate the concepts.</p>
+</div>
+<p>The values were read from a latitude-longitude grid, and interpolated to a Lambert Conformal grid.</p>
+<p>The sections below review sample CDL fragments and explain how the various attributes are used to document the contents of this file.</p>
+<p>Here&#8217;s a CDL fragment for a 2-m temperature field.  (Output is captured from the application Panoply.  All attributes that follow the variable declaration are associated with the variable.)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">short</span> <span class="n">GFS13_Temp_instant_2_21600</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">169</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">297</span><span class="p">,</span> <span class="n">lead_times</span><span class="o">=</span><span class="mi">93</span><span class="p">,</span> <span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">S</span><span class="p">;</span> <span class="o">//</span> <span class="n">short</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">grid_mapping</span> <span class="o">=</span> <span class="s2">&quot;polar_stereographic&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">FcstTime_hour</span> <span class="o">=</span> <span class="mi">21600</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">ancillary_variables</span> <span class="o">=</span> <span class="s2">&quot;OM_phenomenonTimeInstant OM_resultTime OM_validTime forecast_reference_time LeadTime mosLinearInterpolation &quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;elev0, x, y&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;temperature instant at 2m&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;air_temperature&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;K&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">OM_observedProperty</span> <span class="o">=</span> <span class="s2">&quot;https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">OM_procedure</span> <span class="o">=</span> <span class="s2">&quot;( mosLinearInterpolation )&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">149</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
+</pre></div>
+</div>
+<p>The y and x coordinates, of course, delineate the geogrphic grid.  Lead_times delineate the temporal domain for this variable, and default_time_coordinate_size delineates the various model cycles.  The value for FcstTme_hour equates to 0600 UTC on 01-Jan-1970, and it indicatest that all data stored in this variable are associated with some 0600 UTC run of the NWP system.</p>
+<p>The next attribute identifies a number of ancillary variables, most of which are associated with time.  Each of these variables are explained in some detail below.</p>
+<p>The attribute OM_observedProperty takes on a value that resolves to a code registry entry for temperature.</p>
+<p>The attribute OM_procedure points to a one-step procedure.  The only processing performed by the software that created this file interpolated the data from the latitude/longitude file disseminated by the NWS to the northern polar stereographic grid described by attributes that are not shown in this fragment.  The attribute OM_procedure takes on a character string value that names one or more value-less integers.  Those integers, in turn, convey metadata in their attributes about each procedure step.</p>
+<p>Here&#8217;s the CDL fragment that declares mosLinearInterpolation:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">long</span> <span class="n">mosLinearInterpolation</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;MOS Linear Interpolation&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">LE_Source</span> <span class="o">=</span> <span class="s2">&quot;https://codes.nws.noaa.gov/NumericalWeatherPrediction/Models/GFS13&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">LE_ProcessStep</span> <span class="o">=</span> <span class="s2">&quot;https://codes.nws.noaa.gov/StatPP/Methods/Geosp/LinInterp&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The attribute LE_Source shows the input into this step of the procedure.  Of course, it&#8217;s version 13 of the Global Forecast System (GFS).  The attribute LE_ProcessStep shows that a linear interpolation technique was applied.  Both of these concepts are documented in the NWS Codes Registry.</p>
+<blockquote>
+<div>This section describes sample model output that can be <a class="reference download internal" href="../_downloads/reduced_gfs0020160700.nc" download=""><code class="xref download docutils literal"><span class="pre">downloaded</span> <span class="pre">here</span></code></a>.</div></blockquote>
+<p>This sample file contains gridded data from the NWS spectral Global Forecast System (GFS) run that began with HHMM UTC data on DD MON YYYY.
+The values were read from a latitude-longitude grid, and projected to a Lambert Conformal grid.</p>
 </div>
 
 
