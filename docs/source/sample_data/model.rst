@@ -75,4 +75,18 @@ LeadTime has only one dimension.  This is because the lead time values are ident
 
 LeadTime is dimensioned 93, and it is used for data that are forecast every three hours.  LeadTime1 is dimensioned 40, and it is used for data that are forecast every six hours.  LeadTime2 handles 12-hour variables.
 
+Here's the CDL fragment that declares OM_phenomenonTimeInstant:
+
+::
+
+| long OM_phenomenonTimeInstant(lead_times=93, default_time_coordinate_size=8);
+|   :_FillValue = -9999L; // long
+|   :calendar = "gregorian";
+|   :units = "seconds since 1970-01-01 00:00:00.0";
+|   :standard_name = "time";
+|   :wisps_role = "OM_phenomenonTime";
+|   :_ChunkSizes = 93, 8; // int
+
+OM_phenomenonTimeInstant has two dimensions.  The first dimension matches LeadTime, and the second tracks the forecast cycle.  Again, the attribute wisps_role designates the function on this variable.  There are three other variables with similar names and functions.  As with LeadTime, they are used to care for use cases such as 3-, 6-, and 12-hourly time steps.
+
 
