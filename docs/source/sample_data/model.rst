@@ -4,6 +4,7 @@ Model output
 .. only:: builder_html
 
    This section describes sample model output that can be :download:`downloaded here <./reduced_gfs0020160700.nc>`.
+   If you are reading this in a PDF document, then you will need to access a web version to download the sample files.
 
 This sample file contains gridded data from 8 runs of the NWS spectral Global Forecast System (GFS) that began at 0600 UTC on 01-08 July 2016.  It is interesting to note that the data are not from consecutive runs of the model.
 Rather, the data have been stratified by model cycle time.
@@ -21,7 +22,7 @@ The values were read from a latitude-longitude grid, and interpolated to a Lambe
 
 The sections below review sample CDL fragments and explain how the various attributes are used to document the contents of this file.
 
-Here's a CDL fragment for a 2-m temperature field.  (Output is captured from the application Panoply.  All attributes that follow the variable declaration are associated with the variable.)
+Here's a CDL fragment for a 2-m temperature field.  (Output is captured from the application Panoply.  All attributes that follow the variable declaration are associated with that variable.)
 
 ::
 
@@ -38,7 +39,7 @@ Here's a CDL fragment for a 2-m temperature field.  (Output is captured from the
 |   :OM_procedure = "( mosLinearInterpolation )";
 |   :_ChunkSizes = 85, 149, 47, 3, 1; // int
 
-The y and x coordinates, of course, delineate the geogrphic grid.  Lead_times delineate the temporal domain for this variable, and default_time_coordinate_size delineates the various model cycles.  The value for FcstTme_hour equates to 0600 UTC on 01-Jan-1970, and it indicatest that all data stored in this variable are associated with some 0600 UTC run of the NWP system.
+The y and x coordinates, of course, delineate the geogrphic grid.  Lead_times delineate the temporal domain for this variable, and default_time_coordinate_size delineates the various model cycles.  The value for FcstTme_hour equates to 0600 UTC on 01-Jan-1970, and it indicates that all data stored in this variable are associated with some 0600 UTC run of the NWP system.
 
 The next attribute identifies a number of ancillary variables, most of which are associated with time.  Each of these variables are explained in some detail below.
 
@@ -56,5 +57,22 @@ Here's the CDL fragment that declares mosLinearInterpolation:
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Geosp/LinInterp";
 
 The attribute LE_Source shows the input into this step of the procedure.  Of course, it's version 13 of the Global Forecast System (GFS).  The attribute LE_ProcessStep shows that a linear interpolation technique was applied.  Both of these concepts are documented in the NWS Codes Registry.
+
+The next few CDL fragments illustrate the time variables used within WISPS.
+
+Here's the CDL fragment that declares LeadTime.  (LeadTime1 and LeadTime2 are similar.)
+
+::
+
+| long LeadTime(lead_times=93);
+|   :_FillValue = -9999L; // long
+|   :units = "seconds";
+|   :standard_name = "forecast_period";
+|   :wisps_role = "LeadTime";
+|   :_ChunkSizes = 93; // int
+
+LeadTime has only one dimension.  This is because the lead time values are identical for the various forecast cycles.  LeadTime is the only time-related variable that behaves in this way.  Note the attribute wisps_role.
+
+LeadTime is dimensioned 93, and it is used for data that are forecast every three hours.  LeadTime1 is dimensioned 40, and it is used for data that are forecast every six hours.  LeadTime2 handles 12-hour variables.
 
 
