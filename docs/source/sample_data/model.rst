@@ -60,7 +60,7 @@ The attribute LE_Source shows the input into this step of the procedure.  Of cou
 
 The next few CDL fragments illustrate the time variables used within WISPS.
 
-Here's the CDL fragment that declares LeadTime.  (LeadTime1 and LeadTime2 are similar.)
+Here's the CDL fragment that declares LeadTime (a duration measured from forecast_reference_time).  (LeadTime1 and LeadTime2 are similar.)
 
 ::
 
@@ -75,7 +75,7 @@ LeadTime has only one dimension.  This is because the lead time values are ident
 
 LeadTime is dimensioned 93, and it is used for data that are forecast every three hours.  LeadTime1 is dimensioned 40, and it is used for data that are forecast every six hours.  LeadTime2 handles 12-hour variables.
 
-Here's the CDL fragment that declares OM_phenomenonTimeInstant:
+Here's the CDL fragment that declares OM_phenomenonTimeInstant ("when the weather happens"):
 
 ::
 
@@ -89,4 +89,30 @@ Here's the CDL fragment that declares OM_phenomenonTimeInstant:
 
 OM_phenomenonTimeInstant has two dimensions.  The first dimension matches LeadTime, and the second tracks the forecast cycle.  Again, the attribute wisps_role designates the function of this variable.  There are three other variables with similar names and functions--OM_PhenomenonTimeInstant1, OM_PhenomenonTimeInstant2, and OM_PhenomenonTimeInstant3.  As with LeadTime, they are used to care for use cases such as 3-, 6-, and 12-hourly time steps.
 
+Here's the CDL fragment that declares OM_resultTime (the time the result became available):
 
+::
+
+| long OM_resultTime(default_time_coordinate_size=8);
+|   :_FillValue = -9999L; // long
+|   :calendar = "gregorian";
+|   :units = "seconds since 1970-01-01 00:00:00.0";
+|   :standard_name = "time";
+|   :wisps_role = "OM_resultTime";
+|   :_ChunkSizes = 8; // int
+
+OM_resultTime has one dimension that tracks the forecast cycle.  
+
+Finally, here's the CDL fragment that declares OM_validTime (the time of intended use of the result):
+
+::
+
+| long OM_validTime(lead_times=93, default_time_coordinate_size=8, begin_end_size=2);
+|   :_FillValue = -9999L; // long
+|   :calendar = "gregorian";
+|   :units = "seconds since 1970-01-01 00:00:00.0";
+|   :standard_name = "time";
+|   :wisps_role = "OM_validTime";
+|   :_ChunkSizes = 93, 8, 2; // int
+
+As we saw with OM_phenomenonTime, OM_validTime has two dimensions that track lead time and forecast cycle.  OM_validTime, however, includes a third dimension that holds the beginning and end times of this period of time.  
