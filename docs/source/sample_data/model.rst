@@ -87,6 +87,6 @@ Here's the CDL fragment that declares OM_phenomenonTimeInstant:
 |   :wisps_role = "OM_phenomenonTime";
 |   :_ChunkSizes = 93, 8; // int
 
-OM_phenomenonTimeInstant has two dimensions.  The first dimension matches LeadTime, and the second tracks the forecast cycle.  Again, the attribute wisps_role designates the function on this variable.  There are three other variables with similar names and functions.  As with LeadTime, they are used to care for use cases such as 3-, 6-, and 12-hourly time steps.
+OM_phenomenonTimeInstant has two dimensions.  The first dimension matches LeadTime, and the second tracks the forecast cycle.  Again, the attribute wisps_role designates the function of this variable.  There are three other variables with similar names and functions--OM_PhenomenonTimeInstant1, OM_PhenomenonTimeInstant2, and OM_PhenomenonTimeInstant3.  As with LeadTime, they are used to care for use cases such as 3-, 6-, and 12-hourly time steps.
 
 
