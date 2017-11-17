@@ -43,3 +43,24 @@ The first, number_of_stations, of course, indexes the various stations.
 The character variable stations contains the ICAO call letters that identify each.
 The second dimension, default_time_coordinate, simply counts through the 672 UTC hours in the month of February 2013.
 The last dimension is a vertical coordinate that satisfies the requirements of the CF Conventions.
+It simply indicates 2 meters above the Earth's surface.
+
+The next attribute identifies a number of ancillary variables, most of which are associated with time.
+Each of these variables are explained in some detail below.
+
+The attribute OM_observedProperty takes on a value that resolves to a code registry entry for temperature.
+
+The attribute OM_procedure points to a two step process.
+The data in this file were first decoded from METAR format.
+Then, they were quality controlled with routines developed by MDL.
+The attribute OM_procedure takes on a character string value that names one or more value-less integers.
+Those integers, in turn, convey metadata in their attributes about each procedureal step.
+
+Here's the CDL fragment that describes the first step, MetarObProcStep1:
+
+::
+
+| long MetarObProcStep1;
+|   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/SfcObs/METAR";
+|   :long_name = "METAR Observation";
+
