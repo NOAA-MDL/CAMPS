@@ -7,3 +7,4 @@ Data Encoding to support MOS in WISPS
    :glob:
    
    mos_equation.rst
+   mos_metadata/index.rst

@@ -180,7 +180,58 @@
             
   <div class="section" id="surface-observations">
 <h1>Surface Observations<a class="headerlink" href="#surface-observations" title="Permalink to this headline">¶</a></h1>
-<p>This section describes sample surface observation output that can be <a class="reference download internal" href="../_downloads/reduced_hre201302.nc" download=""><code class="xref download docutils literal"><span class="pre">downloaded</span> <span class="pre">here</span></code></a>.</p>
+<p>This section describes sample surface observation output that can be <a class="reference download internal" href="../_downloads/reduced_hre201302.nc" download=""><code class="xref download docutils literal"><span class="pre">downloaded</span> <span class="pre">here</span></code></a>.
+If you are reading this in a PDF document, then you will need to access a web version to download the sample files.</p>
+<p>This sample file contains station data from METAR-encoded hourly surface observations for a set of 2000 stations taken during the 28 days of February 2013.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">NOTE:  This file was modified from the original to make it smaller and easier to review.
+The original file contained 3095 unique stations.
+Two thousand of those stations were selected at random to constitute this file.</p>
+</div>
+<p>The observations were processed through MDL&#8217;s quality control (QC) routines.
+Notably, the observation time information was removed in that process.
+Thus, all time data in this file are at the &#8220;top of the hour.&#8221;
+E.g., a METAR whose time was encoded as 1953 (19:53:00 UTC) is stored in this file with the time 20:00:00 UTC.
+This is useful for a number of applications in statistical post-processing, but problematic in a number of other ways.</p>
+<p>Here&#8217;s a CDL fragment for an array of 2-m temperature values.
+(Output is captued from the application Panoply.  All atrributes that follow the variable declaration are associated with that variable.)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">short</span> <span class="n">METAR_Temp_instant_2_</span><span class="p">(</span><span class="n">number_of_stations</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">672</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">S</span><span class="p">;</span> <span class="o">//</span> <span class="n">short</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">ancillary_variables</span> <span class="o">=</span> <span class="s2">&quot;OM_phenomenonTimeInstant OM_resultTime OM_validTime MetarObProcStep1 MetarObProcStep2 &quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;air_temperature&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;elev0&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">LE_Source</span> <span class="o">=</span> <span class="s2">&quot;METAR&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;dry bulb temperature&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">80</span><span class="n">S</span><span class="p">;</span> <span class="o">//</span> <span class="n">short</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degF&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mi">130</span><span class="n">S</span><span class="p">;</span> <span class="o">//</span> <span class="n">short</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">OM_observedProperty</span> <span class="o">=</span> <span class="s2">&quot;https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">OM_procedure</span> <span class="o">=</span> <span class="s2">&quot;( MetarObProcStep1,MetarObProcStep2 )&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">672</span><span class="p">,</span> <span class="mi">1</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
+</pre></div>
+</div>
+<p>There are three dimensions.
+The first, number_of_stations, of course, indexes the various stations.
+The character variable stations contains the ICAO call letters that identify each.
+The second dimension, default_time_coordinate, simply counts through the 672 UTC hours in the month of February 2013.
+The last dimension is a vertical coordinate that satisfies the requirements of the CF Conventions.
+It simply indicates 2 meters above the Earth&#8217;s surface.</p>
+<p>The next attribute identifies a number of ancillary variables, most of which are associated with time.
+Each of these variables are explained in some detail below.</p>
+<p>The attribute OM_observedProperty takes on a value that resolves to a code registry entry for temperature.</p>
+<p>The attribute OM_procedure points to a two step process.
+The data in this file were first decoded from METAR format.
+Then, they were quality controlled with routines developed by MDL.
+The attribute OM_procedure takes on a character string value that names one or more value-less integers.
+Those integers, in turn, convey metadata in their attributes about each procedureal step.</p>
+<p>Here&#8217;s the CDL fragment that describes the first step, MetarObProcStep1:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">long</span> <span class="n">MetarObProcStep1</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">LE_ProcessStep</span> <span class="o">=</span> <span class="s2">&quot;https://codes.nws.noaa.gov/StatPP/Methods/SfcObs/METAR&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;METAR Observation&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Additional content needed here.</p>
 </div>
 
 

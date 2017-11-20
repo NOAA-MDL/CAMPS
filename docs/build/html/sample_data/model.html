@@ -180,7 +180,8 @@
             
   <div class="section" id="model-output">
 <h1>Model output<a class="headerlink" href="#model-output" title="Permalink to this headline">¶</a></h1>
-<p>This section describes sample model output that can be <a class="reference download internal" href="../_downloads/reduced_gfs0020160700.nc" download=""><code class="xref download docutils literal"><span class="pre">downloaded</span> <span class="pre">here</span></code></a>.</p>
+<p>This section describes sample model output that can be <a class="reference download internal" href="../_downloads/reduced_gfs0020160700.nc" download=""><code class="xref download docutils literal"><span class="pre">downloaded</span> <span class="pre">here</span></code></a>.
+If you are reading this in a PDF document, then you will need to access a web version to download the sample files.</p>
 <p>This sample file contains gridded data from 8 runs of the NWS spectral Global Forecast System (GFS) that began at 0600 UTC on 01-08 July 2016.  It is interesting to note that the data are not from consecutive runs of the model.
 Rather, the data have been stratified by model cycle time.
 Many statistical post-processing techniques stratify their data in this manner to accommodate the varying error characteristics of the model runs.</p>
@@ -195,7 +196,7 @@ The remaining variables should be sufficient to illustrate the concepts.</p>
 </div>
 <p>The values were read from a latitude-longitude grid, and interpolated to a Lambert Conformal grid.</p>
 <p>The sections below review sample CDL fragments and explain how the various attributes are used to document the contents of this file.</p>
-<p>Here&#8217;s a CDL fragment for a 2-m temperature field.  (Output is captured from the application Panoply.  All attributes that follow the variable declaration are associated with the variable.)</p>
+<p>Here&#8217;s a CDL fragment for a 2-m temperature field.  (Output is captured from the application Panoply.  All attributes that follow the variable declaration are associated with that variable.)</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">short</span> <span class="n">GFS13_Temp_instant_2_21600</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">169</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">297</span><span class="p">,</span> <span class="n">lead_times</span><span class="o">=</span><span class="mi">93</span><span class="p">,</span> <span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">);</span>
 <span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">S</span><span class="p">;</span> <span class="o">//</span> <span class="n">short</span>
 <span class="o">|</span>   <span class="p">:</span><span class="n">grid_mapping</span> <span class="o">=</span> <span class="s2">&quot;polar_stereographic&quot;</span><span class="p">;</span>
@@ -210,7 +211,7 @@ The remaining variables should be sufficient to illustrate the concepts.</p>
 <span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">149</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
 </pre></div>
 </div>
-<p>The y and x coordinates, of course, delineate the geogrphic grid.  Lead_times delineate the temporal domain for this variable, and default_time_coordinate_size delineates the various model cycles.  The value for FcstTme_hour equates to 0600 UTC on 01-Jan-1970, and it indicatest that all data stored in this variable are associated with some 0600 UTC run of the NWP system.</p>
+<p>The y and x coordinates, of course, delineate the geogrphic grid.  Lead_times delineate the temporal domain for this variable, and default_time_coordinate_size delineates the various model cycles.  The value for FcstTme_hour equates to 0600 UTC on 01-Jan-1970, and it indicates that all data stored in this variable are associated with some 0600 UTC run of the NWP system.</p>
 <p>The next attribute identifies a number of ancillary variables, most of which are associated with time.  Each of these variables are explained in some detail below.</p>
 <p>The attribute OM_observedProperty takes on a value that resolves to a code registry entry for temperature.</p>
 <p>The attribute OM_procedure points to a one-step procedure.  The only processing performed by the software that created this file interpolated the data from the latitude/longitude file disseminated by the NWS to the northern polar stereographic grid described by attributes that are not shown in this fragment.  The attribute OM_procedure takes on a character string value that names one or more value-less integers.  Those integers, in turn, convey metadata in their attributes about each procedure step.</p>
@@ -222,10 +223,51 @@ The remaining variables should be sufficient to illustrate the concepts.</p>
 </pre></div>
 </div>
 <p>The attribute LE_Source shows the input into this step of the procedure.  Of course, it&#8217;s version 13 of the Global Forecast System (GFS).  The attribute LE_ProcessStep shows that a linear interpolation technique was applied.  Both of these concepts are documented in the NWS Codes Registry.</p>
-<blockquote>
-<div>This section describes sample model output that can be <a class="reference download internal" href="../_downloads/reduced_gfs0020160700.nc" download=""><code class="xref download docutils literal"><span class="pre">downloaded</span> <span class="pre">here</span></code></a>.</div></blockquote>
-<p>This sample file contains gridded data from the NWS spectral Global Forecast System (GFS) run that began with HHMM UTC data on DD MON YYYY.
-The values were read from a latitude-longitude grid, and projected to a Lambert Conformal grid.</p>
+<p>The next few CDL fragments illustrate the time variables used within WISPS.</p>
+<p>Here&#8217;s the CDL fragment that declares LeadTime (a duration measured from forecast_reference_time).  (LeadTime1 and LeadTime2 are similar.)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">long</span> <span class="n">LeadTime</span><span class="p">(</span><span class="n">lead_times</span><span class="o">=</span><span class="mi">93</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;forecast_period&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">wisps_role</span> <span class="o">=</span> <span class="s2">&quot;LeadTime&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">93</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
+</pre></div>
+</div>
+<p>LeadTime has only one dimension.  This is because the lead time values are identical for the various forecast cycles.  LeadTime is the only time-related variable that behaves in this way.  Note the attribute wisps_role.</p>
+<p>LeadTime is dimensioned 93, and it is used for data that are forecast every three hours.  LeadTime1 is dimensioned 40, and it is used for data that are forecast every six hours.  LeadTime2 handles 12-hour variables.</p>
+<p>Here&#8217;s the CDL fragment that declares OM_phenomenonTimeInstant (&#8220;when the weather happens&#8221;):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">long</span> <span class="n">OM_phenomenonTimeInstant</span><span class="p">(</span><span class="n">lead_times</span><span class="o">=</span><span class="mi">93</span><span class="p">,</span> <span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">8</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">wisps_role</span> <span class="o">=</span> <span class="s2">&quot;OM_phenomenonTime&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">93</span><span class="p">,</span> <span class="mi">8</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
+</pre></div>
+</div>
+<p>OM_phenomenonTimeInstant has two dimensions.  The first dimension matches LeadTime, and the second tracks the forecast cycle.  Again, the attribute wisps_role designates the function of this variable.  There are three other variables with similar names and functions&#8211;OM_PhenomenonTimeInstant1, OM_PhenomenonTimeInstant2, and OM_PhenomenonTimeInstant3.  As with LeadTime, they are used to care for use cases such as 3-, 6-, and 12-hourly time steps.</p>
+<p>Here&#8217;s the CDL fragment that declares OM_resultTime (the time the result became available):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">long</span> <span class="n">OM_resultTime</span><span class="p">(</span><span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">8</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">wisps_role</span> <span class="o">=</span> <span class="s2">&quot;OM_resultTime&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
+</pre></div>
+</div>
+<p>OM_resultTime has one dimension that tracks the forecast cycle.</p>
+<p>Finally, here&#8217;s the CDL fragment that declares OM_validTime (the time of intended use of the result):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">long</span> <span class="n">OM_validTime</span><span class="p">(</span><span class="n">lead_times</span><span class="o">=</span><span class="mi">93</span><span class="p">,</span> <span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">begin_end_size</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">wisps_role</span> <span class="o">=</span> <span class="s2">&quot;OM_validTime&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">93</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
+</pre></div>
+</div>
+<p>As we saw with OM_phenomenonTime, OM_validTime has two dimensions that track lead time and forecast cycle.  OM_validTime, however, includes a third dimension that holds the beginning and end times of this period of time.</p>
 </div>
 
 
