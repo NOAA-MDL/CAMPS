@@ -17,13 +17,13 @@ The netCDF-CF Conventions provide considerable guidance on the encoding of time 
 
 Time nomenclature seems to be a perennial stumbling block in StatPP.  This often becomes evident as data consumers attempt to process data that has been shared by one or more data producers.  At the risk of becoming tedious, this section will cover first principles and how they are named in the various standards.  The first definitions come from TS.
 
-*TM_Instant*
+**TM_Instant**
 
 “An instant is a zero-dimensional geometric primitive that represents position in time. It is equivalent to a point in space. In practice, an instant is an interval whose duration is less than the resolution of the time scale”  [TS].
 
 In netCDF-WISPS, a number of weather elements are usually represented as occurring at a point in time.  These include temperature, wind direction, wind speed, sky cover, and precipitation type.  For some of these elements, this is matter of convenience.  In reality, the systems that assess conditions are conducting time averages.  Moreover, analyses for multiple weather elements are all associated with a single instant.  In the same way, various weather elements in a METAR-encoded observation are associated with a single instant.
 
-*TM_Period and TM_Duration*
+**TM_Period and TM_Duration**
 
 “The period is a one-dimensional geometric primitive that represents extent in time.  The period is equivalent to a curve in space.  Like a curve, it is an open interval bounded by beginning and end points (instants), and has length (duration).  Its location in time is described by the temporal positions of the instants at which it begins and ends; its duration equals the temporal distance between those two temporal positions”  (ISO 19108).
 
@@ -43,19 +43,19 @@ Periods and durations that are long enough (generally > one day) often encounter
 
 The following concepts build on instant, period, and duration.  They are drawn from various sources, including CF, MD1, MD2, and O&M.
 
-*forecast_reference_time*
+**forecast_reference_time**
 
 The forecast_reference_time is a standard name in the netCDF-CF Conventions.  In that document it is defined as “The ‘data time’, the time of the analysis from which the forecast was made” [CF].  This description seems to draw its origin from NWP.  It has broad applications within StatPP as well.  Clearly, the forecast_reference_time is an instant in time.  It is frequently used to define the epoch of the time coordinate for variables associated with NWP output.
 
  **Best Practice:**  *In datasets where this concept is meaningful, a variable should contain this time (these times) and the attribute standard_name assigned the value “forecast_reference_time.”  That said, netCDF-WISPS does not discourage other practices that convey this concept.*
 
-*leadTime*
+**leadTime**
 
 The term “lead time” is often used to describe a duration of time that is measured from a forecast_reference_time to the time when some phenomenon is observed or forecast to occur.  We are aware of no formal definition of this concept by any Standards Development Organization (SDO; Various WMO standards provide instructions for encoding this concept).  There are a number of expressions that are commonly used to describe this concept (e.g., forecast period, forecast lead, time projection).  The CF Standard Names includes an entry for forecast_period that corresponds well to this concept.  For netCDF-WISPS, we recommend that data producers adopt the term “lead time” and use it uniformly.
 
  **Best Practice:**  *In datasets where this concept is meaningful, a variable of appropriate dimensionality should be defined and contain leadTime values.  This variable should be declared as an auxiliary coordinate variable, as needed.  This variable should have the attribute wisps_role declared with the value “leadTime.”  This variable should also have a standard_name of “forecast_period.”*
 
-*periodicTime and cadence*
+**periodicTime and cadence**
 
 The “duration of one cycle” (ISO 19108) is defined with the words “periodic time.”  While the term is defined in ISO 19108, it does not appear formally in the data models.  (Hence, we call it periodicTime, not TM_PeriodicTime.)  The concept of periodic time has two primary applications in StatPP.
 
@@ -69,7 +69,7 @@ Second, periodic time can be used to characterize certain datasets whose data el
 
  *E.g., “firstLeadTime=P12H periodicTime=P24H lastLeadTime=P84H” describes leadTimes of 12, 36, 60, and 84 hours.*
 
-*OM_phenomenonTime*
+**OM_phenomenonTime**
 
 “The attribute phenomenonTime shall describe the time that the result (6.2.2.9) applies to the property of the feature-of-interest (6.2.2.7). This is often the time of interaction by a sampling procedure (8.1.3) or observation procedure (6.2.2.10) with a real-world feature.  NOTE 1:  The phenomenonTime is the temporal parameter normally used in geospatial analysis of the result.”  [O&M}
 
@@ -81,7 +81,7 @@ While not obvious from this definition, OM_phenomenonTime can be of type TM_Inst
 
  *We recognize that in many applications a combination of model_reference_time and leadTime can convey the same content as OM_phenomenonTime.  The Best Practice, however, is to create an auxiliary coordinate variable explicitly for this purpose and assign it the appropriate attribute.  The purpose, of course, is to limit implicit metadata wherever possible.*
 
-*OM_resultTime*
+**OM_resultTime**
 
 “The attribute resultTime:TM_Instant shall describe the time when the result became available, typically when the procedure (6.2.2.10) associated with the observation was completed For some observations this is identical to the phenomenonTime. However, there are important cases where they differ.
 …
@@ -96,7 +96,7 @@ OM_resultTime has clear applications to StatPP in general and operational meteor
 
 In general, for observations, OM_resultTime = OM_phenomenonTime; for analyses, OM_resultTime ≥ OM_phenomenonTime; and for forecasts, OM_resultTime ≤ OM_phenomenonTime.
 
-*OM_validTime*
+**OM_validTime**
 
 The concepts covered above in this section seem to be clarifications and standardizations of concepts that have been applied to NWP and StatPP for years.  Most English speakers will be able to intuitively grasp the concepts represented by names like phenomenonTime, leadTime, and resultTime.  Unfortunately, the term “valid time” is used widely in NWP and StatPP.  Frequently, it’s common usage differs significantly from the O&M definition, below:
 
