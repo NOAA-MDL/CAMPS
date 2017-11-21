@@ -25,7 +25,7 @@ They are presented here, hoping they will prove useful to other groups who deal 
 
 #.  Step variables are typed short integer.
 
-#.  Step variables have long names of the form “Step #1”.
+#.  Step variables have descriptive, human-readable long names.
 
 #.  Step variables all have the standard name “source”.
     (It isn't the best fit, but it's the best we could find.)
