@@ -56,14 +56,37 @@ Then, they were quality controlled with routines developed by MDL.
 The attribute OM_procedure takes on a character string value that names one or more value-less integers.
 Those integers, in turn, convey metadata in their attributes about each procedureal step.
 
-Here's the CDL fragment that describes the first step, MetarObProcStep1:
+.. note::
+   CDL Fragments and explanation for OM_procedure steps are needed here.
+
+There are three time-related variables associated with METAR_Temp_instant_2_.
+They are OM_phenomenonTimeInstant, OM_resultTime, and OM_validTime.
+Here are the CDL fragments that declare each of them:
 
 ::
 
-| long MetarObProcStep1;
-|   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/SfcObs/METAR";
-|   :long_name = "METAR Observation";
+| long OM_phenomenonTimeInstant(default_time_coordinate_size=672);
+|   :_FillValue = -9999L; // long
+|   :calendar = "gregorian";
+|   :units = "seconds since 1970-01-01 00:00:00.0";
+|   :standard_name = "time";
+|   :wisps_role = "OM_phenomenonTime";
+|   :_ChunkSizes = 672; // int
+| 
+| long OM_resultTime(default_time_coordinate_size=672);
+|   :_FillValue = -9999L; // long
+|   :calendar = "gregorian";
+|   :units = "seconds since 1970-01-01 00:00:00.0";
+|   :standard_name = "time";
+|   :wisps_role = "OM_resultTime";
+|   :_ChunkSizes = 672; // int
+| 
+| long OM_validTime(begin_end_size=2, default_time_coordinate_size=672);
+|   :_FillValue = -9999L; // long
+|   :calendar = "gregorian";
+|   :units = "seconds since 1970-01-01 00:00:00.0";
+|   :standard_name = "time";
+|   :wisps_role = "OM_validTime";
+|   :_ChunkSizes = 2, 672; // int
 
-Additional content needed here.
-
-
+The declarations we find here are somewhat different than those in the other data types.
