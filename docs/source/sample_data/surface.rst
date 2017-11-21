@@ -89,4 +89,12 @@ Here are the CDL fragments that declare each of them:
 |   :wisps_role = "OM_validTime";
 |   :_ChunkSizes = 2, 672; // int
 
-The declarations we find here are somewhat different than those in the other data types.
+The declarations we find here are somewhat different than those found in model output.
+As one might expect, there are fewer dimensions and the values are simpler.
+OM_phenomenonTimeInstant takes on a value for each hour of the month.
+As noted above, the times are set to the top of each hour for all stations and times.
+OM_resultTime value are equal to OM_phenomenonTime.
+OM_validTime is two-dimensional representing beginning time and ending time.
+The beginning times equal the phenomenon times and result times.
+(I.e., we don't intend for data consumers to use an observation before it's taken.)
+The ending times are set to missing to show that we intend for data consumers to use an observation indefinitely.
