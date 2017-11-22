@@ -93,7 +93,7 @@ The declarations we find here are somewhat different than those found in model o
 As one might expect, there are fewer dimensions and the values are simpler.
 OM_phenomenonTimeInstant takes on a value for each hour of the month.
 As noted above, the times are set to the top of each hour for all stations and times.
-OM_resultTime value are equal to OM_phenomenonTime.
+OM_resultTime values are equal to OM_phenomenonTime values.
 OM_validTime is two-dimensional representing beginning time and ending time.
 The beginning times equal the phenomenon times and result times.
 (I.e., we don't intend for data consumers to use an observation before it's taken.)
