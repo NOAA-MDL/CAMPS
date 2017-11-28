@@ -64,6 +64,7 @@ Those integers, in turn, convey metadata in their attributes about each procedur
 |   :long_name = "Ingest BUFR-encoded METAR observations from NCEP repository";
 |   :standard_name = “source”;
 |   :units = 1;
+| 
 | short MetarObProcStep2;
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/QC/METARQC";
 |   :long_name = "Apply MDL METAR Quality Control procedure";
