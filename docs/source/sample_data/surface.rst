@@ -56,8 +56,28 @@ Then, they were quality controlled with routines developed by MDL.
 The attribute OM_procedure takes on a character string value that names one or more value-less integers.
 Those integers, in turn, convey metadata in their attributes about each procedureal step.
 
-.. note::
-   CDL Fragments and explanation for OM_procedure steps are needed here.
+::
+
+| short MetarObProcStep1;
+|   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Ingest/DecodeBUFR";
+|   :LE_Source = “https://codes.nws.noaa.gov/StatPP/Data/NCEPSfcObsMETAR”;
+|   :long_name = "Ingest BUFR-encoded METAR observations from NCEP repository";
+|   :standard_name = “source”;
+|   :units = 1;
+| short MetarObProcStep2;
+|   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/QC/METARQC";
+|   :long_name = "Apply MDL METAR Quality Control procedure";
+|   :standard_name = “source”;
+|   :units = 1;
+
+The attribute strings associated with MetarObProcStep1 document that the data were ingested from BUFR-endcoded METAR observations in a repository maintained by NCEP.
+Note that the attribute LE_ProcessStep shows a BUFR decoding step while the attribute LE_Source identifies the repository.
+Note that both LE_ProcessStep and LE_Source point to entries in the NWS Codes Registry where additional details can be documented.
+
+The attribute strings associated with MetarObProcStep2 document that the data were quality controlled using a procedure developed and maintained by MDL.
+The attribute LE_ProcessStep again points to a codes registry entry.
+There is no entry for LE_Source in this variable.
+When LE_Source is omitted, we presume that the results from the previous process step are the source for the current process step.
 
 There are three time-related variables associated with METAR_Temp_instant_2_.
 They are OM_phenomenonTimeInstant, OM_resultTime, and OM_validTime.
