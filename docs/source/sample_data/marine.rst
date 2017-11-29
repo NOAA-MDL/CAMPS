@@ -55,14 +55,14 @@ Here is the CDL that describes the process step integers:
 
 ::
 
-| long MarineObProcStep1;
+| short MarineObProcStep1;
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Ingest/DecodeTabularText";
 |   :LE_Source = “https://codes.nws.noaa.gov/StatPP/Data/NDBC”
 |   :long_name = "Decode tabular text data";
 |   :standard_name = “source”;
 |   :units = 1;
 | 
-| long MarineObProcStep2;
+| short MarineObProcStep2;
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/QC/MarineQC";
 |   :long_name = "Marine Observation Quality Control";
 |   :standard_name = “source”;
@@ -107,4 +107,11 @@ Here are the CDL fragments that declare each of them:
 |   :wisps_role = "OM_validTime";
 |   :_ChunkSizes = 2, 744; // int
 
-
+The declarations we find here are quite simlar to the one used for METAR-encoded surface observations.
+OM_phenomenonTimeInstant takes on a value for each hour of the month.
+As noted above, the times are set to the top of each hour for all stations and times.
+OM_resultTime values are equal to OM_phenomenonTime values.
+OM_validTime is two-dimensional representing beginning time and ending time.
+The beginning times equal the phenomenon times and result times.
+(I.e., we don't intend for data consumers to use an observation before it's taken.)
+The ending times are set to missing to show that we intend for data consumers to use an observation indefinitely.
