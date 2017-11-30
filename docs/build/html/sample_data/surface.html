@@ -225,13 +225,64 @@ The data in this file were first decoded from METAR format.
 Then, they were quality controlled with routines developed by MDL.
 The attribute OM_procedure takes on a character string value that names one or more value-less integers.
 Those integers, in turn, convey metadata in their attributes about each procedureal step.</p>
-<p>Here&#8217;s the CDL fragment that describes the first step, MetarObProcStep1:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">long</span> <span class="n">MetarObProcStep1</span><span class="p">;</span>
-<span class="o">|</span>   <span class="p">:</span><span class="n">LE_ProcessStep</span> <span class="o">=</span> <span class="s2">&quot;https://codes.nws.noaa.gov/StatPP/Methods/SfcObs/METAR&quot;</span><span class="p">;</span>
-<span class="o">|</span>   <span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;METAR Observation&quot;</span><span class="p">;</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">short</span> <span class="n">MetarObProcStep1</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">LE_ProcessStep</span> <span class="o">=</span> <span class="s2">&quot;https://codes.nws.noaa.gov/StatPP/Methods/Ingest/DecodeBUFR&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">LE_Source</span> <span class="o">=</span> <span class="s2">&quot;https://codes.nws.noaa.gov/StatPP/Data/NCEPSfcObsMETAR&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Ingest BUFR-encoded METAR observations from NCEP repository&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="o">|</span>
+<span class="o">|</span> <span class="n">short</span> <span class="n">MetarObProcStep2</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">LE_ProcessStep</span> <span class="o">=</span> <span class="s2">&quot;https://codes.nws.noaa.gov/StatPP/Methods/QC/METARQC&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Apply MDL METAR Quality Control procedure&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>Additional content needed here.</p>
+<p>The attribute strings associated with MetarObProcStep1 document that the data were ingested from BUFR-endcoded METAR observations in a repository maintained by NCEP.
+Note that the attribute LE_ProcessStep shows a BUFR decoding step while the attribute LE_Source identifies the repository.
+Note that both LE_ProcessStep and LE_Source point to entries in the NWS Codes Registry where additional details can be documented.</p>
+<p>The attribute strings associated with MetarObProcStep2 document that the data were quality controlled using a procedure developed and maintained by MDL.
+The attribute LE_ProcessStep again points to a codes registry entry.
+There is no entry for LE_Source in this variable.
+When LE_Source is omitted, we presume that the results from the previous process step are the source for the current process step.</p>
+<p>There are three time-related variables associated with <a href="#id1"><span class="problematic" id="id2">METAR_Temp_instant_2_</span></a>.
+They are OM_phenomenonTimeInstant, OM_resultTime, and OM_validTime.
+Here are the CDL fragments that declare each of them:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">long</span> <span class="n">OM_phenomenonTimeInstant</span><span class="p">(</span><span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">672</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">wisps_role</span> <span class="o">=</span> <span class="s2">&quot;OM_phenomenonTime&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">672</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
+<span class="o">|</span>
+<span class="o">|</span> <span class="n">long</span> <span class="n">OM_resultTime</span><span class="p">(</span><span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">672</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">wisps_role</span> <span class="o">=</span> <span class="s2">&quot;OM_resultTime&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">672</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
+<span class="o">|</span>
+<span class="o">|</span> <span class="n">long</span> <span class="n">OM_validTime</span><span class="p">(</span><span class="n">begin_end_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">672</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">wisps_role</span> <span class="o">=</span> <span class="s2">&quot;OM_validTime&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">672</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
+</pre></div>
+</div>
+<p>The declarations we find here are somewhat different than those found in model output.
+As one might expect, there are fewer dimensions and the values are simpler.
+OM_phenomenonTimeInstant takes on a value for each hour of the month.
+As noted above, the times are set to the top of each hour for all stations and times.
+OM_resultTime values are equal to OM_phenomenonTime values.
+OM_validTime is two-dimensional representing beginning time and ending time.
+The beginning times equal the phenomenon times and result times.
+(I.e., we don&#8217;t intend for data consumers to use an observation before it&#8217;s taken.)
+The ending times are set to missing to show that we intend for data consumers to use an observation indefinitely.</p>
 </div>
 
 
