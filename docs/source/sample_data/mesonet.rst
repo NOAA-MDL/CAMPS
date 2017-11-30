@@ -7,7 +7,7 @@ Mesonet Observations
    This section describes sample surface observation output that can be :download:`downloaded here <./reduced_mesohre201207.nc>`.
    If you are reading this in a PDF document, then you will need to access a web version to download the sample files.
 
-This sample file contains station data from the NWS National Centers for Environmental Prediction (NCEP) Meteorological Assimilation Data Ingest System (MADIS; httpe://madis.ncep.noaa.gov).
+This sample file contains mesonet station data from the NWS National Centers for Environmental Prediction (NCEP) Meteorological Assimilation Data Ingest System (MADIS; https://madis.ncep.noaa.gov).
 The original MADIS file contained surface observation data from more than 22,000 stations taken during July 2012.
 
 .. note::
@@ -17,8 +17,8 @@ The original MADIS file contained surface observation data from more than 22,000
    This reduced the size substantially and maintained the diverse collection of station identifiers and metadata.
 
 The observations were processed through MDL's quality control (QC) routines.
-Notably, the observation time information was removed in that process.
-Thus, all time data in this file are at the "top of the hour."
+Notably, the observation time information was altered in that process.
+Specifically, all time data in this file are at the "top of the hour."
 E.g., a METAR whose time was encoded as 1953 (19:53:00 UTC) is stored in this file with the time 20:00:00 UTC.
 This is useful for a number of applications in statistical post-processing, but problematic in a number of other ways.
 
@@ -55,6 +55,7 @@ The attribute OM_observedProperty takes on a value that resolves to a code regis
 
 The attribute OM_procedure points to a three step process.
 The data in this file were first decoded from a tabular text format.
+(They were likely received by MADIS in a wide variety of formats.)
 Then, they were quality controlled with routines developed by MDL.
 Finally, they were given a geospatial quality control developed by MDL.
 This final step identifies stations with identical MADIS station identifiers that are considered too far apart for our statistical post-processing needs.
@@ -68,25 +69,25 @@ Here is the CDL that describes the process step integers:
 
 | short MesoObProcStep1;
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Ingest/DecodeTabularText";
-|   :LE_Source = “https://codes.nws.noaa.gov/StatPP/Data/MADIS”;
-|   :long_name = "Ingest tabular text-encoded data from MADIS";
+|   :LE_Source = “https://codes.nws.noaa.gov/StatPP/Data/MADISMesonet”;
+|   :long_name = "Ingest tabular text-encoded mesonet data from MADIS";
 |   :standard_name = “source”;
-|   :units = 1;
+|   :units = "1";
 | 
 | short MesoObProcStep2;
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/QC/MesoQC";
 |   :long_name = "Apply MDL mesonet Quality Control technique";
 |   :standard_name = “source”;
-|   :units = 1;
+|   :units = "1";
 | 
 | short MesoObProcStep3;
 |   :LE_ProcessStep = “https://codes.nws.noaa.gov/StatPP/Methods/QC/GeodspatialQC”;
 |   :long_name = “Identify and resolve geospatial inconsistencies”;
 |   :standard_name = “source”;
-|   :units = 1;
+|   :units = "1";
 
-The attribute strings associated with MesoObProcStep1 document that the data were ingested from surface observations in a tabular text format maintained by NCEP's Meteorological Assimilation Data Ingest System (MADIS).
-Note that the attribute LE_ProcessStep shows a tabular text decoding step while the attribute LE_Source identifies MADIS as the source.
+The attribute strings associated with MesoObProcStep1 document that the data were ingested from mesonet observations in a tabular text format maintained by NCEP's Meteorological Assimilation Data Ingest System (MADIS).
+Note that the attribute LE_ProcessStep shows a tabular text decoding step while the attribute LE_Source identifies MADISMesonet as the source.
 Note that both LE_ProcessStep and LE_Source point to entries in the NWS Codes Registry where additional details can be documented.
 
 The attribute strings associated with MesoObProcStep2 document that the data were quality controlled using a procedure developed and maintained by MDL.

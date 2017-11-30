@@ -14,8 +14,8 @@ This sample file contains station data from METAR-encoded hourly surface observa
    Two thousand of those stations were selected at random to constitute this file.
 
 The observations were processed through MDL's quality control (QC) routines.
-Notably, the observation time information was removed in that process.
-Thus, all time data in this file are at the "top of the hour."
+Notably, the observation time information was altered in that process.
+Specifically, all time data in this file are at the "top of the hour."
 E.g., a METAR whose time was encoded as 1953 (19:53:00 UTC) is stored in this file with the time 20:00:00 UTC.
 This is useful for a number of applications in statistical post-processing, but problematic in a number of other ways.
 
