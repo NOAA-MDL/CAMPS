@@ -56,16 +56,16 @@ Then, they were quality controlled with routines developed by MDL.
 The attribute OM_procedure takes on a character string value that names one or more value-less integers.
 Those integers, in turn, convey metadata in their attributes about each procedureal step.
 
-::
+.. code-block:: python
 
-| short MetarObProcStep1;
+| short MetarObProcStep1(dummy);
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Ingest/DecodeBUFR";
 |   :LE_Source = “https://codes.nws.noaa.gov/StatPP/Data/NCEPSfcObsMETAR”;
 |   :long_name = "Ingest BUFR-encoded METAR observations from NCEP repository";
 |   :standard_name = “source”;
 |   :units = 1;
 | 
-| short MetarObProcStep2;
+| short MetarObProcStep2(dummy);
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/QC/METARQC";
 |   :long_name = "Apply MDL METAR Quality Control procedure";
 |   :standard_name = “source”;
