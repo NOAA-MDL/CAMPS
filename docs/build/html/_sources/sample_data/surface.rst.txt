@@ -14,8 +14,8 @@ This sample file contains station data from METAR-encoded hourly surface observa
    Two thousand of those stations were selected at random to constitute this file.
 
 The observations were processed through MDL's quality control (QC) routines.
-Notably, the observation time information was removed in that process.
-Thus, all time data in this file are at the "top of the hour."
+Notably, the observation time information was altered in that process.
+Specifically, all time data in this file are at the "top of the hour."
 E.g., a METAR whose time was encoded as 1953 (19:53:00 UTC) is stored in this file with the time 20:00:00 UTC.
 This is useful for a number of applications in statistical post-processing, but problematic in a number of other ways.
 
@@ -51,10 +51,12 @@ Each of these variables are explained in some detail below.
 The attribute OM_observedProperty takes on a value that resolves to a code registry entry for temperature.
 
 The attribute OM_procedure points to a two step process.
-The data in this file were first decoded from METAR format.
+The data in this file were first decoded from METAR format to BUFR format by NCEP.
+MDL routines then decoded the BUFR data and ingested them.
 Then, they were quality controlled with routines developed by MDL.
 The attribute OM_procedure takes on a character string value that names one or more value-less integers.
 Those integers, in turn, convey metadata in their attributes about each procedureal step.
+Here is a CDL fragment:
 
 ::
     
@@ -63,17 +65,19 @@ Those integers, in turn, convey metadata in their attributes about each procedur
 |   :LE_Source = "https://codes.nws.noaa.gov/StatPP/Data/NCEPSfcObsMETAR";
 |   :long_name = "Ingest BUFR-encoded METAR observations from NCEP repository";
 |   :standard_name = "source";
-|   :units = 1;
+|   :units = "1";
 | 
 | short MetarObProcStep2;
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/QC/METARQC";
 |   :long_name = "Apply MDL METAR Quality Control procedure";
 |   :standard_name = "source";
-|   :units = 1;
+|   :units = "1";
 
 The attribute strings associated with MetarObProcStep1 document that the data were ingested from BUFR-endcoded METAR observations in a repository maintained by NCEP.
-Note that the attribute LE_ProcessStep shows a BUFR decoding step while the attribute LE_Source identifies the repository.
-Note that both LE_ProcessStep and LE_Source point to entries in the NWS Codes Registry where additional details can be documented.
+The attribute LE_ProcessStep shows a BUFR decoding step while the attribute LE_Source identifies the repository.
+Both LE_ProcessStep and LE_Source point to entries in the NWS Codes Registry where additional details can be documented.
+The step where NCEP decoded the METAR-encoded observations and stored them in BUFR does not appear in the procedure.
+Those steps that happened before the data were ingested are not documented a procedure steps.
 
 The attribute strings associated with MetarObProcStep2 document that the data were quality controlled using a procedure developed and maintained by MDL.
 The attribute LE_ProcessStep again points to a codes registry entry.

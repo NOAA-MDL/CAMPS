@@ -17,6 +17,7 @@ These pages will help the community use and integrate into WISPS.
    overview/index
    data_encoding
    data_encoding_mos
+   codes_registry/index
    modules/wisps
 
    

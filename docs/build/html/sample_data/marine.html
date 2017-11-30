@@ -184,8 +184,8 @@
 If you are reading this in a PDF document, then you will need to access a web version to download the sample files.</p>
 <p>This sample file contains marine station data from a selection of ~600 fixed data buoys located in the Great Lakes and coastal waters of the US.  The observations were taken during the month of May 2013.</p>
 <p>The observations were processed through MDL&#8217;s quality control (QC) routines.
-Notably, the observation time information was removed in that process.
-Thus, all time data in this file are at the &#8220;top of the hour.&#8221;
+Notably, the observation time information was altered in that process.
+Specifically, all time data in this file are at the &#8220;top of the hour.&#8221;
 E.g., a METAR whose time was encoded as 1953 (19:50:00 UTC) is stored in this file with the time 20:00:00 UTC.
 This is useful for a number of applications in statistical post-processing, but problematic in a number of other ways.</p>
 <p>Here’s a CDL fragment for an array of 2-m temperature values.
@@ -215,7 +215,8 @@ It simply indicates 2 meters above the Earth&#8217;s surface.</p>
 Each of these variables are explained in some detail below.</p>
 <p>The attribute OM_observedProperty takes on a value that resolves to a code registry entry for temperature.</p>
 <p>The attribute OM_procedure points to a two step process.
-The data in this file were first decoded from a tabular text format.
+The data in this file were decoded from a tabular text format.
+(They likely were exchanged in a different format before they were encoded in tabular text.)
 Then, they were quality controlled with routines developed by MDL.
 The attribute OM_procedure takes on a character string value that names one or more value-less integers.
 Those integers, in turn, convey metadata in their attributes about each procedureal step.</p>
@@ -225,13 +226,13 @@ Those integers, in turn, convey metadata in their attributes about each procedur
 |   :LE_Source = “https://codes.nws.noaa.gov/StatPP/Data/NDBC”
 |   :long_name = &quot;Decode tabular text data&quot;;
 |   :standard_name = “source”;
-|   :units = 1;
+|   :units = &quot;1&quot;;
 |
 | short MarineObProcStep2;
 |   :LE_ProcessStep = &quot;https://codes.nws.noaa.gov/StatPP/Methods/QC/MarineQC&quot;;
 |   :long_name = &quot;Marine Observation Quality Control&quot;;
 |   :standard_name = “source”;
-|   :units = 1;
+|   :units = &quot;1&quot;;
 </pre></div>
 </div>
 <p>The attribute strings associated with MarineObProcStep1 document that the data were ingested from marine observations in a tabular text format maintained by the National Data Buoy Center (NDBC).
