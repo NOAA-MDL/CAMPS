@@ -69,21 +69,21 @@ Here is the CDL that describes the process step integers:
 
 | short MesoObProcStep1;
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Ingest/DecodeTabularText";
-|   :LE_Source = “https://codes.nws.noaa.gov/StatPP/Data/MADISMesonet”;
+|   :LE_Source = "https://codes.nws.noaa.gov/StatPP/Data/MADISMesonet";
 |   :long_name = "Ingest tabular text-encoded mesonet data from MADIS";
-|   :standard_name = “source”;
+|   :standard_name = "source";
 |   :units = "1";
 | 
 | short MesoObProcStep2;
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/QC/MesoQC";
 |   :long_name = "Apply MDL mesonet Quality Control technique";
-|   :standard_name = “source”;
+|   :standard_name = "source";
 |   :units = "1";
 | 
 | short MesoObProcStep3;
-|   :LE_ProcessStep = “https://codes.nws.noaa.gov/StatPP/Methods/QC/GeodspatialQC”;
-|   :long_name = “Identify and resolve geospatial inconsistencies”;
-|   :standard_name = “source”;
+|   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/QC/GeodspatialQC";
+|   :long_name = "Identify and resolve geospatial inconsistencies";
+|   :standard_name = "source";
 |   :units = "1";
 
 The attribute strings associated with MesoObProcStep1 document that the data were ingested from mesonet observations in a tabular text format maintained by NCEP's Meteorological Assimilation Data Ingest System (MADIS).

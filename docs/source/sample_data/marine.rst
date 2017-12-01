@@ -58,15 +58,15 @@ Here is the CDL that describes the process step integers:
 
 | short MarineObProcStep1;
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Ingest/DecodeTabularText";
-|   :LE_Source = “https://codes.nws.noaa.gov/StatPP/Data/NDBC”
+|   :LE_Source = "https://codes.nws.noaa.gov/StatPP/Data/NDBC"
 |   :long_name = "Decode tabular text data";
-|   :standard_name = “source”;
+|   :standard_name = "source";
 |   :units = "1";
 | 
 | short MarineObProcStep2;
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/QC/MarineQC";
 |   :long_name = "Marine Observation Quality Control";
-|   :standard_name = “source”;
+|   :standard_name = "source";
 |   :units = "1";
 
 The attribute strings associated with MarineObProcStep1 document that the data were ingested from marine observations in a tabular text format maintained by the National Data Buoy Center (NDBC).
