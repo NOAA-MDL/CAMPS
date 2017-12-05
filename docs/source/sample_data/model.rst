@@ -36,7 +36,7 @@ Here's a CDL fragment for a 2-m temperature field.  (Output is captured from the
 |   :standard_name = "air_temperature";
 |   :units = "K";
 |   :OM_observedProperty = "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp";
-|   :OM_procedure = "( mosLinearInterpolation )";
+|   :OM_procedure = "( GFSModProcStep1,GFSModProcStep2 )";
 |   :_ChunkSizes = 85, 149, 47, 3, 1; // int
 
 The y and x coordinates, of course, delineate the geogrphic grid.  Lead_times delineate the temporal domain for this variable, and default_time_coordinate_size delineates the various model cycles.  The value for FcstTme_hour equates to 0600 UTC on 01-Jan-1970, and it indicates that all data stored in this variable are associated with some 0600 UTC run of the NWP system.
@@ -45,18 +45,26 @@ The next attribute identifies a number of ancillary variables, most of which are
 
 The attribute OM_observedProperty takes on a value that resolves to a code registry entry for temperature.
 
-The attribute OM_procedure points to a one-step procedure.  The only processing performed by the software that created this file interpolated the data from the latitude/longitude file disseminated by the NWS to the northern polar stereographic grid described by attributes that are not shown in this fragment.  The attribute OM_procedure takes on a character string value that names one or more value-less integers.  Those integers, in turn, convey metadata in their attributes about each procedure step.
+The attribute OM_procedure points to a two step process. The data in this file were decoded from GRIB2 by MDL routines to ingest them into WISPS. Then, a linear interpolation routine was used to convert from a latitude-longitude grid to a polar stereographic grid.
 
-Here's the CDL fragment that declares mosLinearInterpolation:
+The attribute OM_procedure takes on a character string value that names two value-less integers. Those integers, in turn, convey metadata in their attributes about each procedureal step. Here is a CDL fragment that declares these two integers:
 
 ::
 
-| long mosLinearInterpolation;
-|   :long_name = "MOS Linear Interpolation";
-|   :LE_Source = "https://codes.nws.noaa.gov/NumericalWeatherPrediction/Models/GFS13";
+| short GFSModProcStep1;
+|   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Ingest/DecodeGRIB2”;
+|   :LE_Source = “https://codes.nws.noaa.gov/StatPP/Data/GFS13”;
+|   :long_name = “Ingest GRIB2-encoded GFS13 forecasts from NCEP repository”;
+|   :standard_name = “source”;
+|   :units = “1”;
+| 
+| short GFSModProcStep2;
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Geosp/LinInterp";
+|   :long_name = “Apply MDL bilinear interpolation technique”;
+|   :standard_name = “source”;
+|   :units = “1”;
 
-The attribute LE_Source shows the input into this step of the procedure.  Of course, it's version 13 of the Global Forecast System (GFS).  The attribute LE_ProcessStep shows that a linear interpolation technique was applied.  Both of these concepts are documented in the NWS Codes Registry.
+The first step of the procedure decodes the data from GRIB2 and ingests them into WISPS.  The attribute LE_Source shows the input into this step of the procedure.  Of course, it's version 13 of the Global Forecast System (GFS).  The attribute LE_ProcessStep shows that a linear interpolation technique was applied.  Both of these concepts are documented in the NWS Codes Registry.
 
 The next few CDL fragments illustrate the time variables used within WISPS.
 
