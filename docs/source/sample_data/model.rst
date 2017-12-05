@@ -1,3 +1,4 @@
+
 Model output
 ============
 
@@ -55,7 +56,7 @@ The attribute OM_procedure takes on a character string value that names two valu
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Ingest/DecodeGRIB2";
 |   :LE_Source = "https://codes.nws.noaa.gov/StatPP/Data/GFS13";
 |   :long_name = "Ingest GRIB2-encoded GFS13 forecasts from NCEP repository";
-|   :standard_name = “source";
+|   :standard_name = "source";
 |   :units = "1";
 | 
 | short GFSModProcStep2;
