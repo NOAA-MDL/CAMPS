@@ -52,17 +52,17 @@ The attribute OM_procedure takes on a character string value that names two valu
 ::
 
 | short GFSModProcStep1;
-|   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Ingest/DecodeGRIB2”;
-|   :LE_Source = “https://codes.nws.noaa.gov/StatPP/Data/GFS13”;
-|   :long_name = “Ingest GRIB2-encoded GFS13 forecasts from NCEP repository”;
-|   :standard_name = “source”;
-|   :units = “1”;
+|   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Ingest/DecodeGRIB2";
+|   :LE_Source = "https://codes.nws.noaa.gov/StatPP/Data/GFS13";
+|   :long_name = "Ingest GRIB2-encoded GFS13 forecasts from NCEP repository";
+|   :standard_name = “source";
+|   :units = "1";
 | 
 | short GFSModProcStep2;
 |   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Geosp/LinInterp";
-|   :long_name = “Apply MDL bilinear interpolation technique”;
-|   :standard_name = “source”;
-|   :units = “1”;
+|   :long_name = "Apply MDL bilinear interpolation technique";
+|   :standard_name = "source";
+|   :units = "1";
 
 The first step of the procedure decodes the data from GRIB2 and ingests them into WISPS.  The attribute LE_Source shows the input into this step of the procedure.  Of course, it's version 13 of the Global Forecast System (GFS).  The attribute LE_ProcessStep shows that a linear interpolation technique was applied.  Both of these concepts are documented in the NWS Codes Registry.
 
