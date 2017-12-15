@@ -12,13 +12,17 @@ import pdb
 def test_fetch():
     """Test fetch function"""
     # Create metadata dictionary of variable that should be pulled.
-    metadata = {'property':'Temp', 
-                'vert_coord1' : 500}
+    metadata =  {
+                'property':'Temp', 
+                'vert_coord1' : 500
+                }
     w_obj = fetch.fetch(**metadata)
     assert w_obj
 
-    metadata = {'property':'StatPP/Data/Temp', 
-                'vert_coord1' : 500}
+    metadata =  {
+                'property':'StatPP/Data/Temp', 
+                'vert_coord1' : 500
+                }
     w_obj2 = fetch.fetch(**metadata)
     assert w_obj.data.all() == w_obj2.data.all()
     

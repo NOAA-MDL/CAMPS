@@ -85,7 +85,8 @@ def main(control_file=None):
             times = get_time(reader.dates)
             obj.time = times
             obj.add_data(ob_arr)
-            obj.add_source("MARINE")
+            obj.add_process('MarineObProcStep1')
+            obj.add_process('MarineObProcStep2')
             obj_list.append(obj)
         except KeyError:
             print observation_name, "undefined"
@@ -94,7 +95,7 @@ def main(control_file=None):
 
     obj = pack_station_names(station_names)
     obj.time = get_time(reader.dates)
-    obj.add_source("MARINE")
+    #obj.add_source("MARINE")
     obj_list.append(obj)
 
 

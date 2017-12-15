@@ -26,15 +26,16 @@ c = conn.cursor()
 
 def create_variable_db():
     """
-    Creates a variable database based off of dictionary
+    Creates a variable database based off of dictionary.
+    Clears table if called.
     """
     table_name = 'variable'
     conn = connect(db_name)
     c = conn.cursor()
     c.execute('DROP TABLE IF EXISTS ' + table_name)
     # Create the table
-    fields = get_variable_fields()
-    types = get_variable_types()
+    fields = get_variable_ftypes().keys()
+    types = get_variable_ftypes().values()
     column_names_str = "("
     for f, t in zip(fields, types):
         column_names_str += f
@@ -57,6 +58,21 @@ def get_variable_types():
             'BIGINT', 'TEXT',
             'INTEGER', 'INTEGER', 'TEXT',
             'TEXT', 'TEXT']
+
+def get_variable_ftypes():
+    return { 
+        'property': 'TEXT',
+        'source': 'TEXT',
+        'start': 'BIGINT',
+        'end': 'BIGINT',
+        'duration': 'BIGINT',
+        'duration_method': 'TEXT',
+        'vert_coord1': 'INTEGER',
+        'vert_coord2': 'INTEGER',
+        'vert_method': 'TEXT',
+        'filename': 'TEXT',
+        'name': 'TEXT'
+        }
 
 
 def insert_variable(property, source, start, end,
@@ -99,8 +115,7 @@ def insert_variable(property, source, start, end,
 
 def create_new_metadata_db():
     """
-    Deletes old metadata table and replaces it with a new table 
-    based on the configuration.
+
     """
     table_name = 'metadata'
     variables = cfg.read_variables()
@@ -177,9 +192,9 @@ def get_variable(**kwargs):
     for k,v in kwargs.iteritems():
         operator = "="
         if k == "start":
-            operator = ">="
-        elif k == "end":
             operator = "<="
+        elif k == "end":
+            operator = ">="
         where_str += k + " "+operator+" '" + str(v) + "' AND "
     where_str = where_str[0:-4] # Remove trailing 'AND'
     filename_index = name_arr.index('filename')
@@ -292,7 +307,10 @@ def get_property(name, attr):
         index = name_arr.index(attr)
         sql = "SELECT " + attr + " FROM " + db + " WHERE name = '" + name + "'"
         c.execute(sql)
-        return c.fetchone()[0]
+        property = c.fetchone()
+        if property is not None:
+            return c.fetchone()[0]
+        return None
     except ValueError as err:
         logging.info(attr + " is not a known property attribute or " + name + " not defined")
         return False

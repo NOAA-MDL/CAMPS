@@ -10,9 +10,38 @@ import numpy as np
 from netCDF4 import Dataset
 from scipy.interpolate import griddata
 from pyproj import Proj
+import registry.util as cfg
+import util
 
 
+def interp_setup(w_obj, interp_method):
+    """Handle the Wisps_data for interpolation.
+    """
+    # Extract x,y variables
+    x = w_obj.location.get_x()
+    y = w_obj.location.get_y()
+    # Extract model_values 
+    model_values = w_obj.data
+    w_obj.add_process('BiLinInterp')
+    # Get Station info
+    control = cfg.read_mospred_control()
+    station_defs_file = control['station_defs']
+    selected_stations_file = control['selected_stations']
+    station_defs = util.read_station_definitions(station_defs_file)
+    # Read valid stations
+    selected_stations = util.read_valid_stations(selected_stations_file)
+    lats = [i['lat'] for i in station_defs.values()]
+    lons = [i['lon'] for i in station_defs.values()]
+    station_names = station_defs.keys()
 
+    data = interp(x, y, model_values, lats, lons)
+
+    station_dim = cfg.read_dimensions()['nstations']
+    w_obj.dimensions = [station_dim]
+    w_obj.data = data
+
+    # Refer to config for station values
+    return w_obj
 
 def interp(x, y, model_values, station_lat, station_lon, method='linear'):
     """
@@ -35,7 +64,7 @@ def interp(x, y, model_values, station_lat, station_lon, method='linear'):
     # Where n in size of array and D is number of dimensions... or 2
     points = np.array((x_1d, y_1d)).T
 
-    # The point(s) at which to interpolate
+    # The point(s) at which to interpolate in grid space.
     xi_x,xi_y = reproject(station_lon, station_lat)
 
     try:
@@ -61,8 +90,8 @@ def reproject(lon=None, lat=None):
     control = cfg.read_mospred_control()
     projparams = control['projparams']
     p = Proj(projparams=projparams)
-    x,y = p(lon, lat )
-    return (x,y)
+    x,y = p(lon, lat)
+    return (np.array(x),np.array(y))
 
 
 

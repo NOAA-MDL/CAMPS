@@ -152,6 +152,7 @@ def write_obs_to_netcdf(filepath, point_dict):
         if(ob_type == "MESONET"):
             obj.add_process('MesoObProcStep1')
             obj.add_process('MesoObProcStep2')
+            obj.add_process('MesoObProcStep3')
         obj.time = metar_driver.add_time(start_date, end_date)
         obj.change_data_type()
         #obj.time = metar_driver.add_time(start_date, end_date)

@@ -10,9 +10,9 @@
 #    day : null
 #    stride : null
 
-range: ['2013100100-2014033100,24h']
+range: ['2016070100-2016073100,24h']
 
-forecast_reference_time : 18 # hour
+forecast_reference_time : 06 # hour
 
 # Where observation/model data is held.
 # Specify one or many directories

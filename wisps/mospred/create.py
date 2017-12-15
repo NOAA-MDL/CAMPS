@@ -1,11 +1,13 @@
-# Many import statements here
 import os
 import sys
+from os.path import basename
 file_dir = os.path.dirname(os.path.realpath(__file__))
 relative_path = "/.."
 path = os.path.abspath(file_dir + relative_path)
 sys.path.insert(0, path)
 import thickness
+import computations
+import wind_speed
 
 
 creation_functions = {
@@ -16,7 +18,7 @@ creation_functions = {
         'CldHght' : None,
         'SkyCover' : None,
         'SunDuratn' : None,
-        'GeoHght' : thickness.thickness, # If it makes it here, its a thickenss
+        'GeoHght' : None, 
         'Pres' : None,
         'Albedo' : None,
         'DOY' : None,
@@ -48,7 +50,7 @@ creation_functions = {
         'Uwind' : None,
         'Vwind' : None,
         'WindDir' : None,
-        'WSpd' : None,
+        'WSpd' : wind_speed.WSpd_setup,
         'WSpdRatio' : None,
         'Wwind' : None,
         'CAPE' : None,
@@ -142,13 +144,34 @@ creation_functions = {
         'Vsby' : None
         }
 
+common_functions = {
+     'mean' : computations.mean,
+     'difference' : computations.difference,
+     'sum' : computations.sum,
+     'point' : None, # What is this?
+     'maximum' : computations.max,
+     'minimum' : computations.min,
+     'mid_range' : None,
+     'standard_deviation' : None,
+     'variance' : None,
+     'mult' : None
+    }
 
-def get_function(observedProperty):
+def is_valid_property(observedProperty):
+    """
+    """
+    return basename(observedProperty) in creation_functions
+
+def get_met_function(observedProperty):
     """Returns function associated with a particular weather element
     """
+    # First, check if it's a arithmetic function on 2 layers
     if observedProperty in creation_functions:
         return creation_functions[observedProperty]
     return None
+
+def get_common_function(method):
+    return common_functions[method]
 
 
 

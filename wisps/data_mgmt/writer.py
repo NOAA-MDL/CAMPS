@@ -82,6 +82,14 @@ def write(wisps_data, filename, global_attrs={}, overwrite=True,
 
 def get_primary_variables(w_list):
     """Return space-separated primary variables.
+
+    Args:
+        w_list (:obj:`list` of :obj:Wisps_data): variables that will have
+                their names extracted.
+
+    Returns:
+        str: Space-separated string of variable names 
+
     """
     PV_str = ""
     for w in w_list:
@@ -92,6 +100,13 @@ def get_primary_variables(w_list):
 def write_global_attributes(nc, extra_globals):
     """Writes the global attributes as defined in netcdf.yml.
     Also may add additional information.
+
+    Args:
+        nc (:obj:`Dataset`): NetCDF file handle.
+        extra_globals(dict): Additional global attributes to be added to `nc`
+
+    Returns:
+        None
     """
     nc_globals = util.read_globals()
     nc_globals.update(extra_globals)
@@ -100,7 +115,13 @@ def write_global_attributes(nc, extra_globals):
 
 
 def update_variable_db(w_obj):
-    """Adds a new entry to the variable database
+    """Adds a new entry to the variable database.
+
+    Args:
+        w_obj (:obj:`Wisps_data`): object metadata to store in metadata db.
+
+    Returns:
+        None
     """
     db.insert_variable(
         property,
@@ -120,8 +141,13 @@ def get_dimensions(wisps_data):
     """
     Checks if each object's dimensions have the same length.
     Confirms shape of data is same number of dimensions.
-    returns a dictionary where the key is the dimension name
-    and the value is the number of elements.
+
+    Args:
+        w_obj (:obj:list of :obj:`Wisps_data`): To assure dimensions are consistent.
+
+    Returns:
+        A dictionary where the key is the dimension name
+        and the value is the number of elements.
     """
     # Define count; where the
     # key is the dimension name, and the

@@ -363,7 +363,9 @@ def convert_grib2(filename):
         valid_time = valid_time.astype(int)
         phenom_time = valid_time
         obj = Wisps_data(name)
-        obj.add_source('GFS')
+        #obj.add_source('GFS')
+        obj.add_process('GFSModProcStep1')
+        obj.add_process('GFSModProcStep2')
         obj.add_fcstTime(fcst_time)
         obj.dimensions = [y_proj, x_proj, lead_time_dim, time]
         try:

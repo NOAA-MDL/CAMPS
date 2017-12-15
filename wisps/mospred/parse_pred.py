@@ -11,7 +11,7 @@ import procedures
 observedProperties = cfg.read_observedProperties()
 default_time = 'hour'
 cell_methods_regex = {
-    re.compile(".*av[a-z]*g.*"): "mean",
+    re.compile(".*av[a-z]*g.*"): 'mean',
     re.compile(".*mean.*"): 'mean',
     re.compile(".*diff.*"): 'difference',
     re.compile(".*sum.*"): 'sum',
@@ -101,6 +101,7 @@ def cell_method(in_str):
 def duration(in_str):
     """Returns a duration identifier."""
     entries = separate_entries(in_str)
+    return entries
 
 
 def observedProperty(in_str):
@@ -187,7 +188,7 @@ def vertical_coordinate(in_str):
 def source(in_str):
     """returns the source attribute in the mos predictor list"""
     in_str = in_str.lower()
-    valid_sources = ['metar', 'gfs', 'nam', 'mesonet']
+    valid_sources = ['metar', 'gfs', 'gfs13', 'nam', 'mesonet']
     if in_str in valid_sources:
         return True
     raise LookupError

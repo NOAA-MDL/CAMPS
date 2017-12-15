@@ -4,15 +4,23 @@ from Wisps_data import Wisps_data
 import Time
 from Process import Process
 import pdb
+from Location import Location
 import logging
 logging.basicConfig(level=logging.INFO)
 
 
 ancil_name = 'ancillary_variables'
+file_cache = {}
 
 def read(*filenames):
     """Function to read a netCDF file of given
     filename into a list of WISPS data objects.
+    Args:
+        *filenames (:obj:list of str): netCDF files to pull from.
+    
+    Returns:
+        (:obj:`list` of :obj:Wisps_data) : Wisps_data objects
+
     """
     wisps_data = []
     variables_dict = {}
@@ -24,7 +32,7 @@ def read(*filenames):
         # and the predictor variables.
         procedures, variables_dict = separate_procedure_and_data(
             variables_dict)
-        times, variables_dict = separate_time_and_data(variables_dict)
+        teimes, variables_dict = separate_time_and_data(variables_dict)
         coordinates, variables_dict = separate_coordinate_and_data(
             variables_dict)
         # Initializes the Wisps_data objects
@@ -37,6 +45,14 @@ def read(*filenames):
 def add_metadata_from_netcdf_variable(nc_var, wisps_obj):
     """Fill metadata dict in wisps object with relavent 
     metadata from the netcdf variable.
+    Modifies given Wisps_object.
+    Args:
+        nc_var (:obj:Dataset.Variable): netCDF4 Dataset variable to pull metadata.
+        wisps_obj (:obj:Wisps_data): Wisps_data object to add metadata.
+    
+    Returns:
+        None
+
     """
     metadata_exceptions = ['_FillValue']
     metadata_keys = nc_var.ncattrs()
@@ -46,12 +62,26 @@ def add_metadata_from_netcdf_variable(nc_var, wisps_obj):
             w_obj.add_metadata(key, value)
     
 
-def read_var(filepath, name, lead_time=None, phenom_time=None):
+def read_var(filepath, name, lead_time=None, forecast_time=None):
     """
     Returns a Wisps_data object from netcdf file. Optionally
     returns Wisps_data object with only a slice of data.
+    Args:
+        filepath (str): Filepath to netCDF file>
+        name (str): Exact name of netCDF variable.
+        lead_time (optional, int): lead time to subset. (seconds)
+        forecast_time (optional, int): Time that forecast was made
+                        in which to subset. (seconds)
+    
+    Returns:
+        `obj`(Wisps_data)
+
     """
-    nc = Dataset(filepath, mode='r', format="NETCDF4")
+    if filepath in file_cache:
+        nc = file_cache[filepath]['filehandle']
+    else:
+        nc = Dataset(filepath, mode='r', format="NETCDF4")
+        file_cache[filepath] = {'filehandle':nc}
     nc_var = nc.variables[name]
     ancil_vars = nc_var.getncattr(ancil_name).split(' ')
     name = nc_var.getncattr("OM_observedProperty")
@@ -64,47 +94,82 @@ def read_var(filepath, name, lead_time=None, phenom_time=None):
         if key not in metadata_exceptions:
             value = nc_var.getncattr(key)
             w_obj.add_metadata(key, value)
+    # Get Processes
+    p_string = nc_var.getncattr('OM_procedure')
+    procedures = parse_processes_string(p_string)
+    for p in procedures:
+        w_obj.add_process(str(p))
+
     # Get Time
     time = []
     for v in ancil_vars:
         if 'Time' in v or '_time' in v:
             nc_time = nc.variables[v]
-            t_obj = create_time(nc_time)
+            t_obj = create_time(nc_time, lead_time, forecast_time)
             w_obj.time.append(t_obj)
             
     # Get vertCoord
-    coord_vars = ""
+    coord_vars = []
     try:
-        coord_vars = nc_var.getncattr('coordinates').split(' ')
+        coord_vars = [x.strip(' ') for x in nc_var.getncattr('coordinates').split(',')]
     except:
         pass # No coordinate attribute in nc_var
+
+    location = get_location(filepath, nc, coord_vars)
+    w_obj.location = location
     for c in coord_vars:
         nc_coord = nc.variables[c]
         coord_len = len(nc_coord[:])
-        assert coord_len > 0 and coord_len <= 2
-        if coord_len == 2: # It's bounded
+        if coord_len <= 0:
+            continue
+        elif coord_len == 1: # Single level
+            w_obj.properties['coord_val'] = nc_coord[0]
+        elif coord_len == 2: # Bounded level
             w_obj.properties['coord_val1'] = nc_coord[0]
             w_obj.properties['coord_val2'] = nc_coord[1]
-        elif coord_len == 1:
-            w_obj.properties['coord_val'] = nc_coord[0]
 
-    # Get Processes
-    p_string = nc_var.getncattr('OM_procedure')
-    procedures = parse_processes_string(p_string)
     
     # Add Dimensions
     w_obj.dimensions = nc_var.dimensions
     # Store data
-    if lead_time is None and phenom_time is None:
+    if lead_time is None and forecast_time is None:
         w_obj.data = nc_var[:]
     else:
-        w_obj = subset_time(w_obj, nc_var, lead_time, phenom_time)
+        w_obj = subset_time(w_obj, nc_var, lead_time, forecast_time)
 #    return (var,w_obj)
     return w_obj
+
+def get_location(filename, nc, coord_vars):
+    """
+    """
+    if file_cache[filename] and 'location' in file_cache[filename]:
+        return file_cache[filename]['location']
+    locations = []
+    for c in coord_vars:
+        nc_coord = nc.variables[c]
+        coord_len = len(nc_coord[:])
+        if coord_len > 2: # location data
+            locations.append(nc_coord)
+    location_obj = Location(*locations)
+    file_cache[filename]['location'] = location_obj
+    return location_obj
+
+def get_coordinate_names(nc_var):
+    pass
 
 def subset_time(w_obj, nc_var, lead_time, time):
     """Only pull a slice of data from the netcdf variable if only a portion of time.
     rework time objects to reflect the subset.
+    Args:
+        w_obj (:obj:`Wisps_data`): Wisps_object to store the data.
+                Assumes w_obj has Time compositions>
+        nc_var (obj:`NetCDF4.Dataset.Variable`): Variable where data is subset from.
+        lead_time (int): lead time to subset.
+        time (int): forecast time to subset
+    
+    Returns:
+        *obj*Wisps_data
+
     """
     # First, check if it's model data. if it is not and
     # lead time was requested return obj, throw warning
@@ -115,16 +180,15 @@ def subset_time(w_obj, nc_var, lead_time, time):
 
     l_time_index = None
     p_time_index = None
-
     # Next, search lead_time variable for proper index
     if lead_time is not None:
         l_time = w_obj.get_lead_time()
         l_time_index = l_time.get_index(lead_time)
     if time is not None:
-        p_time = w_obj.get_phenom_time()
+        p_time = w_obj.get_forecast_reference_time()
         p_time_index = p_time.get_index(time)
 
-    if l_time_index and p_time_index:
+    if l_time_index is not None and p_time_index is not None:
         data = nc_var[:,:,l_time_index, p_time_index]
     elif l_time_index: 
         data = nc_var[:,:,l_time_index,:]
@@ -135,8 +199,14 @@ def subset_time(w_obj, nc_var, lead_time, time):
     return w_obj
 
 
-def create_time(nc_variable):
+def create_time(nc_variable, lead_time=None, fcst_time=None):
     """Given a netcdf4 variable, create Time representation.
+    Args:
+        nc_variable (:obj:`NetCDF4.Dataset.Variable`): variable with which to create times.
+    
+    Returns:
+        :obj:(`Time` subclass) subclass of Time with appropriate data.
+
     """
     time_switch = {
             'OM_phenomenonTime' : Time.PhenomenonTime,
@@ -148,11 +218,32 @@ def create_time(nc_variable):
             }
     role = nc_variable.getncattr("wisps_role")
     t_class = time_switch[role]
-    return t_class(data=nc_variable[:])
+    attributes = nc_variable.ncattrs()
+    t_obj =  t_class(data=nc_variable[:])
+    # set metadata
+    for a in attributes:
+        value = nc_variable.getncattr(a)
+        t_obj.metadata[a] = value
+    if 'lead_times' in nc_variable.dimensions:
+        lead_time_index = nc_variable.dimensions.index('lead_times')
+    fcst_time_index = nc_variable.dimensions.index('default_time_coordinate_size')
+    empty_slice = [slice(None)]*t_obj.data.ndim
+    l_time = w_obj.get_lead_time()
+    l_time_index = l_time.get_index(lead_time)
+    empty_slice
+
+    return t_obj
 
 def get_procedures(nc_variable, procedures_dict):
     """
     returns the netcdf variables associated with OM_procedure.
+    Args:
+        nc_variable (:obj:`NetCDF4.Dataset.Variable`): variable to extract procedures.
+        procedures_dict (dict): dict containing procedure Variables.
+    
+    Returns:
+        (:obj:list of :obj:`NetCDF4.Dataset.Variable`): Procedures from Variable.
+
     """
     try:
         p_string = nc_variable.getncattr('OM_procedure')
@@ -175,6 +266,13 @@ def get_procedures(nc_variable, procedures_dict):
 
 def get_times(nc_variable, time_dict):
     """Returns all the time variables associated with the nc_variable.
+    Args:
+        nc_variable (:obj:`NetCDF4.Dataset.Variable`): Variable to extract Times from.
+        time_dict (dict of :obj:`Time`): Time objects from Variable
+    
+    Returns:
+        None
+
     """
     time_vars = []
     try:
@@ -230,6 +328,13 @@ def get_coordinate(nc_variable, coordinate_dict):
     """
     Returns the netcdf variable for the coordinate of the given
     variable if it exists.
+    Args:
+        nc_variable (:obj:`NetCDF4.Dataset.Variable`): Variable to extract coordinate.
+        coordinate_dict (dict of Variables): 
+    
+    Returns:
+        Variable Associated with Coordinate or None if Coordinate empty.
+
     """
     try:
         coord_name = nc_variable.getncattr("coordinates")
@@ -243,6 +348,12 @@ def get_coordinate(nc_variable, coordinate_dict):
 
 def removeTime(attrs):
     """Removes Time metadata from attrs dict.
+    Args:
+        attrs ( ): 
+    
+    Returns:
+        None
+
     """
     attrs_cp = attrs[:]
     for i in attrs_cp:
@@ -252,6 +363,12 @@ def removeTime(attrs):
 
 
 def get_metadata(nc_variable):
+    """gets metadata from variable.
+    Args:
+        nc_variable (:obj:NetCDF.Dataset.Variable): 
+    Returns:
+        (dict): Representation of metadata.
+    """
     attributes = nc_variable.ncattrs()
     attributes = removeTime(attributes)
     metadata = {}
@@ -264,6 +381,15 @@ def get_metadata(nc_variable):
 def create_wisps_data(nc_variable, procedures_dict, time_dict, coord_dict):
     """Given the netCDF variable and any associated procedures,
     creates and returns a Wisps_data object
+    Args:
+        nc_variable (:obj:NetCDF4.Dataset.Variable): Variable to convert.
+        procedures_dict (dict): All Procedures in Dataset
+        time_dict (dict): All Time Variables in Dataset
+        coord_dict (dict): All Coordinat Variables ind Dataset
+    
+    Returns:
+        (:obj:`Wisps_data`) Resultant Dataset
+
     """
     procedures = get_procedures(nc_variable, procedures_dict)
     times = get_times(nc_variable, time_dict)
@@ -277,7 +403,9 @@ def create_wisps_data(nc_variable, procedures_dict, time_dict, coord_dict):
     except AttributeError:
         err_msg = "No OM_observedProperty metadata in " + nc_variable.name
         logging.error(err_msg)
-        raise
+        #temp
+        pass
+        #raise
 
     # Create the initial Wisps_object.
     name = os.path.basename(OM_observedProperty)
@@ -339,8 +467,14 @@ def create_wisps_data(nc_variable, procedures_dict, time_dict, coord_dict):
 
 
 def parse_processes_string(process_string):
-    """Returns a list of process names given a string
-    that is comma separated and enclosed in parens.
+    """Returns a list of process names given a formatted string string.
+    Args:
+        process_string (str): Formatted process string; comma separated 
+                enclosed in parens.
+    
+    Returns:
+        (:list: of str): list of only the process names
+
     """
     process_string = process_string.replace(" ", "")
     process_string = process_string.replace("(", "")
@@ -354,6 +488,15 @@ def parse_processes_string(process_string):
 def separate_procedure_and_data(variables_dict):
     """Separates the variables into Processes and data-holding variables.
     Returns the processes and normal variables as a tuple.
+    Args:
+        variables_dict (dict of `Dataset.Variable`): Where name is the name 
+                of the nc variable, and the value is the Variable object
+    
+    Returns:
+        (tuple): Where,
+                index[0] are process variables dict. 
+                index[1] are the remainder of the variables.
+
     """
     #process_identifier = 'process'
     process_identifier = 'LE_ProcessStep'
@@ -373,6 +516,15 @@ def separate_procedure_and_data(variables_dict):
 def separate_time_and_data(variables_dict):
     """Separates the variables into Time and predictor variables.
     Returns the processes and normal variables as a tuple.
+    Args:
+        variables_dict (dict of `Dataset.Variable`): Where name is the name 
+                of the nc variable, and the value is the Variable object
+    
+    Returns:
+        (tuple): Where,
+                index[0] are Time variables dict. 
+                index[1] are the remainder of the variables.
+
     """
     time_dict = {}
     var_dict = {}
@@ -396,6 +548,15 @@ def separate_time_and_data(variables_dict):
 def separate_coordinate_and_data(variables_dict):
     """Separates the variables into coordinate and predictor variables.
     Returns the processes and normal variables as a tuple.
+    Args:
+        variables_dict (dict of `Dataset.Variable`): Where name is the name 
+                of the nc variable, and the value is the Variable object
+    
+    Returns:
+        (tuple): Where,
+                index[0] are Coordinate variables dict. 
+                index[1] are the remainder of the variables.
+
     """
     coordinate_dict = {}
     var_dict = {}

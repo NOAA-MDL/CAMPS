@@ -39,7 +39,9 @@ class Wisps_data(nc_writable):
         metadata (dict): Metadata with key-value pairs.
         time (:obj:`list` of :obj:`Time`): Time objects describing this variable
         properties (dict): Metadata that will not be written to NetCDF file 
-            that may be used internally.
+                that may be used internally.
+        location (:obj:`Location`) Location object which describes the first
+                dimensions.
 
     Args:
         name (str): `quick-fill` name that can be used to initialize variable from template.
@@ -61,10 +63,17 @@ class Wisps_data(nc_writable):
         self.metadata = {}
         self.time = []
         self.properties = {}
+        self.location = None
         if autofill:
             self.add_db_metadata()
 
     # Coordinates
+    def add_coord(self,level1, level2, vert_type='plev'):
+        """
+        """
+        pass
+
+
     def has_plev(self):
         """
         Checks metadata to see if this has plev.
@@ -151,6 +160,11 @@ class Wisps_data(nc_writable):
     def get_result_time(self):
         """Returns resultTime if it exists."""
         result_type = Time.ResultTime
+        return self.get_time(result_type)
+
+    def get_forecast_reference_time(self):
+        """Returns ForecastReferenceTime if it exists."""
+        result_type = Time.ForecastReferenceTime
         return self.get_time(result_type)
 
     def get_phenom_time(self):
@@ -327,14 +341,13 @@ class Wisps_data(nc_writable):
         """
         if self.is_feature_of_interest():
             return self.name
-        # Write dataSource
-        name = ""
-        try:
-            name += self.metadata['LE_Source']
-        except:
-            pass
-        name += '_'
+        # Do not write dataSource
+        # name = ""
+        # source = self.get_source() 
+        # if source is not None:
+        #     name += source
 
+        # name += '_'
         # Write observedProperty
         try:
             name += self.get_observedProperty()
@@ -430,7 +443,7 @@ class Wisps_data(nc_writable):
 
         if self.has_time_bounds():
             success = self._write_time_bounds(nc_handle)
-            self.add_bounds_process()
+            #self.add_bounds_process()
 
         if 'coordinates' in self.metadata:
             coord_str = self.metadata['coordinates']
@@ -446,7 +459,8 @@ class Wisps_data(nc_writable):
         return success
     
     def add_bounds_process(self):
-        """Adds a process representing the cell_method"""
+        """Adds a process representing the cell_method
+        """
         cell_type = self.metadata['cell_methods'].split(':')[1].strip(' ')
         if cell_type == 'minimum':
             self.add_process('BoundsProcMin')
@@ -746,7 +760,7 @@ class Wisps_data(nc_writable):
 
 
         db.insert_variable(property=self.get_observedProperty(),
-                           source=self.metadata['LE_Source'],
+                           source=self.get_source(),
                            start=start,
                            end=end,
                            duration=duration,
@@ -849,13 +863,21 @@ class Wisps_data(nc_writable):
     def get_source(self):
         """Return the source metadata attribute.
         """
-        return self.metadata['LE_Source']
+        if 'LE_Source' in self.metadata:
+            return os.path.basename(self.metadata['LE_Source'])
+        else:
+            # Look for LE_Source in processes
+            for proc in self.processes:
+                if 'LE_Source' in proc.attributes:
+                    return os.path.basename(proc.attributes['LE_Source'])
+        return None
+
 
     def is_model(self):
         """Returns True if the Source is from a model.
         Currently, 'GFS' and 'NAM'
         """
-        models = ['NAM', 'GFS']
+        models = ['NAM', 'GFS', 'GFS13']
         return self.get_source() in models
 
     def get_fill_value(self):
@@ -909,8 +931,11 @@ class Wisps_data(nc_writable):
         obj_str += "* processes           : " + self.get_process_str() + "\n"
         obj_str += "* dimensions          : " + str(self.dimensions) + "\n"
         if coord_str in self.metadata:
-            obj_str += "* level               : " + \
-                str(self.get_coordinate()) + "\n"
+            obj_str += "* level               : " 
+            try:
+                obj_str += str(self.get_coordinate()) + "\n"
+            except:
+                obj_str += "\n"
         obj_str += "Metadata:\n"
         for k, v in self.metadata.iteritems():
             num_chars = len(k)

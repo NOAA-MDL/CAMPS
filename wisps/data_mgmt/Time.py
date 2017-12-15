@@ -789,6 +789,22 @@ class ForecastReferenceTime(Time):
         if 'reference_time' in kwargs:
             self.append_reference_time(kwargs['reference_time'])
 
+    def get_index(self, num_seconds):
+        """Returns index where the forecastReferenceTime data equals num_seconds.
+        Only checks if the start bound is equal to the input argument.
+        Throws error if multiple indicies are found or none are found.
+        """
+        indices = np.where(self.data == num_seconds)
+        # indices is returned as tuple; extract first element
+        indices = indices[0]
+        if len(indices) == 0:
+            raise ValueError("time not found in ForecastReferenceTime object.")
+        if len(indices) > 1:
+            err_str = "Found multiple desired times in ForecastReferencTime object."
+            print self.data
+            raise ValueError(err_str)
+        return indices[0]
+
     def append_reference_time(self, ref_time):
         self.data[:] = ref_time
 
@@ -877,6 +893,7 @@ class LeadTime(Time):
                 ret_str += "hr,\n"
         return ret_str
 
+    __repr__ = __str__
 
 class BoundedTime(Time):
     """Class reproesenting the Bounded time.

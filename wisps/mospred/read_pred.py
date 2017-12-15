@@ -31,8 +31,10 @@ def parse_range(range_str):
     Given a string such as '2013100100-2014033100,24h',
     split into a 'start', 'end', and 'stride'. return dict.
     """
-    stride = 24 * 60 * 60
+    # Default stride to 24hrs
+    stride = 24 * 60 * 60 
     start, end = range_str.split('-')
+    # If non-24hr stride
     if ',' in end:
         end,stride = end.split(',')
         stride = parse_pred.separate_entries(stride)
@@ -80,6 +82,7 @@ def get_variable(entry_dict):
         if source == "METAR" or source == "MARINE":
             raise Exception(
                 "variable cannot have lead time and be an observation")
+        exit_dict['lead_time'] = leadtime
 
     # Check Duration
     if 'Duration' in entry_dict:

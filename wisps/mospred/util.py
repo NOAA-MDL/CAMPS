@@ -24,14 +24,16 @@ def read_station_definitions(file_path):
                 code = row[5]
                 lat = row[6]
                 lon = row[7]
+                # Positive North
                 if lat[0] == 'N':
                     lat = float(lat[1:])
                 else:
                     lat = -float(lat[1:])
+                # Negative West
                 if lon[0] == 'W':
-                    lon = float(lon[1:])
-                else:
                     lon = -float(lon[1:])
+                else:
+                    lon = float(lon[1:])
 
                 station_dict[call] = {}
                 station_dict[call]['lat'] = lat

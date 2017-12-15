@@ -16,18 +16,44 @@ def fetch(time=None, lead_time=None, **metadata_dict):
     the files. If the Observed property is recognized as a variable that needs
     to be computed, then a routine will be started to compute variables.
     
-    Metadata Keys w/ type:
-     'property'        : str
-     'source'          : str
-     'start'           : int
-     'end'             : int
-     'duration'        : int
-     'duration_method' : str
-     'vert_coord1'     : int
-     'vert_coord2'     : int
-     'vert_method'     : str
+
+    Args:
+        time (optional, int): Number of seconds after epoch.
+        lead_time (optional, int): Number of seconds after forecast run time.
+        **metadata_dict (dict): Metadata matching desired variable. 
+        Formatted::
+            {
+                'property'        : str
+                'source'          : str
+                'start'           : int
+                'end'             : int
+                'duration'        : int
+                'duration_method' : str
+                'vert_coord1'     : int
+                'vert_coord2'     : int
+                'vert_method'     : str
+            }
+    
+    Returns:
+        If successful, returns Wisps_data object read from NetCDF.
+        Otherwise, returns None if no variables are found.
+
+    Raises:
+        RuntimeError: If multiple variables are found matching provided metadata.
+
     """
-    # First check if calling the database gives any entries.
+    # Get a start and end range
+    if 'start' not in metadata_dict and 'end' not in metadata_dict:
+        if time is not None:
+            start = time
+            end = time 
+        if lead_time is not None:
+            end += lead_time
+
+        metadata_dict['start'] = start
+        metadata_dict['end'] = end
+
+    # Check if calling the database gives any entries.
     ret = db.get_variable(**metadata_dict)
     num_records_returned = len(ret)
     if num_records_returned > 1:
@@ -37,7 +63,15 @@ def fetch(time=None, lead_time=None, **metadata_dict):
                 print i
         print len(ret), "variables returned from fetch."
         print "Please be more specific"
-        raise RuntimeError("too many variables returned")
+        #raise RuntimeError("too many variables returned")
+
+        # TEMP-just pull the first element drawn
+        record = ret[0]
+        print "Found one Matching record."
+        filepath = record['filename']
+        nc_variable_name = record['name']
+        return reader.read_var(filepath, nc_variable_name, lead_time, time)
+        
     elif num_records_returned  == 0:
         # Check if another fetch without full URI might yeild results
         if 'property' in metadata_dict:

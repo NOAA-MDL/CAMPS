@@ -33,32 +33,10 @@ def wet_bulb_setup(mixrat_obj):
 
 
 
-    # # # mixrat.f interpretted # # # 
-    #
-    # Initialize variables 
-    # 
-    # Determine if isobaric, constant height, or sigma surface
-    # 
-    # if isobaric. 
-    #   Looks at mosid, and gets the upper level pressure.
-    #   fills pressure 1-d array with that pressure. 
-    # else 
-    #   if sigma or 2 m height
-    #      divides upper level by 1000 
-    #      fetches pressure
-    # 
-     
-
 def wet_bulb(pressure_arr, temperature_arr, rel_hum_arr):
     """Compute the mixing ratio
     """
-    #epsilon = const.ratio_of_dry_and_saturated_gas_constant
-    #psat = const.saturated_pressure_at_triple_point
-    #saturation_vapor_pressure = calc.saturation_vapor_pressure
-
-    sat_mix_ratio = calc.saturation_mixing_ratio(pressure_arr, temperature_arr)
-    mixing_ratio = sat_mix_ratio * rel_hum_arr
-    return mixing_ratio
+    pass
     
 
 

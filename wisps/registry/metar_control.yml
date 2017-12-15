@@ -9,7 +9,8 @@ month : 02     # Where 1 is January and 12 is December
 day : null
 stride  : null # in hours
 
-METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/metar_sub/"
+#METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/metar_sub/"
+METAR_data_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/data/metar/"
 nc_output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/output/"
 
 # Can be DEBUG, INFO, WARNING, ERROR, CRITICAL.
