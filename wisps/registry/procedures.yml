@@ -72,6 +72,18 @@ LinSmooth :
 BiLinInterp :
     process_step : "https://codes.nws.noaa.gov/StatPP/Methods/InterpBiLinear"
     long_name : "Linear Interpolation"
+Sin :
+    process_step : "https://codes.nws.noaa.gov/StatPP/Methods/Arith/Sin"
+    long_name : "Apply sin"
+Sin2 :
+    process_step : "https://codes.nws.noaa.gov/StatPP/Methods/Arith/Sin2"
+    long_name : "Apply sin to twice the value"
+Cos :
+    process_step : "https://codes.nws.noaa.gov/StatPP/Methods/Arith/Cos"
+    long_name : "Apply cos"
+Cos2 :
+    process_step : "https://codes.nws.noaa.gov/StatPP/Methods/Arith/Cos2"
+    long_name : "Apply cos to twice the value"
 
 
 

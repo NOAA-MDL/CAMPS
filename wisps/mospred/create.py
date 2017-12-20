@@ -12,6 +12,10 @@ import wind_speed
 
 creation_functions = {
         'Ozone' : None,
+        'sinDoy' : computations.sin_doy,
+        'cosDoy' : computations.cos_doy,
+        'sin2Doy' : computations.sin_2doy,
+        'cos2Doy' : computations.cos_2doy,
         'CilgHght' : None,
         'CilgHghtProb' : None,
         'CldAmt' : None,
@@ -128,19 +132,11 @@ creation_functions = {
         'TVVAvgRHProd' : None,
         'TVVTotQPFProd' : None,
         'VFRCond' : None,
-        'WxGroup' : None,
-        'M2KCodedWxGroup1' : None,
-        'M2KCodedWxGroup2' : None,
-        'M2KCodedWxGroup3' : None,
         'FlightCats' : None,
         'Hel' : None,
         'SRH' : None,
         'PBL' : None,
         'AltimtrStg' : None,
-        'WvPd' : None,
-        'DomWvPd' : None,
-        'WvHght' : None,
-        'WvDir' : None,
         'Vsby' : None
         }
 

@@ -9,12 +9,12 @@
 ########################################
 globals:
   institution : "NOAA/National Weather Service"
-  Conventions : "CF-1.6 WISPS-0.2"
-  version : "WISPS-0.5"
+  Conventions : "CF-1.7 WISPS-0.2"
+  version : "WISPS-0.6"
   history : "Generated on NOAA's Weather and Climate Operational Supercomputing System"
   references : ""
   organization : "NOAA/MDL/SMB"
-  url : "http://www.nws.noaa.gov/mdl/"
+  url : "http://www.nws.noaa.gov/mdl/, https://sats.nws.noaa.gov/~wisps/"
 
 ########################################
 ##
@@ -2051,5 +2051,16 @@ variables :
       OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
       long_name : "Difference of geopotential height"
       standard_name : "geopotential_height"
+
+  day_of_year :
+    data_type : float32
+    dimensions : [] 
+    attribute : 
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Misc/DOY"
+      long_name : "Day of year"
+      standard_name : "time"
+      units : "days"
+      valid_min : ""
+      valid_max : ""
 
 
