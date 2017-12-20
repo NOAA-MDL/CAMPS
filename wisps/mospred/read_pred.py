@@ -32,7 +32,7 @@ def parse_range(range_str):
     split into a 'start', 'end', and 'stride'. return dict.
     """
     # Default stride to 24hrs
-    stride = 24 * 60 * 60 
+    stride = 24 * 60 * 60 # In seconds
     start, end = range_str.split('-')
     # If non-24hr stride
     if ',' in end:

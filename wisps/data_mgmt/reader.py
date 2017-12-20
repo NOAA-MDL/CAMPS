@@ -196,6 +196,18 @@ def subset_time(w_obj, nc_var, lead_time, time):
         data = nc_var[:,:,:,p_time_index]
 
     w_obj.data = data
+
+    # Next Subset the time objects
+    for t in w_obj.time:
+        slice_arr = [slice(None)]*t.data.ndim
+        dimensions =  t.get_dimensions()
+        if 'lead_times' in dimensions:
+            lead_time_index = dimensions.index('lead_times')
+            slice_arr[lead_time_index] = slice(l_time_index, l_time_index+1)
+        if 'default_time_coordinate_size' in dimensions:
+            fcst_time_index = dimensions.index('default_time_coordinate_size')
+            slice_arr[fcst_time_index] = slice(p_time_index, p_time_index+1)
+        t.data = t.data[slice_arr]
     return w_obj
 
 
@@ -224,15 +236,25 @@ def create_time(nc_variable, lead_time=None, fcst_time=None):
     for a in attributes:
         value = nc_variable.getncattr(a)
         t_obj.metadata[a] = value
-    if 'lead_times' in nc_variable.dimensions:
-        lead_time_index = nc_variable.dimensions.index('lead_times')
-    fcst_time_index = nc_variable.dimensions.index('default_time_coordinate_size')
-    empty_slice = [slice(None)]*t_obj.data.ndim
-    l_time = w_obj.get_lead_time()
-    l_time_index = l_time.get_index(lead_time)
-    empty_slice
 
     return t_obj
+
+def reduce_time(time_objs):
+    """
+    """
+
+    slice_arr = [slice(None)]*t_obj.data.ndim
+    if 'lead_times' in nc_variable.dimensions:
+        lead_time_index = nc_variable.dimensions.index('lead_times')
+        slice_arr[lead_time_index] = None
+    if 'default_time_coordinate_size' in nc_variable.dimensions:
+        fcst_time_index = nc_variable.dimensions.index('default_time_coordinate_size')
+        slice_arr[fcst_time_index ] = None
+
+        t_obj.data.slice(empty_slice)
+    #l_time = w_obj.get_lead_time()
+    #l_time_index = l_time.get_index(lead_time)
+    #empty_slice
 
 def get_procedures(nc_variable, procedures_dict):
     """

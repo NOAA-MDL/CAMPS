@@ -68,7 +68,7 @@ def interp(x, y, model_values, station_lat, station_lon, method='linear'):
     xi_x,xi_y = reproject(station_lon, station_lat)
 
     try:
-        grid_z0 = griddata(points, model_values_1d, (xi_x,xi_y), method='linear')
+        grid_z0 = griddata(points, model_values_1d, (xi_x, xi_y), method='linear')
     except ValueError:
         
         print "shape of points", points.shape
