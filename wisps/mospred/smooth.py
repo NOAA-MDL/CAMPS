@@ -8,10 +8,14 @@ import numpy as np
 import pdb
 
 
-def smooth_var(w_obj, *args):
-    out_arr = smooth.smooth(w_obj.data, args[0])
+def smooth_var(w_obj, args):
+    if len(w_obj.data.shape) == 3:
+        out_arr = smooth(w_obj.data[:,:,0], args[0])
+    else:
+        out_arr = smooth(w_obj.data[:,:], args[0])
     w_obj.data = out_arr
-    w_obj.add_process('Smooth')
+    w_obj.add_process('LinSmooth')
+
 
 def smooth(arr, smooth_type):
     """Given a 2D array, smooth with smooth_type.

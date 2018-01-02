@@ -13,6 +13,7 @@ import mospred.util as util
 import data_mgmt.Time as Time
 from datetime import timedelta
 import mospred.create as create
+from mospred.create import Predictor
 import mospred.procedures as procedures
 import mospred.interp
 import copy

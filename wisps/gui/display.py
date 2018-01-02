@@ -5,9 +5,15 @@ import random
 
 
 
-def display(grid):
-    plt.imshow(grid,origin='lower', cmap=cm.gist_rainbow)
-    plt.savefig('img'+str(random.randint(1,30))+'.png')
+def display(grid, filename=None, axis=True):
+    img = plt.imshow(grid,origin='lower', cmap=cm.gist_rainbow, vmin=0, vmax=1)
+    img.set_cmap('tab20b')
+    if not axis:
+        plt.axis('off')
+    if filename is None:
+        plt.savefig('img'+str(random.randint(1,30))+'.png')
+    else:
+        plt.savefig(filename + '.png', bbox_inches='tight')
     plt.show()
 
 

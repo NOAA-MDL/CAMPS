@@ -2,21 +2,31 @@ import os
 import sys
 import re
 import pdb
+import metpy.calc as calc
+from metpy.units import units
+import math
+import numpy as np
+import operator
 relative_path = os.path.abspath(
     os.path.dirname(os.path.realpath(__file__)) + "/..")
 sys.path.insert(0, relative_path)
 from data_mgmt.fetch import *
-import metpy.calc as calc
-from metpy.units import units
+from data_mgmt.Time import epoch_to_datetime
+import data_mgmt.Time as Time
+from data_mgmt.Wisps_data import Wisps_data
 
-def wet_bulb_setup(mixrat_obj):
-    """Compute gridded mixing ratio using 
-    pressure, temperature, and relative humidity (%) 
-    on an isobaric, a constant height, or a sigma surface.
+
+
+
+
+def temp_corr_setup(temp, pred):
+    """Compute temperature coreection.
     """
-    level = mixrat_obj.get_coordinate()
+    # Only will work if surface or 2m elevation
+    level = pred.get_coordinate()
     if level != 2 or level is not None:
         raise ValueError("level is not surface or 2m")
+    # Otherwise, will work on sigma surface and isobarametric surfaces
     # Get temperature, relative humidity, and pressure
     temp = fetch(property='Temp', source='GFS', vert_coord1=level)
     pres = fetch(property='Pres', source='GFS', vert_coord1=None)
@@ -26,17 +36,12 @@ def wet_bulb_setup(mixrat_obj):
     q_temp = units('K') * temp.data
     q_pres = units('Pa') * pres.data
     q_rel_hum = units(None) * rel_hum.data # Dimensionless
+    return temp
 
-    data = mixing_ratio(q_temp, q_pres, q_relum)
-    mixrat_obj.data = data
-    return mixrat_obj
+     
 
-
-
-def wet_bulb(pressure_arr, temperature_arr, rel_hum_arr):
-    """Compute the mixing ratio
+def temp_corr(pressure_arr, temperature_arr):
+    """Compute the temperature correction
     """
     pass
     
-
-

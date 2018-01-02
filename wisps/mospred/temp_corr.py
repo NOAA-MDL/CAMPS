@@ -10,9 +10,7 @@ import metpy.calc as calc
 from metpy.units import units
 
 def temp_corr_setup(mixrat_obj):
-    """Compute gridded mixing ratio using 
-    pressure, temperature, and relative humidity (%) 
-    on an isobaric, a constant height, or a sigma surface.
+    """Compute temperature coreection.
     """
     # Only will work if surface or 2m elevation
     level = mixrat_obj.get_coordinate()
@@ -36,7 +34,7 @@ def temp_corr_setup(mixrat_obj):
      
 
 def temp_corr(pressure_arr, temperature_arr, rel_hum_arr):
-    """Compute the mixing ratio
+    """Compute the temperature correction
     """
     #epsilon = const.ratio_of_dry_and_saturated_gas_constant
     #psat = const.saturated_pressure_at_triple_point
