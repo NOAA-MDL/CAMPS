@@ -9,6 +9,6 @@ Like the CF conventions, most of the requirements for netCDF-WISPS are focused o
 2.1  Identification of convention
 =================================
 
-Similar to CF, we suggest that the global attribute Conventions includes the string “WISPS-0.1” to indicate compliance with this profile.
+Similar to CF, we suggest that the global attribute Conventions includes the string “WISPS-0.2” to indicate compliance with this profile.
 Since all files that follow the WISPS application profile also follow the netCDF CF Conventions, the Conventions attribute should also contain the appropriate CF string.
 
