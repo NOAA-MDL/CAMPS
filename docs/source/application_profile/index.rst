@@ -1,5 +1,5 @@
 ================================================================================================================================================
-Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1
+Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.2
 ================================================================================================================================================
 
 .. toctree::
