@@ -45,6 +45,7 @@ def parse_range(range_str):
 def apply_procedures(w_obj, procedures):
     for p in procedures:
         func, args = procedures.get_procedure(p)
+
         # Apply the function and given args to w_obj
         # This should modify the w_obj
         func(w_obj, args)

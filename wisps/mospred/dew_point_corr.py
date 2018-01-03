@@ -19,16 +19,6 @@ def dewpoint_corr_setup(dewpt_obj):
     if level != 2 or level is not None:
         raise ValueError("level is not surface or 2m")
 
-    temp = fetch(property='Temp', source='GFS', vert_coord1=level)
-    rel_hum = fetch(property='RelHum', source='GFS', vert_coord1=level)
-    
-    # Package into quantity
-    q_temp = units('K') * temp.data
-    q_rel_hum = units(None) * rel_hum.data # Dimensionless
-
-    data = calc.dewpoint_rh(q_temp, q_rel_hum)
-
-    dewpt_obj.data = data
     return dewpt_obj
 
 

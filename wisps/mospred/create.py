@@ -7,15 +7,13 @@ path = os.path.abspath(file_dir + relative_path)
 sys.path.insert(0, path)
 import thickness
 import computations
-import wind_speed
+import miscellaneous
+import momentum
 
 
 creation_functions = {
         'Ozone' : None,
-        'sinDoy' : computations.sin_doy,
-        'cosDoy' : computations.cos_doy,
-        'sin2Doy' : computations.sin_2doy,
-        'cos2Doy' : computations.cos_2doy,
+        'DOY' : miscellaneous.DOY,
         'CilgHght' : None,
         'CilgHghtProb' : None,
         'CldAmt' : None,
@@ -25,7 +23,6 @@ creation_functions = {
         'GeoHght' : None, 
         'Pres' : None,
         'Albedo' : None,
-        'DOY' : None,
         'LandSea' : None,
         'Terrain' : None,
         'Veg' : None,
@@ -54,7 +51,7 @@ creation_functions = {
         'Uwind' : None,
         'Vwind' : None,
         'WindDir' : None,
-        'WSpd' : wind_speed.WSpd_setup,
+        'WSpd' : momentum.WSpd_setup,
         'WSpdRatio' : None,
         'Wwind' : None,
         'CAPE' : None,
@@ -169,5 +166,43 @@ def get_met_function(observedProperty):
 def get_common_function(method):
     return common_functions[method]
 
+class Predictor:
+    def __init__(self, searchable_dict, procedures=None, leadTime=None, fcstRef=None):
+        """
+        """
+        self.search_metadata = searchable_dict
+        self.procedures = procedures
+        self.leadTime = leadTime
+        self.fcst_ref_time = fcstRef
+
+    def copy(self):
+        """
+        """
+        return copy.deepcopy(self)
+
+    def change_property(self, observed_property):
+        """
+        """
+        self.search_metadata['property'] = observed_property
+
+    def __getitem__(self, item):
+        """
+        """
+        return self.search_metadata[item]
+
+    def __str__(self):
+        """
+        """
+        fstr = str(self.search_metadata) 
+        fstr += '\n'
+        fstr += str(self.procedures)
+        fstr += '\n'
+        fstr += str(self.leadTime)
+        fstr += '\n'
+        fstr += str(self.fcst_ref_time)
+        fstr += '\n'
+        return fstr
+
+    __repr__ = __str__
 
 
