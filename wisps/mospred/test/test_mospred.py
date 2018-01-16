@@ -2,9 +2,12 @@
 import os
 import sys
 relative_path = os.path.abspath(
-    os.path.dirname(os.path.realpath(__file__)) + "/..")
+    os.path.dirname(os.path.realpath(__file__)) + "/../..")
 sys.path.insert(0, relative_path)
-import parse_pred as pp
+import mospred.parse_pred as pp
+import mospred.read_pred as rp
+import registry.util as cfg
+import pdb
 
 
 def test_separate_entries():
@@ -30,6 +33,12 @@ def test_get_cell_method():
     assert pp.cell_method("difference") == 'difference'
     assert pp.cell_method("difference") == 'difference'
 
+def test_parse_range():
+    out_dict = rp.parse_range('2013100100-2014033100,12h')
+    
+def test_get_variable():
+    var_dict = cfg.read_yaml('test_pred.yml')
+    rp.get_variable(var_dict[0])
 
 def test_get_time_multiplier():
     assert pp.get_time_multiplier("days") == 86400
@@ -55,12 +64,17 @@ def test_vertical_coordinate():
     assert ret['layer2'] == 15
     assert ret['units'] == 'm'
     assert ret['cell_method'] == 'difference'
+    ret = pp.vertical_coordinate('0')
+    assert ret['layer1'] == 0
 
+if __name__ == "__main__":
 
-test_separate_entries()
-test_get_cell_method()
-test_observedProperty()
-test_get_time_multiplier()
-test_vertical_coordinate()
-
-print "PASSED mospred"
+    test_separate_entries()
+    test_get_cell_method()
+    test_observedProperty()
+    test_get_time_multiplier()
+    test_vertical_coordinate()
+    test_parse_range()
+    test_get_variable()
+    
+    print "PASSED mospred"

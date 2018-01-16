@@ -10,7 +10,8 @@ sys.path.insert(0, path)
 import importlib
 import pdb
 
-def main():
+
+def test_all():
     dirs = os.walk('../')
     for d in dirs:
         dirname = d[0]
@@ -36,4 +37,4 @@ def check_py(filename):
     return pyfile and notpyc and notinit and notswp
 
 if __name__ == "__main__":
-    main()
+    test_all()

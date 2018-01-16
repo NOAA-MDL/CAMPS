@@ -11,7 +11,7 @@ import procedures
 observedProperties = cfg.read_observedProperties()
 default_time = 'hour'
 cell_methods_regex = {
-    re.compile(".*av[a-z]*g.*"): "mean",
+    re.compile(".*av[a-z]*g.*"): 'mean',
     re.compile(".*mean.*"): 'mean',
     re.compile(".*diff.*"): 'difference',
     re.compile(".*sum.*"): 'sum',
@@ -35,6 +35,23 @@ def str2epoch(in_str):
     if type(in_str) is not str:
         pass
         # Assumes hours
+
+def check_valid_keys(in_dict):
+    valid_keys = set([
+        'Vertical_Coordinate',
+        'Duration',
+        'Source',
+        'LeadTime',
+        'Property',
+        'Procedure'
+            ])
+    for k in in_dict.keys():
+        try:  
+            assert k in valid_keys
+        except AssertionError:
+            print k, "not a valid key"
+            print "valid keys are:\n", ",\n".join(valid_keys)
+            raise
 
 
 def separate_entries(in_str):
@@ -84,6 +101,7 @@ def cell_method(in_str):
 def duration(in_str):
     """Returns a duration identifier."""
     entries = separate_entries(in_str)
+    return entries
 
 
 def observedProperty(in_str):
@@ -100,7 +118,7 @@ def observedProperty(in_str):
 def lead_time(in_str):
     """Given unformatted lead_time string, return number of seconds of leadTime.
     """
-    return separate_entries(in_str)[0]
+    return separate_entries(in_str)['time']
 
 
 def forecast_ref_time(in_str):
@@ -118,15 +136,23 @@ def vertical_coordinate(in_str):
     unit - unit of measurement
     cell_method - cell method if it's multi layered
     """
-    vertical_dict = {}
+    in_str = str(in_str)
     in_str = in_str.lower()
     in_str = in_str.strip(" ")  # take off leading or following spaces
+    vertical_dict = {}
+    if in_str == '0':
+        vertical_dict['layer1'] = 0
+        vertical_dict['units'] = 'm'
+        return vertical_dict
     sep = None
     if "to" in in_str:
         sep = "to"
     if "-" in in_str:
         sep = '-'
-    if sep:  # then it's a range
+    single_layered = sep is None
+    multi_layered = sep is not None
+
+    if multi_layered:  
         in_str_arr = in_str.split(" ")  # get cell method.
         # It should be in the last position
         cell_method_name = cell_method(in_str_arr[-1])
@@ -142,17 +168,17 @@ def vertical_coordinate(in_str):
         elif layer2[1]:
             units = layer2[1]
         else:
-            raise LookupError("units not defined")
+            raise LookupError("units in Vertical_Coordinate not defined")
         vertical_dict['layer1'] = int(layer1[0])
         vertical_dict['layer2'] = int(layer2[0])
         vertical_dict['units'] = units
         vertical_dict['cell_method'] = cell_method_name
 
-    else:  # It's a single layer
+    elif single_layered: 
         exp = re.compile("^ *(\d+) *([a-z]*) *")
         layer = exp.match(in_str).groups()
         if len(layer) <= 1 or not layer[1]:
-            raise LookupError("units not defined")
+            raise LookupError("units in Vertical_Coordinate not defined")
         vertical_dict['layer1'] = int(layer[0])
         vertical_dict['units'] = layer[1]
 
@@ -162,7 +188,7 @@ def vertical_coordinate(in_str):
 def source(in_str):
     """returns the source attribute in the mos predictor list"""
     in_str = in_str.lower()
-    valid_sources = ['metar', 'gfs', 'nam', 'mesonet']
+    valid_sources = ['metar', 'gfs', 'gfs13', 'nam', 'mesonet']
     if in_str in valid_sources:
         return True
     raise LookupError

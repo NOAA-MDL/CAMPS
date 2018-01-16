@@ -1,0 +1,459 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>5.1 Event Probabilities &mdash; wisps 0.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="wisps 0.5 documentation" href="../index.html"/>
+        <link rel="up" title="Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1" href="index.html"/>
+        <link rel="next" title="Appendix A: Proposed enhancements to Guidelines for Construction of CF Standard Names" href="enhancements_construction_standard_names.html"/>
+        <link rel="prev" title="4. Coordinates" href="coordinates.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> wisps
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="introduction.html">1.  Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files_components.html">2.  NetCDF-WISPS files and components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="description_data.html">3.  Description of the data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="coordinates.html">4.  Coordinates</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">5.1  Event Probabilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#evaluated-event-probabilities-of-a-continuous-variable">5.1.1  Evaluated Event Probabilities of a continuous variable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#specified-event-probabilities">5.1.2  Specified Event Probabilities</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#categorical-probabilities-of-a-continuous-variable">5.2  Categorical Probabilities of a continuous variable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parameterized-probability-distributions-of-a-continuous-variable">5.3  Parameterized Probability distributions of a continuous variable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="enhancements_construction_standard_names.html">Appendix A:  Proposed enhancements to Guidelines for Construction of CF Standard Names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="proposed_standard_names.html">Appendix B:  Proposed CF standard names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="references.html">6.  References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sample_data/index.html">Sample Wisps-encoded data files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../encoding_parameter.html">Encoding parameter files in WISPS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sample_parameter/index.html">Sample WISPS-encoded parameter files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding_mos.html">Data Encoding to support MOS in WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/wisps.html">wisps package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">wisps</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../data_encoding.html">Data Encoding for WISPS</a> &raquo;</li>
+        
+          <li><a href="index.html">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a> &raquo;</li>
+        
+      <li>5.1  Event Probabilities</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/application_profile/quantifying_uncertainty.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="event-probabilities">
+<h1>5.1  Event Probabilities<a class="headerlink" href="#event-probabilities" title="Permalink to this headline">¶</a></h1>
+<p>Appendix A includes a proposal to add the transformation event_probability_of_X[_over_Z] to [GCSN] to facilitate the encoding of this concept.  Event probabilities seem to fall into two categories&#8211;evaluated and specified.  Here, we use the term evaluated event to describe those events defined by evaluating the value of a continuous variable against one or two limits.  Examples include an air temperature below freezing and a precipitation amount that exceeds some predetermined value.  We use the term specified event to include those events that cannot be readily encoded as evaluated events.  Examples include the occurrence of a tornado or some complex combination of evaluated events.</p>
+<p>The following sections recommend Best Practices for a number of common applications in StatPP.  There is considerable overlap among these cases.  An evaluated event probability can be considered a degenerate case of a categorical probability, etc.  Our intent is to facilitate the effective exchange of data with sufficient metadata.  We do not intend to offer a formal partitioning of the problem.</p>
+<p>We omit techniques the encode time bounds since these are covered well in the existing CF.  Almost all cases that involve event probabilities will require some specification of valid time periods.</p>
+<div class="section" id="evaluated-event-probabilities-of-a-continuous-variable">
+<h2>5.1.1  Evaluated Event Probabilities of a continuous variable<a class="headerlink" href="#evaluated-event-probabilities-of-a-continuous-variable" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><strong>Best Practice:</strong>  <em>The attribute event_relation should be defined and contain one of the mathematical relations found Table 1, below.    The attribute event_limit1 (and optionally event_limit2) should be defined and contain the name of a variable of appropriate dimensionality that contains this (these) limit(s).  The variable(s) that contain the limit value(s) should be declared as (an) ancillary variable(s), as needed.</em></div></blockquote>
+<p>Table 1 Mathematical relations for evaluated event probabilities
+of a continuous variable</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>&gt; limit1</td>
+</tr>
+<tr class="row-even"><td>&gt;= limit1</td>
+</tr>
+<tr class="row-odd"><td>&lt; limit1</td>
+</tr>
+<tr class="row-even"><td>&lt;= limit1</td>
+</tr>
+<tr class="row-odd"><td>&gt; limit1 and &lt; limit2</td>
+</tr>
+<tr class="row-even"><td>&gt;= limit1 and &lt; limit2</td>
+</tr>
+<tr class="row-odd"><td>&gt; limit1 and &lt;= limit2</td>
+</tr>
+<tr class="row-even"><td>&gt;= limit1 and &lt;= limit2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong>  <em>Limit1 and limit2 are intended to be literal strings.  Ancillary variables and attributes should be used to convey the values of limit1 and limit2.</em></p>
+</div>
+<div class="section" id="specified-event-probabilities">
+<h2>5.1.2  Specified Event Probabilities<a class="headerlink" href="#specified-event-probabilities" title="Permalink to this headline">¶</a></h2>
+<p>Best Practice:  The attribute event_specification should be defined and contain a brief, human-readable description of the event.  The attribute event_reference should also be defined and contain a URI that offers a more extensive description of the event definition.</p>
+</div>
+</div>
+<div class="section" id="categorical-probabilities-of-a-continuous-variable">
+<h1>5.2  Categorical Probabilities of a continuous variable<a class="headerlink" href="#categorical-probabilities-of-a-continuous-variable" title="Permalink to this headline">¶</a></h1>
+<p>This case is a straightforward application of existing netCDF-CF conventions.</p>
+<blockquote>
+<div><strong>Best Practice:</strong>  <em>A variable of appropriate dimensionality should be declared and contain the limits of the categories.  If needed, a character array can also be declared that contains values found in Table 1 to further define the categories.  These variables should be declared as ancillary variables.</em></div></blockquote>
+</div>
+<div class="section" id="parameterized-probability-distributions-of-a-continuous-variable">
+<h1>5.3  Parameterized Probability distributions of a continuous variable<a class="headerlink" href="#parameterized-probability-distributions-of-a-continuous-variable" title="Permalink to this headline">¶</a></h1>
+<p>Parameterized probability distributions have the potential to convey substantial amounts of information economically.  They also bring unique challenges.  In many cases,  the parameters of the distribution have attributes that are quite different from the attributes of the primary variable.  We propose a scheme where the primary variable conveys attribute information and declares one or more Ancillary Variables that convey the parameter values.</p>
+<p>In Appendix A, we propose parameterized_probability_distribution_of_X[_over_Z] as a new transformation.  Also, in Appendix B, we propose probability_distribution_parameter as a new CF standard_name.  This will help distinguish the function of the parameter variables from the primary variable.</p>
+<blockquote>
+<div><p><strong>Best Practice:</strong>  <em>A primary variable of limited dimensionality should be declared.  This variable will convey the metadata (e.g., units, standard_name, long_name) associated with the stored variable.  Distribution parameter variables will also be declared with appropriate dimensionality.  (In general, all distribution parameter variables will have identical dimensionality.)  The variables that convey the parameters should be declared as Ancillary Variables of the primary variable.  The primary variable should have an attribute declared named distribution_name with a value that names the parametric distribution used.  The primary variable should also have an attribute named distribution_reference with a value that contains a URI that points to an authoritative reference describing the distribution and its parameterization.</em></p>
+<p><em>Each parameter variable should have an attribute declared named parameter_name with a value that names the parameter as it is named in the authoritative reference.  Parameter variables should have appropriate units.  Often, the units of a probability distribution parameter are ill-defined.  In that case, the parameter variable should be encoded as unitless.</em></p>
+</div></blockquote>
+<div class="highlight-default"><div class="highlight"><pre><span></span>//  global attributes:
+   :primary_variables = “mos_temperature mos_pop06 prob_t”;
+
+dimensions:
+   nsta = 3018;
+   period_bounds = 2;
+   time = UNLIMITED;
+
+variables:
+   int period_bounds;
+     period_bounds.wisps_role = “TM_Period:Beginning TM_Period:Ending”;
+
+   float time(time);
+     time:long_name = &quot;time&quot;;
+     time:standard_name = &quot;time&quot;;
+     time:units = &quot;hours since 2016-05-05 00:00:00.0&quot;;
+     time:axis = &quot;T&quot;;
+     time:wisps_role = “leadTime”;
+
+   float forecast_reference_time;
+     forecast_reference_time.long_name = “forecast reference time”;
+     forecast_reference_time.standard_name = “forecast_reference_time”;
+     forecast_reference_time:units = &quot;hours since 1970-01-01 00:00:00.0&quot;;
+
+   float phenomenon_time_instant(time);
+     phenomenon_time_instant.long_name = “phenomenon time for instants”;
+     phenomenon_time_instant.standard_name = “time”;
+     phenomenon_time_instant:units = “hours since 1970-01-01 00:00:00.0”;
+     phenomenon_time_instant:wisps_role = “OM_phenomenon_time”;
+
+   float phenomenon_time_period(time, period_bounds);
+     phenomenon_time_period.long_name = “phenomenon time for periods”;
+     phenomenon_time_period.standard_name = “time”;
+     phenomenon_time_period:units = “hours since 1970-01-01 00:00:00.0&quot;;
+     phenomenon_time_period:wisps_role = “OM_phenomenon_time”;
+
+   float product_completion_time;
+     product_completion_time:long_name = “product completion time”;
+     product_completion_time:standard_name = “time”;
+     product_completion_time:units = “seconds since 1970-01-01
+       00:00:00.0”;
+     product_completion_time:wisps_role = “OM_resultTime”;
+
+   float product_use_period(period_bounds);
+     product_use_period:long_name = “product use period”;
+     product_use_period:standard_name = “time”;
+     product_use_period:units = “seconds since 1970-01-01 00:00:00.0”;
+     product_use_period:wisps_role = “OM_validTime”;
+
+   int mos_procstep1;
+     mos_procstep1:LE_ProcessStep =
+     “https://codes.nws.noaa.gov/StatPP/Methods/Geospatial/MapProjection”;
+     mos_procstep1:LE_Source =
+     “https://codes.nws.noaa.gov/NumericalWeatherPrediction/Models/GFS13”;
+     mos_procstep1:LE_Processing.runTimeParameter1 =
+“https://codes.nws.noaa.gov/StatPP/Methods/Geospatial/PolarStereographic”;
+
+   int mos_procstep2;
+     mos_procstep2:LE_ProcessStep =
+       “https://codes.nws.noaa.gov/StatPP/Methods/Analytical/Smoothing”;
+     mos_temperature_procstep2:LE_Processing.runTimeParameter1 = “9”;
+
+   int mos_procstep3;
+     mos_procstep3:LE_ProcessStep =
+       “https://codes.nws.noaa.gov/StatPP/Methods/MOS”;
+     mos_procstep3:LE_Algorithm.citation.edition =
+  “https://codes.nws.noaa.gov/StatisticalPostProcessing/Methods/GFSMOS05”;
+
+   float mos_pop06_bound;
+     mos_pop06_bound:standard_name = “precipitation_amount”;
+     mos_pop06_bound:units = “kg m-2”;
+     mos_pop06_bound:long_name = “precipitation threshold of 0.01 inches”;
+
+   float mos_temperature(time, nsta);
+     mos_temperature:standard_name = &quot;surface_temperature&quot;;
+     mos_temperature:units = &quot;degree_Fahrenheit&quot;;
+     mos_temperature:long_name = &quot;surface_temperature&quot;;
+     mos_temperature:coordinates = &quot;time station_latitude
+       station_longitude station_elevation&quot;;
+     mos_temperature:ancillary_variables = “forecast_reference_time
+       phenomenon_time_instant product_completion_time
+       product_use_period mos_procstep1 mos_procstep2 mos_procstep3”;
+     mos_temperature:OM_observedProperty =
+       “http://codes.wmo.int/grib2/codeflag/4.2/0-0-0”;
+     mos_temperature:OM_procedure = “(mos_procstep1 mos_procstep2
+       mos_procstep3)”;
+
+   float mos_pop06(time, nsta);
+     mos_pop06:units = &quot;%&quot;;
+     mos_pop06:standard_name =
+       &quot;probability_distribution_of_precipitation_amount_over_time&quot;;
+     mos_pop06:proposed_standard_name =
+       “event_probability_of_precipitation_amount_over_time”;
+     mos_pop06:long_name = &quot;probability_of_precipitation&quot;;
+     mos_pop06:coordinates = &quot;time station_latitude station_longitude
+       station_elevation&quot;;
+     mos_pop06:ancillary_variables = “forecast_reference_time
+       phenomenon_time_period product_completion_time product_use_period
+       mos_procstep1 mos_procstep2 mos_procstep3 mos_pop06_bound”;
+     mos_pop06:event_relation = “&gt;= limit1”;
+     mos_pop06:event_limit1 = “mos_pop06_bound”;
+     mos_pop06:OM_observedProperty =
+       “http://codes.wmo.int/grib2/codeflag/4.2/0-0-0”;
+     mos_pop06:OM_procedure = “(mos_procstep1 mos_procstep2
+       mos_procstep3)”;
+
+   float prob_t;
+     prob_t:ancillary_variables = “prob_t_mean prob_t_variance”;
+     prob_t:standard_name =
+       “probability_distribution_of_surface_temperature”;
+     prob_t:proposed_standard_name =
+       “parameterized_probability_distribution_of_surface_temperature”;
+     prob_t:units = “K”;
+     prob_t:distribution_name = “Normal 2”;
+     prob_t:distribution_reference =
+       “http://www.probonto.org/ontology#PROB_k0000265”;
+
+   float prob_t_mean(time,nsta);
+     prob_t_mean:standard_name = “surface_temperature”;
+     prob_t_mean:proposed_standard_name =
+       “probability_distribution_parameter”;
+     prob_t_mean:units = “K”;
+     prob_t_mean:parameter_name = “mean”;
+     prob_t_mean:parameter_reference =
+       “http://www.probonto.org/ontology#PROB_k0000268”;
+
+   float prob_t_variance(time,nsta);
+     prob_t_variance:standard_name = “surface_temperature”;
+     prob_t_variance:proposed_standard_name =
+       “probability_distribution_parameter”;
+     prob_t_variance:units = “1”;
+     prob_t_variance:parameter_name = “variance”;
+     prob_t_variance:parameter_reference = “
+       “http://www.probonto.org/ontology#PROB_k0000271”;
+
+data:
+ inches_to_millimeter = 25.4;
+ mos_pop06_bound = 0.01 * inches_to_millimeter;
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="enhancements_construction_standard_names.html" class="btn btn-neutral float-right" title="Appendix A: Proposed enhancements to Guidelines for Construction of CF Standard Names" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="coordinates.html" class="btn btn-neutral" title="4. Coordinates" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,363 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Surface Observations &mdash; wisps 0.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="wisps 0.5 documentation" href="../index.html"/>
+        <link rel="up" title="Sample Wisps-encoded data files" href="index.html"/>
+        <link rel="next" title="Marine Observations" href="marine.html"/>
+        <link rel="prev" title="Model output" href="model.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> wisps
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../application_profile/index.html">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Sample Wisps-encoded data files</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="model.html">Model output</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Surface Observations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="marine.html">Marine Observations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesonet.html">Mesonet Observations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../encoding_parameter.html">Encoding parameter files in WISPS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sample_parameter/index.html">Sample WISPS-encoded parameter files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding_mos.html">Data Encoding to support MOS in WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/wisps.html">wisps package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">wisps</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../data_encoding.html">Data Encoding for WISPS</a> &raquo;</li>
+        
+          <li><a href="index.html">Sample Wisps-encoded data files</a> &raquo;</li>
+        
+      <li>Surface Observations</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/sample_data/surface.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="surface-observations">
+<h1>Surface Observations<a class="headerlink" href="#surface-observations" title="Permalink to this headline">¶</a></h1>
+<p>This section describes sample surface observation output that can be <a class="reference download internal" href="../_downloads/reduced_hre201302.nc" download=""><code class="xref download docutils literal"><span class="pre">downloaded</span> <span class="pre">here</span></code></a>.
+If you are reading this in a PDF document, then you will need to access a web version to download the sample files.</p>
+<p>This sample file contains station data from METAR-encoded hourly surface observations for a set of 2000 stations taken during the 28 days of February 2013.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">NOTE:  This file was modified from the original to make it smaller and easier to review.
+The original file contained 3095 unique stations.
+Two thousand of those stations were selected at random to constitute this file.</p>
+</div>
+<p>The observations were processed through MDL&#8217;s quality control (QC) routines.
+Notably, the observation time information was altered in that process.
+Specifically, all time data in this file are at the &#8220;top of the hour.&#8221;
+E.g., a METAR whose time was encoded as 1953 (19:53:00 UTC) is stored in this file with the time 20:00:00 UTC.
+This is useful for a number of applications in statistical post-processing, but problematic in a number of other ways.</p>
+<p>Here&#8217;s a CDL fragment for an array of 2-m temperature values.
+(Output is captued from the application Panoply.  All atrributes that follow the variable declaration are associated with that variable.)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">short</span> <span class="n">METAR_Temp_instant_2_</span><span class="p">(</span><span class="n">number_of_stations</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">672</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">S</span><span class="p">;</span> <span class="o">//</span> <span class="n">short</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">ancillary_variables</span> <span class="o">=</span> <span class="s2">&quot;OM_phenomenonTimeInstant OM_resultTime OM_validTime MetarObProcStep1 MetarObProcStep2 &quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;air_temperature&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;elev0&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">LE_Source</span> <span class="o">=</span> <span class="s2">&quot;METAR&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;dry bulb temperature&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">80</span><span class="n">S</span><span class="p">;</span> <span class="o">//</span> <span class="n">short</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degF&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mi">130</span><span class="n">S</span><span class="p">;</span> <span class="o">//</span> <span class="n">short</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">OM_observedProperty</span> <span class="o">=</span> <span class="s2">&quot;https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">OM_procedure</span> <span class="o">=</span> <span class="s2">&quot;( MetarObProcStep1,MetarObProcStep2 )&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">672</span><span class="p">,</span> <span class="mi">1</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
+</pre></div>
+</div>
+<p>There are three dimensions.
+The first, number_of_stations, of course, indexes the various stations.
+The character variable stations contains the ICAO call letters that identify each.
+The second dimension, default_time_coordinate, simply counts through the 672 UTC hours in the month of February 2013.
+The last dimension is a vertical coordinate that satisfies the requirements of the CF Conventions.
+It simply indicates 2 meters above the Earth&#8217;s surface.</p>
+<p>The next attribute identifies a number of ancillary variables, most of which are associated with time.
+Each of these variables are explained in some detail below.</p>
+<p>The attribute OM_observedProperty takes on a value that resolves to a code registry entry for temperature.</p>
+<p>The attribute OM_procedure points to a two step process.
+The data in this file were first decoded from METAR format to BUFR format by NCEP.
+MDL routines then decoded the BUFR data and ingested them.
+Then, they were quality controlled with routines developed by MDL.
+The attribute OM_procedure takes on a character string value that names one or more value-less integers.
+Those integers, in turn, convey metadata in their attributes about each procedureal step.
+Here is a CDL fragment:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">short</span> <span class="n">MetarObProcStep1</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">LE_ProcessStep</span> <span class="o">=</span> <span class="s2">&quot;https://codes.nws.noaa.gov/StatPP/Methods/Ingest/DecodeBUFR&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">LE_Source</span> <span class="o">=</span> <span class="s2">&quot;https://codes.nws.noaa.gov/StatPP/Data/NCEPSfcObsMETAR&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Ingest BUFR-encoded METAR observations from NCEP repository&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span><span class="p">;</span>
+<span class="o">|</span>
+<span class="o">|</span> <span class="n">short</span> <span class="n">MetarObProcStep2</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">LE_ProcessStep</span> <span class="o">=</span> <span class="s2">&quot;https://codes.nws.noaa.gov/StatPP/Methods/QC/METARQC&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Apply MDL METAR Quality Control procedure&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The attribute strings associated with MetarObProcStep1 document that the data were ingested from BUFR-endcoded METAR observations in a repository maintained by NCEP.
+The attribute LE_ProcessStep shows a BUFR decoding step while the attribute LE_Source identifies the repository.
+Both LE_ProcessStep and LE_Source point to entries in the NWS Codes Registry where additional details can be documented.
+The step where NCEP decoded the METAR-encoded observations and stored them in BUFR does not appear in the procedure.
+Those steps that happened before the data were ingested are not documented a procedure steps.</p>
+<p>The attribute strings associated with MetarObProcStep2 document that the data were quality controlled using a procedure developed and maintained by MDL.
+The attribute LE_ProcessStep again points to a codes registry entry.
+There is no entry for LE_Source in this variable.
+When LE_Source is omitted, we presume that the results from the previous process step are the source for the current process step.</p>
+<p>There are three time-related variables associated with <a href="#id1"><span class="problematic" id="id2">METAR_Temp_instant_2_</span></a>.
+They are OM_phenomenonTimeInstant, OM_resultTime, and OM_validTime.
+Here are the CDL fragments that declare each of them:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">long</span> <span class="n">OM_phenomenonTimeInstant</span><span class="p">(</span><span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">672</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">wisps_role</span> <span class="o">=</span> <span class="s2">&quot;OM_phenomenonTime&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">672</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
+<span class="o">|</span>
+<span class="o">|</span> <span class="n">long</span> <span class="n">OM_resultTime</span><span class="p">(</span><span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">672</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">wisps_role</span> <span class="o">=</span> <span class="s2">&quot;OM_resultTime&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">672</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
+<span class="o">|</span>
+<span class="o">|</span> <span class="n">long</span> <span class="n">OM_validTime</span><span class="p">(</span><span class="n">begin_end_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">672</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">wisps_role</span> <span class="o">=</span> <span class="s2">&quot;OM_validTime&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">672</span><span class="p">;</span> <span class="o">//</span> <span class="nb">int</span>
+</pre></div>
+</div>
+<p>The declarations we find here are somewhat different than those found in model output.
+As one might expect, there are fewer dimensions and the values are simpler.
+OM_phenomenonTimeInstant takes on a value for each hour of the month.
+As noted above, the times are set to the top of each hour for all stations and times.
+OM_resultTime values are equal to OM_phenomenonTime values.
+OM_validTime is two-dimensional representing beginning time and ending time.
+The beginning times equal the phenomenon times and result times.
+(I.e., we don&#8217;t intend for data consumers to use an observation before it&#8217;s taken.)
+The ending times are set to missing to show that we intend for data consumers to use an observation indefinitely.</p>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="marine.html" class="btn btn-neutral float-right" title="Marine Observations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="model.html" class="btn btn-neutral" title="Model output" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

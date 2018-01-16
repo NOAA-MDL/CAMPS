@@ -7,21 +7,32 @@ class Location(nc_writable):
     as well as the station names
     """
 
-    def __init__(self):
+    def __init__(self, *args):
         """Initializes empy latitude, longitude, and station arrays
         """
-        self.lat = np.array([])
-        self.lon = np.array([])
-        self.station_names = set([])
+        self.location_data = args
 
-    def write_to_nc(nc_handle):
+    def write_to_nc(self, nc_handle):
         """Writes this objects netCDF representation as a
         netCDF Variable to the nc_handle.
         """
-        if len(self.station_names > 0):
-            pass
-
-    def num_stations(self):
-        """Returns the number of stations.
+        for i in location_data:
+            write_to_nc(i)
+    
+    def get_x(self):
         """
-        return len(self.station_names)
+        """
+        for i in self.location_data:
+            if i.name == 'x':
+                return i[:]
+
+    def get_y(self):
+        """
+        """
+        for i in self.location_data:
+            if i.name == 'y':
+                return i[:]
+
+
+
+

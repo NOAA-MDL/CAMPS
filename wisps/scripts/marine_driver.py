@@ -85,19 +85,29 @@ def main(control_file=None):
             times = get_time(reader.dates)
             obj.time = times
             obj.add_data(ob_arr)
-            obj.add_source("MARINE")
+            obj.add_process('MarineObProcStep1')
+            obj.add_process('MarineObProcStep2')
             obj_list.append(obj)
         except KeyError:
             print observation_name, "undefined"
 
+    obj_list = add_marine_procedures(obj_list)
+
     obj = pack_station_names(station_names)
-    obj.add_source("MARINE")
+    obj.time = get_time(reader.dates)
+    #obj.add_source("MARINE")
     obj_list.append(obj)
+
 
     writer.write(obj_list, out_path)
     if log_file:
         out_log.close()
 
+def add_marine_procedures(obj_list):
+    """Add Marine QC procedures"""
+    for obj in obj_list:
+        obj.add_process('MarineObProcStep1')
+    return obj_list
 
 def get_time(dates):
     """Returns phenom time from list of dates"""

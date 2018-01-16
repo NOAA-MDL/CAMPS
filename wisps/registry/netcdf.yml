@@ -9,12 +9,12 @@
 ########################################
 globals:
   institution : "NOAA/National Weather Service"
-  Conventions : "CF-1.1"
-  version : "WISPS-0.1"
+  Conventions : "CF-1.7 WISPS-0.2"
+  version : "WISPS-0.6"
   history : "Generated on NOAA's Weather and Climate Operational Supercomputing System"
   references : ""
   organization : "NOAA/MDL/SMB"
-  url : "http://www.nws.noaa.gov/mdl/"
+  url : "http://www.nws.noaa.gov/mdl/, https://sats.nws.noaa.gov/~wisps/"
 
 ########################################
 ##
@@ -28,7 +28,6 @@ globals:
 ##
 ########################################
 dimensions :
-    #time : &time 'time_projection'
   time : &time 'default_time_coordinate_size'
   nstations : &nstations 'number_of_stations'
   num_vert : &nv 'nv' #number of verticies
@@ -38,6 +37,8 @@ dimensions :
   lead_time : &lead 'lead_times'
   lat : &lat 'lat'
   lon : &lon 'lon'
+  x_proj : &x_proj 'x'
+  y_proj : &y_proj 'y'
   
 
 ########################################
@@ -96,7 +97,7 @@ dimensions :
 ##
 ##     OM_observedProperty : [Property URI]
 ##       Required. URI to a wmo code entry representing the propery. 
-##       e.q. StatPP/Data/Met/momentum/wind_speed
+##       e.q. https://codes.nws.noaa.gov/StatPP/Data/Met/momentum/wind_speed
 ##
 ##     long_name : [long name]
 ##       Optional but suggested. A longer name. A name that might be
@@ -139,9 +140,11 @@ variables :
     data_type : "c" # NC_CHAR
     dimensions : [*nstations,*chars]
     fill_value : "-"
+    feature_of_interest : True
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/station_name"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/station_name"
       long_name : "ICAO METAR call letters"
+      standard_name : "platform_id"
       comment : "
                 Only currently archives reports from stations only if  
                 the first letter of the ICAO ID is 'K', 'P', 'M', 'C', or 'T'.
@@ -150,14 +153,17 @@ variables :
     data_type : int8
     dimensions : [*nstations,*time]
     fill_value : 9
+    feature_of_interest : True
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/station_type"
+      standard_name : "platform_id"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/station_type"
       long_name : "station type"
   latitude :
     #data_type : int16
     data_type : float32
+    feature_of_interest : True
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/latitude"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/latitude"
       long_name : "latitude"
       units : "degrees_north"
       valid_min : -90.0
@@ -167,18 +173,40 @@ variables :
   longitude :
     data_type : float32
     dimensions : [*nstations,*time]
+    feature_of_interest : True
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/longitude"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/longitude"
       long_name : "longitude"
       units : "degrees_west"
       valid_min : -180.0
       valid_max : 180.0
       standard_name : "longitude"
+  y :
+    #data_type : int16
+    data_type : float32
+    feature_of_interest : True
+    dimensions : [*y_proj]
+    attribute : 
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/yProj"
+      long_name : "y coordinate of projection"
+      standard_name : "projection_y_coordinate"
+      units : "m"
+  x :
+    #data_type : int16
+    data_type : float32
+    feature_of_interest : True
+    dimensions : [*x_proj]
+    attribute : 
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/xProj"
+      long_name : "x coordinate of of projection"
+      standard_name : "projection_x_coordinate"
+      units : "m"
   observation_time :
     data_type : int64
     dimensions : [*time]
+    feature_of_interest : True
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/time/observation_time"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/time/observation_time"
       long_name : *time
       units : "HHMM"
       standard_name : "time"
@@ -188,41 +216,41 @@ variables :
     dimensions : [*nstations,*time]
     coord_val : 2
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "dry bulb temperature"
       valid_min : -80
       valid_max : 130 
       standard_name : "air_temperature"
-      units : "degrees F"
+      units : "degF"
       coordinates : "elev"
   dew_point_temperature :
     data_type : int16
     dimensions : [*nstations,*time]
     coord_val : 2
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/DewPt"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/DewPt"
       long_name : "dew point temperature"
       standard_name : "dew_point_temperature"
       valid_min : -85
       valid_max :  80
       coordinates : "elev"
-      units : "degrees F"
+      units : "degF"
   present_weather_group_1 :
     data_type : uint16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/present_weather_group_1"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/M2KCodedWxGroup1"
       long_name : "present weather group 1"
       valid_min : 0
       valid_max : 208
-      standard_name : "present_weather"
+      standard_name : "precipitation_amount"
       comment : "enumeration legend available at:"
   present_weather_group_2 :
     data_type : uint16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/present_weather_group_2"
-      long_name : "present weather group 2"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/M2KCodedWxGroup2"
+      standard_name : "precipitation_amount"
       valid_min : 0
       valid_max : 208
       standard_name : "present_weather"
@@ -231,17 +259,17 @@ variables :
     data_type : uint16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/present_weather_group_3"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/M2KCodedWxGroup3"
       long_name : "present weather group 3"
       valid_min : 0 
       valid_max : 208
-      standard_name : "present_weather"
+      standard_name : "precipitation_amount"
       comment : "enumeration legend available at:"
   visibility_in_air :
     data_type : float32
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/visibility_in_air"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Phys/Vsby"
       long_name : "horizontal visiblity"
       units : "miles"
       valid_min : 0
@@ -252,7 +280,7 @@ variables :
     dimensions : [*nstations,*time]
     coord_val : 2
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/WindDir"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/WindDir"
       long_name : "wind direction"
       units : "degrees"
       valid_min : 0
@@ -265,7 +293,7 @@ variables :
     dimensions : [*nstations,*time]
     coord_val : 2
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/WSpd"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/WSpd"
       long_name : "wind speed"
       valid_min : 0
       valid_max : 75
@@ -278,7 +306,7 @@ variables :
     dimensions : [*nstations,*time]
     coord_val : 2
     attribute :
-      OM_observedProperty : "StatPP/Data/Met/Moment/Gust"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Gust"
       long_name : "wind speed of gust"
       coordinates : "elev"
       valid_min : 0
@@ -289,7 +317,7 @@ variables :
     data_type : float32
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/Pres"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/Pres"
       long_name : "mean sea level pressure"
       valid_min : 875
       valid_max : 1075
@@ -300,19 +328,19 @@ variables :
     data_type : float32
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/altimeter_setting"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/AltimtrStg"
       long_name : "altimiter setting"
       valid_min : 24
       valid_max : 32
       units : "mm Hg"
-      standard_name : "altimiter_range"
+      standard_name : "altimeter_range"
   cloud_amount_layer_1 :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/cloud_amount_layer_1"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldAmt"
       long_name : "cloud amount layer 1"
-      units : "coded"
+      #units : "coded"
       valid_min : 0
       valid_max : 10
       standard_name : "cloud_area_fraction_in_atmosphere_layer"
@@ -321,7 +349,7 @@ variables :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/cloud_height_layer_1"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldHght"
       long_name : "cloud height layer 1"
       units : "feet"
       standard_name : "convective_cloud_base_height"
@@ -329,18 +357,18 @@ variables :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/cloud_amount_layer_2"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldAmt"
       long_name : "cloud amount layer 2"
       valid_min : 0
       valid_max : 10
-      units : "coded"
+      #units : "coded"
       standard_name : "cloud_area_fraction_in_atmosphere_layer"
       comment : "Enumeration can be found at:"
   cloud_height_layer_2  :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/cloud_height_layer_2"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldHght"
       long_name : "cloud height layer 2"
       units : "feet"
       standard_name : "convective_cloud_base_height"
@@ -348,10 +376,10 @@ variables :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/cloud_amount_layer_3"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldAmt"
       long_name : "cloud amount layer 3"
       valid_min : 0
-      units : "coded"
+      #units : "coded"
       valid_max : 10
       standard_name : "cloud_area_fraction_in_atmosphere_layer"
       comment : "Enumeration can be found at:"
@@ -359,7 +387,7 @@ variables :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/cloud_height_layer_3"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldHght"
       long_name : "cloud height layer 3"
       units : "feet"
       standard_name : "convective_cloud_base_height"
@@ -367,18 +395,18 @@ variables :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/cloud_amount_layer_4"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldAmt"
       long_name : "cloud amount layer 4"
       valid_min : 0
       valid_max : 10
-      units : "coded"
+      #units : "coded"
       standard_name : "cloud_area_fraction_in_atmosphere_layer"
       comment : "Enumeration can be found at:"
   cloud_height_layer_4  :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/cloud_height_layer_4"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldHght"
       long_name : "cloud height layer 4"
       units : "feet"
       standard_name : "convective_cloud_base_height"
@@ -386,17 +414,17 @@ variables :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/cloud_amount_layer_5"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldAmt"
       long_name : "cloud amount layer 5"
       valid_min : 0
       valid_max : 10
       standard_name : "cloud_area_fraction_in_atmosphere_layer"
-      units : "coded"
+      #units : "coded"
   cloud_height_layer_5  :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/cloud_height_layer_5"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldHght"
       long_name : "cloud height layer 5"
       units : "feet"
       standard_name : "convective_cloud_base_height"
@@ -404,17 +432,17 @@ variables :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/cloud_amount_layer_6"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldAmt"
       long_name : "cloud amount layer 6"
       valid_min : 0
       valid_max : 10
       standard_name : "cloud_area_fraction_in_atmosphere_layer"
-      units : "coded"
+      #units : "coded"
   cloud_height_layer_6  :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/cloud_height_layer_6"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldHght"
       long_name : "cloud height layer 6"
       units : "feet"
       standard_name : "convective_cloud_base_height"
@@ -422,65 +450,69 @@ variables :
     data_type : int16
     dimensions : [*nstations,*time]
     hours : 1
+    coord_val : 2
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/TotalPrecip"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/TotalPrecip"
       standard_name : "precipitation_amount"
       long_name : "Hourly precipitation amount"
       valid_min : 0
       valid_max : 3.75
-      cell_methods : "time_projection:sum"
-      bounds : "time_bounds"
-      units : "inches"
-      scale_factor : 100
+      cell_methods : "default_time_coordinate_size:sum"
+      units : "in"
+      scale_factor : !!float 100
+      coordinates : "plev"
       comment : "A -4 is used to represent a trace amount\n
                  A -9 is used to represent an indeterminate amount"
   precipitation_amount_3_hour  :
     data_type : int16
     dimensions : [*nstations,*time]
     hours : 3
+    coord_val : 2
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/TotalPrecip"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/TotalPrecip"
       standard_name : "precipitation_amount"
       long_name : "3-hour precipitation amount"
       cell_methods : "default_time_coordinate_size :sum"
-      bounds : "time_bounds"
       valid_min : 0
       valid_max : 9
-      units : "inches"
-      scale_factor : 100
+      units : "in"
+      coordinates : "plev"
+      scale_factor : !!float 100
   precipitation_amount_6_hour  :
     data_type : int16
     dimensions : [*nstations,*time]
     hours : 6
+    coord_val : 2
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/TotalPrecip"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/TotalPrecip"
       standard_name : "precipitation_amount"
       long_name : "6-hour precipitation amount"
       valid_min : 0
       valid_max : 12
       cell_methods : "default_time_coordinate_size :sum"
-      bounds : "time_bounds"
-      units : "inches"
-      scale_factor : 100
+      units : "in"
+      coordinates : "plev"
+      scale_factor : !!float 100
   precipitation_amount_24_hour  :
     data_type : int16
     dimensions : [*nstations,*time]
     hours : 24
+    coord_val : 2
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/TotalPrecip"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/TotalPrecip"
       standard_name : "precipitation_amount"
       long_name : "24-hour precipitation amount"
       valid_min : 0
       valid_max : 24
       cell_methods : "default_time_coordinate_size :sum"
-      bounds : "time_bounds"
-      scale_factor : 100
-      units : "inches"
+      scale_factor : !!float 100
+      coordinates : "plev"
+      units : "in"
   duration_of_sunshine :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/duration_of_sunshine"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/SunDuratn"
       long_name : "minutes of sunshine"
       standard_name : "duration_of_sunshine"
       units : "minutes"
@@ -491,11 +523,10 @@ variables :
     hours : 6
     attribute : 
       standard_name : "air_temperature"
-      OM_observedProperty : "StatPP/Data/Met/temperature_6_hour_maximum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       coordinates : "elev"
       long_name : "6-hour maximum temperature"
       cell_methods :  "default_time_coordinate_size : maximum"
-      bounds : "time_bounds"
       units : "Fahrenheit"
       comment : "Minimum and maximum values depend on season and region"
   temperature_6_hour_minimum  :
@@ -505,10 +536,9 @@ variables :
     hours : 6
     attribute : 
       standard_name : "air_temperature"
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       coordinates : "elev"
       cell_methods :  "default_time_coordinate_size : minimum"
-      bounds : "time_bounds"
       long_name : "6-hour minimum temperature"
       units : "Fahrenheit"
       comment : "Minimum and maximum values depend on season and region"
@@ -521,8 +551,7 @@ variables :
       standard_name : "air_temperature"
       coordinates : "elev"
       cell_methods :  "default_time_coordinate_size : minimum"
-      bounds : "time_bounds"
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "1-hour minimum temperature"
       units : "Fahrenheit"
   temperature_1_hour_maximum  :
@@ -532,11 +561,10 @@ variables :
     hours : 1
     attribute : 
       standard_name : "air_temperature"
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       coordinates : "elev"
-      bounds : "time_bounds"
       cell_methods :  "default_time_coordinate_size : maximum"
-      long_name : "1-hour minimum temperature"
+      long_name : "1-hour maximum temperature"
       units : "Fahrenheit"
   calendar_day_maximum_temperature  :
     data_type : int16
@@ -545,12 +573,11 @@ variables :
     hours : 24
     attribute : 
       standard_name : "air_temperature"
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       coordinates : "elev"
-      bounds : "time_bounds"
       cell_methods :  "default_time_coordinate_size : maximum"
       long_name : "Calendar day maximum temperature"
-      units : "degrees F"
+      units : "degF"
       comment : "Minimum and maximum values depend on season and region"
   calendar_day_minimum_temperature  :
     data_type : int16
@@ -559,74 +586,73 @@ variables :
     hours : 24
     attribute : 
       standard_name : "air_temperature"
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       coordinates : "elev"
       long_name : "calendar day minimum temperature"
-      bounds : "time_bounds"
       cell_methods :  "default_time_coordinate_size : minimum"
-      units : "degrees F"
+      units : "degF"
       comment : "Minimum and maximum values depend on season and region"
   snow_depth_on_ground :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
       standard_name : "surface_snow_thickness"
-      OM_observedProperty : "StatPP/Data/Met/snow_depth_on_ground"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/snow_depth_on_ground"
       long_name : "snow depth on the ground"
-      units : "inches"
+      units : "in"
   snowfall_amount :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/snowfall_amount"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/snowfall_amount"
       long_name : "snowfall amount"
-      units : "inches"
+      units : "in"
       standard_name : "snowfall_amount"
-      comment : "amount of snowfall that has fallen in the past hour. must be > .5 inches"
+      comment : "amount of snowfall that has fallen in the past hour. must be > .5 inch"
   sattelite_cloud_amount_category_GOES_E :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/sattelite_cloud_amount_category_GOES_E"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldAmt"
       standard_name : "cloud_area_fraction"
       long_name : "satellite cloud amount category from GOES-East"
-      units : "coded"
+      #units : "coded"
   sattelite_effective_cloud_amount_GOES_E :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/sattelite_effective_cloud_amount_GOES_E"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldAmt"
       long_name : "sattelite effective cloud amount from GOES-East"
       standard_name : "cloud_area_fraction"
-      units : "coded"
+      #units : "coded"
   sattelite_cloud_amount_category_GOES_W :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/sattelite_cloud_amount_category_GOES_W"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldAmt"
       standard_name : "cloud_area_fraction"
       long_name : "sattelite cloud amount from GOES-West"
   sattelite_effective_cloud_amount_GOES_W :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/sattelite_effective_cloud_amount_GOES_W"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Cloud/CldAmt"
       long_name : "sattelite effective cloud amount from GOES-West"
-      units : "coded"
+      #units : "coded"
   water_temperature :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
       standard_name : "sea_water_temperature"
-      OM_observedProperty : "StatPP/Data/Met/water_temperature"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       standard_name : "sea_surface_skin_temperature"
       long_name : "water temperature"
-      units : "degrees F"
+      units : "degF"
   wave_height :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/wave_height"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Ocean/Waves/WvHght"
       long_name : "wave_height"
       units : "centimeters"
       standard_name : "sea_surface_swell_significant_height"
@@ -635,7 +661,7 @@ variables :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/wave_direction"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Ocean/Waves/WvDir"
       long_name : "wave_direction"
       units : "degrees"
       standard_name : "sea_surface_wave_from_direction"
@@ -644,7 +670,7 @@ variables :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/average_wave_period"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Ocean/Waves/WvPd"
       long_name : "average wave period"
       units : "seconds"
       standard_name : "sea_surface_swell_wave_period"
@@ -653,7 +679,7 @@ variables :
     data_type : int16
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/dominant_wave_period"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Ocean/Waves/DomWvPd"
       long_name : "average wave period"
       standard_name : "sea_surface_swell_wave_period"
       units : "seconds"
@@ -661,7 +687,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/albedo_3hr_avg"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Misc/Albedo"
       long_name : "albedo 3hr avg"
       standard_name : "surface_albedo"
       units : ""
@@ -671,7 +697,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/albedo"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Misc/Albedo"
       long_name : "albedo 6hr avg"
       standard_name : "surface_albedo"
       units : ""
@@ -681,7 +707,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/albedo"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Misc/Albedo"
       long_name : "albedo 6hr avg"
       standard_name : "surface_albedo"
       units : ""
@@ -691,7 +717,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/best_4layer_lifted_index"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Stability/LIBest4Lyr"
       long_name : "best 4layer lifted index instant"
       standard_name : "temperature_difference_between_ambient_air_and_air_lifted_adiabatically"
       units : ""
@@ -701,7 +727,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/categorical_freezing_rain"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/FZRABin"
       long_name : "categorical freezing rain 3hr avg surface"
       standard_name : "categorical_freezing_rain_3hr_avg_surface"
       units : ""
@@ -711,7 +737,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/categorical_freezing_rain_6hr_avg"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/FZRABin"
       long_name : "categorical freezing rain 6hr avg surface"
       standard_name : "categorical_freezing_rain_6hr_avg_surface"
       units : ""
@@ -721,7 +747,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/categorical_ice_pellets_3hr_avg"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/IPBin"
       long_name : "categorical ice pellets 3hr avg surface"
       standard_name : "categorical_ice_pellets_3hr_avg_surface"
       units : ""
@@ -731,7 +757,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/categorical_ice_pellets_6hr_avg"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/IPBin"
       long_name : "categorical ice pellets 6hr avg surface"
       standard_name : "categorical_ice_pellets_6hr_avg_surface"
       units : ""
@@ -741,7 +767,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/categorical_rain_3hr_avg"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/RNBin"
       long_name : "categorical rain 3hr avg surface"
       standard_name : "categorical_rain_3hr_avg_surface"
       units : ""
@@ -751,7 +777,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/categorical_rain_6hr_avg"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/RNBin"
       long_name : "categorical rain 6hr avg surface"
       standard_name : "categorical_rain_6hr_avg_surface"
       units : ""
@@ -761,7 +787,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/categorical_snow_3hr_avg"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/SNBin"
       long_name : "categorical snow 3hr avg surface"
       standard_name : "categorical_snow_3hr_avg_surface"
       units : ""
@@ -771,7 +797,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/categorical_snow_6hr_avg"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/SNBin"
       long_name : "categorical snow 6hr avg surface"
       standard_name : "categorical_snow_6hr_avg_surface"
       units : ""
@@ -781,7 +807,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/convective_available_potential_energy"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Stability/CAPE"
       long_name : "convective available potential energy instant"
       standard_name : "atmosphere_convective_available_potential_energy"
       units : "J/kg"
@@ -791,7 +817,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/convective_inhibition"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Stability/CIN"
       long_name : "convective inhibition instant"
       standard_name : "atmosphere_convective_inhibition"
       units : "J/kg"
@@ -801,7 +827,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/convective_precipitation_3hr_accum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/CPrecip"
       long_name : "convective precipitation 3hr accum surface"
       standard_name : "convective_precipitation_amount"
       units : ""
@@ -811,7 +837,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/convective_precipitation_6hr_accum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/CPrecip"
       long_name : "convective precipitation 6hr accum surface"
       standard_name : "convective_precipitation_amount"
       units : ""
@@ -822,7 +848,7 @@ variables :
     dimensions : [] 
     coord_val : 1000
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 1000"
       standard_name : "geopotential_height"
       units : "gpm"
@@ -834,7 +860,7 @@ variables :
     dimensions : [] 
     coord_val : 300
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 300"
       standard_name : "geopotential_height"
       units : "gpm"
@@ -846,7 +872,7 @@ variables :
     dimensions : [] 
     coord_val : 500
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 500"
       standard_name : "geopotential_height"
       units : "gpm"
@@ -858,7 +884,7 @@ variables :
     dimensions : [] 
     coord_val : 600
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 600"
       standard_name : "geopotential_height"
       units : "gpm"
@@ -870,7 +896,7 @@ variables :
     dimensions : [] 
     coord_val : 700
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 700"
       standard_name : "geopotential_height"
       units : "gpm"
@@ -882,7 +908,7 @@ variables :
     dimensions : [] 
     coord_val : 750
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 750"
       standard_name : "geopotential_height"
       units : "gpm"
@@ -894,7 +920,7 @@ variables :
     dimensions : [] 
     coord_val : 800
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 800"
       standard_name : "geopotential_height"
       units : "gpm"
@@ -906,7 +932,7 @@ variables :
     dimensions : [] 
     coord_val : 850
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 850"
       standard_name : "geopotential_height"
       units : "gpm"
@@ -918,7 +944,7 @@ variables :
     dimensions : [] 
     coord_val : 900
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 900"
       standard_name : "geopotential_height"
       units : "gpm"
@@ -930,7 +956,7 @@ variables :
     dimensions : [] 
     coord_val : 925
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 925"
       standard_name : "geopotential_height"
       units : "gpm"
@@ -942,7 +968,7 @@ variables :
     dimensions : [] 
     coord_val : 950
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 950"
       standard_name : "geopotential_height"
       units : "gpm"
@@ -954,7 +980,7 @@ variables :
     dimensions : [] 
     coord_val : 975
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/GeoHght"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
       long_name : "geopotential height instant 975"
       standard_name : "geopotential_height"
       units : "gpm"
@@ -965,17 +991,17 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/planetary_boundary_layer_height"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/PBL"
       long_name : "planetary boundary layer height instant"
       standard_name : "atmosphere_boundary_layer_thickness"
-      units : ""
+      units : "m"
       valid_min : ""
       valid_max : ""
   precipitable_water_instant_surface :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/PWat"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/PWat"
       long_name : "precipitable water instant surface"
       standard_name : "lwe_thickness_of_atmosphere_mass_content_of_water_vapor"
       units : ""
@@ -985,7 +1011,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/Pres"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/Pres"
       long_name : "pressure reduced to msl instant"
       standard_name : "air_pressure"
       units : ""
@@ -995,7 +1021,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant surface"
       standard_name : "relative_humidity"
       units : "K"
@@ -1006,7 +1032,7 @@ variables :
     dimensions : [] 
     coord_val : 1000
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 1000"
       standard_name : "relative_humidity"
       units : "K"
@@ -1018,7 +1044,7 @@ variables :
     dimensions : [] 
     coord_val : 2
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 2"
       standard_name : "relative_humidity"
       units : "K"
@@ -1030,7 +1056,7 @@ variables :
     dimensions : [] 
     coord_val : 300
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 300"
       standard_name : "relative_humidity"
       units : "K"
@@ -1042,7 +1068,7 @@ variables :
     dimensions : [] 
     coord_val : 3000
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 3000"
       standard_name : "relative_humidity"
       units : "K"
@@ -1054,7 +1080,7 @@ variables :
     dimensions : [] 
     coord_val : 500
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 500"
       standard_name : "relative_humidity"
       units : "K"
@@ -1066,7 +1092,7 @@ variables :
     dimensions : [] 
     coord_val : 600
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 600"
       standard_name : "relative_humidity"
       units : ""
@@ -1078,7 +1104,7 @@ variables :
     dimensions : [] 
     coord_val : 700
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 700"
       standard_name : "relative_humidity"
       units : "K"
@@ -1090,7 +1116,7 @@ variables :
     dimensions : [] 
     coord_val : 750
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 750"
       standard_name : "relative_humidity"
       units : "K"
@@ -1102,7 +1128,7 @@ variables :
     dimensions : [] 
     coord_val : 800
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 800"
       standard_name : "relative_humidity"
       units : "K"
@@ -1114,7 +1140,7 @@ variables :
     dimensions : [] 
     coord_val : 850
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 850"
       standard_name : "relative_humidity"
       units : "K"
@@ -1126,7 +1152,7 @@ variables :
     dimensions : [] 
     coord_val : 900
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 900"
       standard_name : "relative_humidity"
       units : "K"
@@ -1138,7 +1164,7 @@ variables :
     dimensions : [] 
     coord_val : 925
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 925"
       standard_name : "relative_humidity"
       units : "K"
@@ -1150,7 +1176,7 @@ variables :
     dimensions : [] 
     coord_val : 950
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 950"
       standard_name : "relative_humidity"
       units : "K"
@@ -1162,7 +1188,7 @@ variables :
     dimensions : [] 
     coord_val : 975
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/RelHum"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/RelHum"
       long_name : "relative humidity instant 975"
       standard_name : "relative_humidity"
       units : "K"
@@ -1173,7 +1199,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/storm_relative_helicity"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Stability/SRH"
       long_name : "storm relative helicity instant 3000"
       standard_name : "product_of_eastward_wind_and_upward_air_velocity"
       units : ""
@@ -1183,7 +1209,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/lifted_index"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Stability/LI"
       long_name : "lifted index from surface"
       standard_name : "temperature_difference_between_ambient_air_and_air_lifted_adiabatically_from_the_surface"
       units : ""
@@ -1193,7 +1219,7 @@ variables :
     data_type : float32
     dimensions : [*nstations,*time]
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Mass/Pres"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/Pres"
       long_name : "pressure instant surface"
       standard_name : "air_pressure"
       units : ""
@@ -1203,8 +1229,8 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
-      long_name : "maximum temperature 3hr max 2"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
+      long_name : "maximum temperature 3hr max at 2m"
       standard_name : "air_temperature"
       units : "K"
       valid_min : ""
@@ -1213,8 +1239,8 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
-      long_name : "maximum temperature 6hr max 2"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
+      long_name : "maximum temperature 6hr max at 2m"
       standard_name : "air_temperature"
       units : "K"
       valid_min : ""
@@ -1223,8 +1249,8 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
-      long_name : "minimum temperature 3hr min 2"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
+      long_name : "minimum temperature 3hr min at 2m"
       standard_name : "air_temperature"
       units : "K"
       valid_min : ""
@@ -1233,8 +1259,8 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
-      long_name : "minimum temperature 6hr min 2"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
+      long_name : "minimum temperature 6hr min at 2m "
       standard_name : "air_temperature"
       units : "K"
       valid_min : ""
@@ -1243,7 +1269,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "minimum temperature 12hr at 2m"
       standard_name : "air_temperature"
       units : "K"
@@ -1253,9 +1279,21 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "maximum temperature 12hr at 2m"
       standard_name : "air_temperature"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+  2_metre_apparent_temperature_instant_2 :
+    data_type : float32
+    dimensions : [] 
+    coord_val : 2
+    attribute : 
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
+      long_name : "temperature instant at 2m"
+      standard_name : "air_temperature"
+      coordinates: "elev"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1264,8 +1302,8 @@ variables :
     dimensions : [] 
     coord_val : 2
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
-      long_name : "2 metre temperature instant 2"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
+      long_name : "temperature instant at 2m"
       standard_name : "air_temperature"
       coordinates: "elev"
       units : "K"
@@ -1276,7 +1314,7 @@ variables :
     dimensions : [] 
     coord_val : 1000
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 1000"
       standard_name : "air_temperature"
       units : "K"
@@ -1288,7 +1326,7 @@ variables :
     dimensions : [] 
     coord_val : 300
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 300"
       standard_name : "air_temperature"
       units : "K"
@@ -1299,7 +1337,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 3000"
       standard_name : "air_temperature"
       units : "K"
@@ -1310,7 +1348,7 @@ variables :
     dimensions : [] 
     coord_val : 500
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 500"
       standard_name : "air_temperature"
       units : "K"
@@ -1322,7 +1360,7 @@ variables :
     dimensions : [] 
     coord_val : 600
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 600"
       standard_name : "air_temperature"
       units : "K"
@@ -1334,7 +1372,7 @@ variables :
     dimensions : [] 
     coord_val : 700
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 700"
       standard_name : "air_temperature"
       units : "K"
@@ -1346,7 +1384,7 @@ variables :
     dimensions : [] 
     coord_val : 750
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 750"
       standard_name : "air_temperature"
       units : "K"
@@ -1358,7 +1396,7 @@ variables :
     dimensions : [] 
     coord_val : 800
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 800"
       standard_name : "air_temperature"
       units : "K"
@@ -1370,7 +1408,7 @@ variables :
     dimensions : [] 
     coord_val : 850
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 850"
       standard_name : "air_temperature"
       units : "K"
@@ -1382,7 +1420,7 @@ variables :
     dimensions : [] 
     coord_val : 900
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 900"
       standard_name : "air_temperature"
       units : "K"
@@ -1394,7 +1432,7 @@ variables :
     dimensions : [] 
     coord_val : 925
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "temperature instant 925 mb"
       standard_name : "air_temperature"
       units : "K"
@@ -1406,7 +1444,7 @@ variables :
     dimensions : [] 
     coord_val : 950
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "temperature at 950 mb"
       standard_name : "air_temperature"
       units : "K"
@@ -1418,7 +1456,7 @@ variables :
     dimensions : [] 
     coord_val : 975
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Temp/Temp"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp"
       long_name : "temperature at 975 mb"
       standard_name : "air_temperature"
       units : "K"
@@ -1429,7 +1467,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/TotalPrecip"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/TotalPrecip"
       long_name : "total precipitation 3hr accum surface"
       standard_name : "precipitation_amount"
       units : ""
@@ -1439,7 +1477,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/TotalPrecip"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Wx/TotalPrecip"
       long_name : "total precipitation 6hr accum surface"
       standard_name : "precipitation_amount"
       units : ""
@@ -1449,7 +1487,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/MomentUwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "U wind speed instant 10m"
       standard_name : "northward_wind"
       units : ""
@@ -1459,7 +1497,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/MomentVwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "V wind speed instant 10m"
       standard_name : "eastward_wind"
       units : ""
@@ -1469,7 +1507,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant surface"
       standard_name : "northward_wind"
       units : "m/s"
@@ -1480,7 +1518,7 @@ variables :
     dimensions : [] 
     coord_val : 1000
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 1000"
       standard_name : "northward_wind"
       units : "m/s"
@@ -1492,7 +1530,7 @@ variables :
     dimensions : [] 
     coord_val : 300
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 300"
       standard_name : "northward_wind"
       units : "m/s"
@@ -1504,7 +1542,7 @@ variables :
     dimensions : [] 
     coord_val : 500
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 500"
       standard_name : "northward_wind"
       units : "m/s"
@@ -1516,7 +1554,7 @@ variables :
     dimensions : [] 
     coord_val : 600
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 600"
       standard_name : "northward_wind"
       units : "m/s"
@@ -1528,7 +1566,7 @@ variables :
     dimensions : [] 
     coord_val : 700
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 700"
       standard_name : "northward_wind"
       units : "m/s"
@@ -1540,7 +1578,7 @@ variables :
     dimensions : [] 
     coord_val : 750
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 750"
       standard_name : "northward_wind"
       units : "m/s"
@@ -1552,7 +1590,7 @@ variables :
     dimensions : [] 
     coord_val : 800
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 800"
       standard_name : "northward_wind"
       units : "m/s"
@@ -1564,7 +1602,7 @@ variables :
     dimensions : [] 
     coord_val : 850
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 850"
       standard_name : "northward_wind"
       units : "m/s"
@@ -1576,7 +1614,7 @@ variables :
     dimensions : [] 
     coord_val : 900
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 900"
       standard_name : "northward_wind"
       units : "m/s"
@@ -1588,7 +1626,7 @@ variables :
     dimensions : [] 
     coord_val : 925
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 925"
       standard_name : "northward_wind"
       units : "m/s"
@@ -1600,7 +1638,7 @@ variables :
     dimensions : [] 
     coord_val : 950
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 950"
       standard_name : "northward_wind"
       units : "m/s"
@@ -1612,7 +1650,7 @@ variables :
     dimensions : [] 
     coord_val : 975
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Uwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Uwind"
       long_name : "u component of wind instant 975"
       standard_name : "northward_wind"
       units : "m/s"
@@ -1623,7 +1661,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/unknown"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/unknown"
       long_name : "unknown instant 2"
       standard_name : "unknown_instant_2"
       units : ""
@@ -1633,7 +1671,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant surface"
       standard_name : "eastward_wind"
       units : "m/s"
@@ -1644,7 +1682,7 @@ variables :
     dimensions : [] 
     coord_val : 1000
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 1000"
       standard_name : "eastward_wind"
       units : "m/s"
@@ -1656,7 +1694,7 @@ variables :
     dimensions : [] 
     coord_val : 300
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 300"
       standard_name : "eastward_wind"
       units : "m/s"
@@ -1668,7 +1706,7 @@ variables :
     dimensions : [] 
     coord_val : 500
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 500"
       standard_name : "eastward_wind"
       units : "m/s"
@@ -1680,7 +1718,7 @@ variables :
     dimensions : [] 
     coord_val : 600
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 600"
       standard_name : "eastward_wind"
       units : "m/s"
@@ -1692,7 +1730,7 @@ variables :
     dimensions : [] 
     coord_val : 700
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 700"
       standard_name : "eastward_wind"
       units : "m/s"
@@ -1704,7 +1742,7 @@ variables :
     dimensions : [] 
     coord_val : 750
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 750"
       standard_name : "eastward_wind"
       units : "m/s"
@@ -1716,7 +1754,7 @@ variables :
     dimensions : [] 
     coord_val : 800
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 800"
       standard_name : "eastward_wind"
       units : "m/s"
@@ -1728,7 +1766,7 @@ variables :
     dimensions : [] 
     coord_val : 850
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 850"
       standard_name : "eastward_wind"
       units : "m/s"
@@ -1740,7 +1778,7 @@ variables :
     dimensions : [] 
     coord_val : 900
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 900"
       standard_name : "eastward_wind"
       units : "m/s"
@@ -1752,7 +1790,7 @@ variables :
     dimensions : [] 
     coord_val : 925
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 925"
       standard_name : "eastward_wind"
       units : "m/s"
@@ -1764,7 +1802,7 @@ variables :
     dimensions : [] 
     coord_val : 950
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 950"
       standard_name : "eastward_wind"
       units : "m/s"
@@ -1776,7 +1814,7 @@ variables :
     dimensions : [] 
     coord_val : 975
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Vwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Vwind"
       long_name : "v component of wind instant 975"
       standard_name : "eastward_wind"
       units : "m/s"
@@ -1787,7 +1825,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant surface"
       standard_name : "upward_air_velocity"
       units : "Pa/s"
@@ -1798,7 +1836,7 @@ variables :
     dimensions : [] 
     coord_val : 1000
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 1000"
       standard_name : "upward_air_velocity"
       units : "Pa/s"
@@ -1810,7 +1848,7 @@ variables :
     dimensions : [] 
     coord_val : 300
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 300"
       standard_name : "upward_air_velocity"
       units : "Pa/s"
@@ -1822,7 +1860,7 @@ variables :
     dimensions : [] 
     coord_val : 500
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 500"
       standard_name : "upward_air_velocity"
       units : "Pa/s"
@@ -1834,7 +1872,7 @@ variables :
     dimensions : [] 
     coord_val : 600
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 600"
       standard_name : "upward_air_velocity"
       units : "Pa/s"
@@ -1846,7 +1884,7 @@ variables :
     dimensions : [] 
     coord_val : 700
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 700"
       standard_name : "upward_air_velocity"
       units : "Pa/s"
@@ -1858,7 +1896,7 @@ variables :
     dimensions : [] 
     coord_val : 750
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 750"
       standard_name : "upward_air_velocity"
       units : "Pa/s"
@@ -1870,7 +1908,7 @@ variables :
     dimensions : [] 
     coord_val : 800
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 800"
       standard_name : "upward_air_velocity"
       units : "Pa/s"
@@ -1882,7 +1920,7 @@ variables :
     dimensions : [] 
     coord_val : 850
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity instant 850"
       standard_name : "upward_air_velocity"
       units : "Pa/s"
@@ -1894,7 +1932,7 @@ variables :
     dimensions : [] 
     coord_val : 900
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity 900"
       standard_name : "upward_air_velocity"
       units : "Pa/s"
@@ -1906,7 +1944,7 @@ variables :
     dimensions : [] 
     coord_val : 925
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity 925 mb"
       standard_name : "upward_air_velocity"
       units : "Pa/s"
@@ -1918,7 +1956,7 @@ variables :
     dimensions : [] 
     coord_val : 950
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity at 950 mb"
       standard_name : "upward_air_velocity"
       units : "Pa/s"
@@ -1930,7 +1968,7 @@ variables :
     dimensions : [] 
     coord_val : 975
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Wwind"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Wwind"
       long_name : "vertical velocity at 975mb"
       standard_name : "upward_air_velocity"
       units : "Pa/s"
@@ -1941,7 +1979,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/VolSoilMoist"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/VolSoilMoist"
       long_name : "volumetric soil moisture content"
       standard_name : "soil_moisture_content"
       units : "Proportion"
@@ -1951,7 +1989,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/VolSoilMoist"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/VolSoilMoist"
       long_name : "volumetric soil moisture content"
       standard_name : "soil_moisture_content"
       units : "Proportion"
@@ -1961,7 +1999,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moist/VolSoilMoist"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/VolSoilMoist"
       long_name : "volumetric soil moisture content"
       standard_name : "soil_moisture_content"
       units : "Proportion"
@@ -1971,7 +2009,7 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/water_equivalent_of_accumulated_snow_depth"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/WatEquAccSN"
       long_name : "water equivalent of accumulated snow depth"
       standard_name : "liquid_water_content_of_surface_snow"
       units : ""
@@ -1981,9 +2019,48 @@ variables :
     data_type : float32
     dimensions : [] 
     attribute : 
-      OM_observedProperty : "StatPP/Data/Met/Moment/Gust"
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Moment/Gust"
       long_name : "wind speed of gust at surface"
       standard_name : "wind_speed_of_gust"
       units : "m/s"
       valid_min : ""
       valid_max : ""
+
+  #####
+  ### Map projections
+  #####
+   
+  polar_stereographic :
+    data_type : int
+    feature_of_interest : True
+    attribute :
+      OM_observedProperty : 'projection'
+      grid_mapping_name : "polar_stereographic"
+      straight_vertical_longitude_from_pole : 255.0
+      latitude_of_projection_origin : 90.0
+      standard_parallel : 60.0
+      false_easting : 8001120.943743927
+      false_northing : 8001120.943743927
+
+  #####
+  ### Variables for mospred ###
+  #####
+
+  thickness : 
+    attribute:
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Mass/GeoHght"
+      long_name : "Difference of geopotential height"
+      standard_name : "geopotential_height"
+
+  day_of_year :
+    data_type : float32
+    dimensions : [] 
+    attribute : 
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Misc/DOY"
+      long_name : "Day of year"
+      standard_name : "time"
+      units : "days"
+      valid_min : ""
+      valid_max : ""
+
+

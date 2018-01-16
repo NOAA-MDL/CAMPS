@@ -9,6 +9,7 @@ sys.path.insert(0, relative_path)
 
 from Wisps_data import Wisps_data
 
+if __name__ == "__main__":
 
-arr = np.random.rand(169, 300, 3)
-print "passed performance metric"
+    arr = np.random.rand(169, 300, 3)
+    print "passed performance metric"

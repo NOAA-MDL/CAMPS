@@ -1,14 +1,22 @@
 # Specify period of interest
-start :
-    year : 2013
-    month : 02     # Where 1 is January and 12 is December
-    day : null
-    stride : null
-end :
-    year : 2015
-    month : 02     # Where 1 is January and 12 is December
-    day : null
-    stride : null
+#start :
+#    year : 2013
+#    month : 02     # Where 1 is January and 12 is December
+#    day : null
+#    stride : null
+#end :
+#    year : 2015
+#    month : 02     # Where 1 is January and 12 is December
+#    day : null
+#    stride : null
+
+range: ['2016070100-2016073100,24h']
+
+forecast_reference_time : 06 # hour
+
+# Where observation/model data is held.
+# Specify one or many directories
+input_directory : [""]
 
 output_directory : "/scratch3/NCEPDEV/mdl/Riley.Conroy/testOut/"
 
@@ -27,7 +35,30 @@ num_processors : 16
 station_defs : "/home/Riley.Conroy/dev/wisps_dev/iolib/config/station.tbl"
 
 # Provides a list of all stations that will be used in observations
-valid_stations : "/home/Riley.Conroy/dev/wisps_dev/iolib/config/metar.lst"
+selected_stations : "/home/Riley.Conroy/dev/wisps_dev/iolib/config/metar.lst"
 
-predictor_file : "/home/Riley.Conroy/dev/wisps/wisps/registry"
+predictor_file : "/home/Riley.Conroy/dev/wisps/wisps/registry/predictors.yml"
 
+
+
+#projparams : 
+#        'a': 6371229
+#        'b': 6371229
+#        'lat_ts': 60.0
+#        'lon_0': 255.0
+#        'proj': 'stere'
+#        'lat_0': 90.0
+#
+dx : 47625
+
+projparams :
+        'a' : 6371229
+        'b' : 6371229
+        'proj' : 'stere' 
+        'lat_0' : 90.0
+        'lon_0' : 255.0
+        'lat_ts' : 60.0 
+        'to_meters' : True
+        'x_0' : 8001120.943743927
+        'y_0' : 8001120.943743927
+#    'over': True

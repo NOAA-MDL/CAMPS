@@ -91,6 +91,17 @@ def read_nc_meta():
     write_cache(data)
     return data
 
+def read_procedures():
+    """Reads netcdf.yml file that contains the metadata for
+    common variables.
+    """
+    data = read_cache()
+    if data:
+        return data
+    data = read_yaml(CONFIG_PATH + "procedures.yml")
+    write_cache(data)
+    return data
+
 
 def read_nc_config():
     """
@@ -101,6 +112,25 @@ def read_nc_config():
     nc.global_attributes = read_globals()
     nc.variables = read_variables()
     return nc
+
+def read_mospred_control(control_file=None):
+    """
+    Reads the metar control file that provides time ranges and
+    directory locations for the observations.
+    """
+    # Read file and put it in cache if control_file specified
+    if control_file is not None:
+        data = read_yaml(control_file)
+        write_cache(data)
+        return data
+    # Otherwise, try to read the cache.
+    data = read_cache()
+    if data:
+        return data
+    # If nothing cached, read default control file
+    data = read_yaml(CONFIG_PATH + "mospred_control.yml")
+    write_cache(data)
+    return data
 
 
 def read_metar_control():

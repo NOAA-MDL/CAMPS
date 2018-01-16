@@ -1,0 +1,358 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1 &mdash; wisps 0.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="wisps 0.5 documentation" href="../index.html"/>
+        <link rel="next" title="Data Encoding for WISPS" href="../data_encoding.html"/>
+        <link rel="prev" title="Welcome to WISPS documentation!" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> wisps
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#purpose">1.  Purpose</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overall-goals">1.1  Overall Goals</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#key-terminology-and-background">2.  Key Terminology and Background</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#metadata-concepts">2.1  Metadata Concepts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding_mos.html">Data Encoding to support MOS in WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/wisps.html">wisps package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">wisps</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/overview/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="an-overview-of-the-weather-information-statistical-post-processing-system-wisps-v0-1">
+<h1>An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1<a class="headerlink" href="#an-overview-of-the-weather-information-statistical-post-processing-system-wisps-v0-1" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="purpose">
+<h2>1.  Purpose<a class="headerlink" href="#purpose" title="Permalink to this headline">¶</a></h2>
+<p>This document is intended to describe the goals, nature, and strategy for the development and maintenance of the Weather Information Statistical Post-processing System (WISPS).  It will also serve as a guide to a number of other documents that will capture considerably more detail about aspects of WISPS.</p>
+<div class="section" id="overall-goals">
+<h3>1.1  Overall Goals<a class="headerlink" href="#overall-goals" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Ensure that NOAA’s goals for Statistical Post-processing of output from Numerical Weather Prediction (NWP) systems (StatPP) are met.</li>
+<li>Maintain all components of WISPS as community code.  This implies the following:<ul>
+<li>WISPS is a free and shared resource with distributed development and centralized support.</li>
+<li>Ongoing development of WISPS is maintained under version control</li>
+<li>Periodic releases, which include the latest in developments of new capabilities and techniques, are made available to the user community.</li>
+<li>Insofar as policy permits, major organizations (i.e. NOAA) that participate in the WISPS community and perform StatPP operationally will maintain the currently operational code in a public repository</li>
+</ul>
+</li>
+<li>Foster community involvement, experimentation, and improvement.</li>
+<li>Promote accessible, documented, robust, and portable code.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="key-terminology-and-background">
+<h2>2.  Key Terminology and Background<a class="headerlink" href="#key-terminology-and-background" title="Permalink to this headline">¶</a></h2>
+<p><strong>WISPS</strong> is a software infrastructure that supports StatPP and is maintained as community code.  This infrastructure includes standards and tools for data representation as well as software repositories that facilitate the use of these standards.</p>
+<p><strong>Statistical post-processing (StatPP)</strong> refers to the adjustment of current real-time forecast guidance using the discrepancies noted between past forecasts and observations/analyses.
+Past experience has shown that statistical post-processing is capable of modifying real-time NWP guidance that is biased, somewhat unskillful, and unreliable into guidance that is unbiased, much more skillful, downscaled to local conditions, and highly reliable, thus making it suitable for use in decision support with little or no manual modification by forecasters.”  StatPP can also ameliorate deficiencies due to finite ensemble size and infer forecasts for weather elements that are not directly forecast by the NWP system.  (Cf. Hamill and Peroutka, 2016:  High-Level Functional Requirements for Statistical Post-Processing in NOAA.)</p>
+<p>For many StatPP techniques, the <strong>Training Phase</strong> or <strong>Development Phase</strong> is a set of processes and software that notes discrepancies between past forecasts and observations/analyses and distills them into a set of parameters.  The Model Output Statistics (MOS) and Kalman Filter techniques both have distinct training phases.  Most bias-correction techniques, however, do not.</p>
+<p>All StatPP techniques have a <strong>Production Phase</strong> or <strong>Implementation Phase</strong> which is the set of processes and software that creates output forecasts.</p>
+<p>The <strong>Proxy for Truth</strong> is the set of observations/analyses that guides the StatPP process.  The name recognizes the biases and errors that afflict our best observing platforms and analytical techniques.  The proxy for truth is generally accepted to be adequate for the task of StatPP.</p>
+<p><strong>Numerical Weather Prediction (NWP)</strong> generally begins with some form of <strong>Data Assimilation (DA)</strong> which is followed by one or more runs of a <strong>NWP</strong> system.  Additional steps may be required to breed perturbed inputs to facilitate an <strong>ensemble</strong> of <strong>NWP</strong> runs.  The final step of an <strong>NWP</strong> run is named the <strong>Model Post</strong>; this step generally converts output from the specialized coordinate reference systems used in NWP (e.g., spherical harmonics and sigma levels) to more standard coordinate reference systems.  StatPP applications generally work with these standard outputs.</p>
+<p>Many StatPP applications use some form of <strong>Statistical Pre-processing</strong> step where NWP output from multiple runs is captured in a <strong>StatPP Archive</strong>.  This <strong>Statistical Pre-processing</strong> captures the data needed for the <strong>Training Phase</strong>.  Often, NWP output is transformed in ways that facilitate statistical training.  In general, if a <strong>Statistical Pre-processing</strong> step is required in the <strong>Training Phase</strong>, that same step will also appear in the <strong>Production Step</strong>.</p>
+<p>A <strong>Training Phase</strong>, if present, will use one or more <strong>Statistical Development Engines</strong> to note discrepancies between past NWP output and a selected <strong>Proxy for Truth</strong>.  These discrepancies are then captured in a set of <strong>StatPP Parameters</strong> which can be used in the <strong>Production Phase</strong>.</p>
+<p>Figure 1, below, attempts to capture some of these concepts in a data flow diagram.</p>
+<img alt="a data flow diagram of a generic statistical post-processing training phase" src="../_images/StatPPTrainingPhasev0.1.png" />
+<p>A data flow diagram of the training phase of a generic statistical post-processing technique</p>
+<p>Figure 2, below, also captures these concepts, but applies them to the <strong>Production Phase</strong>.</p>
+<img alt="a data flow diagram of a generic statistical post-processing implementation phase" src="../_images/StatPPProductionPhasev0.1.png" />
+<p>A data flow diagram of the implementation phase of a generic statistical post-processing technique</p>
+<div class="section" id="metadata-concepts">
+<h3>2.1  Metadata Concepts<a class="headerlink" href="#metadata-concepts" title="Permalink to this headline">¶</a></h3>
+<p>It is a truism among StatPP developers that they spend 10% of their time in science, 10% in statistics, and 80% in bookkeeping.
+Indeed, metadata storage and use are key aspects to any successful StatPP project.
+Daunting amounts of data characterize the training phase of many techniques.
+Some techniques defer these challenges to the production phase.</p>
+<p>WISPS has tentatively adopted NetCDF-CF as format for storing data for both the proxy for truth and StatPP archive.
+Other formats (especially HDF) were considered, but the level of support available for NetCDF suggested we use it.</p>
+<p>When designing the metadata portions of WISPS, it seemed wise to build on key concepts that were emerging in widely-recognized Standards Development Organizations (e.g., WMO, OGC, and ISO).
+In 2015, the WMO issued <em>Volume I.3, Annex II to the WMO Technical Regulations, Part D&#8211;Representations derived from data models</em> (Available from the WMO Library at <a class="reference external" href="http://library.wmo.int/pmb_ged/wmo_306-I3_en.pdf">http://library.wmo.int/pmb_ged/wmo_306-I3_en.pdf</a>).
+This document is quite focused on the representation of aviation products such as METAR and TAF.
+However, it points to a second document that is far more general, <em>Guidelines on Data Modelling for WMO Codes</em> (available in English only from <a class="reference external" href="http://wis.wmo.int/metce-uml">http://wis.wmo.int/metce-uml</a>).</p>
+<p>The reader is encouraged to download and review the <em>Guidelines</em>, especially section 1.6 and chapters 4 and 5.
+These foundational concepts will be applied to the development of metadata within WISPS NetCDF files.
+Chapter 5 describes the WMO Codes Registry.
+We note that the NWS has created a Codes Registry at <a class="reference external" href="https://codes.nws.noaa.gov">https://codes.nws.noaa.gov</a>, and the NWS plans to use that registry to support local applications within WISPS.
+Further, the WMO hosts a similar Codes Registry at <a class="reference external" href="https://codes.wmo.int">https://codes.wmo.int</a>.</p>
+<p>The technical specifics of data encoding will be deferred to other documents.
+Some high-level concepts will be reviewed here.</p>
+<ul class="simple">
+<li>Where possible, NetCDF attributes will be named with well-defined ISO concepts (e.g., OM_observedProperty, LE_ProcessStep, OM_phenomenonTime).</li>
+<li>Often, attributes will be assigned Uniform Resource Identifiers (URI) that point to a codes registry.</li>
+<li>Multiple time variables will be declared and populated, as needed, to provide ease of access to data consumers.</li>
+<li>Every effort will be made to document multi-step procedures within the metadata.</li>
+</ul>
+<p>This will be prefered over defining a new OM_observedProperty.
+The following time-related terms will follow these definitions.  Historically, these terms have not been defined with sufficient precision or used consistently in meteorology.  Ideally, this problem will be addressed early in the lifespan of WISPS.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="42%" />
+<col width="36%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">The term</th>
+<th class="head">Means this,</th>
+<th class="head">Not this.</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>forecast_reference_time</td>
+<td>The &#8220;data time&#8221;, the time of the analysis from
+which the forecast was made (from the CF Standard
+Name Table).  Must be an instant in time.</td>
+<td>the time for which the forecast is valid</td>
+</tr>
+<tr class="row-odd"><td>OM_phenomenonTime</td>
+<td>Colloquially, “when the weather happens.”  Can be
+either an instant in time or a period of time.</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>OM_resultTime</td>
+<td>When the result (analysis, forecast) became
+available to data consumers.  Must be an instant
+in time.</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>OM_validTime</td>
+<td>Time of intended use.  Must be a period of time.</td>
+<td>the time for which the forecast is valid</td>
+</tr>
+<tr class="row-even"><td>leadTime</td>
+<td><p class="first">Length of time (a duration) from
+forecast_reference_time to OM_phenomenonTime.</p>
+<blockquote class="last">
+<div>Must be a duration.</div></blockquote>
+</td>
+<td>an instant in time</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../data_encoding.html" class="btn btn-neutral float-right" title="Data Encoding for WISPS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral" title="Welcome to WISPS documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

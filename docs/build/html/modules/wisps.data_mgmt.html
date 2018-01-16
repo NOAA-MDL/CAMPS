@@ -1,0 +1,1251 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>wisps.data_mgmt package &mdash; wisps 0.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="wisps 0.5 documentation" href="../index.html"/>
+        <link rel="up" title="wisps package" href="wisps.html"/>
+        <link rel="next" title="wisps.data_mgmt.test package" href="wisps.data_mgmt.test.html"/>
+        <link rel="prev" title="wisps package" href="wisps.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> wisps
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding_mos.html">Data Encoding to support MOS in WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">Maintaining the NWS Codes Registry</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="wisps.html">wisps package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="wisps.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">wisps.data_mgmt package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-wisps.data_mgmt.Location">wisps.data_mgmt.Location module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-wisps.data_mgmt.Process">wisps.data_mgmt.Process module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-wisps.data_mgmt.Time">wisps.data_mgmt.Time module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-wisps.data_mgmt.Wisps_data">wisps.data_mgmt.Wisps_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-wisps.data_mgmt.fetch">wisps.data_mgmt.fetch module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-wisps.data_mgmt.nc_writable">wisps.data_mgmt.nc_writable module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-wisps.data_mgmt.reader">wisps.data_mgmt.reader module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-wisps.data_mgmt.writer">wisps.data_mgmt.writer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-wisps.data_mgmt">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.grib2_to_nc.html">wisps.grib2_to_nc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.marine_to_nc.html">wisps.marine_to_nc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.mathlib.html">wisps.mathlib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.metar_to_nc.html">wisps.metar_to_nc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.mospred.html">wisps.mospred package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.registry.html">wisps.registry package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.scripts.html">wisps.scripts package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.test.html">wisps.test package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="wisps.html#module-wisps">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">wisps</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="wisps.html">wisps package</a> &raquo;</li>
+        
+      <li>wisps.data_mgmt package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/wisps.data_mgmt.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="wisps-data-mgmt-package">
+<h1>wisps.data_mgmt package<a class="headerlink" href="#wisps-data-mgmt-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="wisps.data_mgmt.test.html">wisps.data_mgmt.test package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#module-wisps.data_mgmt.test.test">wisps.data_mgmt.test.test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#wisps-data-mgmt-test-test-wisps-data-module">wisps.data_mgmt.test.test_Wisps_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#module-wisps.data_mgmt.test.test_fetch">wisps.data_mgmt.test.test_fetch module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#module-wisps.data_mgmt.test.test_performance">wisps.data_mgmt.test.test_performance module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#module-wisps.data_mgmt.test.test_process">wisps.data_mgmt.test.test_process module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#module-wisps.data_mgmt.test.test_reader">wisps.data_mgmt.test.test_reader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#module-wisps.data_mgmt.test.test_time">wisps.data_mgmt.test.test_time module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#module-wisps.data_mgmt.test.test_writer">wisps.data_mgmt.test.test_writer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wisps.data_mgmt.test.html#module-wisps.data_mgmt.test">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-wisps.data_mgmt.Location">
+<span id="wisps-data-mgmt-location-module"></span><h2>wisps.data_mgmt.Location module<a class="headerlink" href="#module-wisps.data_mgmt.Location" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="wisps.data_mgmt.Location.Location">
+<em class="property">class </em><code class="descclassname">wisps.data_mgmt.Location.</code><code class="descname">Location</code><a class="headerlink" href="#wisps.data_mgmt.Location.Location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wisps.data_mgmt.nc_writable.nc_writable" title="wisps.data_mgmt.nc_writable.nc_writable"><code class="xref py py-class docutils literal"><span class="pre">wisps.data_mgmt.nc_writable.nc_writable</span></code></a></p>
+<p>Class to hold location data. Includes latitude and longitude array,
+as well as the station names</p>
+<dl class="method">
+<dt id="wisps.data_mgmt.Location.Location.num_stations">
+<code class="descname">num_stations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Location.Location.num_stations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of stations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Location.Location.write_to_nc">
+<code class="descname">write_to_nc</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Location.Location.write_to_nc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes this objects netCDF representation as a
+netCDF Variable to the nc_handle.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-wisps.data_mgmt.Process">
+<span id="wisps-data-mgmt-process-module"></span><h2>wisps.data_mgmt.Process module<a class="headerlink" href="#module-wisps.data_mgmt.Process" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="wisps.data_mgmt.Process.Process">
+<em class="property">class </em><code class="descclassname">wisps.data_mgmt.Process.</code><code class="descname">Process</code><span class="sig-paren">(</span><em>name</em>, <em>process_step=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Process.Process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wisps.data_mgmt.nc_writable.nc_writable" title="wisps.data_mgmt.nc_writable.nc_writable"><code class="xref py py-class docutils literal"><span class="pre">wisps.data_mgmt.nc_writable.nc_writable</span></code></a></p>
+<p>Class that holds process chain information for WISPS data</p>
+<dl class="method">
+<dt id="wisps.data_mgmt.Process.Process.add_attribute">
+<code class="descname">add_attribute</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Process.Process.add_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new attribute, or change an exsisting attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Process.Process.get_attribute">
+<code class="descname">get_attribute</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Process.Process.get_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns value of attribute key</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Process.Process.write_to_nc">
+<code class="descname">write_to_nc</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Process.Process.write_to_nc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the netCDF variable representation of the Process
+to the nc_handle.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-wisps.data_mgmt.Time">
+<span id="wisps-data-mgmt-time-module"></span><h2>wisps.data_mgmt.Time module<a class="headerlink" href="#module-wisps.data_mgmt.Time" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="wisps.data_mgmt.Time.BoundedTime">
+<em class="property">class </em><code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">BoundedTime</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.BoundedTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wisps.data_mgmt.Time.Time" title="wisps.data_mgmt.Time.Time"><code class="xref py py-class docutils literal"><span class="pre">wisps.data_mgmt.Time.Time</span></code></a></p>
+<p>Class reproesenting the Bounded time.
+The bounded time represents an instant in time
+separated duration</p>
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.BoundedTime.add_bounds">
+<code class="descname">add_bounds</code><span class="sig-paren">(</span><em>stride</em>, <em>offset</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.BoundedTime.add_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>adds a bounds array to the object, where stride is
+the number of time steps to skip, and offset is the
+starting point in the array</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.BoundedTime.add_common_metadata">
+<code class="descname">add_common_metadata</code><span class="sig-paren">(</span><em>nc_var</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.BoundedTime.add_common_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds metadata that is common to Time variables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.BoundedTime.get_dimensions">
+<code class="descname">get_dimensions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.BoundedTime.get_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a tuple of dimension names. 
+Will account for data with different shapes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.BoundedTime.get_duration">
+<code class="descname">get_duration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.BoundedTime.get_duration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wisps.data_mgmt.Time.ForecastReferenceTime">
+<em class="property">class </em><code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">ForecastReferenceTime</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.ForecastReferenceTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wisps.data_mgmt.Time.Time" title="wisps.data_mgmt.Time.Time"><code class="xref py py-class docutils literal"><span class="pre">wisps.data_mgmt.Time.Time</span></code></a></p>
+<p>Class representing the Forecast reference time.
+Where the Forecast Reference time is the
+&#8216;data time&#8217;, the time of the
+analysis from which the forecast was
+made.</p>
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.ForecastReferenceTime.append_reference_time">
+<code class="descname">append_reference_time</code><span class="sig-paren">(</span><em>ref_time</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.ForecastReferenceTime.append_reference_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wisps.data_mgmt.Time.LeadTime">
+<em class="property">class </em><code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">LeadTime</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.LeadTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wisps.data_mgmt.Time.Time" title="wisps.data_mgmt.Time.Time"><code class="xref py py-class docutils literal"><span class="pre">wisps.data_mgmt.Time.Time</span></code></a></p>
+<p>Class representing the lead time.
+The lead_time Length of time (a duration) from
+forecast_reference_time to the
+Phenomenon time</p>
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.LeadTime.add_common_metadata">
+<code class="descname">add_common_metadata</code><span class="sig-paren">(</span><em>nc_var</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.LeadTime.add_common_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds metadata that is common to LeadTime variables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.LeadTime.get_dimensions">
+<code class="descname">get_dimensions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.LeadTime.get_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a tuple of dimension names. 
+Will account for data with different shapes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.LeadTime.get_index">
+<code class="descname">get_index</code><span class="sig-paren">(</span><em>num_seconds</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.LeadTime.get_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns index where the lead time data equals num_seconds.
+Throws error if multiple indicies are found or none are found.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wisps.data_mgmt.Time.PhenomenonTime">
+<em class="property">class </em><code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">PhenomenonTime</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.PhenomenonTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wisps.data_mgmt.Time.Time" title="wisps.data_mgmt.Time.Time"><code class="xref py py-class docutils literal"><span class="pre">wisps.data_mgmt.Time.Time</span></code></a></p>
+<p>Class representing the Phenomenon Time Instant
+Phenomenon time is colloquially, when the weather happens.
+It can be either an instant in time or
+A period of time.</p>
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.PhenomenonTime.get_dimensions">
+<code class="descname">get_dimensions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.PhenomenonTime.get_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a tuple of dimension names. 
+Will account for data with different shapes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.PhenomenonTime.get_index">
+<code class="descname">get_index</code><span class="sig-paren">(</span><em>num_seconds</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.PhenomenonTime.get_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns index where the lead time data equals num_seconds.
+Only checks if the start bound is equal to the input argument.
+Throws error if multiple indicies are found or none are found.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wisps.data_mgmt.Time.PhenomenonTimePeriod">
+<em class="property">class </em><code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">PhenomenonTimePeriod</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.PhenomenonTimePeriod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wisps.data_mgmt.Time.Time" title="wisps.data_mgmt.Time.Time"><code class="xref py py-class docutils literal"><span class="pre">wisps.data_mgmt.Time.Time</span></code></a></p>
+<p>Class representing the Phenomenon Time Period
+Phenomenon time is colloquially, when the weather happens.
+It can be either an instant in time or
+A period of time.</p>
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.PhenomenonTimePeriod.get_dimensions">
+<code class="descname">get_dimensions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.PhenomenonTimePeriod.get_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a tuple of dimension names. 
+Will account for data with different shapes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.PhenomenonTimePeriod.get_duration">
+<code class="descname">get_duration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.PhenomenonTimePeriod.get_duration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.PhenomenonTimePeriod.get_index">
+<code class="descname">get_index</code><span class="sig-paren">(</span><em>num_seconds</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.PhenomenonTimePeriod.get_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns index where the lead time data equals num_seconds.
+Only checks if the start bound is equal to the input argument.
+Throws error if multiple indicies are found or none are found.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.PhenomenonTimePeriod.get_name">
+<code class="descname">get_name</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.PhenomenonTimePeriod.get_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Looks for a match in Time variables.
+Returns a tuple containing the [0] - name of the variable
+and [1] - a boolean indicating if it already existed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.PhenomenonTimePeriod.write_begin_end_var">
+<code class="descname">write_begin_end_var</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.PhenomenonTimePeriod.write_begin_end_var" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes beg_end_bounds variable to netcdf file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.PhenomenonTimePeriod.write_to_nc">
+<code class="descname">write_to_nc</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.PhenomenonTimePeriod.write_to_nc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes varibale to netcdf file. Additionally writes begin_end_bounds
+variable.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wisps.data_mgmt.Time.ResultTime">
+<em class="property">class </em><code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">ResultTime</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.ResultTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wisps.data_mgmt.Time.Time" title="wisps.data_mgmt.Time.Time"><code class="xref py py-class docutils literal"><span class="pre">wisps.data_mgmt.Time.Time</span></code></a></p>
+<p>Class representing the Result time.
+The result time is when the result (analysis, forcast)
+became available to data consumers.
+Must be an instant in time.</p>
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.ResultTime.append_result">
+<code class="descname">append_result</code><span class="sig-paren">(</span><em>result_time</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.ResultTime.append_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds the Result Time.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wisps.data_mgmt.Time.Time">
+<em class="property">class </em><code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">Time</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.Time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wisps.data_mgmt.nc_writable.nc_writable" title="wisps.data_mgmt.nc_writable.nc_writable"><code class="xref py py-class docutils literal"><span class="pre">wisps.data_mgmt.nc_writable.nc_writable</span></code></a></p>
+<p>Baseclass representing time.</p>
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.Time.add_common_metadata">
+<code class="descname">add_common_metadata</code><span class="sig-paren">(</span><em>nc_var</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.Time.add_common_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds metadata that is common to Time variables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.Time.check_dimensions">
+<code class="descname">check_dimensions</code><span class="sig-paren">(</span><em>nc_handle</em>, <em>dim_tuple</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.Time.check_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check data dimension shape is equal to the nc handle dimension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.Time.create_missing_dimensions">
+<code class="descname">create_missing_dimensions</code><span class="sig-paren">(</span><em>nc_handle</em>, <em>dimensions</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.Time.create_missing_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>given iterable list of dimensions, 
+creates dimensions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.Time.get_bounded_dimension_name">
+<code class="descname">get_bounded_dimension_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.Time.get_bounded_dimension_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a way for accessing the name of the start and end
+dimension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.Time.get_dimensions">
+<code class="descname">get_dimensions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.Time.get_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a tuple of dimension names. 
+Will account for data with different shapes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.Time.get_end_time">
+<code class="descname">get_end_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.Time.get_end_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.Time.get_name">
+<code class="descname">get_name</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.Time.get_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Looks for a match in Time variables.
+Returns a tuple containing the [0] - name of the variable
+and [1] - a boolean indicating if it already existed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.Time.get_start_time">
+<code class="descname">get_start_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.Time.get_start_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.Time.get_stride">
+<code class="descname">get_stride</code><span class="sig-paren">(</span><em>as_timedelta=False</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.Time.get_stride" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of seconds between two time steps.
+This function may provide misleading information if timesteps
+have an irregular step duration.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.Time.init_time_data">
+<code class="descname">init_time_data</code><span class="sig-paren">(</span><em>start_date</em>, <em>end_date</em>, <em>stride</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.Time.init_time_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fills the arrays with appropriate data.
+start and end dates can be of type datetime,
+str (YYYYMMDD), or int (epoch time in seconds).
+end_time is non-inclusive.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.Time.is_duration">
+<code class="descname">is_duration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.Time.is_duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns if the current object is a type of duration</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.Time.write_to_nc">
+<code class="descname">write_to_nc</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.Time.write_to_nc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds the netCDF Variable representation of the Time.
+If Time variable already exists, it will return None.
+Additional Time variables of same type will have consecutive
+integers appended on the end of the variable name.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wisps.data_mgmt.Time.ValidTime">
+<em class="property">class </em><code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">ValidTime</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.ValidTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wisps.data_mgmt.Time.Time" title="wisps.data_mgmt.Time.Time"><code class="xref py py-class docutils literal"><span class="pre">wisps.data_mgmt.Time.Time</span></code></a></p>
+<p>Class representing the valid time.
+The valid time is the time of intended use.
+Must be a period of time.</p>
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.ValidTime.add_offset">
+<code class="descname">add_offset</code><span class="sig-paren">(</span><em>offset</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.ValidTime.add_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Offset can be:
+a function that is applied to the data array,
+a timedelta duration,
+a datetime fixed date, or
+a 0 representing an unlimited valid time</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Time.ValidTime.get_dimensions">
+<code class="descname">get_dimensions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.ValidTime.get_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a tuple of dimension names. 
+Will account for data with different shapes.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.Time.datetime_to_str">
+<code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">datetime_to_str</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.datetime_to_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assumed that time is a datetime object.
+hours are represented YYYYMMDDHH</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.Time.epoch_time">
+<code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">epoch_time</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.epoch_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return hours array as seconds since the epoch,
+where time can be a datetime or str</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.Time.epoch_to_datetime">
+<code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">epoch_to_datetime</code><span class="sig-paren">(</span><em>seconds</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.epoch_to_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts epoch time to datetime</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.Time.fast_arr_equal">
+<code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">fast_arr_equal</code><span class="sig-paren">(</span><em>arr1</em>, <em>arr2</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.fast_arr_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines if two arrays are equal.
+Confidence is low that they are indeed equal</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.Time.get_lead_dim_name">
+<code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">get_lead_dim_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.get_lead_dim_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a way for accessing the name of the time dimension.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.Time.get_time_dim_name">
+<code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">get_time_dim_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.get_time_dim_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a way for accessing the name of the time dimension.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.Time.num_timesteps">
+<code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">num_timesteps</code><span class="sig-paren">(</span><em>start_time</em>, <em>end_time</em>, <em>stride=datetime.timedelta(0</em>, <em>3600)</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.num_timesteps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the number of timesteps between
+a start and end time with a certain duration.
+Assumes inclusive start and end times.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.Time.parse_ISO_standard_time">
+<code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">parse_ISO_standard_time</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.parse_ISO_standard_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a string that is the ISO standard representation of time,
+Return a the epoch time.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.Time.parse_development_sample">
+<code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">parse_development_sample</code><span class="sig-paren">(</span><em>sample_str</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.parse_development_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a string with an ISO interval representation,
+such as 2014-04-01/2014-09-30, returns tuple of 2 datetimes
+where index 0 = the start date, and index 1 = the end date</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.Time.parse_forecast_reference_time">
+<code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">parse_forecast_reference_time</code><span class="sig-paren">(</span><em>forecast_str</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.parse_forecast_reference_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a string of type YYYY-MM-DDTFF,
+returns the FF component, which represents the
+forcast reference time, as a tuple. Where
+index 0 = number of hours
+index 1 = number of seconds, and</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.Time.str_to_datetime">
+<code class="descclassname">wisps.data_mgmt.Time.</code><code class="descname">str_to_datetime</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Time.str_to_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assumed that time is in form YYYYMMDDHH</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-wisps.data_mgmt.Wisps_data">
+<span id="wisps-data-mgmt-wisps-data-module"></span><h2>wisps.data_mgmt.Wisps_data module<a class="headerlink" href="#module-wisps.data_mgmt.Wisps_data" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data">
+<em class="property">class </em><code class="descclassname">wisps.data_mgmt.Wisps_data.</code><code class="descname">Wisps_data</code><span class="sig-paren">(</span><em>name</em>, <em>autofill=True</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wisps.data_mgmt.nc_writable.nc_writable" title="wisps.data_mgmt.nc_writable.nc_writable"><code class="xref py py-class docutils literal"><span class="pre">wisps.data_mgmt.nc_writable.nc_writable</span></code></a></p>
+<p>WISPS data object for storing metadata and accompanied objects describing the variable.</p>
+<p>This class will attempt to
+gather information from the metadata database on a given property, but
+any gaps will need to be provided by the user.</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd><p class="first">name (str): <cite>quick fill</cite> name that can be used to initialize variable from template.
+data (<code class="xref py py-obj docutils literal"><span class="pre">np.array</span></code>): n-dimensional numpy array holding variable data.
+dimensions (<code class="xref py py-obj docutils literal"><span class="pre">list</span></code> of str): The names of the dimensions&#8211;ordered by dimension.
+processes (<code class="xref py py-obj docutils literal"><span class="pre">list</span></code> of <code class="xref py py-obj docutils literal"><span class="pre">Process</span></code>): Process that modify this variable.
+metadata (dict): Metadata with key-value pairs.
+time (<code class="xref py py-obj docutils literal"><span class="pre">list</span></code> of <code class="xref py py-obj docutils literal"><span class="pre">Time</span></code>): Time objects describing this variable
+properties (dict): Metadata that will not be written to NetCDF file</p>
+<blockquote class="last">
+<div>that may be used internally.</div></blockquote>
+</dd>
+<dt>Args:</dt>
+<dd>name (str): <cite>quick-fill</cite> name that can be used to initialize variable from template.
+autofill (bool): If there should be an attempt to autofill metadata based on <cite>name</cite>.</dd>
+<dt>Note:</dt>
+<dd>Time objects must have a dimensionality that&#8217;s compatible with <code class="docutils literal"><span class="pre">data</span></code>.</dd>
+</dl>
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_bounds_process">
+<code class="descname">add_bounds_process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_bounds_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a process representing the cell_method</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_data">
+<code class="descname">add_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a numpy array with the correct dimensions,
+sets it to objects &#8216;data&#8217; instance variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_db_metadata">
+<code class="descname">add_db_metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_db_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the metadata database and copies the metadata to
+this object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_elev_attributes">
+<code class="descname">add_elev_attributes</code><span class="sig-paren">(</span><em>elev_var</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_elev_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds Common elev attributes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_fcstTime">
+<code class="descname">add_fcstTime</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_fcstTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the LE_Source attribute to &#8216;value&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_leadTime">
+<code class="descname">add_leadTime</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_leadTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the LeadTime_hour attribute to &#8216;value&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_metadata">
+<code class="descname">add_metadata</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a key and value, adds it to the metadata</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_nc_data">
+<code class="descname">add_nc_data</code><span class="sig-paren">(</span><em>nc_var</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_nc_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time intensive. See netCDF4.Variable.__setitem__</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_nc_metadata">
+<code class="descname">add_nc_metadata</code><span class="sig-paren">(</span><em>nc_var</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_nc_metadata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_plev_attributes">
+<code class="descname">add_plev_attributes</code><span class="sig-paren">(</span><em>plev_var</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_plev_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds Common Plev attributes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_process">
+<code class="descname">add_process</code><span class="sig-paren">(</span><em>process</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a Process object to the Processes list or creates one if given a str.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_source">
+<code class="descname">add_source</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the LE_Source attribute to &#8216;value&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.add_to_database">
+<code class="descname">add_to_database</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.add_to_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add variable to the database for searching.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.change_data_type">
+<code class="descname">change_data_type</code><span class="sig-paren">(</span><em>data_type=None</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.change_data_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to force the datatype to change for this data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.check_correct_shape">
+<code class="descname">check_correct_shape</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.check_correct_shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.check_dimensions">
+<code class="descname">check_dimensions</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.check_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check data dimension shape is equal to the nc handle dimension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.create_dimension">
+<code class="descname">create_dimension</code><span class="sig-paren">(</span><em>nc_handle</em>, <em>dimension_name</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.create_dimension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a netCDF dimension for each of the individual
+dimensions in the object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.create_dimensions">
+<code class="descname">create_dimensions</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.create_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if self.dimensions are defined in the netcdf file.
+If they are not create them.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_cell_methods">
+<code class="descname">get_cell_methods</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_cell_methods" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionary representing cell methods, where the
+key is the coordinate that the cell method modifies, and the 
+value is the method itself.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_chunk_size">
+<code class="descname">get_chunk_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_chunk_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_coord_name">
+<code class="descname">get_coord_name</code><span class="sig-paren">(</span><em>nc_handle</em>, <em>coord_name</em>, <em>is_bounds=False</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_coord_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a &#8216;coord_name&#8217; such as plev or elev, finds if
+a variable already fits the coordinate for this object.
+If one is not found, returns a new, unique name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_coordinate">
+<code class="descname">get_coordinate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_coordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value of the coordinate data if it has
+one. If this variable is a bounds, return a tuple of the bounds.
+Otherwise return None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_data_type">
+<code class="descname">get_data_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_data_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if data_type is defined in the properties
+database for this variable name. Return value if available,
+otherwise throw ValueError.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_dimensions">
+<code class="descname">get_dimensions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if dimensions is defined in the properties
+database for this variable name. Return value if available,
+otherwise throw ValueError.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_fill_value">
+<code class="descname">get_fill_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_fill_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return fill_value metadata attribute</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_lead_time">
+<code class="descname">get_lead_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_lead_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns leadTime if it exists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_observedProperty">
+<code class="descname">get_observedProperty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_observedProperty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the parsed OM_observedProperty metadata
+element.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_phenom_time">
+<code class="descname">get_phenom_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_phenom_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns instant or period phenomenon time if it exists</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_process_str">
+<code class="descname">get_process_str</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_process_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string representation of the process.
+i.e. A comma separated name of the process enclosed in parens.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_result_time">
+<code class="descname">get_result_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_result_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns resultTime if it exists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_source">
+<code class="descname">get_source</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the source metadata attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_time">
+<code class="descname">get_time</code><span class="sig-paren">(</span><em>time_type</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a time of type time_type or None if there&#8217;s no such instance</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_time_bounds">
+<code class="descname">get_time_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_time_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns phenomenonTimePeriod if exists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.get_variable_name">
+<code class="descname">get_variable_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.get_variable_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a uniqueish vairable name such that it looks like,
+&lt;dataSource&gt;_&lt;observedProperty&gt;_&lt;duration&gt;_&lt;verticalCoord&gt;_&lt;fcstReferenceTime&gt;_&lt;fcstLeadTime&gt;_&lt;########&gt;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.has_bounds">
+<code class="descname">has_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.has_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks metadata to see if this variable has a bounds attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.has_elev">
+<code class="descname">has_elev</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.has_elev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks metadata to see if this has elev.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.has_elev_bounds">
+<code class="descname">has_elev_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.has_elev_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if metadata indicates variable has plev bounds.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.has_plev">
+<code class="descname">has_plev</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.has_plev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks metadata to see if this has plev.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.has_plev_bounds">
+<code class="descname">has_plev_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.has_plev_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if metadata indicates variable has plev bounds.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.has_time_bounds">
+<code class="descname">has_time_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.has_time_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks metadata to see if this variable time bounds.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.in_metadata">
+<code class="descname">in_metadata</code><span class="sig-paren">(</span><em>var</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.in_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean weather var is in metadata dictionary</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.is_feature_of_interest">
+<code class="descname">is_feature_of_interest</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.is_feature_of_interest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks metadata to see if this variable is a feature of interest.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.is_model">
+<code class="descname">is_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.is_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the Source is from a model.
+Currently, &#8216;GFS&#8217; and &#8216;NAM&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.reshape">
+<code class="descname">reshape</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.reshape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reshapes the data when adding the a coordinate dimension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.set_dimensions">
+<code class="descname">set_dimensions</code><span class="sig-paren">(</span><em>dimensions=None</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.set_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a tuple of String dimensions, sets object to the
+dimensions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wisps.data_mgmt.Wisps_data.Wisps_data.write_to_nc">
+<code class="descname">write_to_nc</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.Wisps_data.Wisps_data.write_to_nc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a netCDF variable to the nc_handle.
+Includes the data and metadata associated with the object.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-wisps.data_mgmt.fetch">
+<span id="wisps-data-mgmt-fetch-module"></span><h2>wisps.data_mgmt.fetch module<a class="headerlink" href="#module-wisps.data_mgmt.fetch" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wisps.data_mgmt.fetch.fetch">
+<code class="descclassname">wisps.data_mgmt.fetch.</code><code class="descname">fetch</code><span class="sig-paren">(</span><em>time=None</em>, <em>lead_time=None</em>, <em>**metadata_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.fetch.fetch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a properly formated metadata dictionary, finds the variable amongst
+the files. If the Observed property is recognized as a variable that needs
+to be computed, then a routine will be started to compute variables.</p>
+<dl class="docutils">
+<dt>Metadata Keys w/ type:</dt>
+<dd>&#8216;property&#8217;        : str
+&#8216;source&#8217;          : str
+&#8216;start&#8217;           : int
+&#8216;end&#8217;             : int
+&#8216;duration&#8217;        : int
+&#8216;duration_method&#8217; : str
+&#8216;vert_coord1&#8217;     : int
+&#8216;vert_coord2&#8217;     : int
+&#8216;vert_method&#8217;     : str</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.fetch.find_date">
+<code class="descclassname">wisps.data_mgmt.fetch.</code><code class="descname">find_date</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.fetch.find_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.fetch.printdict">
+<code class="descclassname">wisps.data_mgmt.fetch.</code><code class="descname">printdict</code><span class="sig-paren">(</span><em>dict</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.fetch.printdict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-wisps.data_mgmt.nc_writable">
+<span id="wisps-data-mgmt-nc-writable-module"></span><h2>wisps.data_mgmt.nc_writable module<a class="headerlink" href="#module-wisps.data_mgmt.nc_writable" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="wisps.data_mgmt.nc_writable.nc_writable">
+<em class="property">class </em><code class="descclassname">wisps.data_mgmt.nc_writable.</code><code class="descname">nc_writable</code><a class="headerlink" href="#wisps.data_mgmt.nc_writable.nc_writable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="wisps.data_mgmt.nc_writable.nc_writable.write_to_nc">
+<code class="descname">write_to_nc</code><span class="sig-paren">(</span><em>nc_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.nc_writable.nc_writable.write_to_nc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract method to write a netCDF Variable to the nc_handle</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-wisps.data_mgmt.reader">
+<span id="wisps-data-mgmt-reader-module"></span><h2>wisps.data_mgmt.reader module<a class="headerlink" href="#module-wisps.data_mgmt.reader" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.add_metadata_from_netcdf_variable">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">add_metadata_from_netcdf_variable</code><span class="sig-paren">(</span><em>nc_var</em>, <em>wisps_obj</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.add_metadata_from_netcdf_variable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill metadata dict in wisps object with relavent 
+metadata from the netcdf variable.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.create_time">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">create_time</code><span class="sig-paren">(</span><em>nc_variable</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.create_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a netcdf4 variable, create Time representation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.create_wisps_data">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">create_wisps_data</code><span class="sig-paren">(</span><em>nc_variable</em>, <em>procedures_dict</em>, <em>time_dict</em>, <em>coord_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.create_wisps_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the netCDF variable and any associated procedures,
+creates and returns a Wisps_data object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.get_coordinate">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">get_coordinate</code><span class="sig-paren">(</span><em>nc_variable</em>, <em>coordinate_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.get_coordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the netcdf variable for the coordinate of the given
+variable if it exists.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.get_metadata">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">get_metadata</code><span class="sig-paren">(</span><em>nc_variable</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.get_metadata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.get_procedures">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">get_procedures</code><span class="sig-paren">(</span><em>nc_variable</em>, <em>procedures_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.get_procedures" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the netcdf variables associated with OM_procedure.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.get_times">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">get_times</code><span class="sig-paren">(</span><em>nc_variable</em>, <em>time_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.get_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the time variables associated with the nc_variable.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.parse_processes_string">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">parse_processes_string</code><span class="sig-paren">(</span><em>process_string</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.parse_processes_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of process names given a string
+that is comma separated and enclosed in parens.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.read">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">read</code><span class="sig-paren">(</span><em>*filenames</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to read a netCDF file of given
+filename into a list of WISPS data objects.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.read_var">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">read_var</code><span class="sig-paren">(</span><em>filepath</em>, <em>name</em>, <em>lead_time=None</em>, <em>phenom_time=None</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.read_var" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Wisps_data object from netcdf file. Optionally
+returns Wisps_data object with only a slice of data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.removeTime">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">removeTime</code><span class="sig-paren">(</span><em>attrs</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.removeTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes Time metadata from attrs dict.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.separate_coordinate_and_data">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">separate_coordinate_and_data</code><span class="sig-paren">(</span><em>variables_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.separate_coordinate_and_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Separates the variables into coordinate and predictor variables.
+Returns the processes and normal variables as a tuple.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.separate_procedure_and_data">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">separate_procedure_and_data</code><span class="sig-paren">(</span><em>variables_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.separate_procedure_and_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Separates the variables into Processes and data-holding variables.
+Returns the processes and normal variables as a tuple.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.separate_time_and_data">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">separate_time_and_data</code><span class="sig-paren">(</span><em>variables_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.separate_time_and_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Separates the variables into Time and predictor variables.
+Returns the processes and normal variables as a tuple.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.reader.subset_time">
+<code class="descclassname">wisps.data_mgmt.reader.</code><code class="descname">subset_time</code><span class="sig-paren">(</span><em>w_obj</em>, <em>nc_var</em>, <em>lead_time</em>, <em>time</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.reader.subset_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Only pull a slice of data from the netcdf variable if only a portion of time.
+rework time objects to reflect the subset.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-wisps.data_mgmt.writer">
+<span id="wisps-data-mgmt-writer-module"></span><h2>wisps.data_mgmt.writer module<a class="headerlink" href="#module-wisps.data_mgmt.writer" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wisps.data_mgmt.writer.get_dimensions">
+<code class="descclassname">wisps.data_mgmt.writer.</code><code class="descname">get_dimensions</code><span class="sig-paren">(</span><em>wisps_data</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.writer.get_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if each object&#8217;s dimensions have the same length.
+Confirms shape of data is same number of dimensions.
+returns a dictionary where the key is the dimension name
+and the value is the number of elements.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.writer.get_primary_variables">
+<code class="descclassname">wisps.data_mgmt.writer.</code><code class="descname">get_primary_variables</code><span class="sig-paren">(</span><em>w_list</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.writer.get_primary_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return space-separated primary variables.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.writer.update_variable_db">
+<code class="descclassname">wisps.data_mgmt.writer.</code><code class="descname">update_variable_db</code><span class="sig-paren">(</span><em>w_obj</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.writer.update_variable_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new entry to the variable database</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.writer.write">
+<code class="descclassname">wisps.data_mgmt.writer.</code><code class="descname">write</code><span class="sig-paren">(</span><em>wisps_data</em>, <em>filename</em>, <em>global_attrs={}</em>, <em>overwrite=True</em>, <em>write_to_db=True</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.writer.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a list of Wisps_data to NetCDF file.
+wisps_data is expected to be a list of Wisps_data objects.
+filename is the filename to write to.
+global_attrs are additional global attributes to add to the file.
+overwite specifies whether a file should new or appended to.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>wisps_data (<code class="xref py py-obj docutils literal"><span class="pre">list</span></code> of <code class="xref py py-obj docutils literal"><span class="pre">Wisps_data</span></code> or <code class="xref py py-obj docutils literal"><span class="pre">Wisps_data</span></code>):</dt>
+<dd>Wisps_data or list of Wisps_data objects to be written to NetCDF file.</dd>
+</dl>
+<p>filename (str): NetCDF filename.
+global_attrs (dict): Dict of global attributes for NetCDF file.
+overwrite (bool): If true, write a new file regardless of whether a file</p>
+<blockquote>
+<div>already exists, otherwise append to existing file if possible.</div></blockquote>
+<p class="last">write_to_db (bool): write to database</p>
+</dd>
+<dt>Returns:</dt>
+<dd>True if successful, False otherwise.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="wisps.data_mgmt.writer.write_global_attributes">
+<code class="descclassname">wisps.data_mgmt.writer.</code><code class="descname">write_global_attributes</code><span class="sig-paren">(</span><em>nc</em>, <em>extra_globals</em><span class="sig-paren">)</span><a class="headerlink" href="#wisps.data_mgmt.writer.write_global_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the global attributes as defined in netcdf.yml.
+Also may add additional information.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-wisps.data_mgmt">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-wisps.data_mgmt" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="wisps.data_mgmt.test.html" class="btn btn-neutral float-right" title="wisps.data_mgmt.test package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="wisps.html" class="btn btn-neutral" title="wisps package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

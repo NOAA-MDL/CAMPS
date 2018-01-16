@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Appendix B: Proposed CF standard names &mdash; wisps 0.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="wisps 0.5 documentation" href="../index.html"/>
+        <link rel="up" title="Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1" href="index.html"/>
+        <link rel="next" title="6. References" href="references.html"/>
+        <link rel="prev" title="Appendix A: Proposed enhancements to Guidelines for Construction of CF Standard Names" href="enhancements_construction_standard_names.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> wisps
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="introduction.html">1.  Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files_components.html">2.  NetCDF-WISPS files and components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="description_data.html">3.  Description of the data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="coordinates.html">4.  Coordinates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quantifying_uncertainty.html">5.1  Event Probabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quantifying_uncertainty.html#categorical-probabilities-of-a-continuous-variable">5.2  Categorical Probabilities of a continuous variable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quantifying_uncertainty.html#parameterized-probability-distributions-of-a-continuous-variable">5.3  Parameterized Probability distributions of a continuous variable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="enhancements_construction_standard_names.html">Appendix A:  Proposed enhancements to Guidelines for Construction of CF Standard Names</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Appendix B:  Proposed CF standard names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="references.html">6.  References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sample_data/index.html">Sample Wisps-encoded data files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../encoding_parameter.html">Encoding parameter files in WISPS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sample_parameter/index.html">Sample WISPS-encoded parameter files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding_mos.html">Data Encoding to support MOS in WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/wisps.html">wisps package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">wisps</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../data_encoding.html">Data Encoding for WISPS</a> &raquo;</li>
+        
+          <li><a href="index.html">Application Profile for Encoding Data in netCDF-CF to inter-operate with the Weather Information Statistical Post-processing System (WISPS) v0.1</a> &raquo;</li>
+        
+      <li>Appendix B:  Proposed CF standard names</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/application_profile/proposed_standard_names.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="appendix-b-proposed-cf-standard-names">
+<h1>Appendix B:  Proposed CF standard names<a class="headerlink" href="#appendix-b-proposed-cf-standard-names" title="Permalink to this headline">¶</a></h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="20%" />
+<col width="22%" />
+<col width="7%" />
+<col width="7%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Standard Name</th>
+<th class="head" colspan="2">Canonical Units</th>
+<th class="head">AMIP</th>
+<th class="head">GRIB</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>probability_distribution_parameter</td>
+<td colspan="2">1</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Description</strong></td>
+<td colspan="4">The value of the named parameter of a
+probability distribution.  The variable will
+normally be an Ancillary variable of the
+distribution variable.  The attribute
+parameter_name names parameter, and the
+attribute parameter_reference refers to an
+authoritative reference for the parameter.</td>
+</tr>
+<tr class="row-even"><td>present_weather_binary_mask</td>
+<td colspan="2">1</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Description</strong></td>
+<td colspan="4">X_binary_mask has 1 where condition X is met, 0
+elsewhere.  1 = the specified present weather
+is observed or forecast, 0 = not.  The
+attribute present_weather_list describes the
+present weather cases that cause 1 or refers
+to that description.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="references.html" class="btn btn-neutral float-right" title="6. References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="enhancements_construction_standard_names.html" class="btn btn-neutral" title="Appendix A: Proposed enhancements to Guidelines for Construction of CF Standard Names" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,377 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>wisps.mospred.test package &mdash; wisps 0.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="wisps 0.5 documentation" href="../index.html"/>
+        <link rel="up" title="wisps.mospred package" href="wisps.mospred.html"/>
+        <link rel="next" title="wisps.registry package" href="wisps.registry.html"/>
+        <link rel="prev" title="wisps.mospred package" href="wisps.mospred.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> wisps
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">An Overview of the Weather Information Statistical Post-processing System (WISPS) v0.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding.html">Data Encoding for WISPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_encoding_mos.html">Data Encoding to support MOS in WISPS</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="wisps.html">wisps package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="wisps.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="wisps.data_mgmt.html">wisps.data_mgmt package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.grib2_to_nc.html">wisps.grib2_to_nc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.marine_to_nc.html">wisps.marine_to_nc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.mathlib.html">wisps.mathlib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.metar_to_nc.html">wisps.metar_to_nc package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="wisps.mospred.html">wisps.mospred package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="wisps.mospred.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wisps.mospred.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wisps.mospred.html#module-wisps.mospred.computations">wisps.mospred.computations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wisps.mospred.html#module-wisps.mospred.create">wisps.mospred.create module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wisps.mospred.html#module-wisps.mospred.dew_point">wisps.mospred.dew_point module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wisps.mospred.html#module-wisps.mospred.dew_point_corr">wisps.mospred.dew_point_corr module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wisps.mospred.html#module-wisps.mospred.interp">wisps.mospred.interp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wisps.mospred.html#module-wisps.mospred.mixing_ratio">wisps.mospred.mixing_ratio module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wisps.mospred.html#module-wisps.mospred.parse_pred">wisps.mospred.parse_pred module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wisps.mospred.html#module-wisps.mospred.procedures">wisps.mospred.procedures module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wisps.mospred.html#module-wisps.mospred.read_pred">wisps.mospred.read_pred module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wisps.mospred.html#module-wisps.mospred.temp_corr">wisps.mospred.temp_corr module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wisps.mospred.html#module-wisps.mospred.wet_bulb">wisps.mospred.wet_bulb module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wisps.mospred.html#module-wisps.mospred">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.registry.html">wisps.registry package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.scripts.html">wisps.scripts package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wisps.test.html">wisps.test package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="wisps.html#module-wisps">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">wisps</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="wisps.html">wisps package</a> &raquo;</li>
+        
+          <li><a href="wisps.mospred.html">wisps.mospred package</a> &raquo;</li>
+        
+      <li>wisps.mospred.test package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/wisps.mospred.test.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="wisps-mospred-test-package">
+<h1>wisps.mospred.test package<a class="headerlink" href="#wisps-mospred-test-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-wisps.mospred.test.test_dew_point">
+<span id="wisps-mospred-test-test-dew-point-module"></span><h2>wisps.mospred.test.test_dew_point module<a class="headerlink" href="#module-wisps.mospred.test.test_dew_point" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wisps.mospred.test.test_dew_point.test_dewpoint">
+<code class="descclassname">wisps.mospred.test.test_dew_point.</code><code class="descname">test_dewpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_dew_point.test_dewpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-wisps.mospred.test.test_dew_point_corr">
+<span id="wisps-mospred-test-test-dew-point-corr-module"></span><h2>wisps.mospred.test.test_dew_point_corr module<a class="headerlink" href="#module-wisps.mospred.test.test_dew_point_corr" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wisps.mospred.test.test_dew_point_corr.test_dewpoint_corr">
+<code class="descclassname">wisps.mospred.test.test_dew_point_corr.</code><code class="descname">test_dewpoint_corr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_dew_point_corr.test_dewpoint_corr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-wisps.mospred.test.test_mixing_ratio">
+<span id="wisps-mospred-test-test-mixing-ratio-module"></span><h2>wisps.mospred.test.test_mixing_ratio module<a class="headerlink" href="#module-wisps.mospred.test.test_mixing_ratio" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wisps.mospred.test.test_mixing_ratio.test_mixing_ratio">
+<code class="descclassname">wisps.mospred.test.test_mixing_ratio.</code><code class="descname">test_mixing_ratio</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_mixing_ratio.test_mixing_ratio" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.mospred.test.test_mixing_ratio.test_mixing_ratio_setup">
+<code class="descclassname">wisps.mospred.test.test_mixing_ratio.</code><code class="descname">test_mixing_ratio_setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_mixing_ratio.test_mixing_ratio_setup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-wisps.mospred.test.test_mospred">
+<span id="wisps-mospred-test-test-mospred-module"></span><h2>wisps.mospred.test.test_mospred module<a class="headerlink" href="#module-wisps.mospred.test.test_mospred" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wisps.mospred.test.test_mospred.test_get_cell_method">
+<code class="descclassname">wisps.mospred.test.test_mospred.</code><code class="descname">test_get_cell_method</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_mospred.test_get_cell_method" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.mospred.test.test_mospred.test_get_time_multiplier">
+<code class="descclassname">wisps.mospred.test.test_mospred.</code><code class="descname">test_get_time_multiplier</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_mospred.test_get_time_multiplier" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.mospred.test.test_mospred.test_get_variable">
+<code class="descclassname">wisps.mospred.test.test_mospred.</code><code class="descname">test_get_variable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_mospred.test_get_variable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.mospred.test.test_mospred.test_observedProperty">
+<code class="descclassname">wisps.mospred.test.test_mospred.</code><code class="descname">test_observedProperty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_mospred.test_observedProperty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.mospred.test.test_mospred.test_parse_range">
+<code class="descclassname">wisps.mospred.test.test_mospred.</code><code class="descname">test_parse_range</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_mospred.test_parse_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.mospred.test.test_mospred.test_separate_entries">
+<code class="descclassname">wisps.mospred.test.test_mospred.</code><code class="descname">test_separate_entries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_mospred.test_separate_entries" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.mospred.test.test_mospred.test_vertical_coordinate">
+<code class="descclassname">wisps.mospred.test.test_mospred.</code><code class="descname">test_vertical_coordinate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_mospred.test_vertical_coordinate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-wisps.mospred.test.test_projection">
+<span id="wisps-mospred-test-test-projection-module"></span><h2>wisps.mospred.test.test_projection module<a class="headerlink" href="#module-wisps.mospred.test.test_projection" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-wisps.mospred.test.test_temp_corr">
+<span id="wisps-mospred-test-test-temp-corr-module"></span><h2>wisps.mospred.test.test_temp_corr module<a class="headerlink" href="#module-wisps.mospred.test.test_temp_corr" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wisps.mospred.test.test_temp_corr.test_temp_corr">
+<code class="descclassname">wisps.mospred.test.test_temp_corr.</code><code class="descname">test_temp_corr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_temp_corr.test_temp_corr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.mospred.test.test_temp_corr.test_temp_corr_setup">
+<code class="descclassname">wisps.mospred.test.test_temp_corr.</code><code class="descname">test_temp_corr_setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_temp_corr.test_temp_corr_setup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-wisps.mospred.test.test_wet_bulb">
+<span id="wisps-mospred-test-test-wet-bulb-module"></span><h2>wisps.mospred.test.test_wet_bulb module<a class="headerlink" href="#module-wisps.mospred.test.test_wet_bulb" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wisps.mospred.test.test_wet_bulb.test_wet_bulb">
+<code class="descclassname">wisps.mospred.test.test_wet_bulb.</code><code class="descname">test_wet_bulb</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_wet_bulb.test_wet_bulb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wisps.mospred.test.test_wet_bulb.test_wet_bulb_setup">
+<code class="descclassname">wisps.mospred.test.test_wet_bulb.</code><code class="descname">test_wet_bulb_setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wisps.mospred.test.test_wet_bulb.test_wet_bulb_setup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-wisps.mospred.test">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-wisps.mospred.test" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="wisps.registry.html" class="btn btn-neutral float-right" title="wisps.registry package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="wisps.mospred.html" class="btn btn-neutral" title="wisps.mospred package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -6,6 +6,7 @@ sys.path.insert(0, relative_path)
 import sqlite3
 import util as cfg
 import pdb
+import logging
 
 db_dir = os.path.dirname(os.path.realpath(__file__)) + '/'
 db_name = 'wisps.db'
@@ -25,43 +26,63 @@ c = conn.cursor()
 
 def create_variable_db():
     """
-    Creates a variable database based off of dictionary
+    Creates a variable database based off of dictionary.
+    Clears table if called.
     """
     table_name = 'variable'
     conn = connect(db_name)
     c = conn.cursor()
     c.execute('DROP TABLE IF EXISTS ' + table_name)
     # Create the table
-    fields = get_variable_fields()
-    types = get_variable_types()
+    fields = get_variable_ftypes().keys()
+    types = get_variable_ftypes().values()
     column_names_str = "("
     for f, t in zip(fields, types):
         column_names_str += f
         column_names_str += " " + t + ", "
-    column_names_str = column_names_str[0:-2] + ")"
+    column_names_str = column_names_str[0:-2] +  ", PRIMARY KEY (" +",".join(fields)+"))"
     print column_names_str
     sql = 'CREATE TABLE ' + table_name + ' ' + column_names_str
     c.execute(sql)
 
 
 def get_variable_fields():
-    return ['property', 'source', 'leadtime', 'start',
-            'end', 'duration', 'duration_method', 'vert_coord1',
-            'vert_coord2', 'vert_method', 'filename']
+    return ['property', 'source', 'start', 'end',
+            'duration', 'duration_method',
+            'vert_coord1', 'vert_coord2', 'vert_method',
+            'filename', 'name']
 
 
 def get_variable_types():
     return ['TEXT', 'TEXT', 'BIGINT', 'BIGINT',
-            'BIGINT', 'BIGINT', 'TEXT', 'INTEGER',
-            'INTEGER', 'TEXT', 'TEXT']
+            'BIGINT', 'TEXT',
+            'INTEGER', 'INTEGER', 'TEXT',
+            'TEXT', 'TEXT']
+
+def get_variable_ftypes():
+    return { 
+        'property': 'TEXT',
+        'source': 'TEXT',
+        'start': 'BIGINT',
+        'end': 'BIGINT',
+        'duration': 'BIGINT',
+        'duration_method': 'TEXT',
+        'vert_coord1': 'INTEGER',
+        'vert_coord2': 'INTEGER',
+        'vert_method': 'TEXT',
+        'filename': 'TEXT',
+        'name': 'TEXT'
+        }
 
 
-def insert_variable(property, source, leadtime, start, end, duration, duration_method, vert_coord1, vert_coord2, vert_method, filename):
-    """ Inserts variable metadata information into the table. 
+def insert_variable(property, source, start, end,
+                    duration, duration_method,
+                    vert_coord1, vert_coord2, vert_method,
+                    filename, name):
+    """Inserts variable metadata information into the table. 
     Requires arguments in the following order:
     property, 
     source,
-    leadtime, 
     start, 
     end, 
     duration, 
@@ -69,18 +90,16 @@ def insert_variable(property, source, leadtime, start, end, duration, duration_m
     vert_coord1, 
     vert_coord2, 
     vert_method, 
-    filename
+    filename,
+    name
     """
     #var_db = 'variables.db'
     table_name = 'variable'
-    #conn = connect(db_name)
-    #c = conn.cursor()
     fields_string = ('?,' * len(get_variable_fields()))[:-1]
     sql = "INSERT INTO " + table_name + " VALUES (" + fields_string + ")"
     sql_values = [
         property,
         source,
-        leadtime,
         start,
         end,
         duration,
@@ -88,16 +107,15 @@ def insert_variable(property, source, leadtime, start, end, duration, duration_m
         vert_coord1,
         vert_coord2,
         vert_method,
-        filename]
+        filename,
+        name]
     c.execute(sql, sql_values)
     conn.commit()
-    conn.close()
 
 
 def create_new_metadata_db():
     """
-    Deletes old metadata table and replaces it with a new table 
-    based on the configuration.
+
     """
     table_name = 'metadata'
     variables = cfg.read_variables()
@@ -124,7 +142,6 @@ def create_new_metadata_db():
         c.execute(sql, sql_values)
 
     conn.commit()
-    conn.close()
 
 
 def create_new_properties_db():
@@ -157,7 +174,6 @@ def create_new_properties_db():
         c.execute(sql, sql_values)
 
     conn.commit()
-    conn.close()
 
 
 def get_variable(**kwargs):
@@ -166,23 +182,69 @@ def get_variable(**kwargs):
     the name.
     str name : name of predictor. e.g. wind_speed
     """
-    db = 'metadata'
-    #conn = connect(db_name)
-    #c = conn.cursor()
-    c.execute("PRAGMA table_info(metadata)")
+    db = 'variable'
+    c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]
     name_arr = [ele[1] for ele in name_arr]
-    print name_arr
-    try:
-        index = name_arr.index(attr)
-        sql = "SELECT " + attr + " FROM " + db + " WHERE name = '" + name + "'"
-        c.execute(sql)
-        return c.fetchone()[0]
-    except ValueError as err:
-        print attr + " is not a known metadata attribute"
-        return False
-    conn.close()
+    # Construct a 'WHERE' string from kwargs
+    where_str = ""
+    for k,v in kwargs.iteritems():
+        operator = "="
+        if k == "start":
+            operator = "<="
+        elif k == "end":
+            operator = ">="
+        where_str += k + " "+operator+" '" + str(v) + "' AND "
+    where_str = where_str[0:-4] # Remove trailing 'AND'
+    filename_index = name_arr.index('filename')
+    name_index = name_arr.index('name')
+    sql = "SELECT DISTINCT * FROM " + db + " WHERE " + where_str
+    c.execute(sql)
+    res = c.fetchall()
+    for i,values in enumerate(res):
+        res[i] = associate(name_arr, values)
+    return res
+    #if res:
+    #    return (res[filename_index], res[name_index])
+
+def associate(names, values):
+    """Given a list of names and their associated values, 
+    return a dictionary
+    """
+    return dict((x,y) for x, y in zip(names,values))
+
+def get_all_variables(**kwargs):
+    """
+    Returns the value of of the attribute for 
+    the name.
+    str name : name of predictor. e.g. wind_speed
+    """
+    db = 'variable'
+    c.execute("PRAGMA table_info(" + db + ")")
+    name_arr = c.fetchall()
+    # The name of the column is at index 1. hence, ele[1]
+    name_arr = [ele[1] for ele in name_arr]
+    # Construct a 'WHERE' string from kwargs
+    where_str = ""
+    for k,v in kwargs.iteritems():
+        v = str(v)
+        where_str += k + " = '" + v + "' AND "
+    where_str = where_str[0:-4] # Remove 'AND'
+    filename_index = name_arr.index('filename')
+    name_index = name_arr.index('name')
+    sql = "SELECT * FROM " + db + " WHERE " + where_str
+    print sql
+    c.execute(sql)
+    return c.fetchall()
+
+
+def dump_db():
+    db = 'variable'
+    sql = 'SELECT * FROM ' + db
+    c.execute(sql)
+    return c.fetchall()
+
 
 
 def get_metadata(name, attr):
@@ -192,9 +254,7 @@ def get_metadata(name, attr):
     str name : name of predictor. e.g. wind_speed
     """
     db = 'metadata'
-    #conn = connect(db_name)
-    #c = conn.cursor()
-    c.execute("PRAGMA table_info(metadata)")
+    c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]
     name_arr = [ele[1] for ele in name_arr]
@@ -207,7 +267,29 @@ def get_metadata(name, attr):
     except ValueError as err:
         print attr + " is not a known metadata attribute"
         return False
-    conn.close()
+
+def get_by_metadata(**kwargs):
+    """
+    Returns the value of of the attribute for 
+    the name.
+    str name : name of predictor. e.g. wind_speed
+    """
+    db = 'metadata'
+    c.execute("PRAGMA table_info(" + db + ")")
+    name_arr = c.fetchall()
+    # The name of the column is at index 1. hence, ele[1]
+    name_arr = [ele[1] for ele in name_arr]
+    print name_arr
+    # Construct a 'WHERE' string from kwargs
+    where_str = ""
+    for k,v in kwargs.iteritems():
+        where_str += k + " = '" + v + "' AND "
+    where_str = where_str[0:-4] # Remove 'AND'
+    sql = "SELECT * FROM " + db + " WHERE " + where_str
+    c.execute(sql)
+    res = c.fetchone()
+    if res:
+        return res
 
 
 def get_property(name, attr):
@@ -217,8 +299,6 @@ def get_property(name, attr):
     str name : name of predictor. e.g. wind_speed
     """
     db = 'properties'
-    #conn = connect(db_name)
-    #c = conn.cursor()
     c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]
@@ -227,11 +307,13 @@ def get_property(name, attr):
         index = name_arr.index(attr)
         sql = "SELECT " + attr + " FROM " + db + " WHERE name = '" + name + "'"
         c.execute(sql)
-        return c.fetchone()[0]
+        property = c.fetchone()
+        if property is not None:
+            return c.fetchone()[0]
+        return None
     except ValueError as err:
-        print attr + " is not a known property attribute or " + name + " not defined"
+        logging.info(attr + " is not a known property attribute or " + name + " not defined")
         return False
-    conn.close()
 
 
 def get_all_metadata(name):

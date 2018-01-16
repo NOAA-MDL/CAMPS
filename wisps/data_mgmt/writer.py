@@ -17,23 +17,36 @@ Module to handle writing Wisps netCDF data
 """
 
 
-def write(wisps_data, filename, global_attrs={}, overwrite=True):
+def write(wisps_data, filename, global_attrs={}, overwrite=True,
+          write_to_db=True):
     """
     Writes a list of Wisps_data to NetCDF file.
     wisps_data is expected to be a list of Wisps_data objects.
     filename is the filename to write to.
     global_attrs are additional global attributes to add to the file.
     overwite specifies whether a file should new or appended to.
+
+    Args:
+        wisps_data (:obj:`list` of :obj:`Wisps_data` or :obj:`Wisps_data`):
+            Wisps_data or list of Wisps_data objects to be written to NetCDF file.
+        filename (str): NetCDF filename.
+        global_attrs (dict): Dict of global attributes for NetCDF file.
+        overwrite (bool): If true, write a new file regardless of whether a file 
+            already exists, otherwise append to existing file if possible.
+        write_to_db (bool): write to database
+
+    Returns:
+        True if successful, False otherwise.
     """
-    logging.info("\nWriting\n")
+    logging.info("\nWriting to "+filename+"\n")
     if type(wisps_data) is not list:
-        wisps_data = list(wisps_data)
+        wisps_data = [wisps_data]
     start_time = time.time()
     if overwrite:
-        m = 'w'
+        mode = 'w'
     else:
-        m = 'a'
-    nc = Dataset(filename, mode=m, format="NETCDF4")
+        mode = 'a'
+    nc = Dataset(filename, mode=mode, format="NETCDF4")
     # Get all dimenesions in the list.
     # Will error out if dimensions arn't correct.
     try:
@@ -44,9 +57,17 @@ def write(wisps_data, filename, global_attrs={}, overwrite=True):
     except:
         pass
     # Write the data by calling its write_to_nc function
+    primary_vars = []
     for d in wisps_data:
-        d.write_to_nc(nc)
-    global_attrs['primary_variables'] = get_primary_variables(wisps_data)
+        name = d.write_to_nc(nc)
+        primary_vars.append(name)
+        try:
+            d.add_to_database(filename)
+        except AttributeError as e :
+            logging.info(e)
+            #pass # Variable doesn't have a Phenomenon Time.
+    #global_attrs['primary_variables'] = get_primary_variables(wisps_data)
+    global_attrs['primary_variables'] = ' '.join(primary_vars)
     write_global_attributes(nc, global_attrs)
     nc.close()
 
@@ -56,10 +77,19 @@ def write(wisps_data, filename, global_attrs={}, overwrite=True):
     logging.debug("approximately " +
                   str(elapsed_time / len(wisps_data)) +
                   " seconds per variable")
+    logging.info("writing complete. Closing nc file: "+filename)
 
 
 def get_primary_variables(w_list):
     """Return space-separated primary variables.
+
+    Args:
+        w_list (:obj:`list` of :obj:Wisps_data): variables that will have
+                their names extracted.
+
+    Returns:
+        str: Space-separated string of variable names 
+
     """
     PV_str = ""
     for w in w_list:
@@ -70,6 +100,13 @@ def get_primary_variables(w_list):
 def write_global_attributes(nc, extra_globals):
     """Writes the global attributes as defined in netcdf.yml.
     Also may add additional information.
+
+    Args:
+        nc (:obj:`Dataset`): NetCDF file handle.
+        extra_globals(dict): Additional global attributes to be added to `nc`
+
+    Returns:
+        None
     """
     nc_globals = util.read_globals()
     nc_globals.update(extra_globals)
@@ -78,7 +115,13 @@ def write_global_attributes(nc, extra_globals):
 
 
 def update_variable_db(w_obj):
-    """Adds a new entry to the variable database
+    """Adds a new entry to the variable database.
+
+    Args:
+        w_obj (:obj:`Wisps_data`): object metadata to store in metadata db.
+
+    Returns:
+        None
     """
     db.insert_variable(
         property,
@@ -98,8 +141,13 @@ def get_dimensions(wisps_data):
     """
     Checks if each object's dimensions have the same length.
     Confirms shape of data is same number of dimensions.
-    returns a dictionary where the key is the dimension name
-    and the value is the number of elements.
+
+    Args:
+        w_obj (:obj:list of :obj:`Wisps_data`): To assure dimensions are consistent.
+
+    Returns:
+        A dictionary where the key is the dimension name
+        and the value is the number of elements.
     """
     # Define count; where the
     # key is the dimension name, and the
