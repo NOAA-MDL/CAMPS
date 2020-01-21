@@ -1,0 +1,3 @@
+@ID,@notation,@status,dct:description,rdf:type,rdfs:label,reg:notation,skos:notation,dct:references
+<https://codes.nws.noaa.gov/assist/castest/LevelA/testA>,testA,experimental,"upload test from, created fileA",skos:Concept,cas_testA,testA,cas_testA,"https://www.weather.gov/mdl/"
+<https://codes.nws.noaa.gov/assist/castest/testB>,testB,experimental,upload test from created file B,skos:Concept,cas_testV,testB,cas_testB,''

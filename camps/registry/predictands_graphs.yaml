@@ -1,0 +1,9 @@
+predictands:
+
+- Property : 'Temp'
+  Source : 'NCEPSfcObsMETAR'
+  Vertical_Coordinate : "2m"
+
+- Property : 'DewPt'
+  Source : 'NCEPSfcObsMETAR'
+  Vertical_Coordinate : "2m"

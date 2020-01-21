@@ -1,0 +1,4 @@
+@ID,rdfs:LABEL,skos:NOTATION,dct:DESCRIPTION
+https://codes.nws.noaa.gov/StatPP/Data,Data,Data,Tables and codes that help document a variety of statistical post-processing data sets
+https://codes.nws.noaa.gov/StatPP/Methods,Methods,Methods,Codes and tables that document the various methods used in statistical post-processing
+https://codes.nws.noaa.gov/StatPP/Uncertainty,Uncertainty,Uncertainty,Concepts and collections that support various expressions of uncertainty needed for statistical post processing

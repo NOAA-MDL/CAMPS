@@ -1,0 +1,140 @@
+MesoObProcStep1 :
+    process_step : "StatPP__Methods/SfcObs/Mesonet"
+    long_name : 'Mesonet Observation'
+MesoObProcStep2 :
+    process_step : "StatPP__Methods/QC/SfcQC"
+    long_name : 'Mesonet Quality Control'
+BoundsProcMin :
+    process_step : "StatPP__Methods/Arith/Min"
+    long_name : 'Minimum within bounds'
+BoundsProcMax :
+    process_step : "StatPP__Methods/Arith/Max"
+    long_name : 'Maximum within bounds'
+BoundsProcSum :
+    process_step : "StatPP__Methods/Arith/Sum"
+    long_name : 'summation within bounds'
+MetarObProcStep1 :
+    process_step : "StatPP__Methods/Ingest/DecodeBUFR"
+    PROV__Used : "StatPP__Data/NCEPSfcObsMetar"
+    long_name : 'Ingest BUFR encoded METAR observations from NCEP repository'
+    standard_name : "source"
+MetarObProcStep2 :
+    process_step : "StatPP__Methods/QC/METARQC"
+    long_name : "Apply MDL METAR Quality Control procedure"
+    standard_name : "source"
+VertDiffStep :
+    process_step : "StatPP__Methods/Arith/Diff"
+    long_name : "Difference in observed property between two vertical levels"
+    standard_name : "vert_diff_property"
+    units : "unit of observed property"
+PressThickness : 
+    process_step : "StatPP__Methods/Thermo/_Thick"
+    long_name : "Difference of geopotential height between two isobaric levels"
+    standard_name : "source"
+    prototype_standard_name : "pressure_layer_thickness"
+    units : "unit of observed property"
+TempLapse :
+    process_step : "StatPP__Methods/Thermo/LapRate"
+    standard_name : "air_temperature_lapse_rate"
+    long_name : "Derivative of air temperature with respect to increasing height"
+    units : "unit of observed property"
+HorizAdvect :
+    process_step : "StatPP__Methods/Dyn/Adv"
+    long_name : "Tendency of a scalar observed property at some vertical level"
+    standard_name : "horizontal_advection_scalar"
+    units : "unit of scalar divided by time"
+TempAdvectIsobaric :
+    process_step : "StatPP__Methods/Dyn/Adv"
+    long_name : "Tendency of air temperature at some isobar"
+    standard_name : "horizontal_advection_temperature"
+    units : u"K/s"
+TempAdvectAGL :
+    process_step : "StatPP__Methods/Dyn/Adv"
+    long_name : "Tendency of air temperature at some height above ground level"
+    standard_name : "horizontal_advection_temperature"
+    units : u"K/s"
+ThreshStep : 
+    process_step : "StatPP__Methods/Arith/Thresh"
+    long_name : "Binarization based on threshold"
+    standard_name : "source"
+MarineObProcStep1 :
+    process_step : "StatPP__Methods/Ingest/DecodeTabularText"
+    PROV__Used : "StatPP__Data/NDBC"
+    long_name : 'Decode tabular text data'
+    standard_name : "source"
+MarineObProcStep2 :
+    process_step : "StatPP__Methods/QC/MarineQC"
+    long_name : 'Marine Observation Quality Control'
+    standard_name : "source"
+mosLinearInterpolation :
+    process_step : "StatPP__Methods/Geosp/LinInterp"
+    long_name : "MOS Linear Interpolation"
+    PROV__Used : "https://codes.nws.noaa.gov/NumericalWeatherPrediction/Models/GFS13"
+GFSModProcStep1 :
+    process_step : "StatPP__Methods/Ingest/DecodeGRIB2"
+    PROV__Used : "StatPP__Data/GFS13"
+    long_name : "Ingest GRIB2-encoded GFS13 forecasts from NCEP repository"
+    standard_name : "source"
+GFSModProcStep2 :
+    process_step : "StatPP__Methods/Geosp/LinInterp"
+    long_name : "Apply MDL bilinear interpolation technique"
+    standard_name : "source"
+MesoObProcStep1 :
+    process_step : "StatPP__Methods/Ingest/DecodeTabularText"
+    PROV__Used : "StatPP__Data/MADISMesonet"
+    long_name : "Ingest tabular text-encoded mesonet data from MADIS"
+    standard_name : "source"
+MesoObProcStep2 :
+    process_step : "StatPP__Methods/QC/MesoQC"
+    long_name : "Apply MDL mesonet Quality Control technique"
+    standard_name : "source"
+MesoObProcStep3 :
+    process_step : "StatPP__Methods/QC/GeospatialQC"
+    long_name : "Identify and resolve geospatial inconsistencies"
+    standard_name : "source"
+LinSmooth :
+    process_step : "StatPP__Methods/LinSmooth"
+    long_name : "Linear Smoothing"
+BiLinInterp :
+    process_step : "StatPP__Methods/InterpBiLinear"
+    long_name : "Linear Interpolation"
+BudgetInterp :
+    process_step : "StatPP__Methods/Geosp/BudgetInterp"
+    long_name : "Budget Interpolation"
+PolyLinReg :
+    process_step : "StatPP__Methods/Stat/PolyLinReg"
+    long_name : "Polynomial Linear Regression"
+Sin :
+    process_step : "StatPP__Methods/Arith/Sin"
+    long_name : "Apply sin"
+Sin2 :
+    process_step : "StatPP__Methods/Arith/Sin2"
+    long_name : "Apply sin to twice the value"
+Cos :
+    process_step : "StatPP__Methods/Arith/Cos"
+    long_name : "Apply cos"
+Cos2 :
+    process_step : "StatPP__Methods/Arith/Cos2"
+    long_name : "Apply cos to twice the value"
+MOS_Method :
+    process_step : "StatPP__Methods/MOS"
+    long_name : "Model Output statistical method: Multiple Linear Regression "
+TmpDewCmpChk :
+    process_step : "StatPP__Methods/TmpDewCmpChk"
+    long_name : "Consistency Check for Temperaure and Dew point"
+Max :
+    process_step : "StatPP__Methods/Arith/Max"
+    long_name : "Maximum of a sample"
+Min :
+    process_step : "StatPP__Methods/Arith/Min"
+    long_name : "Minimum of a sample"
+Mean :
+    process_step : "StatPP__Methods/Arith/Mean"
+    long_name : "Mean of a sample"
+
+
+
+
+
+
+

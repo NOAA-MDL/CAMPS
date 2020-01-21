@@ -1,0 +1,68 @@
+
+#----------------------------------------------------------------------------------------------
+# Specify the date_range 
+#----------------------------------------------------------------------------------------------
+# Date range and stride should be a single string (ex: ['2016070106-2016071006,24h'])
+# If only processing a single day just provide the date (YYYYMMDDHH) with no stride
+# (ex: ['2016070100'])
+date_range: ['2018040100-2018040200,24h']
+
+#----------------------------------------------------------------------------------------------
+# Specify explicitly the filepaths where observation and model data are held.
+#
+# Note: If only running for predictors or predictands leaving the not-in-use 
+# filepath blank is acceptable
+#----------------------------------------------------------------------------------------------
+predictor_data_path : ["/scratch1/NCEPDEV/mdl/Emily.Schlie/test_gfs0020180400.nc"]
+predictand_data_path : ["/scratch1/NCEPDEV/mdl/Emily.Schlie/hre201804_test.nc","/scratch1/NCEPDEV/mdl/Emily.Schlie/mar201804_test.nc"]
+
+#----------------------------------------------------------------------------------------------
+# Specify the path to file you want output to be saved.
+#
+# Note: Again, user only need to provide a filepath for the relevant run...
+# either predictors, predictands or both.  Otherwise leaving blank is OK
+#----------------------------------------------------------------------------------------------
+predictor_outfile : "/scratch1/NCEPDEV/mdl/Emily.Schlie/pred_201804_test.nc"
+predictand_outfile : "/scratch1/NCEPDEV/mdl/Emily.Schlie/predictand_201804_test.nc"
+
+#----------------------------------------------------------------------------------------------
+# Provide filepath to log file that records status of a run
+# Set log_file to null or "" to print to stdout.
+#----------------------------------------------------------------------------------------------
+log_file : ""
+
+#----------------------------------------------------------------------------------------------
+# Specify level of detail for logging. Can be DEBUG, INFO, WARNING, ERROR, CRITICAL.
+#----------------------------------------------------------------------------------------------
+debug_level : "DEBUG"
+
+#----------------------------------------------------------------------------------------------
+# Specify the number of processors to be used during the run
+#----------------------------------------------------------------------------------------------
+num_processors : 16
+
+#----------------------------------------------------------------------------------------------
+# NOTE: Relative paths below will be in relation to the registry directory
+#----------------------------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------------------------
+# Provide filename that contains all stations with colon delimeted information about the 
+# station, including lat, lon, long name.
+#----------------------------------------------------------------------------------------------
+station_defs : "/home/Emily.Schlie/repositories/camps/camps/registry/alldevsites.tbl"
+
+#----------------------------------------------------------------------------------------------
+# Provide filename that contains a list of all stations that will be used in observations
+#----------------------------------------------------------------------------------------------
+selected_stations : "/home/Emily.Schlie/repositories/camps/camps/registry/short.lst"
+
+# ---------------------------------------------------------------------------------------------
+# Predictors to be processed and the associated metadata
+# ---------------------------------------------------------------------------------------------
+pred_file : "/home/Emily.Schlie/repositories/camps/camps/registry/pred.yaml"
+
+# ---------------------------------------------------------------------------------------------
+# Specifcy True and/or False to choose to run for either predictors, predictands, or both
+# ---------------------------------------------------------------------------------------------
+predictors : True
+predictands : True

@@ -1,0 +1,20 @@
+# Specify how many lead hours to extend out to. Can be greater than is available.
+maximum_lead_hours : 400
+
+# input file
+input : "/scratch1/NCEPDEV/mdl/Emily.Schlie/GFS_processed/mdl.gfs47.t00z.201804_d1_d5.pgrb2"
+
+# Directory where output files are stored
+outpath : "/scratch1/NCEPDEV/mdl/Emily.Schlie/"
+
+# Specify "" or None to output log to stdout
+log : ""
+
+# Can be DEBUG, INFO, WARNING, ERROR, CRITICAL
+debug_level : "INFO"
+
+# Number of processors to use
+num_processors : 16
+
+# A list of the processes applied to the input grib2 data
+processes : ['GFSModProcStep1','GFSModProcStep2']

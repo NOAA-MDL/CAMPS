@@ -1,20 +1,14 @@
 wisps\.scripts package
 ======================
 
-Subpackages
------------
-
-.. toctree::
-
-    wisps.scripts.test
 
 Submodules
 ----------
 
-wisps\.scripts\.grib2\_driver module
-------------------------------------
+wisps\.scripts\.grib2\_to\_nc\_driver module
+--------------------------------------------
 
-.. automodule:: wisps.scripts.grib2_driver
+.. automodule:: wisps.scripts.grib2_to_nc_driver
     :members:
     :undoc-members:
     :show-inheritance:
@@ -50,6 +44,22 @@ wisps\.scripts\.mospred\_driver module
     :members:
     :undoc-members:
     :show-inheritance:
+
+wisps\.scripts\.forecast\_driver module
+---------------------------------------
+
+.. automodule:: wisps.scripts.forecast_driver
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+wisps\.scripts\.equations\_driver module
+----------------------------------------
+
+.. automodule:: wisps.scripts.equations_driver
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 Module contents

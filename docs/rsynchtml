@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rsync -avz --perms --chmod=Fa-x,a+r,ug+w,o-w,Da+rx,ug+w,o-w /home/$WEBUSER/repositories/wisps/docs/build/html/* $webdirwisps 
+python webclean.py
+

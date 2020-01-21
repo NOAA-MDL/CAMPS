@@ -1,13 +1,6 @@
 wisps\.mospred package
 ======================
 
-Subpackages
------------
-
-.. toctree::
-
-    wisps.mospred.test
-
 Submodules
 ----------
 
@@ -27,21 +20,6 @@ wisps\.mospred\.create module
     :undoc-members:
     :show-inheritance:
 
-wisps\.mospred\.dew\_point module
----------------------------------
-
-.. automodule:: wisps.mospred.dew_point
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-wisps\.mospred\.dew\_point\_corr module
----------------------------------------
-
-.. automodule:: wisps.mospred.dew_point_corr
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 wisps\.mospred\.interp module
 -----------------------------
@@ -51,13 +29,6 @@ wisps\.mospred\.interp module
     :undoc-members:
     :show-inheritance:
 
-wisps\.mospred\.mixing\_ratio module
-------------------------------------
-
-.. automodule:: wisps.mospred.mixing_ratio
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 wisps\.mospred\.parse\_pred module
 ----------------------------------
@@ -83,18 +54,27 @@ wisps\.mospred\.read\_pred module
     :undoc-members:
     :show-inheritance:
 
-wisps\.mospred\.temp\_corr module
----------------------------------
+wisps\.mospred\.smooth module
+-----------------------------
 
-.. automodule:: wisps.mospred.temp_corr
+.. automodule:: wisps.mospred.smooth
     :members:
     :undoc-members:
     :show-inheritance:
 
-wisps\.mospred\.wet\_bulb module
---------------------------------
 
-.. automodule:: wisps.mospred.wet_bulb
+wisps\.mospred\.thresh module
+-----------------------------
+
+.. automodule:: wisps.mospred.thresh
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wisps\.mospred\.util module
+---------------------------
+
+.. automodule:: wisps.mospred.util
     :members:
     :undoc-members:
     :show-inheritance:

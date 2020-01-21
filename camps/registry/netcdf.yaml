@@ -1,0 +1,1275 @@
+########################################
+## Globals
+## -------
+##
+## Defines the global attributes in the netcdf file.
+## You can add arbitrary globals to have them represented
+## in the file
+##
+########################################
+globals:
+  institution : "NOAA/National Weather Service"
+  Conventions : "CF-1.7 CAMPS-1.0"
+  version : "CAMPS-1.0"
+  history : ""
+  references : ""
+  organization : "NOAA/MDL"
+  url : "http://www.nws.noaa.gov/mdl/, https://sats.nws.noaa.gov/~camps/"
+
+########################################
+##
+## Dimensions
+## ----------
+##
+## Defines the possible Dimensions of the netcdf files.
+## These are merely suggestions.
+## Only the dimensions used in a variable
+## will be written to the netcdf file.
+##
+########################################
+dimensions :
+  time : &time 'default_time_coordinate_size'
+  nstations : &nstations 'number_of_stations'
+  num_vert : &nv 'nv' #number of verticies
+  plev : &plev 'pressure_level'
+  elev : &elev 'elevation'
+  chars : &chars 'num_characters'
+  lead_time : &lead 'lead_times'
+  lat : &lat 'lat'
+  lon : &lon 'lon'
+  x_proj : &x_proj 'x'
+  y_proj : &y_proj 'y'
+
+########################################
+##
+## Prefixes
+## --------
+## Defines the group attributes for the prefix_list,
+## Which provides references for all prefixes and aliases
+##
+##
+########################################
+
+prefixes :
+  OM__ : "http://opengeospatial.org/standards/om/"
+  OM2__ : "http://codes.nws.noaa.gov/StatPP/"
+  PROV__ : "http://www.w3.org/ns/prov/#"
+  StatPP__ : "http://codes.nws.noaa.gov/StatPP/"
+  SOSA__ : "http://www.w3.org/ns/sosa/"
+
+########################################
+##
+## Variables
+## ---------
+##
+## Defines all possible variables of the netcdf files.
+##
+## the Key/Value pairs of each variable will be considered
+## 'Properties' of the variable. They are fixed values that
+## describe how the data should be presented.
+##
+## The 'attribute' key of the properties contains the
+## metadata for a variable, where it's dictionary values can be
+## added, removed, or modified to change the variable's netcdf metadata
+##
+## Guide to creaing new Variables:
+##
+##   Properties:
+##
+##     data_type : [valid numpy dtype]
+##       Optional. If defined and change_data_type() is called
+##       on the Camps_data object, it will force the object's data to
+##       be of the defined type.
+##
+##     dimensions : [ [dimension1, dimension2, ...] ]
+##       Optional. Can be used to give hints on what the dimensions are.
+##       Typically however, the user will need to set the
+##       dimensions of their data.
+##
+##     fill_value : [value]
+##       Optional. Not currently used as all fill values are the same
+##       across variables.
+##
+##     coord_val : [value]
+##       Conditionally Required. Specifies the height or pressure level
+##       of the variable. If the 'attribute' property defines
+##       'coordinate' AND it is set to either 'elev' OR 'plev',
+##       coord_val must be defined.
+##
+##     coord_val[1,2] : [value]
+##       Conditionally Required. Specifies the height or pressure level
+##       of the variable. If the 'attribute' property defines
+##       'coordinate' AND it is set to either 'elev' OR 'plev',
+##       AND 'bounds' is defined and set to either 'elev' or 'plev',
+##       coord_val[1,2] must be defined.
+##
+##     attribute : [ {} ]
+##       Describes the metadata.
+##
+##   Attributes:
+##
+##     OM__procedure : ["()"]
+##       Required. However, it does not need to have any values.
+##
+##     OM__observedProperty : [Property URI]
+##       Required. URI to a codes registry entry representing the propery.
+##       e.q. StatPP__Data/Met/momentum/wind_speed
+##
+##     long_name : [long name]
+##       Optional but suggested. A longer name. A name that might be
+##       displayed on a graph for example.
+##
+##     standard_name : [standard_name]
+##       Optional but suggested. A standard_name. Similar to long_name
+##
+##     units : [units]
+##       Optional but suggested. Units of the data. Powers represented
+##       by '^' charactar.
+##
+##     valid_min : [minimum]
+##       Optional but suggested. Valid minimum value of the data.
+##       IMPORTANT: Providing this attribute could potentially
+##       change the values of the data. Any data value falling below
+##       this threshold will be set to the fill_value. Can be a float
+##       or an int. If a string is used, it will not affect the data,
+##       but will be shown in the metadata.
+##
+##     valid_max : [maximum]
+##       Optional but suggested. Valid minimum value of the data.
+##       IMPORTANT: Providing this attribute could potentially
+##       change the values of the data. Any data value above
+##       this threshold will be set to the fill_value. Can be a float
+##       or an int. If a string is used, it will not affect the data,
+##       but will be shown in the metadata.
+##
+##     coordinates : [ plev / elev / *time]
+##       Optional. If coordinates are defined as one of the
+##       three attributes above, a new netcdf variable will
+##       be generated describing the verical/time coordinate.
+##       Note: the coordinate is 'plev' or 'elev', a coord_val
+##       property must be defined.
+##
+########################################
+standard_fill_value : &fill 9999
+variables :
+########################################
+## Features of interest
+########################################
+  station :
+    data_type : "c" # NC_CHAR
+    dimensions : [*nstations,*chars]
+    fill_value : "-"
+    feature_of_interest : True
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/station_name"
+      long_name : "ICAO METAR call letters"
+      standard_name : "platform_id"
+      comment : "
+                Only currently archives reports from stations only if
+                the first letter of the ICAO ID is 'K', 'P', 'M', 'C', or 'T'.
+                "
+  station_type :
+    data_type : int8
+    dimensions : [*nstations,*time]
+    fill_value : 9
+    feature_of_interest : True
+    attribute :
+      standard_name : "platform_id"
+      OM__observedProperty : "StatPP__Data/Met/station_type"
+      long_name : "station type"
+  latitude :
+    data_type : float32
+    feature_of_interest : True
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/latitude"
+      long_name : "latitude"
+      units : "degrees_north"
+      valid_min : -90.0
+      valid_max : 90.0
+      standard_name : "latitude"
+    dimensions : [*nstations,*time]
+  longitude :
+    data_type : float32
+    dimensions : [*nstations,*time]
+    feature_of_interest : True
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/longitude"
+      long_name : "longitude"
+      units : "degrees_west"
+      valid_min : -180.0
+      valid_max : 180.0
+      standard_name : "longitude"
+  y :
+    data_type : float32
+    feature_of_interest : True
+    dimensions : [*y_proj]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/yProj"
+      long_name : "y coordinate of projection"
+      standard_name : "projection_y_coordinate"
+      units : "m"
+  x :
+    data_type : float32
+    feature_of_interest : True
+    dimensions : [*x_proj]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/xProj"
+      long_name : "x coordinate of projection"
+      standard_name : "projection_x_coordinate"
+      units : "m"
+  observation_time :
+    data_type : int64
+    dimensions : [*time]
+    feature_of_interest : True
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/time/observation_time"
+      long_name : *time
+      units : "HHMM"
+      standard_name : "time"
+      comment : "Represented as two-digit hour and two-digit minute"
+  polar_stereographic_grid :
+    data_type : int
+    feature_of_interest : True
+    attribute :
+      OM__observedProperty : 'projection'
+      grid_mapping_name : "polar_stereographic"
+      straight_vertical_longitude_from_pole : 255.0
+      latitude_of_projection_origin : 90.0
+      standard_parallel : 60.0
+      false_easting : 8001120.943743927
+      false_northing : 8001120.943743927
+
+##################################################
+## Variables with defined dimensions
+##################################################
+
+## Temperature
+  air_temperature :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    coord_val : 2
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      long_name : "dry bulb temperature"
+      valid_min : -80
+      valid_max : 130
+      standard_name : "air_temperature"
+      units : "degF"
+      coordinates : "elev"
+  temperature_1_hour_minimum  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    coord_val : 2
+    hours : 1
+    attribute :
+      standard_name : "air_temperature"
+      coordinates : "elev"
+      cell_methods :  "default_time_coordinate_size: minimum"
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      long_name : "1-hour minimum temperature"
+      units : "Fahrenheit"
+  temperature_1_hour_maximum  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    coord_val : 2
+    hours : 1
+    attribute :
+      standard_name : "air_temperature"
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      coordinates : "elev"
+      cell_methods :  "default_time_coordinate_size: maximum"
+      long_name : "1-hour maximum temperature"
+      units : "Fahrenheit"
+  temperature_6_hour_maximum  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    coord_val : 2
+    hours : 6
+    attribute :
+      standard_name : "air_temperature"
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      coordinates : "elev"
+      long_name : "6-hour maximum temperature"
+      cell_methods :  "default_time_coordinate_size: maximum"
+      units : "Fahrenheit"
+      comment : "Minimum and maximum values depend on season and region"
+  temperature_6_hour_minimum  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    coord_val : 2
+    hours : 6
+    attribute :
+      standard_name : "air_temperature"
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      coordinates : "elev"
+      cell_methods :  "default_time_coordinate_size: minimum"
+      long_name : "6-hour minimum temperature"
+      units : "Fahrenheit"
+      comment : "Minimum and maximum values depend on season and region"
+  calendar_day_maximum_temperature  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    coord_val : 2
+    hours : 24
+    attribute :
+      standard_name : "air_temperature"
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      coordinates : "elev"
+      cell_methods :  "default_time_coordinate_size: maximum"
+      long_name : "Calendar day maximum temperature"
+      units : "degF"
+      comment : "Minimum and maximum values depend on season and region"
+  calendar_day_minimum_temperature  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    coord_val : 2
+    hours : 24
+    attribute :
+      standard_name : "air_temperature"
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      coordinates : "elev"
+      long_name : "calendar day minimum temperature"
+      cell_methods :  "default_time_coordinate_size: minimum"
+      units : "degF"
+      comment : "Minimum and maximum values depend on season and region"
+
+## Pressure
+  air_pressure_at_sea_level :
+    data_type : float32
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Mass/Pres"
+      long_name : "mean sea level pressure"
+      valid_min : 875
+      valid_max : 1075
+      units : "millibar"
+      standard_name : "air_pressure_at_sea_level"
+      comment : "metar does not include leading 9 or 10. This attribute does"
+  pressure_instant_surface : &Pres
+    data_type : float32
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Mass/Pres"
+      long_name : "pressure instant"
+      standard_name : "air_pressure"
+      units : ""
+      valid_min : ""
+      valid_max : ""
+
+## Wind
+  wind_from_direction :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    coord_val : 2
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moment/WindDir"
+      long_name : "wind direction"
+      units : "degrees"
+      valid_min : 0
+      valid_max : 360
+      standard_name : "wind_from_direction"
+      coordinates : "elev"
+      comment : "Wind direction is set to 0 if winds are variable."
+  wind_speed_instant :  &WindSpd
+    data_type : float32
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moment/WindSpd"
+      long_name : "horizontal wind speed"
+      valid_min : 0
+      valid_max : 75
+      standard_name : "wind_speed"
+      comment : "Wind speed is set to -9 if winds are variable."
+  wind_speed_of_gust :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    coord_val : 2
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moment/Gust"
+      long_name : "wind speed of gust"
+      coordinates : "elev"
+      valid_min : 0
+      valid_max : 200
+      standard_name : "wind_speed_of_gust"
+      units : "knot"
+
+## Moisture
+  dew_point_temperature :  &DewPt
+    data_type : float32
+    dimensions : [*nstations,*time]
+    coord_val : 2
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/DewPt"
+      long_name : "dew point temperature"
+      standard_name : "dew_point_temperature"
+      coordinates : "elev"
+
+## Precip
+  total_precipitation_1hr_accum_surface : &TotalPrecip1
+    data_type : float32
+    dimensions : [*nstations, *time]
+    hours : 1
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/TotalPrecip"
+      long_name : "total precipitation 1hr accum surface"
+      standard_name : "precipitation_amount"
+      units : "kg m**-2"
+      valid_min : 0
+      valid_max : 1
+      coordinates : "elev"
+      cell_methods : "default_time_coordinate_size : sum"
+  total_precipitation_3hr_accum_surface : &TotalPrecip3
+    data_type : float32
+    dimensions : [*nstations, *time]
+    hours : 3
+    coord_val : 0
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/TotalPrecip"
+      standard_name : "precipitation_amount"
+      long_name : "total precipitation 3hr accum surface"
+      valid_min : 0
+      valid_max : ""
+      cell_methods :  "default_time_coordinate_size : sum"
+      units : "kg m**-2"
+      coordinates : "elev"
+  total_precipitation_6hr_accum_surface : &TotalPrecip6
+    data_type : float32
+    dimensions : [*nstations, *time]
+    hours : 6
+    coord_val : 0
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/TotalPrecip"
+      standard_name : "precipitation_amount"
+      long_name : "total precipitation 6hr accum surface"
+      valid_min : 0
+      valid_max : 2
+      cell_methods :  "default_time_coordinate_size : sum"
+      units : "kg m**-2"
+      coordinates : "elev"
+  total_precipitation_12hr_accum_surface : &TotalPrecip12
+    data_type : float32
+    dimensions : [*nstations, *time]
+    hours : 12
+    coord_val : 0
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/TotalPrecip"
+      standard_name : "precipitation_amount"
+      long_name : "total precipitation 12hr accum surface"
+      valid_min : 0
+      valid_max : 4
+      cell_methods :  "default_time_coordinate_size : sum"
+      units : "kg m**-2"
+      coordinates : "elev"
+  total_precipitation_24hr_accum_surface : &TotalPrecip24
+    data_type : float32
+    dimensions : [*nstations, *time]
+    hours : 24
+    coord_val : 0
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/TotalPrecip"
+      standard_name : "precipitation_amount"
+      long_name : "total precipitation 24hr accum surface"
+      valid_min : 0
+      valid_max : 8
+      cell_methods :  "default_time_coordinate_size : sum"
+      units : "kg m**-2"
+      coordinates : "elev"
+
+
+## Misc
+  k_index_instant : &KIndex
+    data_type : float32
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Stability/KIndex"
+      long_name : "index of potential of severe convection"
+      standard_name : "atmospheric_stability_k_index"
+      units : "deg C"
+      valid_min : ""
+      valid_max : ""
+
+##################################################
+## Variables without defined dimensions
+##################################################
+
+## Temp
+  2_metre_temperature_instant_2 : &Temp
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      long_name : "temperature instant"
+      standard_name : "air_temperature"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+  maximum_temperature_1hr_max_2 : &MaxTemp1
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      long_name : "maximum temperature 1hr min at 2m"
+      standard_name : "air_temperature"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+  minimum_temperature_1hr_min_2 : &MinTemp1
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      long_name : "minimum temperature 1hr min at 2m"
+      standard_name : "air_temperature"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+  maximum_temperature_3hr_max_2 : &MaxTemp3
+    data_type : float32
+    dimensions : []
+    hours : 3
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      long_name : "maximum temperature 3hr max at 2m"
+      cell_methods :  "default_time_coordinate_size: max"
+      standard_name : "air_temperature"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+  minimum_temperature_3hr_min_2 : &MinTemp3
+    data_type : float32
+    dimensions : []
+    hours : 3
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      long_name : "minimum temperature 3hr min at 2m"
+      standard_name : "air_temperature"
+      cell_methods :  "default_time_coordinate_size: min"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+  maximum_temperature_6hr_max_2 : &MaxTemp6
+    data_type : float32
+    dimensions : []
+    hours : 6
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      long_name : "maximum temperature 6hr max at 2m"
+      standard_name : "air_temperature"
+      cell_methods :  "default_time_coordinate_size: max"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+  minimum_temperature_6hr_min_2 : &MinTemp6
+    data_type : float32
+    dimensions : []
+    hours : 6
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      long_name : "minimum temperature 6hr min at 2m "
+      standard_name : "air_temperature"
+      cell_methods :  "default_time_coordinate_size: min"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+  maximum_temperature_12hr_max_2 : &MaxTemp12
+    data_type : float32
+    dimensions : []
+    hours : 12
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      long_name : "maximum temperature 12hr at 2m"
+      standard_name : "air_temperature"
+      cell_methods :  "default_time_coordinate_size: max"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+  minimum_temperature_12hr_min_2 : &MinTemp12
+    data_type : float32
+    dimensions : []
+    hours : 12
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      long_name : "minimum temperature 12hr at 2m"
+      standard_name : "air_temperature"
+      cell_methods :  "default_time_coordinate_size: min"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+  daytime_maximum_temperature: &DayMaxT
+    data_type : int16
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/DayMaxT"
+      long_name : "maximum temperature within local time window: 7am-7pm"
+      cell_methods :  "default_time_coordinate_size: max"
+      standard_name : "air_temperature"
+      units : "degF"
+      valid_min : ""
+      valid_max : ""
+  nighttime_minimum_temperature: &NightMinT
+    data_type : int16
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/NightMinT"
+      long_name : "minimum temperature within local time window: 7pm-8am"
+      cell_methods :  "default_time_coordinate_size: min"
+      standard_name : "air_temperature"
+      units : "degF"
+      valid_min : ""
+      valid_max : ""
+  potential_temperature_instant : &PotTemp
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/PotTemp"
+      long_name : "potential temperature"
+      standard_name : "potential_temperature"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+  equivalent_potential_temperature_instant : &EquPotTemp
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/EquPotTemp"
+      long_name : "equivalent potential temperature"
+      standard_name : "equivalent_potential_temperature"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+
+## Moisture
+  relative_humidity_instant_surface : &RelHum
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moist/RelHum"
+      long_name : "relative humidity instant"
+      standard_name : "relative_humidity"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+
+## Wind
+  wind_speed_(gust)_instant_surface : &Gust
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moment/Gust"
+      long_name : "wind speed of gust at surface"
+      standard_name : "wind_speed_of_gust"
+      units : "m/s"
+      valid_min : ""
+      valid_max : ""
+  U_wind_speed_instant : &Uwind
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moment/Uwind"
+      long_name : "U wind speed instant"
+      standard_name : "eastward_wind"
+      units : "m/s"
+      valid_min : ""
+      valid_max : ""
+  V_wind_speed_instant : &Vwind
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moment/Vwind"
+      long_name : "V wind speed instant"
+      standard_name : "northward_wind"
+      units : "m/s"
+      valid_min : ""
+      valid_max : ""
+  vertical_velocity_instant_surface : &Wwind
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moment/Wwind"
+      long_name : "vertical velocity instant"
+      standard_name : "upward_air_velocity"
+      units : ""
+      valid_min : ""
+      valid_max : ""
+
+## Precip
+  "Total Precipitation_3hr_accum" :
+    data_type : float32
+    dimensions : []
+    dimensions : []
+    hours : 3
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moment/TotalPrecip"
+      long_name : "Total precipitation accumulation 3hr"
+      standard_name : "precipitation_amount"
+      cell_methods :  "default_time_coordinate_size : sum"
+      units : "kg/m^2"
+      valid_min : ""
+      valid_max : ""
+  "Total Precipitation_6hr_accum" :
+    data_type : float32
+    dimensions : []
+    hours : 6
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moment/TotalPrecip"
+      long_name : "Total precipitation accumulation 6hr"
+      standard_name : "precipitation_amount"
+      cell_methods :  "default_time_coordinate_size : sum"
+      units : "kg/m^2"
+      valid_min : ""
+      valid_max : ""
+  "Total Precipitation_12hr_accum" :
+    data_type : float32
+    dimensions : []
+    hours : 12
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moment/TotalPrecip"
+      long_name : "Total precipitation accumulation 12hr"
+      standard_name : "precipitation_amount"
+      cell_methods :  "default_time_coordinate_size : sum"
+      units : "kg/m^2"
+      valid_min : ""
+      valid_max : ""
+
+## Misc
+  day_of_year :
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Misc/DOY"
+      long_name : "Day of year"
+      standard_name : "time"
+      units : "days"
+      valid_min : ""
+      valid_max : ""
+  wind_chill_instant : &WChill
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moment/WChill"
+      long_name : "wind chill"
+      standard_name : "wind_chill_instant"
+      units : "degF"
+      valid_min : ""
+      valid_max : ""
+  geopotential_height_instant : &GeoHght
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Mass/GeoHght"
+      long_name : "geopotential height instant"
+      standard_name : "geopotential_height"
+      units : "gpm"
+      valid_min : ""
+      valid_max : ""
+      coordinates : "plev"
+  heat_index_instant : &HtIndex
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/HtIndex"
+      long_name : "heat index"
+      standard_name : "heat_index"
+      units : "degF"
+      valid_min : ""
+      valid_max : ""
+  mixing_ratio_instant : &MixR
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moist/MixR"
+      long_name : "ratio of the mass of water vapor to the mass of dry air"
+      standard_name : "humidity_mixing_ratio"
+      units : "g/kg"
+      valid_min : "0"
+      valid_max : "1000"
+  precipitable_water_instant_surface : &PWat
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Moist/PWat"
+      long_name : "precipitable water instant surface"
+      standard_name : "lwe_thickness_of_atmosphere_mass_content_of_water_vapor"
+      units : ""
+      valid_min : ""
+      valid_max : ""
+  PLThick : &PLThick
+    data_type : float32
+    dimensions : []
+    coord_val1 :
+    coord_val2 :
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Mass/PLThick"
+      long_name : "Difference of geopotential height between two isobaric levels"
+      standard_name : "geopotential_height"
+      prototype_standard_name : "thickness"
+      cell_methods : "pressure_level : PressThickness"
+      coordinates : 'plev'
+      units :
+      valid_min : "0"
+      valid_max : "100000"
+  TLapse : &TLapse
+    data_type : float32
+    dimensions : []
+    coord_val1 :
+    coord_val2 :
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/TLapse"
+      standard_name : "air_temperature"
+      prototype_standard_name : "temperature_lapse_rate"
+      long_name : "Difference in air temperature between two isobaric levels"
+      cell_methods : "pressure_level : TempLapse"
+      coordinates : 'plev'
+      units : "kelvin"
+      valid_min : ""
+      valid_max : ""
+  land_sea_mask : &LandSeaMask
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM_observedProperty : "StatPP__Data/Met/Misc/LandSea"
+      long_name : "land sea mask"
+      standard_name : "land_sea_mask"
+      units : ""
+      valid_min : ""
+      valid_max : ""
+
+#######################################
+## Metar and Marine specific
+#######################################
+  present_weather_group_1 :
+    data_type : uint16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/M2KCodedWxGroup1"
+      long_name : "present weather group 1"
+      valid_min : 0
+      valid_max : 208
+      standard_name : "precipitation_amount"
+      comment : "enumeration legend available at:"
+  present_weather_group_2 :
+    data_type : uint16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/M2KCodedWxGroup2"
+      standard_name : "precipitation_amount"
+      valid_min : 0
+      valid_max : 208
+      standard_name : "present_weather"
+      comment : "enumeration legend available at:"
+  present_weather_group_3 :
+    data_type : uint16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/M2KCodedWxGroup3"
+      long_name : "present weather group 3"
+      valid_min : 0
+      valid_max : 208
+      standard_name : "precipitation_amount"
+      comment : "enumeration legend available at:"
+  visibility_in_air :
+    data_type : float32
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Phys/Vsby"
+      long_name : "horizontal visiblity"
+      units : "miles"
+      valid_min : 0
+      valid_max : 40
+      standard_name : "visibility_in_air"
+  visibility_instant : &Vis
+    data_type : float32
+    dimensions : [*nstations,*time]
+    attribute :
+      OM_observedProperty : "https://codes.nws.noaa.gov/StatPP/Data/Met/Phys/Vsby"
+      long_name : "horizontal visiblity"
+      units : "miles"
+      valid_min : 0
+      valid_max : 40
+      standard_name : "visibility_instant"
+  air_pressure_at_sea_level :
+    data_type : float32
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Mass/Pres"
+      long_name : "mean sea level pressure"
+      valid_min : 875
+      valid_max : 1075
+      units : "millibar"
+      standard_name : "air_pressure_at_sea_level"
+      comment : "metar does not include leading 9 or 10. This attribute does"
+  altimeter_setting : # altimiter_range?
+    data_type : float32
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Mass/AltimtrStg"
+      long_name : "altimeter setting"
+      valid_min : 24
+      valid_max : 32
+      units : "mm Hg"
+      standard_name : "altimeter_range"
+  cloud_amount_layer_1 :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldAmt"
+      long_name : "cloud amount layer one"
+      #units : "coded"
+      valid_min : 0
+      valid_max : 10
+      standard_name : "cloud_area_fraction_in_atmosphere_layer"
+      comment : "Enumeration can be found at:"
+  cloud_height_layer_1  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldHght"
+      long_name : "cloud height layer 1"
+      units : "feet"
+      standard_name : "convective_cloud_base_height"
+  cloud_amount_layer_2  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldAmt"
+      long_name : "cloud amount layer 2"
+      valid_min : 0
+      valid_max : 10
+      #units : "coded"
+      standard_name : "cloud_area_fraction_in_atmosphere_layer"
+      comment : "Enumeration can be found at:"
+  cloud_height_layer_2  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldHght"
+      long_name : "cloud height layer 2"
+      units : "feet"
+      standard_name : "convective_cloud_base_height"
+  cloud_amount_layer_3  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldAmt"
+      long_name : "cloud amount layer 3"
+      valid_min : 0
+      #units : "coded"
+      valid_max : 10
+      standard_name : "cloud_area_fraction_in_atmosphere_layer"
+      comment : "Enumeration can be found at:"
+  cloud_height_layer_3  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldHght"
+      long_name : "cloud height layer 3"
+      units : "feet"
+      standard_name : "convective_cloud_base_height"
+  cloud_amount_layer_4  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldAmt"
+      long_name : "cloud amount layer 4"
+      valid_min : 0
+      valid_max : 10
+      #units : "coded"
+      standard_name : "cloud_area_fraction_in_atmosphere_layer"
+      comment : "Enumeration can be found at:"
+  cloud_height_layer_4  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldHght"
+      long_name : "cloud height layer 4"
+      units : "feet"
+      standard_name : "convective_cloud_base_height"
+  cloud_amount_layer_5  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldAmt"
+      long_name : "cloud amount layer 5"
+      valid_min : 0
+      valid_max : 10
+      standard_name : "cloud_area_fraction_in_atmosphere_layer"
+      #units : "coded"
+  cloud_height_layer_5  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldHght"
+      long_name : "cloud height layer 5"
+      units : "feet"
+      standard_name : "convective_cloud_base_height"
+  cloud_amount_layer_6  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldAmt"
+      long_name : "cloud amount layer 6"
+      valid_min : 0
+      valid_max : 10
+      standard_name : "cloud_area_fraction_in_atmosphere_layer"
+      #units : "coded"
+  cloud_height_layer_6  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldHght"
+      long_name : "cloud height layer 6"
+      units : "feet"
+      standard_name : "convective_cloud_base_height"
+  precipitation_amount_1_hour  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    hours : 1
+    coord_val : 0
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/TotalPrecip"
+      standard_name : "precipitation_amount"
+      long_name : "Hourly precipitation amount"
+      valid_min : 0
+      valid_max : 3.75
+      cell_methods : "default_time_coordinate_size: sum"
+      units : "in"
+      scale_factor : !!float 100
+      coordinates : "elev"
+      comment : "A -4 is used to represent a trace amount\n
+                 A -9 is used to represent an indeterminate amount"
+  precipitation_amount_3_hour  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    hours : 3
+    coord_val : 0
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/TotalPrecip"
+      standard_name : "precipitation_amount"
+      long_name : "3-hour precipitation amount"
+      cell_methods : "default_time_coordinate_size: sum"
+      valid_min : 0
+      valid_max : 9
+      units : "in"
+      coordinates : "elev"
+      scale_factor : !!float 100
+  precipitation_amount_6_hour  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    hours : 6
+    coord_val : 0
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/TotalPrecip"
+      standard_name : "precipitation_amount"
+      long_name : "6-hour precipitation amount"
+      valid_min : 0
+      valid_max : 12
+      cell_methods : "default_time_coordinate_size: sum"
+      units : "in"
+      coordinates : "elev"
+      scale_factor : !!float 100
+  precipitation_amount_9_hour  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    hours : 9
+    coord_val : 0
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/TotalPrecip"
+      standard_name : "precipitation_amount"
+      long_name : "9-hour precipitation amount"
+      valid_min : 0
+      valid_max : 18
+      cell_methods : "default_time_coordinate_size: sum"
+      units : "in"
+      coordinates : "elev"
+      scale_factor : !!float 100
+  precipitation_amount_12_hour  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    hours : 12
+    coord_val : 0
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/TotalPrecip"
+      standard_name : "precipitation_amount"
+      long_name : "12-hour precipitation amount"
+      valid_min : 0
+      valid_max : 24
+      cell_methods : "default_time_coordinate_size: sum"
+      units : "in"
+      coordinates : "elev"
+      scale_factor : !!float 100
+  precipitation_amount_18_hour  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    hours : 81
+    coord_val : 0
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/TotalPrecip"
+      standard_name : "precipitation_amount"
+      long_name : "18-hour precipitation amount"
+      valid_min : 0
+      valid_max : 36
+      cell_methods : "default_time_coordinate_size: sum"
+      units : "in"
+      coordinates : "elev"
+      scale_factor : !!float 100
+  precipitation_amount_24_hour  :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    hours : 24
+    coord_val : 0
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Wx/TotalPrecip"
+      standard_name : "precipitation_amount"
+      long_name : "24-hour precipitation amount"
+      valid_min : 0
+      valid_max : 48
+      cell_methods : "default_time_coordinate_size: sum"
+      scale_factor : !!float 100
+      coordinates : "elev"
+      units : "in"
+  duration_of_sunshine :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/SunDuratn"
+      long_name : "minutes of sunshine"
+      standard_name : "duration_of_sunshine"
+      units : "minutes"
+  snow_depth_on_ground :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      standard_name : "surface_snow_thickness"
+      OM__observedProperty : "StatPP__Data/Met/snow_depth_on_ground"
+      long_name : "snow depth on the ground"
+      units : "in"
+  snowfall_amount :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/snowfall_amount"
+      long_name : "snowfall amount"
+      units : "in"
+      standard_name : "snowfall_amount"
+      comment : "amount of snowfall that has fallen in the past hour. must be > .5 inch"
+  sattelite_cloud_amount_category_GOES_E :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldAmt"
+      standard_name : "cloud_area_fraction"
+      long_name : "satellite cloud amount category from GOES-East"
+      #units : "coded"
+  sattelite_effective_cloud_amount_GOES_E :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldAmt"
+      long_name : "sattelite effective cloud amount from GOES-East"
+      standard_name : "cloud_area_fraction"
+      #units : "coded"
+  sattelite_cloud_amount_category_GOES_W :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldAmt"
+      standard_name : "cloud_area_fraction"
+      long_name : "sattelite cloud amount from GOES-West"
+  sattelite_effective_cloud_amount_GOES_W :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Cloud/CldAmt"
+      long_name : "sattelite effective cloud amount from GOES-West"
+      #units : "coded"
+  water_temperature :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      standard_name : "sea_water_temperature"
+      OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
+      standard_name : "sea_surface_skin_temperature"
+      long_name : "water temperature"
+      units : "degF"
+  wave_height :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Ocean/Waves/WvHght"
+      long_name : "wave_height"
+      units : "centimeters"
+      standard_name : "sea_surface_swell_significant_height"
+      comment : "average height of highest 1/3"
+  wave_direction :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Ocean/Waves/WvDir"
+      long_name : "wave_direction"
+      units : "degrees"
+      standard_name : "sea_surface_wave_from_direction"
+      comment : "average height of highest 1/3"
+  average_wave_period :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Ocean/Waves/WvPd"
+      long_name : "average wave period"
+      units : "seconds"
+      standard_name : "sea_surface_swell_wave_period"
+      comment : "Average wave period in a 20 minute period"
+  dominant_wave_period :
+    data_type : int16
+    dimensions : [*nstations,*time]
+    attribute :
+      OM__observedProperty : "StatPP__Data/Ocean/Waves/DomWvPd"
+      long_name : "average wave period"
+      standard_name : "sea_surface_swell_wave_period"
+      units : "seconds"
+
+  ####
+  ### Pointers (Alternative name used to reference existing metadata) ###
+  #####
+
+  "10 metre U wind component_instant" : *Uwind
+  "10 metre V wind component_instant" : *Vwind
+  "U component of wind_instant" : *Uwind
+  "V component of wind_instant" : *Vwind
+  "Vertical velocity_instant" : *Wwind
+  "Wind speed_instant" : *WindSpd
+  "Wind speed (gust)_instant" : *Gust
+  "2 metre dewpoint temperature_instant" : *DewPt
+  "Dew point temperature_instant" : *DewPt
+  "2 metre temperature_instant" : *Temp
+  "Apparent temperature_instant" : *Temp
+  "Temperature_instant" : *Temp
+  "Geopotential Height_instant" : *GeoHght
+  "PLThick" : *PLThick
+  "TLapse" : *TLapse
+  "Heat index_instant" : *HtIndex
+  "K-index" : *KIndex
+  "Maximum temperature_1hr_max" : *MaxTemp1
+  "Maximum temperature_12hr_max" : *MaxTemp12
+  "Maximum temperature_3hr_max" : *MaxTemp3
+  "Maximum temperature_6hr_max" : *MaxTemp6
+  "Minimum temperature_6hr_min" : *MinTemp6
+  "Minimum temperature_1hr_min" : *MinTemp1
+  "Minimum temperature_12hr_min" : *MinTemp12
+  "Minimum temperature_3hr_min" : *MinTemp3
+  "DayMaxT" : *DayMaxT
+  "NightMinT" : *NightMinT
+  "Precipitable water_instant" : *PWat
+  "Potential temperature_instant" : *PotTemp
+  "Equivalent potential temperature_instant" : *EquPotTemp
+  "Mixing ratio_instant" : *MixR
+  "Pressure_instant" : *Pres
+  "Surface pressure_instant" : *Pres
+  "Relative humidity_instant" : *RelHum
+  "Surface air relative humidity_instant" : *RelHum
+  "2 metre relative humidity_instant" : *RelHum
+  "Total Precipitation_1hr_accum" : *TotalPrecip1
+  "Total Precipitation_3hr_accum" : *TotalPrecip3
+  "Total Precipitation_6hr_accum" : *TotalPrecip6
+  "Total Precipitation_12hr_accum" : *TotalPrecip12
+  "Land-sea mask_instant" : *LandSeaMask
+  "Visibility_instant" : *Vis

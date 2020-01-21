@@ -27,19 +27,19 @@ Here's a CDL fragment for an array of 2-m temperature values.
 
 ::
 
-| short MESONET_Temp_instant_2_(number_of_stations=3000, default_time_coordinate_size=744, level=1);
+| short Temp_instant_2_(number_of_stations=2000, default_time_coordinate_size=744, level=1);
 |   :_FillValue = 9999S; // short
-|   :ancillary_variables = "OM_phenomenonTimeInstant OM_resultTime OM_validTime MesoObProcStep1 MesoObProcStep2 MesoObProcStep3";
+|   :OM__observedProperty = "StatPP__Data/Met/Temp/Temp";
+|   :PROV__Used = "MESONET";
+|   :ancillary_variables = "OM__phenomenonTimeInstant OM__resultTime ValidTime MesoObProcStep1 MesoObProcStep2 MesoObProcStep3 ";
 |   :standard_name = "air_temperature";
-|   :coordinates = "elev0";
-|   :LE_Source = "MESONET";
+|   :coordinates = "elev0, station";
 |   :long_name = "dry bulb temperature";
 |   :valid_min = -80.0; // double
 |   :units = "degF";
 |   :valid_max = 130.0; // double
-|   :OM_observedProperty = "https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp";
-|   :OM_procedure = "( MesoObProcStep1,MesoObProcStep2,MesoObProcStep3 )";
-|   :_ChunkSizes = 1500, 372, 1; // int
+|   :SOSA__usedProcedure = "( MesoObProcStep1 MesoObProcStep2 MesoObProcStep3 )";
+|   :_ChunkSizes = 2000U, 744U, 1U; // uint
 
 There are three dimensions.
 The first, number_of_stations, of course, indexes the various stations.
@@ -51,9 +51,9 @@ It simply indicates 2 meters above the Earth's surface.
 One of the first attributes identifies a number of ancillary variables, most of which are associated with time.
 Each of these variables are explained in some detail below.
 
-The attribute OM_observedProperty takes on a value that resolves to a code registry entry for temperature.
+The attribute OM__observedProperty takes on a value that resolves to a code registry entry for temperature.
 
-The attribute OM_procedure points to a three step process.
+The attribute SOSA__usedProcedure points to a three step process.
 The data in this file were first decoded from a tabular text format.
 (They were likely received by MADIS in a wide variety of formats.)
 Then, they were quality controlled with routines developed by MDL.
@@ -61,77 +61,77 @@ Finally, they were given a geospatial quality control developed by MDL.
 This final step identifies stations with identical MADIS station identifiers that are considered too far apart for our statistical post-processing needs.
 These stations are given distinct station identifiers within MDL's system.
 
-The attribute OM_procedure takes on a character string value that names one or more value-less integers.
+The attribute SOSA__usedProcedure takes on a character string value that names one or more value-less integers.
 Those integers, in turn, convey metadata in their attributes about each procedureal step.
 Here is the CDL that describes the process step integers:
 
 ::
 
-| short MesoObProcStep1;
-|   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/Ingest/DecodeTabularText";
-|   :LE_Source = "https://codes.nws.noaa.gov/StatPP/Data/MADISMesonet";
+| long MesoObProcStep1;
+|   :PROV__Activity = "StatPP__Methods/Ingest/DecodeTabularText";
 |   :long_name = "Ingest tabular text-encoded mesonet data from MADIS";
+|   :PROV__Used = "StatPP__Data/MADISMesonet";
+|   :units = 1L; // long
 |   :standard_name = "source";
-|   :units = "1";
-| 
-| short MesoObProcStep2;
-|   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/QC/MesoQC";
+|
+| long MesoObProcStep2;
+|   :PROV__Activity = "StatPP__Methods/QC/MesoQC";
 |   :long_name = "Apply MDL mesonet Quality Control technique";
 |   :standard_name = "source";
-|   :units = "1";
-| 
-| short MesoObProcStep3;
-|   :LE_ProcessStep = "https://codes.nws.noaa.gov/StatPP/Methods/QC/GeodspatialQC";
+|   :units = 1L; // long
+|
+| long MesoObProcStep3;
+|   :PROV__Activity = "StatPP__Methods/QC/GeospatialQC";
 |   :long_name = "Identify and resolve geospatial inconsistencies";
 |   :standard_name = "source";
-|   :units = "1";
+|   :units = 1L; // long
 
 The attribute strings associated with MesoObProcStep1 document that the data were ingested from mesonet observations in a tabular text format maintained by NCEP's Meteorological Assimilation Data Ingest System (MADIS).
-Note that the attribute LE_ProcessStep shows a tabular text decoding step while the attribute LE_Source identifies MADISMesonet as the source.
-Note that both LE_ProcessStep and LE_Source point to entries in the NWS Codes Registry where additional details can be documented.
+Note that the attribute PROV__Activity shows a tabular text decoding step while the attribute PROV__Used identifies MADISMesonet as the source.
+Note that both PROV__Activity and PROV__Used point to entries in the NWS Codes Registry where additional details can be documented.
 
 The attribute strings associated with MesoObProcStep2 document that the data were quality controlled using a procedure developed and maintained by MDL.
-The attribute LE_ProcessStep again points to a codes registry entry.
-There is no entry for LE_Source in this variable.
-When LE_Source is omitted, we presume that the results from the previous process step are the source for the current process step.
+The attribute PROV__Activity again points to a codes registry entry.
+There is no entry for PROV__Used in this variable.
+When PROV__Used is omitted, we presume that the results from the previous process step are the source for the current process step.
 
 The attribute strings associated with MesoObProcStep3 document that the data received a geospatial quality control step developed by MDL.
 
 There are three time-related variables associated with MESONET_Temp_instant_2_.
-They are OM_phenomenonTimeInstant, OM_resultTime, and OM_validTime.
+They are OM__phenomenonTimeInstant, OM__resultTime, and ValidTime.
 Here are the CDL fragments that declare each of them:
 
 ::
 
-| long OM_phenomenonTimeInstant(default_time_coordinate_size=744);
-|   :_FillValue = -9999L; // long
+| long OM__phenomenonTimeInstant(default_time_coordinate_size=744);
+|   :_FillValue = 9999L; // long
 |   :calendar = "gregorian";
 |   :units = "seconds since 1970-01-01 00:00:00.0";
 |   :standard_name = "time";
-|   :wisps_role = "OM_phenomenonTime";
-|   :_ChunkSizes = 744; // int
-| 
-| long OM_resultTime(default_time_coordinate_size=744);
-|   :_FillValue = -9999L; // long
+|   :PROV__specializationOf = "( OM__phenomenonTime )";
+|   :_ChunkSizes = 744U; // uint
+|
+| long OM__resultTime(default_time_coordinate_size=744);
+|   :_FillValue = 9999L; // long
 |   :calendar = "gregorian";
 |   :units = "seconds since 1970-01-01 00:00:00.0";
 |   :standard_name = "time";
-|   :wisps_role = "OM_resultTime";
-|   :_ChunkSizes = 744; // int
-| 
-| long OM_validTime(begin_end_size=2, default_time_coordinate_size=744);
-|   :_FillValue = -9999L; // long
+|   :PROV__specializationOf = "( OM__resultTime )";
+|   :_ChunkSizes = 744U; // uint
+|
+| long ValidTime(begin_end_size=2, default_time_coordinate_size=744);
+|   :_FillValue = 9999L; // long
 |   :calendar = "gregorian";
 |   :units = "seconds since 1970-01-01 00:00:00.0";
 |   :standard_name = "time";
-|   :wisps_role = "OM_validTime";
-|   :_ChunkSizes = 2, 744; // int
+|   :PROV__specializationOf = "( StatPP__concepts/TimeBoundsSyntax/BeginEnd OM2__Data/Time/ValidTime )";
+|   :_ChunkSizes = 2U, 744U; // uint
 
 The declarations we find here are quite simlar to those used for METAR-encoded surface observations and marine observations.
 OM_phenomenonTimeInstant takes on a value for each hour of the month.
 As noted above, the times are set to the top of each hour for all stations and times.
-OM_resultTime values are equal to OM_phenomenonTime values.
-OM_validTime is two-dimensional representing beginning time and ending time.
+OM__resultTime values are equal to OM__phenomenonTime values.
+ValidTime is two-dimensional representing beginning time and ending time.
 The beginning times equal the phenomenon times and result times.
 (I.e., we don't intend for data consumers to use an observation before it's taken.)
 The ending times are set to missing to show that we intend for data consumers to use an observation indefinitely.

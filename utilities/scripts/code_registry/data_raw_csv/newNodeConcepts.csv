@@ -1,0 +1,15 @@
+@ID,rdfs:LABEL,skos:NOTATION,dct:DESCRIPTION,dct:REFERENCES
+https://codes.nws.noaa.gov/StatPP/Data/Location/Geospatial/Lat,Latitude,Lat,"""latitude geospatial coordinate""",
+https://codes.nws.noaa.gov/StatPP/Data/Location/Geospatial/Lon,Longitude,Lon,"""longitude geospatial coordinate""",
+https://codes.nws.noaa.gov/StatPP/Data/Location/Geospatial/Elev,Elevation,Elev,"""elevation of point observation""",
+https://codes.nws.noaa.gov/StatPP/Data/Location/Map/Projection,"""Map Projection""",Projection,"""map projection used to translate geospatial coordinates to grid""",
+https://codes.nws.noaa.gov/StatPP/Data/Location/Map/xProj,"""Projected X coordinate""",xProj,"""x coordinate used in projected grid""",
+https://codes.nws.noaa.gov/StatPP/Data/Location/Map/yProj,"""Projected Y coordinate""",yProj,"""y coordinate used in projected grid""",
+https://codes.nws.noaa.gov/StatPP/Location/Station/StaName,"""Station Name""",StaName,"""Station name used in data collection""",
+https://codes.nws.noaa.gov/StatPP/Data/Locaton/Station/StaType,"""Station Type""",StaType,"""Type of data collection from station, as defined by MOS 2000 station ITYPE, where: 0 or blank = manual, precip reported; 1 = semiautomated, precip reported; 2 = manual, precip not reported; 3 = automated, precip not reported; 4 = automated, precip reported.""",https://www.weather.gov/media/mdl/TDL_OfficeNote00-1.pdf
+https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/WChill,"""Wind Chill Temperature""",WChill,"""Wind Chill temperature""",
+https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/HtIndex,"""Heat Index Temperature""",HtIndex,"""Heat Index Temperature""",
+https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/SnowAmt,"""Snow Amount""",SnowAmt,"""Amount of snow expected/observed to fall""",
+https://codes.nws.noaa.gov/StatPP/Data/Met/Moist/SnowDepth,"""Snow Depth""",SnowDepth,"""Depth of Snow as measured on the ground surface.""",
+https://codes.nws.noaa.gov/StatPP/Data/Time/ObsTime,"""Observation Time""",ObsTime,"""Time at which observation is taken""",
+https://codes.nws.noaa.gov/StatPP/Data/Location/Station/TestEntry,"""Test entry for refs""",TestEntry,"""Testing references""","""https://www.weather.gov/media/mdl/TDL_OfficeNote00-1.pdf,https://www.weather.gov/mdl/mos_home"""

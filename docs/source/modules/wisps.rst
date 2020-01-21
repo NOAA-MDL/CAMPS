@@ -6,15 +6,12 @@ Subpackages
 
 .. toctree::
 
-    wisps.data_mgmt
-    wisps.grib2_to_nc
-    wisps.marine_to_nc
-    wisps.mathlib
-    wisps.metar_to_nc
+    wisps.core
+    wisps.StatPP
+    wisps.libraries
     wisps.mospred
     wisps.registry
     wisps.scripts
-    wisps.test
 
 Module contents
 ---------------

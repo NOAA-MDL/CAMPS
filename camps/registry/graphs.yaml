@@ -1,0 +1,173 @@
+#--------------------------------------------------------------------------
+# Specify the date range and stride
+#--------------------------------------------------------------------------
+date_range: '2018040100-2018043000,24h'
+
+#path to predictor and predictand files
+predictor_file_path : ['/scratch1/NCEPDEV/mdl/Emily.Schlie/full_test/pred_201804.nc']
+predictand_file_path : ['/scratch1/NCEPDEV/mdl/Emily.Schlie/full_test/hre201804.nc']
+
+#--------------------------------------------------------------------------
+# Specify the path to the predictor and predictand files and
+# whether predictors and predictands should be read
+#--------------------------------------------------------------------------
+pred_file : "predictors_graphs.yaml"
+predictors : True
+predd_file : "predictands_graphs.yaml"
+predictands : True
+
+#--------------------------------------------------------------------------
+# Specify the lead time to be analyzed
+#--------------------------------------------------------------------------
+lead_time : 3
+
+#--------------------------------------------------------------------------
+# Specify whether subsetting by saved region
+# Provide name of saved region
+# Saved regions are CONUS(Continental US),SE(Southeast),SW(Southwest),
+# NE(Northeast),NW(Northwest),FN(Far North)
+#--------------------------------------------------------------------------
+region : False
+region_name : 'FN'
+
+#--------------------------------------------------------------------------
+# Specify whether subsetting by inputted lat/lon
+# Provide upper and lower lat and far east and far west lon
+#--------------------------------------------------------------------------
+input_loc : False
+LCOlat : 25
+UCOlat : 45
+LCOlon : 70
+UCOlon : 90
+
+#--------------------------------------------------------------------------
+# Specify whether plots should be displayed or saved
+#--------------------------------------------------------------------------
+show : False
+save : True
+
+#--------------------------------------------------------------------------
+# Specify whether scatteplot should be created
+# Provide names of x and y variables to be plotted
+#--------------------------------------------------------------------------
+scatter : True
+scatter_x : 'GFS_Temp_instant_2m_00Z_3hr_25pt_smooth'
+scatter_y : 'METAR_Temp_instant_2m'
+
+#--------------------------------------------------------------------------
+# Specify if temporally-subsetted scatterplot should be created
+# Provide names of x and y variables to be plotted
+# Provide start and end date as a list for both time ranges
+#--------------------------------------------------------------------------
+time_scatter : False
+time_scatter_x : 'GFS_Temp_instant_2m'
+time_scatter_y : 'METAR_Temp_instant_2m'
+time_scatter_range1 : ['2016-07-01 9:00','2016-07-10 9:00']
+time_scatter_range2 : ['2016-07-21 9:00','2016-07-30 9:00']
+
+#--------------------------------------------------------------------------
+# Specify if joint plot should be created
+# Provide names of variables to be plotted
+#--------------------------------------------------------------------------
+joint : False
+joint_x : 'GFS_Uwind_instant_10m'
+joint_y : 'METAR_Temp_instant_2m'
+
+#--------------------------------------------------------------------------
+# Spedify if joint regression plot should be created
+# Provide names of variables to be plotted
+#--------------------------------------------------------------------------
+joint_reg : False
+joint_reg_x : 'GFS_Vwind_instant_10m'
+joint_reg_y : 'METAR_Temp_instant_2m'
+
+#--------------------------------------------------------------------------
+# Spedify if hexbin distribution plot should be created
+# Provide names of variables to be plotted
+#--------------------------------------------------------------------------
+hexbin : False
+hexbin_x : 'GFS_MixR_instant_700mb'
+hexbin_y : 'METAR_Temp_instant_2m'
+
+#--------------------------------------------------------------------------
+# Spedify if density plot should be created
+# Provide names of variables to be plotted
+#--------------------------------------------------------------------------
+density : False
+density_x : 'GFS_MixR_instant_700mb'
+density_y : 'METAR_Temp_instant_2m'
+
+#--------------------------------------------------------------------------
+#Specify whether correlation matrix should be created
+#Provde names of variables to be plotted in a list
+#Can provide names of variables on axis as full names don't fit or leave 
+#as empty list
+#--------------------------------------------------------------------------
+corr_matrix : False
+corr_matrix_vars : ['METAR_Temp_instant_2m','GFS_Temp_instant_2m','GFS_DewPt_instant_2m','GFS_MixR_instant_700mb','GFS_KIndex_instant_0m']
+corr_matrix_names : ['MTemp','GTemp','GDewPt','GMixR','GKIndex']
+
+#--------------------------------------------------------------------------
+# Specify whether scatter matrix should be created
+# Provide names of variables to be plotted in a list
+#--------------------------------------------------------------------------
+scatter_matrix : False
+scatt_matrix_vars : ['METAR_Temp_instant_2m','GFS_Temp_instant_2m','GFS_DewPt_instant_2m','GFS_MixR_instant_700mb','GFS_KIndex_instant_0m']
+
+#--------------------------------------------------------------------------
+# Specify whether correlation table should be created
+# Provide names of variables to be plotted in a list
+#--------------------------------------------------------------------------
+corr_table : False
+corr_table_vars : ['GFS_Temp_instant_2m','GFS_DewPt_instant_2m','GFS_HtIndex_instant_2m','GFS_RelHum_instant_2m']
+
+#--------------------------------------------------------------------------
+# Specify is all three correlation products should be created
+# Creates correlation matrix, scatter matrix, and correlation table using 
+# same variables
+# Provide names of variables to be plotted in a list
+# Provide names for axis or leave as empty list
+#--------------------------------------------------------------------------
+all_corr : False
+corr_vars : ['GFS_Temp_instant_2m','GFS_DewPt_instant_2m','METAR_Temp_instant_2m','METAR_DewPt_instant_2m']
+corr_names : ['GTemp','GDewPt','MTemp','MDewPt']
+
+#--------------------------------------------------------------------------
+# Specify if violin plot should be created
+# Provide names of stations to be plotted as a list
+# Provide name of variable to be plotted
+#--------------------------------------------------------------------------
+violin : False
+violin_stations : ['KBOS','KJFK','KDCA']
+violin_var : 'METAR_Temp_instant_2m'
+
+#--------------------------------------------------------------------------
+# Specify if split violin plot should be created
+# Provide name of stations to be plotted as a list
+# Provide names of variables to be plotted
+# Provide type of variable to be plotted (ex. Temperature, Dew Point,...)
+#--------------------------------------------------------------------------
+split_violin : False
+split_violin_stations : ['KBOS','KJFK','KDCA']
+split_violin_var1 : 'GFS_Uwind_instant_10m'
+split_violin_var2 : 'METAR_Vwind_instant_10m'
+split_violin_var_type : 'Temperature'
+
+#--------------------------------------------------------------------------
+# Specify if line plot should be created
+# Provide names of stations to be plotted as a list
+# Provide names of x and y variables to be plotted
+#--------------------------------------------------------------------------
+line_plot : False
+line_stations : ['KBOS','KJFK','KDCA']
+line_x : 'GFS_Temp_instant_2m'
+line_y : 'METAR_Temp_instant_2m'
+
+#--------------------------------------------------------------------------
+# Specify if time series should be created
+# Provide names of stations to be plotted as a list
+# Provide name of variable to be plotted
+#--------------------------------------------------------------------------
+time_series : False
+time_stations : ['KBOS','KJFK','KDCA']
+time_var : 'METAR_Temp_instant_2m'

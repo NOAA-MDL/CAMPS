@@ -1,0 +1,6 @@
+Collection name (ID)
+Full url of registry to add to (example: https://codes.nws.noaa.gov/assist)
+Collection label (name)
+Descriptive text about collection
+Status (example: experimental)
+OPTIONAL: name of file with information for creating collection entries (example: testcsv.txt)

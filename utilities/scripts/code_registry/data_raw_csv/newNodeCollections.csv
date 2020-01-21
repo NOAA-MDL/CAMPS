@@ -1,0 +1,6 @@
+@ID,rdfs:LABEL,skos:NOTATION,dct:DESCRIPTION,dct:REFERENCES
+https://codes.nws.noaa.gov/StatPP/Data/Location,Location,Location,collection of geophysical and calculated location concepts,
+https://codes.nws.noaa.gov/StatPP/Data/Location/Geospatial,Geospatial,Geospatial,collection of geophyiscal location concepts, 
+https://codes.nws.noaa.gov/StatPP/Data/Location/Map,Map,Map,collection of location concepts produced via projection (such as those used by Methods/Geosp/Projection),
+https://codes.nws.noaa.gov/StatPP/Data/Location/Station,Station,Station,collection of location concepts for observation stations,
+https://codes.nws.noaa.gov/StatPP/Data/Location/TestCollection,TestCollection,TestCollection,collection test with reference," https://www.weather.gov/mdl/mos_home, https://www.weather.gov/mdl/nbm_home" 
