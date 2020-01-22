@@ -35,13 +35,14 @@ global control
 def main(control_file=None):
     """
     """
+    import sys
     # Get control file
-    if control_file:
-        logging.info("Reading Control File: "+control_file)
+    control_file = None if len(sys.argv) !=2 else sys.argv[1]
+    if control_file is not None:
         control = cfg.read_forecast_control(control_file)
+        logging.info("Control File: " + str(control_file) + " successfully read")
     else:
-        logging.info("Reading Default Control File")
-        control = cfg.read_forecast_control()
+        raise RuntimeError("A control file must be provided for camps_forecast.  Exiting program.")
     # Setup logging
     if control.log_file:
         out_log = open(control.log_file, 'w+')
@@ -116,7 +117,7 @@ def main(control_file=None):
             lead = parse_pred.lead_time(L)
             pred_dict['reserved2'] = lead
             # Fetch predictors for each date and then stack data
-            pred_arr = fetch_many_dates(control, start_time, end_time, stride_time, pred_dict, lead)
+            pred_arr = fetch_many_dates(control, start_time, end_time, stride_time, pred_dict, lead*3600)
             if None in pred_arr:
                 logging.warning('Could not fetch all '+pred_dict['property']+' predictors for lead time '+str(lead))
                 logging.warning(str(pred_arr))

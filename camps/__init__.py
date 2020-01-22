@@ -16,7 +16,7 @@ if not os.path.isdir(camps_user_dir):
     os.mkdir(camps_user_dir)
 
 # Create directory in .camps to hold control file templates
-camps_control_dir = camps_user_dir+'/control'
+camps_control_dir = camps_user_dir+'/control/'
 if not os.path.isdir(camps_control_dir):
     os.mkdir(camps_control_dir)
 
@@ -25,4 +25,4 @@ if not os.path.isdir(camps_control_dir):
 resource_package = __name__
 resource_path = pkg_resources.resource_filename(resource_package,'registry/')
 file_list = glob.glob(resource_path+'*.yaml') + glob.glob(resource_path+'*.tbl') + glob.glob(resource_path+'*.lst') 
-[shutil.copy(f,camps_control_dir) for f in file_list]
+[shutil.copy(f,camps_control_dir) for f in file_list if not os.path.isfile(camps_control_dir+os.path.basename(f))]
