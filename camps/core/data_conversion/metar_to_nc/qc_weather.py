@@ -5,24 +5,55 @@ from qc_error import qc_error
 from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool
 
+
+
+"""Module: qc_weather.py
+
+Methods:
+    qc_weather
+    qc_weather_st
+    is_blowing_phenom
+    is_ice_pellets
+    is_precipitation
+    is_hydrometeor
+    is_tstorm
+    is_present
+    is_vision_obstructing
+    is_light_drizzle_or_snow
+    is_moderate_drizzle_or_snow
+    is_heavy_drizzle_or_snow
+    is_drizzle
+    is_rain
+    is_snow
+    is_liquid_precipitation
+    is_only_reported_wx
+    is_rain_snow
+    should_not_exist_below_30
+    should_not_exist_above_40
+    should_not_exist_above_44
+    is_present_weather
+"""
+
+
 MISSING_VALUE = 9999
 
 
 def qc_weather(station_list):
-    """
-    QC present weather and visibility.
-    """
+    """QC present weather and visibility."""
+
     all_errors = []
     num_processors = int(os.getenv('NUM_PROCS', 8))
     pool = Pool(num_processors)
     all_errors = pool.map(qc_weather_st, station_list)
     pool.close()
     pool.join()
+
     return all_errors
     # for station in station_list:
 
 
 def qc_weather_st(station):
+
     errors = []
     # Pull out needed stations
     present_wx = []
@@ -119,7 +150,6 @@ def qc_weather_st(station):
                             " visibility (" + str(vis) +
                             ") reported, and no other weather was reported" +
                             str(all_wx)
-
                         ))
                 elif vis < .25:
                     present_wx[0][i] += 4
@@ -135,7 +165,6 @@ def qc_weather_st(station):
                             " visibility (" + str(vis) +
                             ") reported, and no other weather was reported" +
                             str(all_wx)
-
                         ))
             elif is_moderate_drizzle_or_snow(wx_1) \
                     and is_only_reported_wx(all_wx):
@@ -154,7 +183,6 @@ def qc_weather_st(station):
                             " visibility (" + str(vis) +
                             ") reported, and no other weather was reported" +
                             str(all_wx)
-
                         ))
                 elif vis < .25:
                     present_wx[0][i] += 2
@@ -170,7 +198,6 @@ def qc_weather_st(station):
                             " visibility (" + str(vis) +
                             ") reported, and no other weather was reported" +
                             str(all_wx)
-
                         ))
             elif is_heavy_drizzle_or_snow(all_wx[0]) \
                     and is_only_reported_wx(all_wx):
@@ -188,7 +215,6 @@ def qc_weather_st(station):
                             " visibility (" + str(vis) +
                             ") reported, and no other weather was reported" +
                             str(all_wx)
-
                         ))
                 elif vis > .25:
                     present_wx[0][i] -= 2
@@ -400,104 +426,127 @@ def qc_weather_st(station):
 
     return errors
 
-# No visibility restrictions on light pellets
-
 
 def is_blowing_phenom(wx_num):
+
     return wx_num in set([7, 38, 207])
 
 
 def is_ice_pellets(wx_num):
+
     return 79 == wx_num
 
 
 def is_precipitation(wx_num):
+
     if wx_num == 79:
         return False
+
     return wx_num > 50 and wx_num < 200
 
 
 def is_hydrometeor(wx_num):
+
     return (wx_num >= 4 and wx_num <= 12) \
         or (wx_num >= 36 and wx_num <= 45)
 
 
 def is_tstorm(wx_num):
+
     return wx_num in set([17, 95, 96, 97])
 
 
 def is_present(wx_arr, function):
+
     return any(map(function, wx_arr))
 
 
 def is_vision_obstructing(wx_num):
-    obstructed = set([4, 5, 6, 7, 8, 10, 12, 18, 31,
-                      32, 33, 34, 38, 45, 156, 166])
 
     if wx_num >= 176 and wx_num < 207:
         return True
+
+    obstructed = set([4, 5, 6, 7, 8, 10, 12, 18, 31,
+                      32, 33, 34, 38, 45, 156, 166])
     return wx_num in obstructed
 
 
 def is_light_drizzle_or_snow(wx_num):
+
     return wx_num in set([51, 56, 71])
 
 
 def is_moderate_drizzle_or_snow(wx_num):
+
     return wx_num in set([53, 57, 73])
 
 
 def is_heavy_drizzle_or_snow(wx_num):
+
     return wx_num in set([55, 156, 75])
 
 
 def is_drizzle(wx_num):
+
     if wx_num == 156:
         return True
+
     return wx_num >= 51 and wx_num <= 57
 
 
 def is_rain(wx_num):
+
     return wx_num in set([61, 62, 63, 64, 65, 66, 67, 80, 166, 183])
 
 
 def is_snow(wx_num):
+
     return wx_num in set([71, 72, 73, 74, 75, 85, 86, 187])
 
 
 def is_liquid_precipitation(wx_num):
+
     wx_elements = set([51, 52, 53, 54, 55, 58, 59,
                        60, 61, 62, 63, 64, 65, 80, 81, 183])
+
     return wx_num in wx_elements
 
 
 def is_only_reported_wx(all_wx):
+
     return all_wx[0] != 9999 \
         and all_wx[1] == 9999 \
         and all_wx[2] == 9999
 
 
 def is_rain_snow(wx_num):
+
     return wx_num in set([68, 69, 83, 84])
 
 
 def should_not_exist_below_30(wx_num):
+
     return is_liquid_precipitation(wx_num) or is_rain_snow(wx_num)
 
 
 def should_not_exist_above_40(wx_num):
+
     return wx_num in set([56, 57, 66, 67, 76, 156, 166])
 
 
 def should_not_exist_above_44(wx_num):
+
     if is_rain_snow(wx_num):
         return True
     if is_rain_snow(wx_num):
         return True
+
     return wx_num == 174 or wx_num == 176
 
 
 def is_present_weather(wx_num):
+
     if wx_num == 76:
         return False
+
     return wx_num >= 51 and wx_num <= 97

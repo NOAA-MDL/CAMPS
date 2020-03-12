@@ -53,15 +53,15 @@ def smooth(arr, smooth_type):
     
     # 9pt smooth twice
     if smooth_type == 81: 
-        smooth(arr, 9)
-        smooth(arr, 9)
+        smooth(arr, 25)
+        smooth(arr, 25)
         return arr
 
     # 9pt smooth thrice
     if smooth_type == 169: 
-        smooth(arr, 9)
-        smooth(arr, 9)
-        smooth(arr, 9)
+        smooth(arr, 25)
+        smooth(arr, 25)
+        smooth(arr, 25)
         return arr
 
     if smooth_type == 25:

@@ -20,11 +20,11 @@ from ..registry.db import db as db
 
 
 def main():
-    """
-    Main function for converting marine CSV file to CAMPS netCED file
-    """
+    """Main function for converting marine CSV file to CAMPS netCED file."""
+
     import sys
     control_file = None if len(sys.argv) != 2 else sys.argv[1]
+
     # Read control file and assign vales
     if control_file:
         control = cfg.read_yaml(control_file)
@@ -80,7 +80,8 @@ def main():
     # Create Output filename
     filename = output
 
-    # Create CAMPS data objects and write
+    # Create a list of Camps data objects, one object for each
+    # observed parameter
     camps_data = []
     obs = reader.observations
     obs.remove('TIME')
@@ -88,7 +89,6 @@ def main():
     end_time = end_date
     mar_to_nc = cfg.read_marine_lookup()
     for obs_name in obs:
-        #pdb.set_trace()
         # Set the observation name to the standard CAMPS name
         try:
             observation_name = mar_to_nc[obs_name]
@@ -105,8 +105,9 @@ def main():
         obs_data = np.array(temp_obs)
 
         logging.info(observation_name)
-        camps_obj = Camps_data(observation_name)
 
+        # Construct Camps data object for particular observed variable
+        camps_obj = Camps_data(observation_name)
         camps_obj.set_dimensions()
         camps_obj.add_data(obs_data)
         camps_obj.add_source('StatPP__Data/Source/NDBC')
@@ -129,40 +130,50 @@ def main():
         camps_obj.set_dimensions(dimensions=('default_time_coordinate_size','number_of_stations',))
         camps_data.append(camps_obj)
 
+    # Fill in object with common metadata and append to list
     camps_obj = pack_station_names(stations.keys())
     camps_obj.add_source('StatPP__Data/Source/NDBC')
     camps_obj.time=add_time(start_time, end_time)
     camps_data.append(camps_obj)
 
+    # Write list of Camps data objects to netCDF4 file
     extra_globals = get_globals()
     writer.write(camps_data, filename, extra_globals, write_to_db=True)
+
     if log_file:
         out_log.close()
 
 
 def add_time(start, end, stride=None, time_bounds=None):
-    """
-    Create and return Time objects
-    """
+    """Create and return PhenomenonTime objects, if the observation is instantaneous,
+    or PhenomenonTimePeriod objects, if the observation spans a time period."""
+
     time = []
     if stride is None:
         stride = Time.ONE_HOUR
+
     if time_bounds:
         pt = Time.PhenomenonTimePeriod(start_time=start, end_time=end, stride=stride, period=time_bounds)
     else:
         pt = Time.PhenomenonTime(start_time=start, end_time=end, stride=stride)
-
     time.append(pt)
+
     return time
 
 
 def get_globals():
     """Returns a dictionary of global attributes for marine QC"""
+
     return {"source": "Data from NDBC with their quality control procedures."}
 
 
 def pack_station_names(names):
+    """Constructs and returns a Camps data object for station data. """
+
+    # Instantiate the object
     w_obj = Camps_data('station')
+
+    # Construct station data array
     max_chars = max([len(i) for i in names])
     names = [name + ('_' * (max_chars - len(name))) for name in names]
     station_name_arr = np.array([])
@@ -176,11 +187,14 @@ def pack_station_names(names):
                 station_name_arr = char_arr
             else:
                 station_name_arr = np.vstack((station_name_arr, char_arr))
+
+    # Fill in the object with appropriate data.
     w_obj.set_dimensions(tuple(['number_of_stations', 'num_characters']))
     w_obj.add_data(station_name_arr)
     w_obj.add_metadata("fill_value", '_')
     w_obj.add_metadata("comment","NDBC stations consist of buoy, C-MAN, and platform drilling sites")
     w_obj.add_metadata("long_name","NDBC station identifiers")
+
     return w_obj
 
 

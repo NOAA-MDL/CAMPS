@@ -6,10 +6,23 @@ from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool
 from qc_error import qc_error
 
+
+"""Module: qc_clouds.py
+
+Methods:
+    qc_clouds
+    qc_clouds_st
+    set_all_to_missing
+    qc_clouds_test
+"""
+
+
 MISSING_VALUE = 9999
 
 
+
 def qc_clouds(station_list):
+
     errors = []
     all_errors = []
     pool = Pool()
@@ -20,10 +33,12 @@ def qc_clouds(station_list):
     pool.join()
     # for station in station_list:
     #    qc_temp_st(station)
+
     return all_errors
 
 
 def qc_clouds_st(station):
+
     errors = []
     cloud_height = []
     cloud_amount = []
@@ -31,7 +46,6 @@ def qc_clouds_st(station):
     for i in range(1, 7):
         cloud_height.append(station.get_obs("CH" + str(i)))
         cloud_amount.append(station.get_obs("CA" + str(i)))
-    # pdb.set_trace()
 
     num_hours = len(station.hours)
     for hour in range(0, num_hours):
@@ -45,7 +59,7 @@ def qc_clouds_st(station):
             cloud_amount[0][hour] = 0
             cloud_height[0][hour] = 888
             continue
-        # Check for POB in group 1
+        # Check for POB (Partially OBscured) in group 1
         if cloud_amount[0][hour] == 9 and cloud_height[0][hour] != 0:
             errors.append(qc_error(
                 station_name=station.name, date_of_error=date,
@@ -133,7 +147,7 @@ def qc_clouds_st(station):
                     station_name=station.name, date_of_error=date,
                     error_code=9510, old_data_value=height_layer[hour],
                     new_data_value=MISSING_VALUE,
-                    explanation="Cloud heights not increasing throught groups"
+                    explanation="Cloud heights not increasing through groups"
                 ))
             # Check that they're increasing through layers
             elif prev_amount > amount_layer[hour]:
@@ -180,6 +194,6 @@ def qc_clouds_st(station):
 
 
 def set_all_to_missing(list_of_arrays, index):
+
     for arr in list_of_arrays:
         arr[index] = MISSING_VALUE
-

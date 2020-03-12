@@ -1,15 +1,39 @@
 import logging
 from collections import Counter
 
+
+
+"""Module: qc_error.py
+
+Class: qc_error
+
+    Methods:
+        __init__
+        __str__
+        __repr__
+        get_code_type
+
+Methods:
+    set_all_attr
+    get_qc_type
+    get_qc_type_by_string
+    stats
+    errors_of_type
+    errors_of_code
+"""
+
+
 all_qc_errors = []
 
 
 class qc_error:
 
+
     def __init__(self, station_name="UNKN", station_type="UNKN",
                  date_of_error="UNKN",
                  error_code=9999, old_data_value=9999,
                  new_data_value=9999, explanation=""):
+
         self.station_name = station_name
         self.station_type = station_type
         self.date_of_error = date_of_error
@@ -18,7 +42,9 @@ class qc_error:
         self.new_data_value = new_data_value
         self.explanation = explanation
 
+
     def __str__(self):
+
         return "\n" + \
             "---------------------" + \
             "\nStation Name : " + str(self.station_name) + \
@@ -28,18 +54,23 @@ class qc_error:
             "\nNew Data Value : " + str(self.new_data_value) + \
             "\nExplanation : " + str(self.explanation)
 
+
     __repr__ = __str__
 
+
     def get_code_type(self):
+
         return (self.error_code - 9000) / 100
 
 
 def set_all_attr(err_list, attr, value):
+
     for err in err_list:
         setattr(err, attr, value)
 
 
 def get_qc_type(error_num):
+
     qc_type = {
         9: "Temperature QC ",
         8: "Dewpoint QC ",
@@ -55,6 +86,7 @@ def get_qc_type(error_num):
 
 
 def get_qc_type_by_string(obs_type):
+
     qc_type = {
         'temp': 9,
         'dewpoint': 8,
@@ -70,6 +102,7 @@ def get_qc_type_by_string(obs_type):
 
 
 def stats(err_list, list_len=10):
+
     logging.info("----------------------------")
     logging.info("Total number of Errors: " + str(len(err_list)))
 
@@ -94,10 +127,12 @@ def stats(err_list, list_len=10):
 
 
 def errors_of_type(err_list, err_str):
+
     return filter(
         lambda err: err.get_code_type == get_qc_type_by_string(err_str),
         err_list)
 
 
 def errors_of_code(err_list, err_code):
+
     return filter(lambda err: err.error_code == err_code, err_list)

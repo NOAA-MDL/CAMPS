@@ -6,10 +6,19 @@ import numpy as np
 from qc_error import qc_error
 
 
+
+"""Module: qc_precip.py
+
+Modules:
+    qc_precip
+"""
+
+
 MISSING_VALUE = 9999
 
 
 def qc_precip(station_list):
+
     errors = []
     # pull out the precip layer
     for station in station_list:

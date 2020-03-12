@@ -116,30 +116,26 @@ def magic_strings():
     return data
 
 def read_dimensions():
-    """
-    Reads and returns dimension definitions.
-    """
+    """Reads and returns dimension definitions."""
+
     return read_nc_meta()['dimensions']
 
 
 def read_globals():
-    """
-    Reads and returns global attributes definitions.
-    """
+    """Reads and returns global attributes definitions."""
+
     return read_nc_meta()['globals']
 
 
 def read_prefixes():
-    """
-    Reads and returns global attributes definitions.
-    """
+    """Reads and returns global attributes definitions."""
+
     return read_nc_meta()['prefixes']
 
 
 def read_variables():
-    """
-    returns structured configuration of all CAMPS supported variables.
-    """
+    """returns structured configuration of all CAMPS supported variables."""
+
     return read_nc_meta()['variables']
 
 
@@ -147,12 +143,16 @@ def read_nc_meta():
     """Reads netcdf.yaml file that contains the metadata for
     common variables.
     """
+
     data = read_cache()
     if data:
         return data
+
     data = read_yaml(CONFIG_PATH + "netcdf.yaml")
     write_cache(data)
+
     return data
+
 
 def read_procedures():
     """Reads procedures.yaml file that contains the metadata for
@@ -192,7 +192,7 @@ def read_control(control_file=None):
         if data:
             return data
         else:
-            # If no cached data or control file read return None  
+            # If no cached data or control file read return None
             return None
 
 
@@ -329,9 +329,8 @@ def read_marine_lookup():
 
 
 def read_observedProperties():
-    """
-    Returns the set of all observedProperties.
-    """
+    """Returns the set of all observedProperties."""
+
     data = read_cache()
     if data:
         return data
@@ -356,4 +355,3 @@ def read_graphs_control(control_file=None):
     data = read_yaml(CONFIG_PATH + "graphs.yaml")
     write_cache(data)
     return data
-	

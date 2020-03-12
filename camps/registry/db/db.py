@@ -61,7 +61,7 @@ def create_variable_db():
         column_names_str += " " + t + ", "
     column_names_str = column_names_str[0:-2] +  ", PRIMARY KEY (" +",".join(fields)+"))"
     sql = 'CREATE TABLE ' + table_name + ' ' + column_names_str
-    try:  
+    try:
         c.execute(sql)
     except sqlite3.OperationalError:
         pass
@@ -97,7 +97,7 @@ def insert_variable(property=None, source=None, start=None, end=None,
                     filename=None, name=None, forecast_period=None,
                     file_id=None, smooth=None,
                     reserved1=None, reserved2=None, reserved3=None):
-    """Inserts variable metadata information into the table.
+    """Inserts variable metadata information into the table 'variable'.
     Requires arguments in the following order:
     property,
     source,
@@ -148,7 +148,7 @@ def insert_file_info(filename,file_id):
     """Insert file information into the file_info table
     """
     table_name = 'file_info'
-    sql_str1 = "INSERT INTO " + table_name + " (filename, file_id) " 
+    sql_str1 = "INSERT INTO " + table_name + " (filename, file_id) "
     sql_str2 = "VALUES ('" + filename + "', '" + file_id + "')"
     sql_str = sql_str1 + sql_str2
     sql_values = [filename, file_id]
@@ -246,7 +246,7 @@ def get_variable(**kwargs):
     name_arr = c.fetchall()
     # The name of the column is at index 1. hence, ele[1]
     name_arr = [ele[1] for ele in name_arr]
-    # If there is no vert method then has to be None to distinguish 
+    # If there is no vert method then has to be None to distinguish
     # between variables of same property with multi vert layers
     # We might want to expand this to loop over all possible kwargs
     # to be more explicit on what is None in the database query
@@ -377,44 +377,45 @@ def get_by_metadata(**kwargs):
 
 
 def get_property(name, attr):
+    """Returns from the database table 'properties' the value
+    of the attribute 'attr' for the variable 'name'.
     """
-    Returns the value of of the attribute for
-    the name.
-    str name : name of predictor. e.g. wind_speed
-    """
+
     db = 'properties'
     c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
-    # The name of the column is at index 1. hence, ele[1]
-    name_arr = [ele[1] for ele in name_arr]
+
+    #Get attribute value of variable from database table 'properties'
+    name_arr = [ele[1] for ele in name_arr] #Table column name at index 1
     try:
-        index = name_arr.index(attr)
         sql = "SELECT " + attr + " FROM " + db + " WHERE name = '" + name + "'"
         c.execute(sql)
         property = c.fetchone()
         if property is not None:
-        #    return c.fetchone()[0]
             return property[0]
         return None
+
     except ValueError as err:
         logging.info(attr + " is not a known property attribute or " + name + " not defined")
         return False
 
 
 def get_all_metadata(name):
+    """Returns dictionary of attribute names and values
+    that are defined for given variable name.
     """
-    Returns dictionary of attribute names and values
-    that are defined (not None or an empty string) for given variable name.
-    str name : name of the variable.
-    """
-    defined_attr = {}
+
     c.execute("PRAGMA table_info(metadata)")
     attr_names = c.fetchall()
-    # The name of the column is at index 1. hence, ele[1]
-    attr_names = [ele[1] for ele in attr_names]
+
+    #Get all metadata stored in database table 'metadata' for variable 'name'
+    attr_names = [ele[1] for ele in attr_names] #Table column name at index 1
     sql = "SELECT * FROM metadata WHERE name = '" + name + "'"
     c.execute(sql)
     attr_values = c.fetchone()
+
+    #Cull the defined values before returning.
+    defined_attr = {}
     if(attr_values is None):
         logging.warning(name + "not in metadata db")
         raise ValueError
@@ -422,49 +423,60 @@ def get_all_metadata(name):
     for key, val in zip(attr_names, attr_values):
         if val is not None and val != "":
             defined_attr[key] = val
+
     return defined_attr
 
 
 def get_data_type(name):
-    """Check if data_type is defined in the properties
-    database for this varibale name. Return value if available,
-    otherwise throw ValueError.
+    """Returns data_type stored in the database table 'properties'
+    for this variable name.
     """
+
     return db.get_property(self.name, 'data_type')
 
 
+#Same as get_data_type
 def get_dimensions_type(name):
-    """Check if dimensions is defined in the properties
-    database for this varibale name. Return value if available,
-    otherwise throw ValueError.
-    """
+    """Returns data type of variable 'name'."""
+
     return db.get_property(self.name, 'data_type')
 
 
 def print_properties(name):
+    """Prints out the fields in database table 'properties' for
+    variable 'name'."""
+
     db = "properties"
     print_from(db, name)
 
 
 def print_metadata(name):
+    """Prints out the fields in database table 'metadata' for
+    variable 'name'."""
+
     db = "metadata"
     print_from(db, name)
 
 def print_variable(name):
+    """Prints out the fields in database table 'variable' for
+    variable 'name'."""
+
     db = "variable"
     print_from(db, name)
 
 
 def print_from(db, name):
+    """Logs a formatted list of attribute names and their
+    associated values in database table 'db' for variable 'name'.
     """
-    Prints a formatted list of attribute names and
-    their associated values for a given variable
-    name.
-    """
+
+    #Obtain table 'db' column names
     c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
-    # The name of the column is at index 1. hence, ele[1]
-    name_arr = [ele[1] for ele in name_arr]
+    name_arr = [ele[1] for ele in name_arr] #Table column name at index 1
+
+    #Obtain the values in the fields of the table 'db' for variable 'name'
+    #and log these values.
     sql = "SELECT * FROM " + db + " WHERE name = '" + name + "'"
     c.execute(sql)
     metadata = c.fetchone()
@@ -479,11 +491,10 @@ def print_from(db, name):
 
 
 def get_dictionary_attribute_keys(variables):
-    """
-    Gets all of the unique attribute names for each variable and
+    """Gets all of the unique attribute names for each variable and
     returns an set of the results.
-    Parsing the config is specific to the nc_vars yaml file.
     """
+
     # if there's more that one data type for the same variable,
     # then use the least common denomenator. e.g. float are favored over ints
 
@@ -510,14 +521,15 @@ def get_dictionary_properties_keys(variables):
     returns an set of the results.
     Parsing the config is specific to the nc_vars yaml file.
     """
+
     # if there's more that one data type for the same variable,
-    # then use the least common denomenator. e.g. float are favored over ints
+    # then use the least common denomenator. e.g. ints are favored over floats
     all_properties = {'name': str}
     for i in variables.values():
         for name, value in i.iteritems():
             if name != 'attribute' and name != 'dimensions':
                 if name in all_properties and all_properties[name] is int:
-                    pass  # because we prefer floats
+                    pass  # because we prefer integers
                 else:
                     all_properties[name] = type(value)
 

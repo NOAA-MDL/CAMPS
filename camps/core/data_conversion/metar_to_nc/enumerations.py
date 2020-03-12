@@ -1,50 +1,62 @@
-"""
+"""Module: enumeration.py
+
+Methods:
+    default_func
+    get_station_type_enumeration
+    get_enumeration_function
+    get_station_type
+    get_cloud_amount_enumeration
+    get_weather_type_enumeration
+
 Defines various enumerations used in metar conversion.
 """
+
+
 MISSING_VALUE = 9999
 
 
 def default_func(ob):
+
     return ob
 
 
 def get_station_type_enumeration(station_type_str):
-    """
-    Where station_type is the string that represents the station_type
-    """
+    """Where station_type is the string that represents the station_type."""
+
     return station_type.get(station_type_str, 9)
 
 
 def get_enumeration_function(name):
-    """
-    Returns an enumeration function based if given 'name' enumeration.
+    """Returns an enumeration function based if given 'name' enumeration.
     Otherwise, returns None.
     """
+
     if name in needs_enumeration:
         return get_enumeration.get(name, default_func)
+
     return default_func
 
 
 def get_station_type(station_type_num):
-    """ Returns the string representation of the station type. """
+    """Returns the string representation of the station type."""
+
     station_type_number = station_type_num
     return station_type.get(station_type_number, 'UNKN')
 
 
 def get_cloud_amount_enumeration(observation):
-    """
-    Where observation is the string that represents a code for the cloud amount
-    """
+    """Where observation is the string that represents a code for the cloud amount."""
+
     return cloud_amount.get(observation, MISSING_VALUE)
 
 
 def get_weather_type_enumeration(observation):
-    """
-    Where observation is the string that represents a code for the weather type
-    """
+    """Where observation is the string that represents a code for the weather type."""
+
     enum = weather_type.get(observation, MISSING_VALUE)
     if (enum == MISSING_VALUE):  # potentially report error here
         pass
+
     return enum
 
 

@@ -3,10 +3,19 @@ import qc_general
 import pdb
 from qc_error import qc_error
 
+
+"""Module: qc_winds.py
+
+Methods:
+    qc_winds
+"""
+
+
 MISSING_VALUE = 9999
 
 
 def qc_winds(station_list):
+
     all_errors = []
     for station in station_list:
         station_errors = []

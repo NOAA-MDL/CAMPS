@@ -403,6 +403,7 @@ variables :
       long_name : "dew point temperature"
       standard_name : "dew_point_temperature"
       coordinates : "elev"
+      units: "degF"
 
 ## Precip
   total_precipitation_1hr_accum_surface : &TotalPrecip1

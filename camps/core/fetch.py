@@ -14,14 +14,30 @@ from ..registry import util as cfg
 from . import reader as reader
 from . import Time
 
+"""Module: fetch.py
+Fetches the data and metadata of a specified variable that is
+stored in a netCDF file and returns it as a camps data object.
+
+Methods:
+    fetch
+    get_record_filename
+    get_matching_id
+    has_matching_id
+    get_id
+    fetch_many_dates
+    find_date
+    printdict
+"""
+
+
 def fetch(filepaths, time=None, lead_time=None, repeat=False,ids=None, **metadata_dict):
-    """
-    Given a properly formated metadata dictionary, finds the variable amongst
+    """Given a properly formated metadata dictionary, finds the variable amongst
     the files. If the Observed property is recognized as a variable that needs
-    to be computed, then a routine will be started to compute variables.
+    to be computed, then a routine will be called to compute the variable.
 
 
     Args:
+        filepaths (list): list of filepaths to variable data.
         time (optional, int): Number of seconds after epoch.
         lead_time (optional, int): Number of seconds after forecast run time.
         **metadata_dict (dict): Metadata matching desired variable.
@@ -46,9 +62,9 @@ def fetch(filepaths, time=None, lead_time=None, repeat=False,ids=None, **metadat
         Otherwise, returns None if no variables are found.
 
     Raises:
-        RuntimeError: If multiple variables are found matching provided metadata.
+        RuntimeError: If multiple variables are found matching provided metadata."""
 
-    """
+
     if time is not None and type(time) is datetime:
         time = Time.epoch_time(time)
     # Get a start and end range
@@ -158,31 +174,6 @@ def fetch(filepaths, time=None, lead_time=None, repeat=False,ids=None, **metadat
         	variable.add_metadata('filepath',filepath)
 	return variable
 
-def get_record_filename(records, filepaths):
-    """Returns record that exists.
-    Searches by file_id if given filename doesn't exist.
-    Searches backwards, so in the case of multiple records,
-    the most recently added record will be chosen.
-    """
-    for rec in reversed(records):
-        absolute_path = rec['filename']
-
-        # First checks if absolute path from the db record exists
-        if os.path.isfile(absolute_path) and os.access(absolute_path, os.R_OK):
-            logging.debug('Direct filename access found')
-            return (rec, absolute_path)
-        # Otherwise, it tries to get a file matching the id of the record
-        absolute_path = get_matching_id(filepaths, rec['file_id'])
-        if absolute_path is not None:
-            return (rec, absolute_path)
-        else:
-            logging.warning("Record:" + str(rec) + " couldn't be found in input_directories")
-
-    # Raise Error if it exists the loop
-    err_str = "A Matching file_id could not be found for " + \
-            "any of the matching records. Suggest checking input file(s)" + \
-            "in the control file"
-    raise FileNotFoundError(err_str)
 
 def get_matching_id(files, id):
     """Return absolute path if id matches a netcdf file in list of files."""

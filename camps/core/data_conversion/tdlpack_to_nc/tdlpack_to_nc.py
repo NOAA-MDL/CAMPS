@@ -23,20 +23,20 @@ if __name__ == "__main__":
                         nargs=1, help='option to start up pdb on run',
                         default="")
     args = parser.parse_args()
-    
+
     file_list = args.files
     out_dir = args.out
     in_dir = args.in_dir
     debug = args.debug
-    
+
     if debug:
         pdb.set_trace()
     if type(in_dir) is list:
         in_dir = str(in_dir[0])
-    
+
     for tdl_file in file_list:
         tdl_file = in_dir + str(tdl_file)
-        # Decide if it's an oberservation or model tdlpack file
+        # Decide if it's an observation or model tdlpack file
         if is_obs_tdl_file(tdl_file):
             convert_obs(tdl_file)
         else:  # its a model file

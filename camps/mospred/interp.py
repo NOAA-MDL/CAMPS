@@ -116,18 +116,28 @@ def interp(x, y, model_values, xi_x, xi_y):
 def bilinear_interp(x,y,model_values,xi_x,xi_y):
     """Performs the MOS bilinear interpolations scheme from grid to stations"""
 
-    #get distances between grid points and data points
-    dx = xi_x.round(0)-xi_x
-    dy = xi_y.round(0)-xi_y
-    #convert to indices for data points
-    xi = (xi_x/x[1]).astype(int)
-    yi = (xi_y/y[1]).astype(int)
-    #get 'next' index in each direction
+    #Convert to indices for data points and get distances
+    #between grid points and data points
+    xind = xi_x/x[1]
+    yind = xi_y/y[1]
+    dx = xind.round(0)-xind
+    dy = yind.round(0)-yind
+    xi = xind.astype(int)
+    yi = yind.astype(int)
+
+    #Get 'next' index in each direction    
     xi1 = xi+1
     yi1 = yi+1
-    #adjust end points of 'next' index
-    xi1[xi1>model_values.shape[1]-1] = model_values.shape[1]-1
-    yi1[yi1>model_values.shape[0]-1] = model_values.shape[0]-1
+
+    #Adjust end points of indices
+    xi[xi<0] = 0
+    yi[yi<0] = 0
+    xi[xi>model_values.shape[1]-2] = model_values.shape[1]-2
+    yi[yi>model_values.shape[0]-2] = model_values.shape[0]-2
+    #Get 'next' index in each direction
+    xi1 = xi+1
+    yi1 = yi+1
+
     #Perform bilinear interpolation
     grid_z0 = model_values[yi,xi] + (model_values[yi,xi1]-model_values[yi,xi])*dx + (model_values[yi1,xi]-model_values[yi,xi])*dy + (model_values[yi,xi]+model_values[yi1,xi1]-model_values[yi1,xi]-model_values[yi,xi1])*dx*dy
 

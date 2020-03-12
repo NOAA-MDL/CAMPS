@@ -8,16 +8,29 @@ import struct
 import sys
 import tdlpack
 
-# ----------------------------------------------------------------------------------------
-# Class: TdlpackRecord
-# ----------------------------------------------------------------------------------------
+
+
+"""Module: pytdlpack.py
+
+Class: TdlpackRecord
+
+    Methods:
+        __init__
+        __repr__
+        setPlainLanguage
+        unpackData
+
+Methods:
+    TdlpackDecode
+"""
 
 
 class TdlpackRecord(object):
+
+
     def __init__(self, **kwargs):
-        """
-  create a TdlpackRecord class instance given a TDLPACK file
-        """
+        """create a TdlpackRecord class instance given a TDLPACK file"""
+
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -39,24 +52,32 @@ class TdlpackRecord(object):
         self.decimal_scale_factor = self.product_definition_section[16]
         self.plain_language = self.setPlainLanguage()
 
+
     def __repr__(self):
+
         strings = []
         keys = self.__dict__.keys()
         keys.sort()
         for k in keys:
             if not k.startswith('_'):
                 strings.append('%s = %s\n' % (k, self.__dict__[k]))
+
         return ''.join(strings)
 
+
     def setPlainLanguage(self):
+
         nchars = self.product_definition_section[21]
         plainLang = ''
         for n in range(nchars):
             i = int(self.product_definition_section[22 + n])
             plainLang = plainLang + chr(i)
+
         return plainLang
 
+
     def unpackData(self):
+
         igive = 2
         moctet = np.zeros(1, dtype='int32', order='F')
         data = np.zeros(self.nvalues, dtype='float32', order='F')
@@ -64,10 +85,13 @@ class TdlpackRecord(object):
                                self.grid_definition_section, self._is4Pos,
                                self.data_section, data)
         #iret = tdlpack.unpack5(self.ipack,self._is4Pos)
+
         if iret == 0 and self.nvalues == self.data_section[2]:
             return data
 
+
     values = property(unpackData)
+
 
 # ----------------------------------------------------------------------------------------
 # Function TdlpackDecode
@@ -75,9 +99,7 @@ class TdlpackRecord(object):
 
 
 def TdlpackDecode(filename, dates=[], ids=[]):
-    """
- Read the contents of a TDLPACK file.
-    """
+    """Read the contents of a TDLPACK file."""
 
     # Open file and set its file size.
     f = ff.FortranFile(filename, '>')
@@ -211,6 +233,7 @@ def TdlpackDecode(filename, dates=[], ids=[]):
     f.close()
 
     return tdlps  # Return from function TdlpackDecode
+
 
 # ----------------------------------------------------------------------------------------
 # End of pytdlpack.py

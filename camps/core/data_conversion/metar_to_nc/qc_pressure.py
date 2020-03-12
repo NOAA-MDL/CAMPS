@@ -7,17 +7,29 @@ from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool
 
 
+
+"""Module: qc_pressure.py
+
+Methods:
+    qc_pressure
+    qc_pressure_st
+"""
+
+
 MISSING_VALUE = 9999
 
 
 def qc_pressure(station_list):
+
     all_errors = []
     num_processors = int(os.getenv('NUM_PROCS', 8))
     pool = Pool(num_processors)
     all_errors = pool.map(qc_pressure_st, station_list)
     pool.close()
     pool.join()
+
     return all_errors
+
 
 def qc_pressure_st(station):
 

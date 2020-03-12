@@ -85,18 +85,14 @@ def main(control_file=None):
     file_id = update(control.predictand_data_path[0])
     # loop through predictors, predictands, and lead times and fetch.
     for entry_dict in predictor_list:
-        # Retrieve predictor specific lead times if global was empty. Raise error if also empty.
-        if lead_times is None:
-            try:
-                leads = [parse_pred.lead_time(lead) for lead in entry_dict.pop('lead_times')]
-            except KeyError:
+        # Retrieve predictor specific lead times. If empty, retrieve global. Raise error if both are empty.
+        try:
+            leads = [parse_pred.lead_time(lead) for lead in entry_dict.pop('lead_times')]
+            pred_dict = read_pred.get_variable(entry_dict)
+        except:
+            if lead_times is None:
                 logging.error("Either a global list of lead times or a per variable list of lead times must be provided")
                 raise
-            # Format pred dictionary
-            pred_dict = read_pred.get_variable(entry_dict)
-        else:
-            if 'lead_times' in entry_dict.keys():
-                lead_unneeded = entry_dict.pop('lead_times')
             leads = copy.copy(lead_times)
             # Format pred dictionary
             pred_dict = read_pred.get_variable(entry_dict)
@@ -117,7 +113,7 @@ def main(control_file=None):
             lead = parse_pred.lead_time(L)
             pred_dict['reserved2'] = lead
             # Fetch predictors for each date and then stack data
-            pred_arr = fetch_many_dates(control, start_time, end_time, stride_time, pred_dict, lead*3600)
+            pred_arr = fetch_many_dates(control.predictor_data_path, start_time, end_time, stride_time, pred_dict, lead*3600)
             if None in pred_arr:
                 logging.warning('Could not fetch all '+pred_dict['property']+' predictors for lead time '+str(lead))
                 logging.warning(str(pred_arr))
@@ -128,15 +124,13 @@ def main(control_file=None):
             predictors.append(predictor)
     for entry_dict in predictand_list:
         # Retrieve predictor specific lead times if global was empty. Raise error if also empty.
-        if lead_times is None:
-            try:
-                leads = [parse_pred.lead_time(lead) for lead in entry_dict.pop('lead_times')]
-            except KeyError:
+        try:
+            leads = [parse_pred.lead_time(lead) for lead in entry_dict.pop('lead_times')]
+        except:
+            if lead_times is None:
                 logging.error("Either a global list of lead times or a per variable list of lead times must be provided")
                 raise
-        else:
-            if 'lead_times' in entry_dict.keys():
-                lead_unneeded = entry_dict.pop('lead_times')
+            leads = copy.copy(lead_times)
         # Adjust entry_dict for fetch
         vertical_coordinate = entry_dict.pop('Vertical_Coordinate')
         if isinstance(entry_dict['Source'],list):
@@ -149,7 +143,7 @@ def main(control_file=None):
             start_time2 = start_time + timedelta(hours=int(lead))
             end_time2 = end_time + timedelta(hours=int(lead))
             # Fetch predictands for each date and then stack data
-            vars_arr = fetch_many_dates(control, start_time2, end_time2, stride_time, entry_dict)
+            vars_arr = fetch_many_dates(control.predictand_data_path, start_time2, end_time2, stride_time, entry_dict)
             if None in vars_arr:
                 logging.warning('Could not fetch all '+entry_dict['property']+' predictands for hour '+str(start_time2.hour))
                 logging.warning(str(vars_arr))
@@ -187,6 +181,7 @@ def main(control_file=None):
                 continue
             const = eq_dict['equations'][st_index,-1,p]
             coefs = eq_dict['equations'][st_index,0:-1,p]
+            assert len(coefs)==len(predictors),"number of coefficients and number of predictors must be equal"
             tot = np.zeros(predictands[p].data[:,st_index].size)
             # Loop through coefs
             for nf,coef in enumerate(coefs):

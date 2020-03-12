@@ -19,8 +19,7 @@ Module to handle writing Camps netCDF data
 
 def write(camps_data, filename, global_attrs={}, overwrite=True,
           write_to_db=True):
-    """
-    Writes a list of Camps_data to NetCDF file.
+    """Writes a list of Camps_data to NetCDF file.
     camps_data is expected to be a list of Camps_data objects.
     filename is the filename to write to.
     global_attrs are additional global attributes to add to the file.
@@ -38,41 +37,44 @@ def write(camps_data, filename, global_attrs={}, overwrite=True,
     Returns:
         True if successful, False otherwise.
     """
+
     logging.info("\nWriting to "+filename+"\n")
     file_id = str(uuid.uuid4())
     global_attrs['file_id'] = file_id
+
     if type(camps_data) is not list:
         camps_data = [camps_data]
+
     start_time = time.time()
+
     if overwrite:
         mode = 'w'
     else:
         mode = 'a'
     nc = Dataset(filename, mode=mode, format="NETCDF4")
 
-
     #----------------------------------------------------------------------
-    # I don't understand what this is for...if it errors out it just skips.
+    #I don't understand what this is for...if it errors out it just skips.
     #----------------------------------------------------------------------
-    # Get all dimenesions in the list.
-    # Will error out if dimensions arn't correct.
+    #Get all dimenesions in the list.
+    #Will error out if dimensions arn't correct.
     try:
-        #pdb.set_trace()
         dims = get_dimensions(camps_data)
-        # Write dimensions
+        #Write dimensions
         for d_name, size in dims.iteritems():
             nc.createDimension(d_name, size)
     except:
         pass
     #-----------------------------------------------------------------------
 
-    # Write the data by calling its write_to_nc function
+    #Write the data by calling its write_to_nc function
     primary_vars = []
     #write file info to the file_info table if write_to_db is true
     if write_to_db:
         db.insert_file_info(filename,str(file_id))
         #what if add_to_database fails...need some kind of check
         #what if it fails for only some predictors but not others?
+
     for da in camps_data:
         name = da.write_to_nc(nc)
         primary_vars.append(name)
@@ -82,6 +84,7 @@ def write(camps_data, filename, global_attrs={}, overwrite=True,
             except AttributeError as e :
                 logging.info(e)
             #pass # Variable doesn't have a Phenomenon Time.
+
     #global_attrs['primary_variables'] = get_primary_variables(camps_data)
     global_attrs['primary_variables'] = ' '.join(primary_vars)
     write_global_attributes(nc, global_attrs)
@@ -108,9 +111,11 @@ def get_primary_variables(w_list):
         str: Space-separated string of variable names
 
     """
+
     PV_str = ""
     for w in w_list:
         PV_str += " " + w.get_variable_name()
+
     return PV_str
 
 
@@ -125,6 +130,7 @@ def write_prefixes(nc):
     Returns:
         None
     """
+
     prefixes = util.read_prefixes()
     group = nc.createGroup('prefix_list')
     for name, value in prefixes.iteritems():
@@ -142,6 +148,7 @@ def write_global_attributes(nc, extra_globals):
     Returns:
         None
     """
+
     nc_globals = util.read_globals()
     nc_globals.update(extra_globals)
     for name, value in nc_globals.iteritems():
@@ -159,11 +166,13 @@ def get_dimensions(camps_data):
         A dictionary where the key is the dimension name
         and the value is the number of elements.
     """
+
     # Define count; where the
     # key is the dimension name, and the
     # value is the shape of the data.
     count = {}
     for i in camps_data:
+
         dims = i.dimensions
         shape = i.data.shape
         if i.data.size > 0 and len(dims) != len(shape):
@@ -173,6 +182,7 @@ def get_dimensions(camps_data):
             logging.error("dimensions : " + str(dims))
             logging.error("shape      : " + str(shape))
             raise ValueError
+
         for c, d in enumerate(dims):
             if d not in count:
                 count[d] = shape[c]
@@ -180,7 +190,9 @@ def get_dimensions(camps_data):
                 logging.warning("Dimension " + d + " is not consistant " +
                                 "with other dimensions in list")
                 raise ValueError
+
     return count
+
 
 def write_stations(nc, station_list):
     """Writes station names as a variable in netcdf filehandle.

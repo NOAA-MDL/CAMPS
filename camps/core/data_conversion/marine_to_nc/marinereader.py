@@ -5,27 +5,41 @@ import csv
 import os
 import logging
 import pdb
-
 from ..metar_to_nc.station import station
 from ....registry import util as cfg
 
+
+
+"""Module: marine_to_nc.py
+
+Class: marinereader
+
+    Methods:
+        __init__
+        read
+        parse_file
+        fill_empty_records
+
+Methods:
+    strip_array
+"""
+
+
+
 class marinereader():
-    """
-    Class for reading NDBC QC'ed Marine text files. If the instance variable 'filename' is
-    defined in the object and exists as a Marine formatted file, calling read will
-    add stations to the station_list.
-    """
+    """Class to read Marine CSV text files."""
 
     obs_type = "MARINE"
 
-    def __init__(self,stn_tbl,stn_lst,filename=None):
-        """
-        Initializes station dictionaries, and observation list.
-        """
+
+    def __init__(self, stn_tbl, stn_lst, filename=None):
+        """Initializes station dictionaries, and observation list."""
+
         self.filename = filename
         self.obs_time = None
         self.observations = []
         self.station_list = {}
+        self.dates = []
 
         # Create file object
         self._marine_file = open(self.filename,"rt")
@@ -42,12 +56,10 @@ class marinereader():
 
 
     def read(self,end_date=None):
-        """
-        Read NDBC Hourly obs file, creates station objects, for the observations.
-        """
+        """Read NDBC Hourly obs file, creates station objects, for the observations."""
         # These 2 lines read the Marine archive file header. The first line
         # contains variable names; the second contains a decimal scale factor
-        # for each 
+        # for each
         eof = False
         file_header = self._marine_reader.next()[4:]
         decscale_header = self._marine_reader.next()[4:]
@@ -114,6 +126,7 @@ class marinereader():
 
 
     def check_missing_obs(self,stnlist):
+
         # We have now read all obs for a given hour. Some stations might be missing, so
         # here check for missing obs for expected stations
         for name in self.station_list.keys():
@@ -123,10 +136,10 @@ class marinereader():
 
 
     def check_latlon(self):
-        """
-        Checks if the latitude and longitude of the stations
+        """Checks if the latitude and longitude of the stations
         are within bounds of station definitions.
         """
+
         for station in self.station_list.values():
             station_def = self.station_definitions[station.name]
             lat = float(station.get_obs('LAT')[0])
@@ -154,8 +167,8 @@ class marinereader():
 
 
 def strip_array(arr):
+    """Strips whitespace out of an array of strings.
+    Will throw TypeError if not given a string list.
     """
-    Strips whitespace out of an array of strings.
-    Will fail if not given a string list.
-    """
+
     return [word.strip(' ') for word in arr]

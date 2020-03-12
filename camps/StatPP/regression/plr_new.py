@@ -770,27 +770,29 @@ def make_consistent_dims(predictors, predictands):
     indices_pred = np.in1d(pred_stations,tand_stations)
     indices_tand = np.in1d(tand_stations,pred_stations)
     pred_stations = pred_stations[indices_pred]
-    tand_stations = pred_stations[indices_tand]
+    tand_stations = tand_stations[indices_tand]
     pred_sorted_indices = np.argsort(pred_stations)
     tand_sorted_indices = np.argsort(tand_stations)
     # Each type should all reference a single location
     for pred in predictors:
         pred.data = pred.data[:,indices_pred]
         pred.data = pred.data[:,pred_sorted_indices]
+        pred.location.set_stations(pred_stations[pred_sorted_indices])
 
     for tand in predictands:
         tand.data = tand.data[:,indices_tand]
         tand.data = tand.data[:,tand_sorted_indices]
+        tand.location.set_stations(tand_stations[tand_sorted_indices])
     
     return pred_stations[pred_sorted_indices]
 
     
    
-def main_camps(control, stations, predictors, predictands):
+def main_camps(control, predictors, predictands):
     """Main driver for mlr.
     """
     all_vars = predictors+predictands
-    make_consistent_dims(predictors, predictands)
+    stations = make_consistent_dims(predictors, predictands)
     aaa = get_aaa(stations, all_vars)
     # Get Station groups
     groups = [[x] for x in stations]

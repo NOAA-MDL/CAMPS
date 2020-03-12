@@ -8,26 +8,45 @@ import pdb
 from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool
 
+
+
+"""Module: qc_temp.py
+
+Methods:
+    qc_temp
+    qc_temp_st
+    check_6hour_max
+    check_6hour_min
+    calc_special_max
+    calc_special_min
+    check_dewpoint
+"""
+
+
 MISSING_VALUE = 9999
 
 
 def qc_temp(station_list):
+
     all_errors = []
     num_processors = int(os.getenv('NUM_PROCS', 8))
     pool = Pool(num_processors)
     all_errors = pool.map(qc_temp_st, station_list)
     pool.close()
     pool.join()
+
     return all_errors
 
 
 def qc_temp_st(station):
+
     # Used observations for this QC:
     #   TMP
     #   MX6
     #   MN6
     #   X24
     #   N24
+
     station_errors = []
     # Pull out the needed data from each station
     station_hours = station.hours
@@ -94,12 +113,10 @@ def qc_temp_st(station):
 # if you were to do this again, you may consider just indexing
 def check_6hour_max(hourly_temp_array,
                     six_hour_max_array, date_array, station_type):
-    """
-    Performs QC on the 6 hour max temperature measurements.
-    """
+    """Performs QC on the 6 hour max temperature measurements."""
+
     errors = []
     tmp_6hours = []
-
     for i, date in enumerate(date_array):
         if station_type[i] >= 2 and station_type[i] <= 8:
             base_tolerance = 8
@@ -210,6 +227,7 @@ def check_6hour_max(hourly_temp_array,
                 errors.append(new_error)
                 six_hour_max_array[i] = MISSING_VALUE
             tmp_6hours = [tmp_6hours.pop()]
+
     return errors
 
 # check boundary conditions
@@ -219,9 +237,8 @@ def check_6hour_max(hourly_temp_array,
 
 def check_6hour_min(hourly_temp_array, six_hour_min_array,
                     date_array, station_type):
-    """
-    Performs QC on the 6hour time measurements.
-    """
+    """Performs QC on the 6hour time measurements."""
+
     errors = []
     tmp_6hours = []
     for i, date in enumerate(date_array):
@@ -328,12 +345,12 @@ def check_6hour_min(hourly_temp_array, six_hour_min_array,
                 errors.append(new_error)
                 six_hour_min_array[i] = MISSING_VALUE
             tmp_6hours = []
+
     return errors
 
 
 def calc_special_max(in_array, observed_max):
-    """
-    Find the maximum/minimum value(s) in an array. Return a tuple in which
+    """Find the maximum/minimum value(s) in an array. Return a tuple in which
     element 0 is the maximum/minimum value (if it exists), and
     element 1 is an array of indicies at which the the hourly max
                 was greater than the observed max by at least two,
@@ -341,11 +358,13 @@ def calc_special_max(in_array, observed_max):
                 then indicies at which this max is present, and
     element 2 is the number of missing values
     """
-    num_missing = 0
+
     maximum = -9999
     for i in in_array:
         if i != MISSING_VALUE and i > maximum:
             maximum = i
+
+    num_missing = 0
     indicies = []
     for i in range(0, len(in_array)):
         if in_array[i] == MISSING_VALUE:
@@ -354,16 +373,17 @@ def calc_special_max(in_array, observed_max):
             indicies.append(i)
         elif in_array[i] - observed_max > 1:
             indicies.append(i)
+
     return (maximum, indicies,  num_missing)
 
 
 def calc_special_min(in_array, observed_min):
-    """
-    Find the maximum/minimum value(s) in an array. Return a tuple in which
+    """Find the maximum/minimum value(s) in an array. Return a tuple in which
     element 0 is the maximum/minimum value (if it exists), and
     element 1 is an array of indicies at which the max was found, and
     element 2 is the number of missing values
     """
+
     num_missing = 0
     indicies = []
     minimum = min(in_array)
@@ -374,10 +394,12 @@ def calc_special_min(in_array, observed_min):
             indicies.append(i)
         elif in_array[i] - observed_min < -1:
             indicies.append(i)
+
     return (minimum, indicies,  num_missing)
 
 
 def check_dewpoint(dewpoint_arr, temperature_arr):
+
     errors = []
     for i, (dewpoint, temp) in enumerate(zip(dewpoint_arr, temperature_arr)):
         if(dewpoint == MISSING_VALUE):
@@ -402,4 +424,5 @@ def check_dewpoint(dewpoint_arr, temperature_arr):
             )
             errors.append(new_error)
             dewpoint_arr[i] = temp
+
     return errors

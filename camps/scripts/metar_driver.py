@@ -28,6 +28,7 @@ def main():
     6. Constructs an output NetCDF file
     7. Fills NetCDF file with QC'd observation data
     """
+
     # Read control file and assign values
     import sys
     control_file = None if len(sys.argv) != 2 else sys.argv[1]
@@ -85,7 +86,7 @@ def main():
     if pickle:
         logging.info("Pickling")
         save_object(stations, 'stations.pkl')
-    
+
     # Check if QC is to be performed
     if control.qc_flag:
         stations = qc_main.qc(stations,err_file)
@@ -103,12 +104,12 @@ def main():
     num_stations = dimensions['nstations']
     time_dim = dimensions['time']
 
-    # formats each observation into a 2D array with
-    # dimensions of # of stations and time
+    # Format each observation into a 2D array with
+    # dimensions of # of stations and # of times
     if pickle:
         logging.info("Pickling")
         save_object(stations, 'postqc.pkl')
-    logging.info("Construct 2D arrays")
+    logging.info("Construct 2D observation arrays")
     camps_data = []
     example_station = stations.values()[0]
     obs = example_station.observations.keys()
@@ -134,24 +135,24 @@ def main():
         for station_name, cur_station in stations.iteritems():
             temp_obs.append(cur_station.get_obs(metar_name))
         obs_data = np.array(temp_obs)
-
         logging.info(observation_name)
-        camps_obj = Camps_data(observation_name)
 
+        # Construct Camps data object
+        camps_obj = Camps_data(observation_name)
         camps_obj.set_dimensions()
         camps_obj.add_data(obs_data)
         camps_obj.add_source('StatPP__Data/Source/NCEPSfcObsMETAR')
         camps_obj.add_process('MetarObProcStep1')
         if qc_flag: camps_obj.add_process('MetarObProcStep2')
         camps_obj.change_data_type()
-        
-        # Again check for time bounds, pass extra info to add_time if 
+
+        # Again check for time bounds, pass extra info to add_time if
         # there are time bounds
         if camps_obj.has_time_bounds():
             hours = db.get_property(camps_obj.name,'hours')
             camps_obj.metadata['hours'] = hours
             camps_obj.time = add_time(start_time, end_time, time_bounds=hours)
-        else: 
+        else:
             camps_obj.time = add_time(start_time, end_time)
 
         # Transpose the array and swap dimension names. Note that this may be a
@@ -163,45 +164,55 @@ def main():
 
     camps_obj = pack_station_names(stations.keys())
     camps_obj.add_source('StatPP__Data/Source/NCEPSfcObsMETAR')
-    camps_obj.time=add_time(start_time, end_time)
+    camps_obj.time = add_time(start_time, end_time)
     camps_data.append(camps_obj)
 
     if qc_flag:
        extra_globals = {"source": "Data from METAR with MDL Quality Control"}
     else:
        extra_globals = {"source": "Data from METAR (No MDL Quality Control)"}
-   
+
+    # Write into netCDF4 file
     writer.write(camps_data, filename, extra_globals, write_to_db=True)
     if log_file:
         out_log.close()
 
 
 def check_num_procs(num_procs):
+    """Returns the minimum of the requested number of processors
+    and the available number of processors.
+    """
+
     max_cpu_count = multiprocessing.cpu_count()
     if num_procs > max_cpu_count:
         logging.warning("More processors specified than available")
         logging.warning(
             "defaulting to number of processors available: " + max_cpu_count)
         return max_cpu_count
+
     return num_procs
 
 
 def add_time(start, end, stride=None, time_bounds=None):
-    """
-    Create and return Time objects
-    """
+    """Create and return PhenomenonTime objects, if observation is instantaneous,
+    or PhenomenonTimePeriod objects, if observation applies over a period of time."""
+
     time = []
     if stride is None:
         stride = Time.ONE_HOUR
-    if time_bounds: 
+
+    if time_bounds:
         pt = Time.PhenomenonTimePeriod(start_time=start, end_time=end, stride=stride, period=time_bounds)
     else:
         pt = Time.PhenomenonTime(start_time=start, end_time=end, stride=stride)
-
     time.append(pt)
+
     return time
 
+
 def pack_station_names(names):
+    """Constructs and returns Camps data object for stations."""
+
     w_obj = Camps_data('station')
     max_chars = max([len(i) for i in names])
     names = [name + ('_' * (max_chars - len(name))) for name in names]
@@ -219,8 +230,9 @@ def pack_station_names(names):
     w_obj.set_dimensions(tuple(['number_of_stations', 'num_characters']))
     w_obj.add_data(station_name_arr)
     w_obj.add_metadata("fill_value", '_')
+
     return w_obj
+
 
 if __name__ == '__main__':
     main()
-

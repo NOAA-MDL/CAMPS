@@ -11,19 +11,37 @@ from qc_error import qc_error as qce
 import qc_error
 from ....registry import util as cfg
 
+
+
+"""Module: metarreader.py
+
+Class: metarreader
+    Methods:
+        __init__
+        read_valid_stations
+        _fill_missing
+        read
+        parse_header
+        check_latlon
+
+Methods:
+    strip_array
+"""
+
+
+
 class metarreader():
-    """
-    Class for reading METAR formatted files. If the instance variable 'filename' is
+    """Class for reading METAR formatted files.  If the instance variable 'filename' is
     defined in the object and exists as a METAR formatted file, calling read will
     add stations to the station_list.
     """
 
     obs_type = "METAR"
 
-    def __init__(self,stn_tbl,stn_lst,filename=None):
-        """
-        Initializes station dictionaries, and observation list.
-        """
+
+    def __init__(self, stn_tbl, stn_lst, filename=None):
+        """Initializes station dictionaries, and observation list."""
+
         self.filename = filename
         self.obs_time = 0
         self.observations = []
@@ -43,10 +61,10 @@ class metarreader():
         for s in self.valid_stations:
             self.station_list[s] = station(s)
 
+
     def _fill_missing(self,stations):
-        """
-        Fill all obs for a station in stations with missing.
-        """
+        """Fill all obs for a station in stations with missing."""
+
         # We have now read all obs for a given hour. Some stations might be missing, so
         # here check for missing obs for expected stations
         for name in self.station_list.keys():
@@ -54,10 +72,10 @@ class metarreader():
                 logging.debug("No obs available for station "+name+" for date = "+str(self.obs_time))
                 self.station_list[name].add_empty_record(self.observations,-1,self.obs_time)
 
+
     def read(self,date,advance=True):
-        """
-        Read MDL Hourly obs file, creates station objects, for the observations.
-        """
+        """Read MDL Hourly obs file, creates station objects, for the observations."""
+
         station_list_check = []
         if advance:
             file_header = self._metar_reader.next()
@@ -106,17 +124,18 @@ class metarreader():
 
         self.read_count += 1
 
+
     def parse_header(self, first_row):
-        """
-        Extracts header information from 'first_row'
-        """
+        """Extracts header information from 'first_row'. """
+
         self.obs_time = first_row[0][30:40]  # hardcoded
 
+
     def check_latlon(self):
-        """
-        Checks if the latitude on longitude of the stations
+        """Checks if the latitude on longitude of the stations
         are within bounds of station definitions.
         """
+
         for station in self.station_list.values():
             station_def = self.station_definitions[station.name]
             lat = float(station.get_obs('LAT')[0])
@@ -142,9 +161,10 @@ class metarreader():
                         ". Old value : " + str(station_def['lon'])
                     ))
 
+
 def strip_array(arr):
-    """
-    Strips whitespace out of an array of strings.
+    """Strips whitespace out of an array of strings.
     Will fail if not given a string list.
     """
+
     return [word.strip(' ') for word in arr]

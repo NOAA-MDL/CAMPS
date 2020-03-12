@@ -13,7 +13,16 @@ import pdb
 import time
 
 
+"""Module: qc_main.py
+
+Methods:
+    qc
+    flatten
+"""
+
+
 def qc(station_dict,err_file=None):
+
     all_errors = []
 
     logging.info("Starting QC...")
