@@ -18,3 +18,21 @@ CAMPS provides a structured method of encoding formatted metadata for StatPP.  I
 * __camps/gui__: Various GUIs and modules used to display data are here.  GUI and display features are not fully functional currently.
 * __camps/mospred__: Contains all modules that support the capabilities of the MOS-200 u201 equivalent code. These modules aid in creating new predictors and predictands – typically from model and observational output. They apply procedures to the variables, such as smoothing and interpolating and organize the variables into appropriate dimensions.
 * __camps/libraries/mathlib__: Modules used when creating new predictors/predictands are here. These are largely used during the mospred (u201 equivalent) step in a CAMPS development.
+
+# Version 1.0.1 March 17, 2020
+Patch release.
+
+## Main Features:
+* Minor bug fixes
+* Some additional in-code documentation updates
+* Addition of RELEASE_NOTES.md and update to README.md
+
+__Minor bug fix details:__
+* Small fix to budget interpolation
+* Bilinear introplation fixes.
+    1) Calculates dx and dy after conversion to indices
+    2) Aligning handling of edge of grid with mos2k methods
+* Removed unnecessary stations input argument in plr_new.main_camps
+* Fixed typo in plr_new that was causing issues
+* Fixes to Time.py for  handling of naming variables with otherwise identical names.  Removed period information for dimension variable names.
+* Additional fix to PhenomenonTimePeriod variable duplicate naming convention with wrong period information appended to variable
