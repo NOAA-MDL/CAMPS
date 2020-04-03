@@ -60,8 +60,7 @@ Issue the following commands to set the necessary environment variables and inst
 When installing CAMPS outside of a Python distribution, if the installation path does not exist, and/or the installation directory is not in your PYTHONPATH environment variable, then setup.py will fail. Subsequently if your CAMPS bin directory is not in your PATH then console scripts will not work and you will not be able to run the driver scripts directly from your Unix shell.
 
 
-Running CAMPS Driver Scripts
-#############################
+## Running CAMPS Driver Scripts
 The CAMPS package makes use of something called **console scripts** in setup.py.  This means that you can run any driver script from the command line, anywhere on your machine (so long as your Python library can find CAMPS -- hence setting PYTHONPATH and updating PATH **or** installing into your Python distribution directly)
 
 For detailed information on what each CAMPS driver script does, and a deeper dive into the various features of the CAMPS software, please see the [Technical Description](https://sats.nws.noaa.gov/~camps/technical) section of the CAMPS documentation website.
