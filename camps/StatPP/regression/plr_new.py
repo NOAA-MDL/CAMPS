@@ -480,18 +480,15 @@ def regress(groups,predictors,predictands,aaa,q,regression_params):
     lp = np.zeros((5,nvrbl+1),dtype='int32',order='F')
     #slp = np,.zeros((5,nvrbl+1),dtype='float32',order='F')
 
-    a = np.zeros((ntand+1),dtype='float64',order='F') # regression constants    
+
     avg = np.zeros((nvrbl+1),dtype='float64',order='F') 
     # avg is the mean = sum of variable values divided by the sample size   
     const = np.zeros((ntand+1),dtype='float64',order='F')  # variances of predictands  
     const_1 = np.zeros((ntand+1),dtype='float64',order='F') # reciprocal values of const
-    corr = np.zeros((ntand+1),dtype='float64',order='F') # multiple correlation coefficient  
-    ess = np.zeros((ntand+1),dtype='float64',order='F') # standard error estimate  
     p = np.zeros((nvrbl+1,nvrbl+1),dtype='float64',order='F') # matrix of covariances 
     # that gets transformed using Gaussian elimination to determine regression coefficients 
     # corresponding to knt predictors  
     ptmp =  np.zeros((nvrbl+1),dtype='float64',order='F') # temporary array
-    rdvr = np.zeros((ntand+1),dtype='float64',order='F') # coefficient of determination  
     var = np.zeros((nvrbl+1),dtype='float64',order='F') # variances in the diagonal of matrix p
     sig = np.zeros((nvrbl+1),dtype='float64',order='F') # variances of predictors, std. deviations of predictands   
     stddev = np.zeros((nvrbl+1),dtype='float64',order='F') # std. deviations   
@@ -520,7 +517,10 @@ def regress(groups,predictors,predictands,aaa,q,regression_params):
     # Begin iteration over groups
     for ng,g in enumerate(groups):
 
-
+        a = np.zeros((ntand+1),dtype='float64',order='F') # regression constants
+        corr = np.zeros((ntand+1),dtype='float64',order='F') # multiple correlation coefficient
+        ess = np.zeros((ntand+1),dtype='float64',order='F') # standard error estimate
+        rdvr = np.zeros((ntand+1),dtype='float64',order='F') # coefficient of determination
         if (q[0][ng] <= 200):
             logging.info(" EQUATION DEVELOPMENT FOR GROUP " + str(ng))
             logging.info(" STATION NAME "+ str(groups[ng]))

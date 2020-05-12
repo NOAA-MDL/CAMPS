@@ -350,7 +350,7 @@ def get_predictands(predictand_file, date_range_list, selected_stations, selecte
             for n,file_id in enumerate(file_ids):
                 variables = []
                 pred.search_metadata['file_id'] = file_id  #needed for fetching
-                pred.search_metadata['Source'] = Source[n] #needed for fetching
+                pred.search_metadata['source'] = Source[n] #needed for fetching
                 for j,L in enumerate(leads):
                     # Adjust start and end time based on desired forecast lead time
                     start_time2 = start_time + timedelta(seconds=int(L*3600))

@@ -1057,8 +1057,8 @@ class ResultTime(Time):
 
         if result_time is None:
             # Return current time rounded to the next hour
-            r = datetime.now()
-            r = datetime(year=r.year, month=r.month,day=r.day, hour=r.hour+1)
+            r = datetime.now() + timedelta(hours=1)
+            r = datetime(year=r.year, month=r.month,day=r.day, hour=r.hour)
             self.data[:] = epoch_time(r)
         elif o_type is timedelta:
             for i, value in enumerate(self.data):

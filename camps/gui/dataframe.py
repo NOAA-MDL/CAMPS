@@ -42,26 +42,6 @@ def gmt(time):
                 gmt[i]=datetime.utcfromtimestamp(time[i]).strftime('%Y-%m-%d %H:%M:%S')
         return gmt
 
-def miss_station(all_stations,stations):
-	"""
-	finds stations that don't have predictand data and appends them to a list
-	"""
-	diff = len(all_stations)-len(stations)
-        k=0
-        i=0
-        miss_stations = ['']*diff
-        a = all_stations[:]
-        a.sort()
-        s = stations[:]
-        s.sort()
-        while i < len(stations):
-                while a[i] != s[i]:
-                        miss_stations[k]=a[i]
-                        del a[i]
-                        k+=1
-                i+=1
-	return miss_stations
-
 def dataframe():
 	"""
 	builds and saves dataframe to be used for graphs
@@ -87,7 +67,11 @@ def dataframe():
 	date_range = control.date_range
 
 	#get info for fetch many dates
-	start,end,stride = read_pred.parse_range(date_range)
+	start,end,stride = read_pred.parse_range(date_range[0])
+	stride = timedelta(seconds=int(stride))
+	start = Time.str_to_datetime(start)
+	end = Time.str_to_datetime(end)	
+
 	fcst_ref_time = control.date_range[0].split('-')[0][-2:]
 	
 	#initialize list of predictors
@@ -140,15 +124,11 @@ def dataframe():
 		except:
 			print("Can't read " + variable.name)
 
-	#getting predictor station and time data
+ 	#getting predictor station and time data
 	predr = Dataset(predictor_file_path[0])
 	predr_stat = predr.variables['station'][:]
-	if lead_time == 3:
-		predr_time = predr.variables['OM__phenomenonTimeInstant'][:]
-	elif lead_time == 6:
-		predr_time = predr.variables['OM__phenomenonTimeInstant1'][:]
-	elif lead_time == 12:
-		predr_time = predr.variables['OM__phenomenonTimeInstant2'][:]
+        predr_time_name = predictor[0].ancillary_variables.split(' ')[0]
+        predr_time = predr.variables[predr_time_name][:]
 	predr.close()
 
 	#reformatting predictor station and time data
@@ -158,30 +138,21 @@ def dataframe():
 	#getting predictand station and time data
 	predd = Dataset(predictand_file_path[0])
 	predd_stat = predd.variables['station'][:]
-	predd_time = predd.variables['OM__resultTime'][:]
+        predd_time_name = predictand[0].ancillary_variables.split(' ')[0]
+	predd_time = predd.variables[predd_time_name][:]
 	predd.close()
 	
 	#reformatting predictand station and time data
 	predd_stations = stations(predd_stat)
 	predd_gmt = gmt(predd_time)
+        new_predd_time = [int((datetime.strptime(predd_gmt[i], '%Y-%m-%d %H:%M:%S')-datetime(1970,1,1)).total_seconds()) for i in range(len(predd_gmt))]
+        predd_loc = [np.where(n == np.array(new_predd_time))[0][0] for n in predr_time]
+        predd_hours = [np.array(predd_gmt)[predd_loc]]
 
-	#choosing predictand observations that line up with predictor time
-	hour = (predictor[0].metadata['FcstTime_hour']/3600) + lead_time
-	days = len(predd_gmt)/24
-	predd_hours = [0]*days
-        k=0
-        for i in range(len(predd_gmt)):
-                if i%24 == hour:
-			predd_hours[k]=predd_gmt[i]
-			k+=1
-	
-	#catches when GFS data doesn't cover the last day of the month
-	if len(predr_gmt) < len(predd_hours):
-		predd_hours = predd_hours[:-1]	
-	
 	#find missing stations
-	miss_stations = miss_station(predr_stations,predd_stations)
-	stations = predd_stations
+	stations = np.intersect1d(predr_stations, predd_stations)
+        predd_order = [np.where(i == np.array(predd_stations))[0][0] for i in stations]
+        predr_order = [np.where(i == np.array(predr_stations))[0][0] for i in stations]
 	
 	#station and time array
 	info = [['',''] for k in range(len(predr_gmt)*len(stations))]
@@ -209,19 +180,10 @@ def dataframe():
 			 names[i+2]='GFS_'+predictor[i].get_variable_name()[:-10]
 
 		#create pandas dataframe of data and sort alphabetically by station name
+                predictor[i].data = predictor[i].data[:,predr_order]
 		predictor[i].data = np.squeeze(predictor[i].data,axis=2)
-		predictor[i].data = pd.DataFrame(predictor[i].data,columns=predr_stations,index=predr_gmt)
+		predictor[i].data = pd.DataFrame(predictor[i].data,columns=stations,index=predr_gmt)
 		predictor[i].data = predictor[i].data.reindex(sorted(predictor[i].data.columns),axis=1)
-		
-		#remove stations with no predictand data
-		k=0
-		a=miss_stations[:]
-		for j in predictor[i].data.columns:
-			if not a:
-				break
-			if j==a[k]:
-				predictor[i].data=predictor[i].data.drop(j,axis=1)
-				del a[k]
 		
 		#add data to final dataframe
 		for b in range(len(predr_gmt)):
@@ -235,13 +197,11 @@ def dataframe():
 		names[len(predictor)+2+i]='METAR_'+predictand[i].get_variable_name()[:-1]
 	
 		#resize array and create pandas dataframe
+                predictand[i].data = predictand[i].data[:,predd_order]
 		predictand[i].data = np.squeeze(predictand[i].data,axis=2)
-		predictand[i].data = pd.DataFrame(predictand[i].data,columns=predd_stations,index=predd_hours)
+		predictand[i].data = pd.DataFrame(predictand[i].data,columns=stations,index=predd_hours)
 		predictand[i].data = predictand[i].data.reindex(sorted(predictand[i].data.columns),axis=1)
 		
-		#remove extra days of predictand data
-		predictand[i].data = predictand[i].data.iloc[0:len(predr_time),:]
-			
 		#add predictand data to array
 		for b in range(len(predr_gmt)):
 			for c in range(len(stations)):
@@ -256,4 +216,4 @@ def dataframe():
 	#add station and time data to array and save as csv
 	data = np.concatenate([info,arr],axis = 1)
 	to_save = pd.DataFrame(data,columns=names)
-	to_save.to_csv(str(start)+'_'+str(end)+'_'+str(lead_time)+'hrs.csv')
+	to_save.to_csv(control.output_file_path+start.strftime("%Y%m%d%H")+'_'+end.strftime('%Y%m%d%H')+'_'+str(lead_time)+'hrs.csv')

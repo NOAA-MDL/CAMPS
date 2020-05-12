@@ -84,7 +84,10 @@ def main(control_file=None):
     predictor_id = update(control.predictor_data_path[0])
     file_id = update(control.predictand_data_path[0])
     # loop through predictors, predictands, and lead times and fetch.
+    sources = []
     for entry_dict in predictor_list:
+        if entry_dict['Source'] not in sources:
+            sources.append(entry_dict['Source'])
         # Retrieve predictor specific lead times. If empty, retrieve global. Raise error if both are empty.
         try:
             leads = [parse_pred.lead_time(lead) for lead in entry_dict.pop('lead_times')]
@@ -202,7 +205,7 @@ def main(control_file=None):
         if valid_max:
             output_data[output_data>valid_max] = 9999
         # Create forecast output object
-        forecast_obj = create_forecast_obj(output_name,predictands[p],start_time,end_time,stride)
+        forecast_obj = create_forecast_obj(output_name,predictands[p],start_time,end_time,stride,sources)
         # Set forecast data to object
         while len(output_data.shape)<len(forecast_obj.dimensions):
             output_data = output_data[...,None]
@@ -287,7 +290,7 @@ def process_vars(selected_stations, vars_arr, lats, lons):
     return (stacked_var,stations, lats, lons)
 
 
-def create_forecast_obj(output_name,predictand,start,end,stride):
+def create_forecast_obj(output_name,predictand,start,end,stride,sources):
     """
     Create forecast object for write out
     """
@@ -309,10 +312,10 @@ def create_forecast_obj(output_name,predictand,start,end,stride):
     LeadTime = Time.LeadTime(data=np.ma.array([forecast_obj.metadata['leadtime']]))
     forecast_obj.time.append(LeadTime)
     forecast_obj.metadata['FcstTime_hour'] = FcstTime_hour
-    try:
-        prov = forecast_obj.metadata.pop('PROV__Used')
-    except:
-        pass
+    if 'PROV__Used' in forecast_obj.metadata.keys():
+        forecast_obj.metadata['PROV__Used'] = sources
+    #except:
+    #    pass
     forecast_obj.add_process('MOS_Method')
     forecast_obj.location = predictand.location
     forecast_obj.add_coord(predictand.get_coordinate())

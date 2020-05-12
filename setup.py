@@ -17,7 +17,8 @@ setuptools_extra_kwargs = {
             'camps_metar_to_nc = camps.scripts.metar_driver:main',
             'camps_marine_to_nc = camps.scripts.marine_driver:main',
             'camps_equations = camps.scripts.equations_driver:main',
-            'camps_forecast = camps.scripts.forecast_driver:main'
+            'camps_forecast = camps.scripts.forecast_driver:main',
+            'camps_graphs = camps.gui.graphs:main'
         ]
     },
 }

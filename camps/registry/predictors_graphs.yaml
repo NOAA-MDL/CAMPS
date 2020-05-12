@@ -1,79 +1,20 @@
 predictors :
-- Property : 'WindSpd'
-  Source : 'GFS13'
-  Vertical_Coordinate : "10 m"
-  Procedure : ['smooth 9pt']
-  Duration : '0'
-
-- Property : 'WindSpd'
-  Source : 'GFS13'
-  Vertical_Coordinate : "500 mb"
-  Procedure : ['smooth 9pt']
-  Duration : '0'
-
-- Property : 'Temp'
-  Source : 'GFS13'
-  Vertical_Coordinate : "2 m"
-  Procedure : ['smooth 9pt']
-  Duration : '0'
   
-- Property : 'Temp'
+#--------------------------
+# Temperature
+#--------------------------
+- property : 'Temp'
+  Source : 'GFS13'
+  Vertical_Coordinate : "2m"
+  Duration : "0"
+  Procedure : ['smooth 25pt', 'interp bilinear']
+
+- property : 'Temp'
   Source : 'GFS13'
   Vertical_Coordinate : "700 mb"
-  Procedure : ['smooth 9pt']
+  Procedure : ['smooth 25pt', 'interp bilinear']
   Duration : '0'
 
-- Property : 'WChill'
-  Source : 'GFS13'
-  Vertical_Coordinate : "2 m"
-  Procedure : ['smooth 9pt']
-  Duration : '0'
 
-- Property : 'DewPt'
-  Source : 'GFS13'
-  Vertical_Coordinate : "2 m"
-  Procedure : ['smooth 9pt']
-  Duration : '0'
- 
-- Property : 'DewPt'
-  Source : 'GFS13'
-  Vertical_Coordinate : "700 mb"
-  Procedure : ['smooth 9pt']
-  Duration : '0'
 
-- Property : 'DewPt'
-  Source : 'GFS13'
-  Vertical_Coordinate : "850 mb"
-  Procedure : ['smooth 9pt']
-  Duration : '0'
- 
-- Property : 'KIndex'
-  Source : 'GFS13'
-  Vertical_Coordinate : "0 m"
-  Procedure : ['smooth 9pt']
-  Duration : '0'
- 
-- Property : 'MixR'
-  Source : 'GFS13'
-  Vertical_Coordinate : "700 mb"
-  Procedure : ['smooth 9pt']
-  Duration : '0'
 
-- Property : 'RelHum'
-  Source : 'GFS13'
-  Vertical_Coordinate : "2 m"
-  Procedure : ['smooth 9pt']
-  Duration : '0'
-
-- Property : 'HtIndex'
-  Source : 'GFS13'
-  Vertical_Coordinate : "2 m"
-  Procedure : ['smooth 9pt', 'interp bilinear']
-  Duration : '0'
-
-#- Property : 'PLThick'
-#  Source : 'GFS13'
-#  Vertical_Coordinate : "500-700hPa thickness"
-#  Procedure : ['smooth 9pt']
-#  reserved1 : 'vector'
-#  Duration : '0'

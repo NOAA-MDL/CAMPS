@@ -507,9 +507,11 @@ variables :
   maximum_temperature_1hr_max_2 : &MaxTemp1
     data_type : float32
     dimensions : []
+    hours : 1
     attribute :
       OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
       long_name : "maximum temperature 1hr min at 2m"
+      cell_methods :  "default_time_coordinate_size: max"
       standard_name : "air_temperature"
       units : "K"
       valid_min : ""
@@ -517,9 +519,11 @@ variables :
   minimum_temperature_1hr_min_2 : &MinTemp1
     data_type : float32
     dimensions : []
+    hours : 1
     attribute :
       OM__observedProperty : "StatPP__Data/Met/Temp/Temp"
       long_name : "minimum temperature 1hr min at 2m"
+      cell_methods :  "default_time_coordinate_size: min"
       standard_name : "air_temperature"
       units : "K"
       valid_min : ""
