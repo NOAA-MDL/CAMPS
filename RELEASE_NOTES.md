@@ -1,3 +1,21 @@
+# Version 1.0.2 May 12, 2020
+Patch release.
+
+## Main Features:
+* Graphing module updates
+* Minor bug fixes
+
+__Graphing module updates:__
+* The graphing module in camps/gui was not fully functional before.  These changes make it possible to produce numerous plots from METAR_to_nc output and Mospred_driver output (for predictors).
+* Made graphs.py into a driver script and added it to setup.py to make it a console script so it can run outside of a python interface.
+
+__Minor bug fix details:__
+* Fixed issue in Time.py with result time during 00Z-01Z hour.
+* Fixed a couple issues regarding get_source module.  More to come with this.
+* Small spelling error in plr_new.py
+* Change in netcdf.yaml to support NAM data 
+
+
 # Version 1.0.1 March 17, 2020
 Patch release.
 
