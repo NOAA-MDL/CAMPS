@@ -54,4 +54,7 @@ CAMPS provides a structured method of encoding formatted metadata for StatPP.  I
 * __camps/gui__: Various GUIs and modules used to display data are here.  GUI and display features are not fully functional currently.
 * __camps/mospred__: Contains all modules that support the capabilities of the MOS-200 u201 equivalent code. These modules aid in creating new predictors and predictands – typically from model and observational output. They apply procedures to the variables, such as smoothing and interpolating and organize the variables into appropriate dimensions.
 * __camps/libraries/mathlib__: Modules used when creating new predictors/predictands are here. These are largely used during the mospred (u201 equivalent) step in a CAMPS development.
+<<<<<<< HEAD
 
+=======
+>>>>>>> temp_master

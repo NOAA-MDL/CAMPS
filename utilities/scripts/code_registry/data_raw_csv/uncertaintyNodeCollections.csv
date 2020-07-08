@@ -1,7 +1,0 @@
-Collections under StatPP/Uncertainty
-@ID,rdfs:LABEL,skos:NOTATION,dct:DESCRIPTION,dct:REFERENCES
-https://codes.nws.noaa.gov/StatPP/Uncertainty/IntrvlType,"Interval Types",IntrvlType,"An enumeration of interval types",""
-https://codes.nws.noaa.gov/StatPP/Uncertainty/DichProbEvents,"Dichotomous Events",DichProbEvents,"A collection of dichotomous probabilistic events (i.e., they either happen or they don't)",""
-https://codes.nws.noaa.gov/StatPP/Uncertainty/DichProbEvents/PtypeCat,"Precipitation Type Categorization",PtypeCat,"A collection of categorization schemes for precipitation type",""
-https://codes.nws.noaa.gov/StatPP/Uncertainty/DichProbEvents/PtypeCat/Method2,"Method 2",Method2,"This categorization method was introduced ~2000 to encode short-range GFS MOS bulletins (MEX). It combines sleet with freezing rain and freezing drizzle into a freezing category and uses a seperate category to encode a mixture of rain and snow.",""
-https://codes.nws.noaa.gov/StatPP/Uncertainty/DichProbEvents/PtypeCat/Method1,"Method 1",Method1,"This categorization method was introduced ~2005 to encode short-range GFS MOS bulletins (MAV). It combines sleet with freezing rain and freezing drizzle into a freezing category and includes a mixture of rain and snow in the liquid category.",""
