@@ -2,7 +2,7 @@ This repository is a scientific product and is not official communication of the
 
 # Welcome to the Community Atmospheric Model Post-Processing System (CAMPS) Repository
 
-CAMPS is a software infrastructure that supports Statistical Post-Processing (StatPP) and is maintained as community code.  CAMPS utilizes standards and tools for data representation and incorporates widely recognized metadata standards.  For more information about the development, structure, and the functionality of CAMPS please visit our [documentation page.](https://sats.nws.noaa.gov/~camps)
+CAMPS is a software infrastructure that supports Statistical Post-Processing (StatPP) and is maintained as community code.  CAMPS utilizes standards and tools for data representation and incorporates widely recognized metadata standards.  For more information about the development, structure, and the functionality of CAMPS please visit our [documentation page.](https://noaa-mdl.github.io/CAMPS/)
 
  ## Anaconda Python for CAMPS
 
@@ -63,7 +63,7 @@ When installing CAMPS outside of a Python distribution, if the installation path
 ## Running CAMPS Driver Scripts
 The CAMPS package makes use of something called **console scripts** in setup.py.  This means that you can run any driver script from the command line, anywhere on your machine (so long as your Python library can find CAMPS -- hence setting PYTHONPATH and updating PATH **or** installing into your Python distribution directly)
 
-For detailed information on what each CAMPS driver script does, and a deeper dive into the various features of the CAMPS software, please see the [Technical Description](https://sats.nws.noaa.gov/~camps/technical) section of the CAMPS documentation website.
+For detailed information on what each CAMPS driver script does, and a deeper dive into the various features of the CAMPS software, please see the [Technical Description](https://noaa-mdl.github.io/CAMPS/technical/index.html) section of the CAMPS documentation website.
 
 **There are 6 total driver scripts available for CAMPS:**
 
