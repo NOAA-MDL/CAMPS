@@ -1,0 +1,197 @@
+#Arithmatic procedures
+BoundsProcMin :
+    process_step : "StatPP__Methods/Arith/Min"
+    long_name : 'Minimum within bounds'
+    standard_name : "source"
+BoundsProcMax :
+    process_step : "StatPP__Methods/Arith/Max"
+    long_name : 'Maximum within bounds'
+    standard_name : "source"
+BoundsProcSum :
+    process_step : "StatPP__Methods/Arith/Sum"
+    long_name : 'summation within bounds'
+    standard_name : "source"
+Max :
+    process_step : "StatPP__Methods/Arith/Max"
+    long_name : "Maximum of a sample"
+    standard_name : "source"
+Min :
+    process_step : "StatPP__Methods/Arith/Min"
+    long_name : "Minimum of a sample"
+    standard_name : "source"
+Mean :
+    process_step : "StatPP__Methods/Arith/Mean"
+    long_name : "Mean of a sample"
+    standard_name : "source"
+BinaryGrid :
+    process_step : "StatPP__Method/Arith/Binary"
+    long_name : "Conversion to binary grid via threshold condition"
+    standard_name : "source"
+BinaryPoint :
+    process_step : "StatPP__Method/Arith/Binary"
+    long_name : "Conversion to binary point via threshold condition"
+    standard_name : "source"
+LinSmooth :
+    process_step : "StatPP__Methods/Arith/LinSmooth"
+    long_name : "Linear Smoothing"
+    standard_name : "source"
+
+#Data ingest/filtering/QC
+MetarObProcStep1 :
+    process_step : "StatPP__Methods/Ingest/DecodeBUFR"
+    PROV__Used : "StatPP__Data/Source/NCEPSfcObsMETAR"
+    long_name : 'Ingest BUFR encoded METAR observations from NCEP repository'
+    standard_name : "source"
+MetarObProcStep2 :
+    process_step : "StatPP__Methods/QC/METARQC"
+    long_name : "Apply MDL METAR Quality Control procedure"
+    standard_name : "source"
+ProcMarine :
+    process_step : "StatPP__Methods/Ingest/DecodeTabularText"
+    PROV__Used : "StatPP__Data/Source/NDBC"
+    long_name : 'Decode tabular text data'
+    standard_name : "source"
+MarineQC :
+    process_step : "StatPP__Methods/QC/MarineQC"
+    long_name : 'Marine Observation Quality Control'
+    standard_name : "source"
+FilterGRIB2 :
+    process_step : "StatPP__Methods/Ingest/FilterGRIB2"
+    PROV__Used : "StatPP__Data/Source/GFS13"
+    long_name : "Filter GRIB2-encoded forecasts"
+    standard_name : "source"
+ResampleGRIB2 :
+    process_step : "StatPP__Methods/Ingest/ResampleGRIB2"
+    long_name : "Resampling of GRIB2 data onto a new grid"
+    standard_name : "source"
+TmpDewCmpChk :
+    process_step : "StatPP__Methods/QC/TmpDewCmpChk"
+    long_name : "Consistency Check for Temperature and Dew point"
+    standard_name : "source"
+
+#Geospatial
+LinInterp :
+    process_step : "StatPP__Methods/Geosp/LinInterp"
+    long_name : "Linear Interpolation"
+    standard_name : "source"
+BiLinInterp :
+    process_step : "StatPP__methods/Geosp/BiLinInterp"
+    long_name : "Bilinear Interpolation"
+    standard_name : "source"
+BiQuadInterp :
+    process_step : "StatPP_Methods/Geosp/BiQuadInterp"
+    long_name : "Biquadratic Interpolation"
+    standard_name : "source"
+BudgetInterp :
+    process_step : "StatPP__Methods/Geosp/BudgetInterp"
+    long_name : "Budget Interpolation"
+    standard_name : "source"
+NearestInterp :
+    process_step : "StatPP__Methods/Geosp/StatPP__Methods/Geosp/NNInterp"
+    long_name : "Nearest Neighbor Interpolation"
+    standard_name : "source"
+
+#StatPP methods
+PolyLinReg :
+    process_step : "StatPP__Methods/Stat/PolyLinReg"
+    long_name : "Polynomial Linear Regression"
+    standard_name : "source"
+MOS_Method :
+    process_step : "StatPP__Methods/Stat/MOS"
+    long_name : "Model Output statistical method: Multiple Linear Regression "
+    standard_name : "source"
+
+#Calc vars
+TempLapseCalc :
+    process_step : "StatPP__Methods/Thermo/LapRate"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/CAMPS_calculated"
+    standard_name : "source"
+    long_name : "Difference of air temperature between two pressure levels"
+    units : "unit of observed property"
+DewPointCalc :
+    process_step : "StatPP__Methods/Thermo/DewPt"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/metpy"
+    standard_name : "source"
+    long_name : "The temperature to which a given air parcel must be cooled at constant pressure and constant water vapor content in order for saturation to occur"
+    units : "unit of observed property"
+KIndexCalc :
+    process_step : "StatPP__Methods/Thermo/KIndex"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/CAMPS_calculated"
+    standard_name : "source"
+    long_name : "A heuristic stability index consisting of a sum of temperatures and dewpoints at specified pressure levels"
+    units : "unit of observed property"
+MixRatioCalc :
+    process_step : "StatPP__Methods/Thermo/MixingRatio"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/metpy"
+    standard_name : "source"
+    long_name : "number of grams of water in a kilogram of air"
+    units : "unit of observed property"
+EqPotTempCalc:
+    process_step : "StatPP__Methods/Thermo/EquPotTemp"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/metpy"
+    standard_name : "source"
+    long_name : "The equivalent potential temperature is"
+    units : "unit of observed property"
+MixRatioCalc :
+    process_step : "StatPP__Methods/Thermo/MixingRatio"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/metpy"
+    standard_name : "source"
+    long_name : "number of grams of water in a kilogram of air"
+    units : "unit of observed property"
+EqPotTempCalc:
+    process_step : "StatPP__Methods/Thermo/EquPotTemp"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/metpy"
+    standard_name : "source"
+    long_name : "The equivalent potential temperature is"
+    units : "unit of observed property"
+HtIndexTempCalc:
+    process_step : "StatPP__Methods/Thermo/HtIndexTempCalc"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/metpy"
+    standard_name : "source"
+    long_name : "heat index temperature as defined in (reference)"
+    units : "unit of observed property"
+TotalPrecipCalc:
+    process_step : "StatPP__Methods/Thermo/TotalPrecipCalc"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/CAMPS_calculated"
+    standard_name : "source"
+    long_name : "total liquid water precipation"
+    units : "unit of observed property"
+PotTempCalc :
+    process_step : "StatPP__Methods/Thermo/PotTemp"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/metpy"
+    standard_name : "source"
+    long_name : "temperature of a air parcel in dropping adiabatically from specified pressure level to 1000 hPa"
+    units : "unit of observed property"
+WindSpeedCalc :
+    process_step : "StatPP__Methods/Thermo/WindSpeed"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/CAMPS_calculated"
+    standard_name : "source"
+    long_name : "speed of bulk air movement"
+    units : "unit of observed property"
+WindChillCalc :
+    process_step : "StatPP__Methods/Thermo/WindChill"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/metpy"
+    standard_name : "source"
+    long_name : "heuristic temperature representing the temperature a human would feel subject to cool air temperature and significant wind"
+    units : "unit of observed property"
+PressLayerThickCalc :
+    process_step : "StatPP__Methods/Thermo/Thick"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/CAMPS_calculated"
+    standard_name : "source"
+    long_name : "thickness of a pressure layer defined by two pressure levels"
+    units : "unit of observed property"
+NightMinTempCalc :
+    process_step : "StatPP__Methods/Thermo/NightMinTemp"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/CAMPS_calculated"
+    standard_name : "source"
+    long_name : "minimum temperature reached in the local time span (7pm-8am)"
+    units : "unit of observed property"
+DayMaxTempCalc :
+    process_step : "StatPP__Methods/Thermo/DayMaxTemp"
+    PROV__wasGeneratedBy : "StatPP__Methods/Source/CAMPS_calculated"
+    standard_name : "source"
+    long_name : "maximum temperature reached in the local time span (7am-7pm)"
+    units : "unit of observed property"
+    
+    
+    

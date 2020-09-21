@@ -1,0 +1,133 @@
+pipeline {
+    agent any
+
+    options {
+        skipDefaultCheckout()
+    }
+    
+    stages {
+
+        stage('Checkout Repo') {
+            steps {
+                
+                // Cleanup workspace
+                cleanWs disableDeferredWipeout: true, deleteDirs: true
+                
+                // Checkout repo
+                dir('repo') {
+                    checkout scm
+                }
+
+            }
+        }
+
+        stage('Setup Python') {
+            steps {
+                sh 'virtualenv --python=python3.6 ${WORKSPACE}/python/'
+                sh '''
+                     . ${WORKSPACE}/python/bin/activate
+                     pip install sphinx
+                     pip install sphinx_rtd_theme
+                     pip install rst2pdf
+                   '''
+            }
+        }
+
+        stage('Build docs') {
+            steps {
+                sh '''
+                     . ${WORKSPACE}/python/bin/activate
+                     cd ${WORKSPACE}/repo/doc/
+                     make clean
+                     make html
+                     make pdf
+                   '''
+            }
+        }
+
+        stage('Publish docs to Jenkins') {
+            steps {
+
+                // Publish result
+                publishHTML(target : [
+                             allowMissing: false,
+                             alwaysLinkToLastBuild: false,
+                             keepAll: true,
+                             reportDir: 'repo/doc/build/html/',
+                             reportFiles: 'index.html',
+                             reportName: 'Documentation',
+                             reportTitles: '']
+                           )
+                
+                // Fail stage if needed
+                // (workaround HTML publisher not marking stage as failed when it marks build as failed)
+                script {
+                    if (currentBuild.resultIsWorseOrEqualTo('FAILURE')) {
+                        error('Failed to publish docs. See log above.')
+                    }
+                }
+
+            }
+        }
+ 
+        stage('Publish docs to GitHub') {
+
+            when {
+                expression { env.GERRIT_EVENT_TYPE == 'change-merged' }
+                expression { env.GERRIT_BRANCH == 'master' }
+            }
+
+            environment { 
+                GIT_AUTH = credentials("${params.github_auth}") 
+            }
+
+            steps {
+
+                dir('repo_github') {
+                
+                    // Checkout GitHub repo
+                    git url: params.github_repo, branch: params.github_branch, 
+                        changelog: false, poll: false
+
+                    // Push to gh-pages branch without keeping history
+                    sh '''
+                         rm -rf ./*
+                         cp -R ${WORKSPACE}/repo/doc/build/html/. ./
+                         cp -R ${WORKSPACE}/repo/doc/build/pdf/.  ./
+                         touch .nojekyll
+
+                         git config user.name  "CAMPS (Automated)"
+                         git config user.email "${GERRIT_CHANGE_OWNER_EMAIL}"
+                         git config push.default simple
+
+                         git update-ref -d HEAD
+                         git add --all
+                         git commit -m "Latest docs build (master)."
+
+                         git config --local credential.helper "!p() { echo username=\\${GIT_AUTH_USR:=none}; echo password=\\$GIT_AUTH_PSW; }; p"
+                         git push origin ${github_branch} --force
+                       '''
+
+                }
+
+            }
+
+        }
+
+    }
+    
+    post {
+     
+        failure {
+            emailext to: env.GERRIT_PATCHSET_UPLOADER_EMAIL,
+                subject: "Build failed in Jenkins: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+                
+                Failed to build docs.
+
+                See <${env.RUN_DISPLAY_URL}>.
+                """.stripIndent()
+        }
+
+    }
+}

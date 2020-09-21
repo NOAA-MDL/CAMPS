@@ -6,7 +6,7 @@ SHINXOPTS    =
 #SHINXOPTS    = -t onlymodules
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = camps
-SOURCEDIR     = 
+SOURCEDIR     = .
 BUILDDIR      = build
 
 # Put it first so that "make" without argument is like "make help".
