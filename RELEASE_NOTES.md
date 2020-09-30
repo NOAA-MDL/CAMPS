@@ -1,5 +1,41 @@
+# Version 1.1.0 September 30, 2020
+Minor release
+
+## Main Features:
+* Python 2 to 3 conversion (3.6 or greater)
+* grib2_to_nc now supports Lambert Conformal, Polar Stereographic, Mercator, and regular latitude-longitude coordinate systems.
+	* GRIB2 Grid Definition Section metadata is now being converted into CF and PROJ metadata.
+* Components metadata feature
+	* A new metadata attribute called __wasGeneratedBy__ has been added to primary variables metadata where appropriate.This attribute denotes primary variables used in the  calculation of the new primary variable.  
+Extra component information can be written to the mospred_driver output file. Set preference (True/False) in mospred_control.
+		* If set to True then the variables used in the calculation of other variables will be written separately to the file with their original (before any procedures applied) metadata information ONLY included.  
+* New feature for equations_driver which writes out an easier to decipher summary from equations_driver, denoting which predictors are chosen when generating equations and their coefficients.  Also optional, set preference in equations_control.
+* Expanded grid-to-station interpolation schemes.
+	* bilinear
+	* biquadratic
+	* budget
+	* nearest-neighbor
+* Addition of grid binary process and associated metadata.
+* Several changes to allow for more flexible input/output options for driver scripts.
+	* Allow for multiple input and output files for mospred_driver and forecast_driver.  Functionality already existed for equations_driver.
+	* Allow for multiple date ranges to be set for mospred_driver.  Equations_driver already had this functionality.
+* Updated the equation parameters in equations_control to only include those that are used, and denote those that are not yet used.  Some code correction done to ensure these are being used properly.
+* The beginning of a major metadata restructuring.
+	* Added unique calculation procedures in procedures.yaml, with pre-set metadata information to be encoded in output files.
+	* Added new metadata attribute __wasInformedBy__ to denote procedures applied to a specific variable, that were performed prior to the current iteration of: read, process variables, write. This is usually done by running a driver script.
+
+## Bug Fixes:
+* Adding all applied procedures to primary variable names, with the exception of variable creation calculations.
+* Fixed issue in interp.py that resulted in incorrect distances between grid and data points for bilinear interpolation 
+* Fixed an issue for budget interpolation where the grid coordinates for a station were not being computed correctly, leading to bad interpolation values.   
+
+## Known Issues:
+* GUI graphing modules have errors.  Display.py may work (untested) if Basemap and Basemap-data-hires are installed.  
+* Current netcdf.yaml has errors in paths leading out to NWS codes registry and in CF standard names.  An updated version will be pushed out soon.  Updates will be somewhat frequent as more CF standard names are submitted and approved to the CF standard name table.
+* Some metadata prefixes used for NetCDF-Linked Data are incorrect in our output files.  These will be fixed/updated when the full CAMPS metadata restructuring is complete.
+
 # Version 1.0.2 May 12, 2020
-Patch release.
+Patch release
 
 ## Main Features:
 * Graphing module updates
@@ -54,7 +90,3 @@ CAMPS provides a structured method of encoding formatted metadata for StatPP.  I
 * __camps/gui__: Various GUIs and modules used to display data are here.  GUI and display features are not fully functional currently.
 * __camps/mospred__: Contains all modules that support the capabilities of the MOS-200 u201 equivalent code. These modules aid in creating new predictors and predictands – typically from model and observational output. They apply procedures to the variables, such as smoothing and interpolating and organize the variables into appropriate dimensions.
 * __camps/libraries/mathlib__: Modules used when creating new predictors/predictands are here. These are largely used during the mospred (u201 equivalent) step in a CAMPS development.
-<<<<<<< HEAD
-
-=======
->>>>>>> temp_master
