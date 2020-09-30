@@ -1,0 +1,324 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>An Overview of the Community Atmospheric Model Post-processing System (CAMPS) v0.1 &mdash; camps 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../netcdf_CAMPS_standard.html">Towards a new NetCDF-CAMPS Standard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Netcdf_CAMPS_Structure.html">NetCDF-CAMPS Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical/index.html">CAMPS Techinical description</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>An Overview of the Community Atmospheric Model Post-processing System (CAMPS) v0.1</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/overview/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="an-overview-of-the-community-atmospheric-model-post-processing-system-camps-v0-1">
+<h1>An Overview of the Community Atmospheric Model Post-processing System (CAMPS) v0.1<a class="headerlink" href="#an-overview-of-the-community-atmospheric-model-post-processing-system-camps-v0-1" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="purpose">
+<h2>1.  Purpose<a class="headerlink" href="#purpose" title="Permalink to this headline">¶</a></h2>
+<p>This document is intended to describe the goals, nature, and strategy for the development and maintenance of the Community Atmospheric Model Post-processing System (CAMPS).  It will also serve as a guide to a number of other documents that will capture considerably more detail about aspects of CAMPS.</p>
+<div class="section" id="overall-goals">
+<h3>1.1  Overall Goals<a class="headerlink" href="#overall-goals" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Ensure that NOAA’s goals for Statistical Post-processing of output from Numerical Weather Prediction (NWP) systems (StatPP) are met.</p></li>
+<li><p>Maintain all components of CAMPS as community code.  This implies the following:</p>
+<ul>
+<li><p>CAMPS is a free and shared resource with distributed development and centralized support.</p></li>
+<li><p>Ongoing development of CAMPS is maintained under version control</p></li>
+<li><p>Periodic releases, which include the latest in developments of new capabilities and techniques, are made available to the user community.</p></li>
+<li><p>Insofar as policy permits, major organizations (i.e. NOAA) that participate in the CAMPS community and perform StatPP operationally will maintain the currently operational code in a public repository</p></li>
+</ul>
+</li>
+<li><p>Foster community involvement, experimentation, and improvement.</p></li>
+<li><p>Promote accessible, documented, robust, and portable code.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="key-terminology-and-background">
+<span id="overview-2"></span><h2>2.  Key Terminology and Background<a class="headerlink" href="#key-terminology-and-background" title="Permalink to this headline">¶</a></h2>
+<p><strong>CAMPS</strong> is a software infrastructure that supports StatPP and is maintained as community code.  This infrastructure includes standards and tools for data representation as well as software repositories that facilitate the use of these standards.</p>
+<p><strong>Statistical post-processing (StatPP)</strong> refers to the adjustment of current real-time forecast guidance using the discrepancies noted between past forecasts and observations/analyses.
+Past experience has shown that statistical post-processing is capable of modifying real-time NWP guidance that is biased, somewhat unskillful, and unreliable into guidance that is unbiased, much more skillful, downscaled to local conditions, and highly reliable, thus making it suitable for use in decision support with little or no manual modification by forecasters.”  StatPP can also ameliorate deficiencies due to finite ensemble size and infer forecasts for weather elements that are not directly forecast by the NWP system.  (Cf. Hamill and Peroutka, 2016:  High-Level Functional Requirements for Statistical Post-Processing in NOAA.)</p>
+<p>For many StatPP techniques, the <strong>Training Phase</strong> or <strong>Development Phase</strong> is a set of processes and software that notes discrepancies between past forecasts and observations/analyses and distills them into a set of parameters.  The Model Output Statistics (MOS) and Kalman Filter techniques both have distinct training phases.  Most bias-correction techniques, however, do not.</p>
+<p>All StatPP techniques have a <strong>Production Phase</strong> or <strong>Implementation Phase</strong> which is the set of processes and software that creates output forecasts.</p>
+<p>The <strong>Proxy for Truth</strong> is the set of observations/analyses that guides the StatPP process.  The name recognizes the biases and errors that afflict our best observing platforms and analytical techniques.  The proxy for truth is generally accepted to be adequate for the task of StatPP.</p>
+<p><strong>Numerical Weather Prediction (NWP)</strong> generally begins with some form of <strong>Data Assimilation (DA)</strong> which is followed by one or more runs of a <strong>NWP</strong> system.  Additional steps may be required to breed perturbed inputs to facilitate an <strong>ensemble</strong> of <strong>NWP</strong> runs.  The final step of an <strong>NWP</strong> run is named the <strong>Model Post</strong>; this step generally converts output from the specialized coordinate reference systems used in NWP (e.g., spherical harmonics and sigma levels) to more standard coordinate reference systems.  StatPP applications generally work with these standard outputs.</p>
+<p>Many StatPP applications use some form of <strong>Statistical Pre-processing</strong> step where NWP output from multiple runs is captured in a <strong>StatPP Archive</strong>.  This <strong>Statistical Pre-processing</strong> captures the data needed for the <strong>Training Phase</strong>.  Often, NWP output is transformed in ways that facilitate statistical training.  In general, if a <strong>Statistical Pre-processing</strong> step is required in the <strong>Training Phase</strong>, that same step will also appear in the <strong>Production Step</strong>.</p>
+<p>A <strong>Training Phase</strong>, if present, will use one or more <strong>Statistical Development Engines</strong> to note discrepancies between past NWP output and a selected <strong>Proxy for Truth</strong>.  These discrepancies are then captured in a set of <strong>StatPP Parameters</strong> which can be used in the <strong>Production Phase</strong>.</p>
+<p>Figure 1, below, attempts to capture some of these concepts in a data flow diagram.</p>
+<img alt="a data flow diagram of a generic statistical post-processing training phase" src="overview/StatPPTrainingPhasev0.1.png" />
+<p>A data flow diagram of the training phase of a generic statistical post-processing technique</p>
+<p>Figure 2, below, also captures these concepts, but applies them to the <strong>Production Phase</strong>.</p>
+<img alt="a data flow diagram of a generic statistical post-processing implementation phase" src="overview/StatPPProductionPhasev0.1.png" />
+<p>A data flow diagram of the implementation phase of a generic statistical post-processing technique</p>
+<div class="section" id="metadata-concepts">
+<h3>2.1  Metadata Concepts<a class="headerlink" href="#metadata-concepts" title="Permalink to this headline">¶</a></h3>
+<p>It is a truism among StatPP developers that they spend 10% of their time in science, 10% in statistics, and 80% in bookkeeping.
+Indeed, metadata storage and use are key aspects to any successful StatPP project.
+Daunting amounts of data characterize the training phase of many techniques.
+Some techniques defer these challenges to the production phase.</p>
+<p>CAMPS has tentatively adopted NetCDF-CF as format for storing data for both the proxy for truth and StatPP archive.
+Other formats (especially HDF) were considered, but the level of support available for NetCDF suggested we use it.</p>
+<p>When designing the metadata portions of CAMPS, it seemed wise to build on key concepts that were emerging in widely-recognized Standards Development Organizations (e.g., WMO, OGC, W3C, and ISO).
+In 2015, the WMO issued <em>Volume I.3, Annex II to the WMO Technical Regulations, Part D–Representations derived from data models</em> (Available from the WMO Library at <a class="reference external" href="http://library.wmo.int/pmb_ged/wmo_306-I3_en.pdf">http://library.wmo.int/pmb_ged/wmo_306-I3_en.pdf</a>).
+This document is quite focused on the representation of aviation products such as METAR and TAF.
+However, it points to a second document that is far more general, <em>Guidelines on Data Modelling for WMO Codes</em> (available in English only from <a class="reference external" href="http://wis.wmo.int/metce-uml">http://wis.wmo.int/metce-uml</a>).</p>
+<p>The reader is encouraged to download and review the <em>Guidelines</em>, especially section 1.6 and chapters 4 and 5.
+These foundational concepts will be applied to the development of metadata within CAMPS NetCDF files.
+Chapter 5 describes the WMO Codes Registry.
+We note that the NWS has created a Codes Registry at <a class="reference external" href="https://codes.nws.noaa.gov">https://codes.nws.noaa.gov</a>, and the NWS plans to use that registry to support local applications within CAMPS.
+Further, the WMO hosts a similar Codes Registry at <a class="reference external" href="https://codes.wmo.int">https://codes.wmo.int</a>.</p>
+<p>The technical specifics of data encoding will be deferred to other documents.
+Some high-level concepts will be reviewed here.</p>
+<ul class="simple">
+<li><p>Where possible, NetCDF attributes will be named with well-defined ISO concepts (e.g., OM__observedProperty, LE__ProcessStep, OM__phenomenonTime).</p></li>
+<li><p>Often, attribute names and values will refer to Uniform Resource Identifiers (URI) that point to a codes registry entry.</p></li>
+<li><p>Emerging standards for encoding linked data references within netCDF files (netCDF-LD) will be used.</p></li>
+<li><p>Multiple time variables will be declared and populated, as needed, to provide ease of access to data consumers.</p></li>
+<li><p>Every effort will be made to document multi-step procedures within the metadata.</p></li>
+</ul>
+<p>This will be prefered over defining a new OM__observedProperty.
+The following time-related terms will follow these definitions.  Historically, these terms have not been defined with sufficient precision or used consistently in meteorology.  Ideally, this problem will be addressed early in the lifespan of CAMPS.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 42%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>The term</p></th>
+<th class="head"><p>Means this,</p></th>
+<th class="head"><p>Not this.</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>forecast_reference_time</p></td>
+<td><p>The “data time”, the time of the analysis from
+which the forecast was made (from the CF Standard
+Name Table).  Must be an instant in time.</p></td>
+<td><p>the time for which the forecast is valid</p></td>
+</tr>
+<tr class="row-odd"><td><p>OM__phenomenonTime</p></td>
+<td><p>Colloquially, “when the weather happens.”  Can be
+either an instant in time or a period of time.</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>OM__resultTime</p></td>
+<td><p>When the result (analysis, forecast) became
+available to data consumers.  Must be an instant
+in time.</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>OM__validTime</p></td>
+<td><p>Time of intended use.  Must be a period of time.</p></td>
+<td><p>the time for which the forecast is valid</p></td>
+</tr>
+<tr class="row-even"><td><p>leadTime</p></td>
+<td><p>Length of time (a duration) from
+forecast_reference_time to OM_phenomenonTime.
+Must be a duration.</p></td>
+<td><p>an instant in time</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Sep 30, 2020.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

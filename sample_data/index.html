@@ -1,0 +1,236 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Sample NetCDF-CAMPS files &mdash; camps 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../netcdf_CAMPS_standard.html">Towards a new NetCDF-CAMPS Standard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Netcdf_CAMPS_Structure.html">NetCDF-CAMPS Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical/index.html">CAMPS Techinical description</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Sample NetCDF-CAMPS files</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/sample_data/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sample-netcdf-camps-files">
+<h1>Sample NetCDF-CAMPS files<a class="headerlink" href="#sample-netcdf-camps-files" title="Permalink to this headline">¶</a></h1>
+<p>The concepts presented in the application profile and other documents are quite abstract.
+In these sections we present sample files for download alongside explanations of their metadata.
+If you are reading this document as a standalone PDF, then please refer to a web presentation of the CAMPS documentation.</p>
+<dl class="simple">
+<dt>Here are brief descriptions of the data contained in each sample file:</dt><dd><ul class="simple">
+<li><p>Model Output contains gridded data from the NWS spectral Global Forecast System (GFS).  The values were read from a latitude-longitude grid, and projected to a Polar Stereographic grid.</p></li>
+<li><p>Surface Observations contains surface observations for a number of airport locations in and around the US.  They were originally encoded in the METAR code form.</p></li>
+<li><p>Marine Observations contains maritime data buoy observations from the Great Lakes and coastal waters of the US.</p></li>
+<li><p>Mesonet Observations contains surface observations from a wide variety of mesonet networks in and around the US.</p></li>
+<li><p>CAMPS equations_driver output after running a MOS regression, this is a parameter file.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="model.html">Model output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surface.html">Surface Observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="marine.html">Marine Observations</a></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Sep 30, 2020.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

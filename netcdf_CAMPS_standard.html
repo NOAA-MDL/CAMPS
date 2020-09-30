@@ -1,0 +1,269 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Towards a new NetCDF-CAMPS Standard &mdash; camps 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Primary File Format" href="primary_file_format/formats.html" />
+    <link rel="prev" title="Statistical Post-Processing Background" href="statPP_background/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> camps
+          
+
+          
+            
+            <img src="_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Towards a new NetCDF-CAMPS Standard</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="primary_file_format/formats.html">Primary File Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="camps_metadata_standards/metadata.html">CAMPS Metadata Standards</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Netcdf_CAMPS_Structure.html">NetCDF-CAMPS Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="technical/index.html">CAMPS Techinical description</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Towards a new NetCDF-CAMPS Standard</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/netcdf_CAMPS_standard.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="towards-a-new-netcdf-camps-standard">
+<h1>Towards a new NetCDF-CAMPS Standard<a class="headerlink" href="#towards-a-new-netcdf-camps-standard" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="primary_file_format/formats.html">Primary File Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="primary_file_format/formats.html#use-of-the-cf-convention">Use of the CF-Convention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="primary_file_format/formats.html#use-of-netcdf-classic-ld">Use of NetCDF-Classic-LD</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="camps_metadata_standards/metadata.html">CAMPS Metadata Standards</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="camps_metadata_standards/metadata.html#iso-standards">ISO standards</a></li>
+<li class="toctree-l2"><a class="reference internal" href="camps_metadata_standards/metadata.html#w3c-standards">W3C standards</a></li>
+<li class="toctree-l2"><a class="reference internal" href="camps_metadata_standards/metadata.html#integration-of-user-defined-concepts">Integration of user-defined concepts</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>This document introduces an application profile for CAMPS utilizing  the netCDF-CF
+conventions, and other data models, and controlled vocabularies that improve
+interoperability within the StatPP community. By following this application profile,
+we ensure that CAMPS compliant data files contain sufficient metadata to be
+self-describing for relatively long periods of time.  We introduce the shorthand
+netCDF-CAMPS to describe a file that conforms to this application profile.</p>
+<p>NetCDF-CAMPS tries to standardize the nomenclature and its representation in
+metadata by using pre-existing standards from the International Organization of
+Standards (ISO), World Wide Web (W3), Open Geospatial Consortium (OGC), and the
+World Meteorological Organization (WMO). The reader is encouraged to download
+and review <strong>Guidelines on Data Modelling for WMO Codes</strong> (available in English
+only from <a class="reference external" href="http://wis.wmo.int/metce-uml">http://wis.wmo.int/metce-uml</a>), especially section 1.6 and chapters
+4 and 5. These foundational concepts will be applied to the development of
+metadata within CAMPS data files. Chapter 5 describes the WMO Codes Registry.
+We note that the NWS has created a Codes Registry at <a class="reference external" href="https://codes.nws.noaa.gov">https://codes.nws.noaa.gov</a>,
+and the NWS plans to use that registry to support local applications within CAMPS.
+Further, the WMO hosts a similar Codes Registry at <a class="reference external" href="https://codes.wmo.int">https://codes.wmo.int</a>.
+Both registries are considered authoritative.</p>
+<p>Coincidentally, the OGC’s netCDF Standards Working Group (SWG) has been
+developing a NetCDF Classic Linked Data encoding standard (NetCDF-LD)
+(<a class="reference external" href="http://docs.opengeospatial.org/DRAFTS/19-002.html">http://docs.opengeospatial.org/DRAFTS/19-002.html</a>), which combines netCDF with
+linked data, the binary-array-ld (bald; <a class="reference external" href="https://github.com/binary-array-ld">https://github.com/binary-array-ld</a>).
+Where possible, CAMPS 1.0 complies with this emerging standard.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="primary_file_format/formats.html" class="btn btn-neutral float-right" title="Primary File Format" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statPP_background/index.html" class="btn btn-neutral float-left" title="Statistical Post-Processing Background" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Sep 30, 2020.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

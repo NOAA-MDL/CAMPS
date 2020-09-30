@@ -1,0 +1,341 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Primary File Format &mdash; camps 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="CAMPS Metadata Standards" href="../camps_metadata_standards/metadata.html" />
+    <link rel="prev" title="Towards a new NetCDF-CAMPS Standard" href="../netcdf_CAMPS_standard.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../netcdf_CAMPS_standard.html">Towards a new NetCDF-CAMPS Standard</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Primary File Format</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#use-of-the-cf-convention">Use of the CF-Convention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#use-of-netcdf-classic-ld">Use of NetCDF-Classic-LD</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../camps_metadata_standards/metadata.html">CAMPS Metadata Standards</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Netcdf_CAMPS_Structure.html">NetCDF-CAMPS Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical/index.html">CAMPS Techinical description</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../netcdf_CAMPS_standard.html">Towards a new NetCDF-CAMPS Standard</a> &raquo;</li>
+        
+      <li>Primary File Format</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/primary_file_format/formats.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="primary-file-format">
+<h1>Primary File Format<a class="headerlink" href="#primary-file-format" title="Permalink to this headline">¶</a></h1>
+<p>Network Common Data Format (NetCDF) will be used as the primary CAMPS file
+format, as it supports the creation, access, and sharing of array-oriented
+scientific data.  In addition, NetCDF also offers a self-describing data format
+with more flexibility than other widely used table driven formats such as
+TDLPACK or Gridded Binary (GRIB).   Also, NetCDF seems to have more widespread
+support within the StatPP community than other self-describing data formats
+like Hierarchical Data Format (HDF).</p>
+<div class="section" id="use-of-the-cf-convention">
+<h2>Use of the CF-Convention<a class="headerlink" href="#use-of-the-cf-convention" title="Permalink to this headline">¶</a></h2>
+<p>Within the netCDF family, CAMPS has adopted the NetCDF Climate and Forecast
+(netCDF-CF) conventions format.  NetCDF-CF shares common goals with CAMPS,
+including the processing and sharing of netCDF files and facilitating data
+exchange.  NetCDF-CF also provides a controlled vocabulary that guides the
+specification of metadata, as well as other spatial and temporal properties of
+variables commonly used in StatPP datasets.</p>
+<p>First and foremost, a netCDF-CAMPS file must comply with both the netCDF
+standard and the associated CF conventions (<a class="reference external" href="http://cfconventions.org/">http://cfconventions.org/</a>).
+<strong>The CF conventions recommend the file extension “.nc” and imposes no other
+restrictions on file names.</strong> Similarly, netCDF-CAMPS imposes no further
+restrictions on variable names or dimensions beyond those established for CF.</p>
+<p>Similar to the CF convention, most of the requirements for <strong>netCDF-CAMPS</strong> are
+focused on the use of attributes, ancillary variables, and auxiliary coordinate
+variables to adequately describe the metadata associated with StatPP variables.
+We also recommend the use of a global attribute “Conventions” which should
+include the string “CAMPS-1.0” to indicate compliance with this profile. Since
+all files that follow the CAMPS application profile also follow the netCDF-CF
+Conventions, the conventions attribute should also contain the appropriate CF
+string (Ex: Conventions = “CF-1.7 CAMPS 1.0”).</p>
+<p>Guidelines for Construction of CF Standard Names &lt;<a class="reference external" href="http://cfconventions.org/Data/cf-standard-names/docs/guidelines.html">http://cfconventions.org/Data/cf-standard-names/docs/guidelines.html</a>&gt;`_
+provides background for how CF Standard Names are constructed and how new prototype
+standard names should be developed.  Included in this description are
+Transformations which are Standard Names constructed via other Standard Names.
+There are cases where there are no CF Standard Names or Transformations that
+adequately describe the given StatPP variable, method, or process. In CAMPS when
+development of a new Transformation or Standard Name is necessary, we declare an
+attribute named <strong>prototype_standard_name</strong> as well as provide the most relevant
+CF Standard Name to the given variable, method, or process. the. This conveys our
+intent while maintaining conformity with the current standard.</p>
+</div>
+<div class="section" id="use-of-netcdf-classic-ld">
+<h2>Use of NetCDF-Classic-LD<a class="headerlink" href="#use-of-netcdf-classic-ld" title="Permalink to this headline">¶</a></h2>
+<p>NetCDF-CAMPS makes use of Linked Data (LD) for encoding and publishing data
+wherever possible.  We follow the netCDF Classic Linked Data standard (netCDF-LD)
+(<a class="reference external" href="http://docs.opengeospatial.org/DRAFTS/19-002.html">http://docs.opengeospatial.org/DRAFTS/19-002.html</a> – see section 6).
+One key aspect of netCDF-LD that CAMPS takes advantage of is the mapping of
+global and variable attributes within a NetCDF-CAMPS file to Uniform Resource
+Identifiers (URIs), using prefixes and aliases.  Following the netcdf-LD
+guidelines will allow NetCDF-CAMPS files to be represented within the Resource
+Description Framework (RDF).  This furthers the versatility goal of CAMPS by
+allowing the use of other linked data technologies.</p>
+<p>An example of how NetCDF-CAMPS utilizes the prefix and alias aspect of netcdf-LD
+follows.  The user should specify group attributes which specify the necessary
+prefixes within the file.</p>
+<p>Prefix definition and use: (from section 6.3.3
+(<a class="reference external" href="http://docs.opengeospatial.org/DRAFTS/19-002.html">http://docs.opengeospatial.org/DRAFTS/19-002.html</a>).</p>
+<p>“A prefix is declared using a name-value-pair that associates a short name
+(e.g. cf, bald), with a URI. A single prefix declaration is an attribute and a
+value: the attribute name is the prefix name and the attribute value is the full
+URI for that prefix.”</p>
+<p>The ‘double underscore’ character pair: __ is used as an identifier and as the
+termination of the prefix; the double underscore is part of the prefix.</p>
+<p><strong>The following is CDL output showing the prefixes from a NetCDF-CAMPS file:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span>  <span class="n">group</span><span class="p">:</span> <span class="n">prefix_list</span> <span class="p">{</span>
+<span class="o">|</span>   <span class="o">//</span> <span class="n">group</span> <span class="n">attributes</span><span class="p">:</span>
+<span class="o">|</span>            <span class="p">:</span><span class="n">StatPP__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/&quot;</span> <span class="p">;</span>
+<span class="o">|</span>            <span class="p">:</span><span class="n">OM2__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/&quot;</span> <span class="p">;</span>
+<span class="o">|</span>            <span class="p">:</span><span class="n">SOSA__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/sosa/&quot;</span> <span class="p">;</span>
+<span class="o">|</span>            <span class="p">:</span><span class="n">OM__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/sosa/&quot;</span> <span class="p">;</span>
+<span class="o">|</span>            <span class="p">:</span><span class="n">PROV__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/prov/#&quot;</span> <span class="p">;</span>
+<span class="o">|</span>            <span class="p">:</span><span class="n">StatppUncertainty__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/Uncertainty&quot;</span> <span class="p">;</span>
+<span class="o">|</span>   <span class="p">}</span> <span class="o">//</span> <span class="n">group</span> <span class="n">prefix_list</span>
+<span class="o">|</span>  <span class="p">}</span>
+</pre></div>
+</div>
+<p>These prefixes are utilized to link metadata within a variable to web
+documentation. The following is CDL output for a NetCDF-CAMPS file that shows
+how a prefix can be used to link a variables metadata to a NWS codes registry entry.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span><span class="n">double</span> <span class="n">Temp_instant_700_21600</span><span class="p">(</span><span class="n">default_time_coordinate_size</span><span class="p">,</span> <span class="n">number_of_stations</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span> <span class="p">;</span>
+<span class="o">|</span>          <span class="n">Temp_instant_700_21600</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+<span class="o">|</span>          <span class="n">Temp_instant_700_21600</span><span class="p">:</span><span class="n">OM__observedProperty</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Met/Temp/Temp&quot;</span> <span class="p">;</span>
+<span class="o">|</span>          <span class="n">Temp_instant_700_21600</span><span class="p">:</span><span class="n">grid_mapping</span> <span class="o">=</span> <span class="s2">&quot;polar_stereographic&quot;</span> <span class="p">;</span>
+<span class="o">|</span>          <span class="n">Temp_instant_700_21600</span><span class="p">:</span><span class="n">SOSA__usedProcedure</span> <span class="o">=</span> <span class="s2">&quot;( GFSModProcStep1 GFSModProcStep2 LinSmooth BiLinInterp )&quot;</span> <span class="p">;</span>
+<span class="o">|</span>          <span class="n">Temp_instant_700_21600</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;temperature instant at 2m&quot;</span> <span class="p">;</span>
+<span class="o">|</span>          <span class="n">Temp_instant_700_21600</span><span class="p">:</span><span class="n">filepath</span> <span class="o">=</span> <span class="s2">&quot;/scratch3/NCEPDEV/mdl/Emily.Schlie/inputfiles/greg_test/gfs0020160700.nc&quot;</span> <span class="p">;</span>
+<span class="o">|</span>          <span class="n">Temp_instant_700_21600</span><span class="p">:</span><span class="n">ancillary_variables</span> <span class="o">=</span> <span class="s2">&quot;OM__phenomenonTimeInstant OM__resultTime ValidTime FcstRefTime LeadTime GFSModProcStep1 GFSModProcStep2 LinSmooth BiLinInterp &quot;</span> <span class="p">;</span>
+<span class="o">|</span>          <span class="n">Temp_instant_700_21600</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;plev0 station&quot;</span> <span class="p">;</span>
+<span class="o">|</span>          <span class="n">Temp_instant_700_21600</span><span class="p">:</span><span class="n">FcstTime_hour</span> <span class="o">=</span> <span class="mi">21600</span><span class="n">LL</span> <span class="p">;</span>
+<span class="o">|</span>          <span class="n">Temp_instant_700_21600</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;air_temperature&quot;</span> <span class="p">;</span>
+<span class="o">|</span>          <span class="n">Temp_instant_700_21600</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;K&quot;</span> <span class="p">;</span>
+</pre></div>
+</div>
+<p>In the CDL output above OM__observedProperty is set to the path
+StatPP__Data/Met/Temp/Temp.  <a href="#id1"><span class="problematic" id="id2">StatPP__</span></a> has been given the prefix definition of
+<a class="reference external" href="http://codes.nws.noaa.gov/StatPP/">http://codes.nws.noaa.gov/StatPP/</a>.  Thus if one replaces the prefix with it’s
+definition they get the full URI to the codes registry entry for temperature –
+<a class="reference external" href="http://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp">http://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp</a>.  This same technique can
+also be applied to the other part of the bolded CDL output above
+“OM__observedProperty”.  By replacing <a href="#id1"><span class="problematic" id="id3">OM__</span></a> with it’s prefix definition, the user
+will be directed to <a class="reference external" href="http://www.w3.org/ns/sosa/observedProperty">http://www.w3.org/ns/sosa/observedProperty</a>, which is the
+documentation describing O&amp;M observedProperty.</p>
+<p>The user is encouraged to read through the entirety of section 6 within the
+“OGC Encoding Linked Data Graphs in NetCDF Classic Files” documentation and
+apply these techniques whenever possible when creating and processing
+Netcdf-CAMPS data files.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../camps_metadata_standards/metadata.html" class="btn btn-neutral float-right" title="CAMPS Metadata Standards" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../netcdf_CAMPS_standard.html" class="btn btn-neutral float-left" title="Towards a new NetCDF-CAMPS Standard" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Sep 30, 2020.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

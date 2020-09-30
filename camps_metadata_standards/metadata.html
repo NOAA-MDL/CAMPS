@@ -1,0 +1,338 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>CAMPS Metadata Standards &mdash; camps 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="NetCDF-CAMPS Structure" href="../Netcdf_CAMPS_Structure.html" />
+    <link rel="prev" title="Primary File Format" href="../primary_file_format/formats.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../netcdf_CAMPS_standard.html">Towards a new NetCDF-CAMPS Standard</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../primary_file_format/formats.html">Primary File Format</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">CAMPS Metadata Standards</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#iso-standards">ISO standards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#w3c-standards">W3C standards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#integration-of-user-defined-concepts">Integration of user-defined concepts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Netcdf_CAMPS_Structure.html">NetCDF-CAMPS Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical/index.html">CAMPS Techinical description</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../netcdf_CAMPS_standard.html">Towards a new NetCDF-CAMPS Standard</a> &raquo;</li>
+        
+      <li>CAMPS Metadata Standards</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/camps_metadata_standards/metadata.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="camps-metadata-standards">
+<h1>CAMPS Metadata Standards<a class="headerlink" href="#camps-metadata-standards" title="Permalink to this headline">¶</a></h1>
+<p>A number of attributes that will be used in netCDF-CAMPS have their origins in
+vocabularies that are external to netCDF and the CF conventions. One of the key
+motivations in establishing netCDF-CAMPS has been to develop a well-defined
+template for incorporating these very rich external vocabularies into files
+that conform to netCDF-CF. Since netCDF-CAMPS is intended to support StatPP
+specifically, we focus on vocabularies that have been useful for this work in
+the past. Sections 3.2.0 through 3.2.3 outline the vocabularies utilized in CAMPS
+and our justification for including them.</p>
+<p>As a starting point, CAMPS has adopted the use of the International Organization
+of Standards (ISO) standard for Observation and Measurements (O&amp;M), ISO 19156.
+This introduces a data model and a controlled vocabulary that is useful for the
+description of both observations and forecasts of a given StatPP variable within
+NetCDF-CF.  Many elements can be easily recognized and the terminology is
+designed to apply across disciplines.</p>
+<p>CAMPS will also make use of other international standards, which include
+additional data models and vocabularies that are web-accessible. The inclusion
+of these standards will help simplify atmospheric science applications and
+promote more widespread acceptance of CAMPS as “community” code.  These
+standards include a data model for the ontology of provenance information
+(PROV-O; [PROV]) and the Semantic Sensor Network Ontology [SSN] developed by
+the World Wide Web Consortium (W3C). SSN also includes a simple core ontology
+named SOSA (Sensor, Observation, Sample, and Actuator).  Many of the key
+concepts found in O&amp;M have been integrated into SSN in formats that are hosted
+on the web (<a class="reference external" href="https://www.w3.org/2015/spatial/wiki/Alignment_to_O%26M">https://www.w3.org/2015/spatial/wiki/Alignment_to_O%26M</a>).  In many
+cases, the W3C vocabularies express these key concepts in a simpler, more
+compact format.  In addition, the W3C models also seem a bit more stable and
+robust than O&amp;M.</p>
+<div class="section" id="iso-standards">
+<h2>ISO standards<a class="headerlink" href="#iso-standards" title="Permalink to this headline">¶</a></h2>
+<p>The International Organization of Standards (ISO) is the world’s largest
+developer of international standards, they facilitate world trade by providing
+common standards between nations.  Today, some 20,000 standards have been set
+by ISO.  Of particular importance, the WMO, OGC, and ICAO have all adopted the
+use of ISO standards for Observations and Measurements (ISO 19156) and Metadata
+(TC211) for key applications. These standards are very relevant for weather
+data, so it  seems appropriate for us to illustrate the use of these concepts
+in netCDF attribute names.</p>
+<p><strong>OM_Observation:</strong></p>
+<p>It may appear counterintuitive to apply the O&amp;M standard when encoding data that
+are forecasts. Despite its name, the O&amp;M class (OM_Observation) is remarkably
+well suited to the representation of forecasts as well as observations.
+Meteorological examples of forecasts include NWP and StatPP output and Terminal
+Aerodrome Forecasts (TAFs).  Meteorological examples of observations include
+analyses, METARs, and Pilot Reports</p>
+<p>The <strong>OM_Observation</strong> class provides a framework to describe the event of an
+observation or measurement. In O&amp;M, an observation is defined as: <em>“An event
+that results in an estimation of the value (the result) of a property
+(the observed property) of some entity (the feature of interest) using a
+specified procedure”.</em></p>
+<p>The <strong>procedure</strong> that estimates a temperature value at some
+point on the earth could be a human reading a mercury-in-glass thermometer, an
+automated observing platform reading a voltage from a sensor, or an NWP system
+running on a supercomputer. All three are procedures; all can estimate
+temperature values. Thus, one can consider the difference between an observation
+and a forecast to be a difference in the estimating procedure used.</p>
+<p>Several model elements used in O&amp;M are defined in other ISO geographic
+information standards. With the exception of basic data type classes, the names
+of Unified Modeling Language (UML) classes (within ISO/TC 211) include a two or
+three letter prefix that identifies the relevant international standard and the
+UML package in which the class is defined. (Ex: “OM” would be the international
+standard and “ObservedProperty” would be the class.  Together this is OM_ObservedProperty).
+UML can be thought of as thesuccessor to object-oriented (OO) analysis and design.  An object contains both
+data and methods that control the data. The data represents the state of the
+object. A class describes an object and also forms a hierarchy to model the
+real-world system.</p>
+</div>
+<div class="section" id="w3c-standards">
+<h2>W3C standards<a class="headerlink" href="#w3c-standards" title="Permalink to this headline">¶</a></h2>
+<p>The World Wide Web Consortium (W3C) is an international community of members
+that work together to develop web standards.  The W3C has developed two standards
+that are useful for StatPP applications. They are the <strong>ontology for provenance
+information (PROV-O; [PROV])</strong> and the <strong>Semantic Sensor Network Ontology [SSN]</strong>.
+SSN includes a core ontology named <strong>SOSA (Sensor, Observation, Sample, and Actuator)</strong>.
+Many of the key concepts found in O&amp;M have been integrated into SSN in formats
+that are hosted on the web.</p>
+<p>Many of the attributes used in netcdf-CAMPS are rooted in PROV-O and SSN/SOSA.
+There are a number of reasons why netCDF-CAMPS makes use of both SSN/SOSA and PROV-O, they are:</p>
+<ul class="simple">
+<li><p>Helps promote a more widespread acceptance of our “community” code by incorporating other data models already in use outside the U.S. and which are hosted on the Web (supported by XML).</p></li>
+<li><p>The W3C vocabularies incorporate many key concepts of OM in a simpler, more compact format.</p>
+<ul>
+<li><p>This simplicity is especially useful when describing dataset provenance and lineage; OM constructs (LI,LE classes) are very cumbersome when trying to describe multi-step processes.</p></li>
+<li><p>Furthermore, some essential properties that are necessary to accurately describe meteorological and StatPP variables are not available within the O&amp;M vocabulary, specifically with regards to time variables.</p></li>
+</ul>
+</li>
+<li><p>The W3C models seem a bit more stable and robust than O&amp;M.</p></li>
+</ul>
+</div>
+<div class="section" id="integration-of-user-defined-concepts">
+<h2>Integration of user-defined concepts<a class="headerlink" href="#integration-of-user-defined-concepts" title="Permalink to this headline">¶</a></h2>
+<p>Data producers who use NetCDF-CAMPS should give preference to concepts published
+by the WMO and other Standards Development Organizations wherever possible.
+However, in many cases, data producers will need to identify concepts that fall
+exclusively within their provenance. Examples include data processing techniques
+that are not widely used, weather element definitions that are not widely
+accepted, etc. For these cases, the data producer should define and publish, in
+some manner, a number of URIs that identify and document these concepts. The
+preferred solution would be for the data producer to make this information
+web-accessible and machine readable. The WMO Code Registry (<a class="reference external" href="http://codes.wmo.int">http://codes.wmo.int</a>)
+and the NWS Code Registry (<a class="reference external" href="https://codes.nws.noaa.gov">https://codes.nws.noaa.gov</a>) both provide these capabilities.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Netcdf_CAMPS_Structure.html" class="btn btn-neutral float-right" title="NetCDF-CAMPS Structure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../primary_file_format/formats.html" class="btn btn-neutral float-left" title="Primary File Format" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Sep 30, 2020.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

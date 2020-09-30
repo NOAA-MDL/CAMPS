@@ -1,0 +1,262 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Encoding MOS forecasts (“bulletins”) in CAMPS &mdash; camps 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../netcdf_CAMPS_standard.html">Towards a new NetCDF-CAMPS Standard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Netcdf_CAMPS_Structure.html">NetCDF-CAMPS Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical/index.html">CAMPS Techinical description</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Encoding MOS forecasts (“bulletins”) in CAMPS</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/application_mos/bulletins.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="encoding-mos-forecasts-bulletins-in-camps">
+<h1>Encoding MOS forecasts (“bulletins”) in CAMPS<a class="headerlink" href="#encoding-mos-forecasts-bulletins-in-camps" title="Permalink to this headline">¶</a></h1>
+<p>Model Output Statistics (MOS) products issued by the US National Weather Service (NWS) include a diverse set of weather elements.
+Many of these weather elements would be readily recognized by any meteorologist.
+Others, however, have been specialized to accommodate NWS operations.
+Here, we describe the application of CAMPS data encoding principles to MOS forecasts.</p>
+<div class="sidebar">
+<p class="sidebar-title">Why “bulletins?”</p>
+<p>The original MOS forecasts were disseminated via teletype.  The forecasts were encoded into alphanumeric characters and arranged in rows and columns to facilitate transmission.  A current bulletin can be found at  <a class="reference external" href="http://www.nws.noaa.gov/cgi-bin/mos/getmav.pl?sta=KBWI">this URL,</a>  and a guide for interpretation is : <a class="reference external" href="http://www.nws.noaa.gov/mdl/synop/mavcard.php">here.</a></p>
+<p>While dissemination technologies have changed radically, many of the weather element definitions have persisted.</p>
+</div>
+<div class="section" id="in-general">
+<h2>In general…<a class="headerlink" href="#in-general" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Entries for OM__observedProperty should match the general ones used for observations where possible.</p></li>
+<li><p>A MOS temperature forecast is still a temperature. It used a specific process and came from a specific source.</p></li>
+<li><p>Entries for categorical and discrete probabilities should follow the guidelines documented in the application profile.</p></li>
+<li><p>The evaluation of one or more MOS equations is a procedure.</p></li>
+<li><p>The version of equations used are documented in a PROV__used attribute.</p></li>
+</ul>
+<p>Once the user is at the point of looking at a forecast bulletin, carrying all of the history of the development process (back to the original model data, before the regression) is probably unnecessary.
+An individual MOS netCDF bulletin will contain forecasts of several elements; parameter files for each of these will have been developed/implemented at different times.
+Information about the particular MOS “version” can be conveyed via the Registry entry under /statPP/source.
+The NCO operational release notes can be linked here.  However, these don’t usually contain much in the way of detailed scientific information about the development process for individual weather elements.
+We may or may not want the MOS version entry to be a collection containing entries for each of the elements developed/upgraded with the implementation.</p>
+<p>Metadata properties:</p>
+<p>One OM_observedProperty for each forecast element.  This should be easy and mostly nailed down already.
+PROV_used can point to a Registry entry for the particular MOS “version”.
+SOSA_usedProcedure will delineate a sequence of procedure steps.  Some weather elements will be as simple as “take model-forecast values of predictors, evaluate the parameter file, generate forecast values”.  Other elements will need post-processing steps (i.e. T/Td consistency, additive law, etc.), or a categorical forecast generation (threshold evaluation) step.
+MSA post-meeting thought:  since the categorical forecast step references what today is a separate parameter file (containing thresholds), is this a second, separate entry for PROV_used?  Or should this information be folded into the Registry entry for the particular MOS version?</p>
+<p>Random thoughts, seeking organization…</p>
+<p>What should procedures look like for MOS elements?</p>
+<p>T, Td, Wspd, WDir, Gust
+PROV__Activity = StatPP__Methods/Stat/EvalMLREq
+PROV__Used = <a class="reference external" href="https://codes.nws.noaa.gov/StatPP/Methods/Stat/MOS/GFSMOS/010501">https://codes.nws.noaa.gov/StatPP/Methods/Stat/MOS/GFSMOS/010501</a>
+PROV__Activity = StatPP__Methods/QC/TempQC</p>
+<p>MaxT, MinT
+NetCDF Cell Methods can express a continual max/min over a span of time.  The details of those spans of time are annoying.  Another solution would be to define a new observedProperty named something like NWSZFPMaxT.  Then, we could code phenomenon times in a simple, sane way, and let the Codes Registry explain all of the silliness.</p>
+<p>SOSA__observedProperty = NWSZFPMaxT
+PROV__Activity = StatPP__Methods/Stat/EvalMLREq
+PROV__Used = <a class="reference external" href="https://codes.nws.noaa.gov/StatPP/Methods/Stat/MOS/GFSMOS/010501">https://codes.nws.noaa.gov/StatPP/Methods/Stat/MOS/GFSMOS/010501</a>
+PROV__Activity = StatPP__Methods/QC/MOS/EnfTTdCons
+PROV__Activity = StatPP__Methods/QC/MOS/EnfTMxMnCons</p>
+<p>Categorical probs
+Discrete event probs</p>
+<p>What’s the observed property/procedure for ceiling?</p>
+<p>How to handle Max/Min Temps?
+We’ve spent some time on probabilities.  We’ll see how well it works.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Sep 30, 2020.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

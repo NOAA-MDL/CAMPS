@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3. Description of the data &mdash; camps 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../netcdf_CAMPS_standard.html">Towards a new NetCDF-CAMPS Standard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Netcdf_CAMPS_Structure.html">NetCDF-CAMPS Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical/index.html">CAMPS Techinical description</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>3.  Description of the data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/application_profile_OLD/description_data.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="description-of-the-data">
+<h1>3.  Description of the data<a class="headerlink" href="#description-of-the-data" title="Permalink to this headline">¶</a></h1>
+<p>The reader who is unfamiliar with netCDF-CAMPS is encouraged to review WISPS Overview, especially the sections on metadata concepts, as well as the WMO’s Guidelines on Data Modelling for WMO Codes [DMWMO].
+These documents provide key foundational information for the conventions that follow.</p>
+<div class="section" id="syntax-for-integration-of-externally-defined-vocabularies">
+<h2>3.1 Syntax for integration of externally-defined vocabularies<a class="headerlink" href="#syntax-for-integration-of-externally-defined-vocabularies" title="Permalink to this headline">¶</a></h2>
+<p>A number of attributes that will be used in netCDF-CAMPS have their origins in vocabularies that are external to netCDF and the CF conventions.
+Indeed, one of the key motivations in establishing netCDF-CAMPS has been to develop a well-defined template for incorporating these very rich external vocabularies into files that conform to netCDF-CF.
+Coincidentally, the OGC’s netCDF Standards Working Group (SWG) has been developing a NetCDF Classic Linked Data encoding standard [NETCDFLD].
+Where possible, CAMPS 2.0 complies with this emerging standard.
+Since netCDF-CAMPS is intended to support StatPP specifically, the following sections focus on vocabularies that have proven to be useful for this work in the past.</p>
+<div class="section" id="integration-of-iso-standards">
+<h3>3.1.1 Integration of ISO standards<a class="headerlink" href="#integration-of-iso-standards" title="Permalink to this headline">¶</a></h3>
+<p>The WMO, OGC, and ICAO have all adopted the ISO standards for Observations and Measurements and Metadata for key applications.
+This applies to products that have been traditionally described as both observations (e.g., analyses, METARs, Pilot Reports) and forecasts (e.g., NWP and StatPP output, TAFs).
+Thus, it seems appropriate for us to illustrate the use of these concepts in netCDF attribute names.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some find it counter-intuitive to apply the O&amp;M standard when encoding data that are forecasts.
+Despite its name, the O&amp;M class named OM_Observation is remarkably well suited to the representation of forecasts as well as observations.
+The OM_Observation class provides a framework to describe the event of an observation or measurement.
+In O&amp;M, an observation is defined as an event that results in an estimation of the value (the result) of a property (the observed property) of some entity (the feature of interest) using a specified procedure.</p>
+<p>E.g., the procedure that estimates the temperature value at some point on the earth could be a human reading a mercury-in-glass thermometer, an automated observing platform reading a voltage from a sensor, or an NWP system running on a supercomputer.
+All three are procedures; all can estimate temperature values.
+Thus, one can consider the difference between an observation and a forecast to be a difference in the estimating process used.</p>
+</div>
+<p>Model element names that are defined within the ISO Geographic information/Geomatics (ISO Technical Committee [TC] 211) series are assigned to UML classes.
+The model element names are case sensitive and contain no whitespace.
+They use “terminology…designed to apply across disciplines,” and the terminology does not “correspond precisely with any single discipline.”
+This leads to some important variations between ISO standard terminology and common meteorological practice.
+These variations are noted elsewhere in this document.
+The UML classes are associated with packages within the ISO documents.
+“By convention within ISO/TC 211, names of UML classes…include a two or three letter prefix that identifies the International Standard and the UML package in which the class is defined.”
+E.g., the Observation and Measurements [O&amp;M] class has the prefix OM; the Lineage class [MD1 and MD2] has the prefix LI; and the Extended Lineage class has the prefix LE.
+Examples of model element names include phenomenonTime, procedure, and Source.
+We note that capitalization patterns seem to vary somewhat among the documents.</p>
+<p>The World Wide Web Consortium (W3C) has developed two standards that seem to be useful for StatPP applications.
+They are the ontology for provenance information (PROV-O; [PROV]) and the Semantic Sensor Network Ontology [SSN].
+SSN includes a core ontology named SOSA (Sensor, Observation, Sample, and Actuator).
+Many of the key concepts found in OM have been integrated into SSN in formats that are hosted on the web.</p>
+<p>In netCDF-CAMPS, attributes based on these concepts will have names that concatenate the prefix, two underscore characters, and the model element name.
+The double underscore allows CAMPS to integrate the features of netCDF-Classic-LD.
+Thus, the attribute based on the model element phenomenonTime (in the Observations and Measurements package) is named OM__phenomenonTime.
+Also, the attribute based on the ontology element prov:Activity (in the PROV-O ontology) is named PROV__Activity.</p>
+<p>In at least one case, the SSN/SOSA vocabulary deviates slightly from OM (i.e., usedProcedure vs. procedure).
+The CAMPS encodings described here will use the <a href="#id1"><span class="problematic" id="id2">OM__</span></a> prefix to designate comcepts that had their origin in OM.
+In most cases, the associated attribute name or value will resolve to a concept hosted within SSN or SOSA.
+A different prefix (<a href="#id1"><span class="problematic" id="id3">OM2__</span></a> or <a href="#id1"><span class="problematic" id="id4">SSN__</span></a> or <a href="#id1"><span class="problematic" id="id5">SOSA__</span></a>) will be used when a single CAMPS-encoded file must reference two or more of these resources.</p>
+</div>
+<div class="section" id="integration-of-concepts-defined-by-data-producers">
+<h3>3.1.2 Integration of concepts defined by data producers<a class="headerlink" href="#integration-of-concepts-defined-by-data-producers" title="Permalink to this headline">¶</a></h3>
+<p>In many cases, data producers will need to identify concepts that fall exclusively within their provenance.
+Examples include data processing techniques that are not widely used, weather element definitions that are not widely accepted,  etc.
+For these cases, the data producer should define and publish, in some manner, a number of URIs that identify and document these concepts.
+One preferred solution, of course would be for the data producer to make these data web-accessible and machine readable.
+The WMO Code Registry (<a class="reference external" href="http://codes.wmo.int">http://codes.wmo.int</a>) and the NWS Code Registry (<a class="reference external" href="https://codes.nws.noaa.gov">https://codes.nws.noaa.gov</a>) both provide these capabilities.</p>
+</div>
+<div class="section" id="integration-of-vocabularies-controlled-by-wmo">
+<h3>3.1.3 Integration of vocabularies controlled by WMO<a class="headerlink" href="#integration-of-vocabularies-controlled-by-wmo" title="Permalink to this headline">¶</a></h3>
+<p>Data producers who use NetCDF-CAMPS should give preference to concepts published by the WMO and other Standards Development Organizations wherever possible.</p>
+</div>
+</div>
+<div class="section" id="primary-and-ancillary-variables">
+<h2>3.2 Primary and ancillary variables<a class="headerlink" href="#primary-and-ancillary-variables" title="Permalink to this headline">¶</a></h2>
+<p>We quote here from NCU:</p>
+<blockquote>
+<div><p>A netCDF file typically contains several variables. Some of these may depend on others, i.e. contain ancillary information referred to or qualifying concepts encoded by other variables…</p>
+<p>Dually, netCDF-U files may declare a primary_variables global attribute, whose value is a white-separated list of variable identifiers.</p>
+<p>The intended use of the primary_variables attribute is to support applications in directly accessing their presumable data of interest, particularly since netCDF-U files are likely to contain a large number of ancillary variables, as in the example below.</p>
+</div></blockquote>
+<p>The sections below will describe a number of best practices that involve ancillary variables and auxiliary coordinate variables.  Most netCDF-CAMPS files will contain many ancillary variables that are used to fully describe the complexities of time, properties, and procedures used.  This makes the use of the primary_variables global attribute especially useful.</p>
+<blockquote>
+<div><p><strong>Best Practice:</strong>  <em>A netCDF-CAMPS file should declare a global attribute named primary_variables and assign it the value of a whitespace-separated list of variable identifiers.  This attribute will help data consumers identify presumable data of interest.</em></p>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>//  global attributes:
+   :primary_variables = “mos_temperature mos_pop06”;
+</pre></div>
+</div>
+</div>
+<div class="section" id="observed-property-and-procedure">
+<h2>3.3  Observed property and procedure<a class="headerlink" href="#observed-property-and-procedure" title="Permalink to this headline">¶</a></h2>
+<p>The CF conventions introduce the attributes standard_name and long_name to standardize the concepts of what is observed/forecast and how it was processed.
+The standard_name is a controlled vocabulary, and long_name is intended to be human-readable.
+NetCDF-CAMPS maintains these two attributes and introduces two additional concepts–OM__observedProperty and OM__procedure (or, equivalently, SOSA__usedProcedure).
+Our intent is to facilitate data discovery, provide explicit linkages to widely-accepted standards outside the atmospheric/oceanic/space weather domains, and uses widely-accepted standards to enhance our metadata.
+StatPP applications frequently apply complex procedures to datasets, and this increases the importance of these metadata entries.</p>
+<div class="section" id="om-observedproperty-and-om-procedure-sosa-usedprocedure">
+<h3>OM__observedProperty and OM__procedure (SOSA__usedProcedure)<a class="headerlink" href="#om-observedproperty-and-om-procedure-sosa-usedprocedure" title="Permalink to this headline">¶</a></h3>
+<p>The O&amp;M definitions of OM__observedProperty and OM__procedure (SOSA__usedProcedure) are quite abstract.
+Rather than quote them here, we recall that in O&amp;M an observation is an event that results in an estimation of the value (the result) of a property (OM__observedProperty) of some entity (the feature of interest) using a specified procedure (OM__procedure/SOSA__usedProcedure).
+We declare attributes with the names OM__observedProperty and OM__procedure (SOSA__usedProcedure) and assign them values that (eventually) resolve to URIs that contain complete information.
+(Ideally, the URIs will be web-accessible as well.)</p>
+<p>In simple cases, the OM__observedProperty and OM__procedure (SOSA__usedProcedure) may seem to be redundant with standard_name and long_name.
+That said, StatPP applications often define parameters (e.g., sine of the day of the year) that are useful in the development phase, but will not be disseminated.
+In these instances, careful use of OM__observedProperty and OM__procedure (SOSA__usedProcedure) can yield a number of benefits.</p>
+<ul>
+<li><p>It can thoroughly document the origins of a variable.</p></li>
+<li><p>It can enhance data exchange among StatPP development organizations.</p></li>
+<li><p>It can improve the quality and utility of data archives.</p>
+<p><strong>Best Practice:</strong>  <em>All primary variables in a netCDF-CAMPS dataset should have an attribute named OM__observedProperty declared with a value that is a URI.  This URI will refer to a clear description of the property contained in the variable.  The URI need not describe any procedures performed to obtain the results contained in the variable.  The procedure description is better contained in OM__procedure (SOSA__usedProcedure), below.  Ideally, the URI will be web-accessible.</em></p>
+<p><strong>Best Practice:</strong>  <em>All primary variables in a netCDF-CAMPS dataset should have an attribute named OM__procedure (or, equivalently, SOSA__usedProcedure) declared with a value of the form “(v1 v2 v3 … vn)” where n is a non-zero integer.
+The tokens v1, etc. will name ancillary variables whose attributes describe the numbered steps of the procedure.
+The names of these attributes should be taken from MD1, MD2, and PROV.
+The attribute PROV__Activity should always appear with a value that is a URI.
+This URI will refer to a clear description of that processing step.
+Other attributes found in MD1, MD2, and PROV are permitted (e.g., PROV__Used, LI__ProcessStep.rationale, LI__ProcessStep.dateTime, LE__Processing.softwareReference, LE__Algorithm.citation.edition, LE__Algorithm.citation.editionDate, LE__Processing.runTimeParameters).</em></p>
+</li>
+</ul>
+<p>Data producers should include sufficient detail in the OM__procedure (SOSA__usedProcedure) steps to adequately describe the data contained in the variable and distinguish it from other, similar variables and otherwise identical variables contained in other datasets.
+Judicious use of these attributes can add key metadata to a netCDF-CAMPS database and facilitate collaboration.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Sep 30, 2020.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

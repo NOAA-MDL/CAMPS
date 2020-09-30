@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Observed Property and Used Procedure &mdash; camps 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Geospatial Coordinates" href="../Coordinates/geo_coords.html" />
+    <link rel="prev" title="Primary and Ancillary Variables" href="../P_A_variables/variables.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../netcdf_CAMPS_standard.html">Towards a new NetCDF-CAMPS Standard</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Netcdf_CAMPS_Structure.html">NetCDF-CAMPS Structure</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Attributes/attribute_names.html">Attribute Names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../P_A_variables/variables.html">Primary and Ancillary Variables</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Observed Property and Used Procedure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#om-observedproperty">OM_observedProperty</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sosa-usedprocedure">SOSA_usedProcedure</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Coordinates/geo_coords.html">Geospatial Coordinates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Coordinates/time_coords.html">Time Coordinates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Equations/equat.html">Equation output files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical/index.html">CAMPS Techinical description</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../Netcdf_CAMPS_Structure.html">NetCDF-CAMPS Structure</a> &raquo;</li>
+        
+      <li>Observed Property and Used Procedure</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/Observed_Property_Used_Procedure/OP_UP.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="observed-property-and-used-procedure">
+<h1>Observed Property and Used Procedure<a class="headerlink" href="#observed-property-and-used-procedure" title="Permalink to this headline">¶</a></h1>
+<p>NetCDF-CAMPS requires the two attributes <strong>standard_name</strong> and <strong>long_name</strong>, which are
+introduced in CF-conventions, to standardize the concepts of what is observed/forecast
+and how it was processed.</p>
+<p><strong>Standard_name</strong> is a controlled vocabulary (<a class="reference external" href="http://cfconventions.org/Data/cf-standard-names/65/build/cf-standard-name-table.html">http://cfconventions.org/Data/cf-standard-names/65/build/cf-standard-name-table.html</a>).</p>
+<p><strong>Long_name</strong> is intended to be human-readable.</p>
+<p>NetCDF-CAMPS also introduces two additional concepts;
+<strong>OM__observedProperty</strong> and <strong>SOSA__usedProcedure</strong>. Our intent is to facilitate data
+discovery, provide explicit linkages to widely-accepted standards outside the
+atmospheric/oceanic/space weather domains, and use widely-accepted standards to
+enhance our metadata. StatPP applications frequently apply complex procedures to
+datasets, and this increases the importance of these metadata entries.</p>
+<p>Recall that in O&amp;M an observation is an event that results in an estimation of
+the value (the result) of a property (<em>OM__observedProperty</em>) of some entity
+(the feature of interest) using a specified procedure (<em>SOSA__usedProcedure</em>).</p>
+<p>In simple cases, the OM__observedProperty and SOSA__usedProcedure may seem to
+be redundant with standard_name and long_name. That said, StatPP applications
+often define parameters (e.g., sine of the day of the year) that are useful in
+the development phase, but will not be disseminated. In these instances,
+careful use of OM__observedProperty and SOSA__usedProcedure can yield a
+number of benefits.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>It can thoroughly document the origins of a variable.</p></li>
+<li><p>It can enhance data exchange among StatPP development organizations.</p></li>
+<li><p>It can improve the quality and utility of data archives.</p></li>
+</ul>
+</div></blockquote>
+<div class="section" id="om-observedproperty">
+<h2>OM_observedProperty<a class="headerlink" href="#om-observedproperty" title="Permalink to this headline">¶</a></h2>
+<p>All primary variables in a netCDF-CAMPS dataset should have an attribute named
+<strong>OM__observedProperty</strong> declared with a value that is a URI. This URI will refer
+to a clear description of the property contained in the variable. The URI need
+not describe any procedures performed to obtain the results contained in the
+variable. The procedure description is better contained in OM__procedure
+(SOSA__usedProcedure). Ideally, the URI will be web-accessible.</p>
+</div>
+<div class="section" id="sosa-usedprocedure">
+<h2>SOSA_usedProcedure<a class="headerlink" href="#sosa-usedprocedure" title="Permalink to this headline">¶</a></h2>
+<p>All primary variables in a netCDF-CAMPS dataset should have an attribute
+<strong>SOSA__usedProcedure</strong>, declared with a value of the form “(v1 v2 v3 … vn)”
+where n is a non-zero integer.</p>
+<p>The order of tokens should be in the same order that the procedures were performed.</p>
+<dl class="simple">
+<dt>Example:</dt><dd><ul class="simple">
+<li><p>For a single step: :SOSA__usedProcedure = “( firststep )”;</p></li>
+<li><p>For two steps: :SOSA__usedProcedure = “( firststep secondstep )”;</p></li>
+<li><p>For three steps: :SOSA__usedProcedure = “( firststep secondstep thirdstep )”;</p></li>
+<li><p>etc…</p></li>
+</ul>
+</dd>
+</dl>
+<p>The tokens v1, etc. will name ancillary variables which are written to the
+netCDF-CAMPS file as separate variables whose attributes describe the procedure.
+The names of these attributes should be taken from conformance class schemas found in PROV.
+When used, the attribute PROV__Activity should always appear with a value that
+is a URI. This URI will refer to a clear description of the processing step.
+Other attributes found in PROV are permitted (e.g., PROV__Used). PROV__Used describes
+little more than the ingest of the data. The first token in SOSA_usedProcdure should
+usually have a PROV__Used token.</p>
+<p>SOSA__usedProcedure step variables are typed short integer, have descriptive, human-readable
+long names, and have units of unity. Unil a more appropriate standard_name becomes available
+“source” should be used”.</p>
+<p>Data producers should include sufficient detail in the SOSA__usedProcedure steps
+to adequately describe the data contained in the variable and distinguish it
+from other, similar variables and otherwise identical variables contained in
+other datasets. Judicious use of these attributes can add key metadata to a
+netCDF-CAMPS database and facilitate collaboration. SOSA_usedProcedure should only
+document what a user has done to the data. If highly processed data is received
+from outside the users system OM_observedProperty in the ancillary variable metadata
+that points to a code registry entry that describes the external processing.</p>
+<p>SOSA__usedProcedure should not be used to convey a list of routines that were called.
+If needed, those details can be captured in the various entries in the codes registry.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Coordinates/geo_coords.html" class="btn btn-neutral float-right" title="Geospatial Coordinates" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../P_A_variables/variables.html" class="btn btn-neutral float-left" title="Primary and Ancillary Variables" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Sep 30, 2020.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

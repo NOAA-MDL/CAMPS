@@ -1,0 +1,332 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Model output &mdash; camps 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../netcdf_CAMPS_standard.html">Towards a new NetCDF-CAMPS Standard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Netcdf_CAMPS_Structure.html">NetCDF-CAMPS Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical/index.html">CAMPS Techinical description</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Model output</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/sample_data/model.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="model-output">
+<span id="ref-to-v1-model-output"></span><h1>Model output<a class="headerlink" href="#model-output" title="Permalink to this headline">¶</a></h1>
+<p>This section describes sample model output that can be <a class="reference download internal" download="" href="../_downloads/bc6a44d6307d43bb3d1ab27919925f47/reduced_gfs201607.nc"><code class="xref download docutils literal notranslate"><span class="pre">downloaded</span> <span class="pre">here</span></code></a>.
+If you are reading this in a PDF document, then you will need to access a web version to download the sample files.</p>
+<p>This sample file contains gridded data from 2 runs of the NWS spectral Global Forecast System (GFS) that began at 0600 UTC on 01-02 July 2016.
+It is interesting to note that the data are not from consecutive runs of the model.
+Rather, the data producer has chosen to stratify these data by model cycle time.
+Many statistical post-processing techniques stratify their data in this manner to accommodate the diurnally varying error characteristics of the model runs.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>NOTE:  This file was modified from the original in a number of ways.
+Most of the modifications were intended to make the file smaller and easier to review.
+Zero values were inserted into large portions of the data arrays.
+The first 20 rows and 20 columns contain the original data.
+A little more than half of the variables were removed from the file.
+The remaining variables should be sufficient to illustrate the concepts.</p>
+</div>
+<p>The values were read from a latitude-longitude grid, and interpolated to a Polar Stereographic grid.</p>
+<p>The sections below review sample CDL fragments and explain how the various attributes are used to document the contents of this file.</p>
+<p>Here’s a CDL fragment for a 2-m temperature field.  (Output is captured from the application Panoply.  All attributes that follow the
+variable declaration are associated with that variable.)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="nb">float</span> <span class="n">Temp_instant_2_21600</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">169</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">297</span><span class="p">,</span> <span class="n">lead_times_3hr</span><span class="o">=</span><span class="mi">93</span><span class="p">,</span> <span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.0</span><span class="n">f</span><span class="p">;</span> <span class="o">//</span> <span class="nb">float</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">OM__observedProperty</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Met/Temp/Temp&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">grid_mapping</span> <span class="o">=</span> <span class="s2">&quot;polar_stereographic&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;temperature instant at 2m&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">ancillary_variables</span> <span class="o">=</span> <span class="s2">&quot;OM__phenomenonTimeInstant OM__resultTime ValidTime1 FcstRefTime LeadTime1 GFSModProcStep1 GFSModProcStep2 &quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;elev1, x, y&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">FcstTime_hour</span> <span class="o">=</span> <span class="mi">21600</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;air_temperature&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;K&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">SOSA__usedProcedure</span> <span class="o">=</span> <span class="s2">&quot;( GFSModProcStep1 GFSModProcStep2 )&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">85</span><span class="n">U</span><span class="p">,</span> <span class="mi">149</span><span class="n">U</span><span class="p">,</span> <span class="mi">47</span><span class="n">U</span><span class="p">,</span> <span class="mi">1</span><span class="n">U</span><span class="p">,</span> <span class="mi">1</span><span class="n">U</span><span class="p">;</span> <span class="o">//</span> <span class="n">uint</span>
+</pre></div>
+</div>
+<p>The y and x coordinates, of course, delineate the geogrphic grid.
+Lead_times delineate the temporal domain for this variable, and default_time_coordinate_size delineates the two model cycles.
+The value for FcstTme_hour equates to 0600 UTC on 01-Jan-1970, and it indicates that all data stored in this variable are
+associated with some 0600 UTC run of the NWP system.</p>
+<p>The attribute OM__observedProperty takes on a value that resolves to a codes registry entry for temperature.</p>
+<p>The attribute ancillary_variables identifies a number of ancillary variables, most of which are associated with time.
+Each of these variables is explained in some detail below.</p>
+<p>The procedure attribute found in [O&amp;M] is not readily available in a web-referenceable form.  Here, we substitute the attribute
+SOSA__usedProcedure.  The attribute SOSA__usedProcedure points to a two step process. The data in this file were decoded from GRIB2
+by MDL routines to ingest them into CAMPS. Then, a bilinear interpolation routine was used to convert from a latitude-longitude grid
+to a Polar Stereographic grid.</p>
+<p>The attribute SOSA__usedProcedure takes on a character string value that names two value-less integers. Those integers, in turn, convey
+metadata in their attributes about each procedureal step. Here is the CDL fragment that declares these two integers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span>     <span class="n">long</span> <span class="n">GFSModProcStep1</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">PROV__Activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Ingest/DecodeGRIB2&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Ingest GRIB2-encoded GFS13 forecasts from NCEP repository&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">PROV__Used</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/GFS13&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="mi">1</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span><span class="p">;</span>
+<span class="o">|</span>
+<span class="o">|</span>     <span class="n">long</span> <span class="n">GFSModProcStep2</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">PROV__Activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Geosp/LinInterp&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Apply MDL bilinear interpolation technique&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="mi">1</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+</pre></div>
+</div>
+<p>The first step of the procedure decodes the data from GRIB2 and ingests them into CAMPS (PROV__Activity).  The attribute PROV__Used shows the
+input into this step of the procedure.  Of course, it’s version 13 of the Global Forecast System (GFS).  The attribute PROV__Activity of
+GFSModProcStep2 shows that the second step was a linear interpolation technique.  Both of these concepts are documented in the NWS Codes Registry.</p>
+<p>The next few CDL fragments for Temp_instant_2_21600 illustrate the time variables used within CAMPS.</p>
+<p>Here’s the CDL fragment that declares LeadTime (a duration measured from forecast_reference_time).  (LeadTime and LeadTime2 are similar.)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span>  <span class="n">long</span> <span class="n">LeadTime1</span><span class="p">(</span><span class="n">lead_times_3hr</span><span class="o">=</span><span class="mi">93</span><span class="p">);</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;forecast_period&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( StatPP__Data/Time/LeadTime )&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">93</span><span class="n">U</span><span class="p">;</span> <span class="o">//</span> <span class="n">uint</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">_CoordinateAxisType</span> <span class="o">=</span> <span class="s2">&quot;TimeOffset&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>LeadTime1 has only one dimension.  This is because the lead time values are identical for the two forecast cycles.  LeadTime1 is the only
+time-related variable that behaves in this way.  Note the attribute PROV__specializationOf.</p>
+<p>LeadTime2 is dimensioned 12, and it is used for data that are forecast every 24 hours.  LeadTime is dimensioned 40, and it is used for data
+that are forecast every six hours.</p>
+<p>Here’s the CDL fragment that declares OM__phenomenonTimeInstant (“when the weather happens”):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">long</span> <span class="n">OM__phenomenonTimeInstant</span><span class="p">(</span><span class="n">lead_times_3hr</span><span class="o">=</span><span class="mi">93</span><span class="p">,</span> <span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( OM__phenomenonTime )&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">93</span><span class="n">U</span><span class="p">,</span> <span class="mi">2</span><span class="n">U</span><span class="p">;</span> <span class="o">//</span> <span class="n">uint</span>
+</pre></div>
+</div>
+<p>OM__phenomenonTimeInstant has two dimensions.  The first dimension matches LeadTime, and the second tracks the forecast cycle.  Again, the
+attribute PROV__specializationOf designates the function of this variable.  There are other variables with similar names and functions,
+e.g., OM__PhenomenonTimePeriod6hr and OM__PhenomenonTimePeriod3hr.  As with LeadTime, they are used to care for 3- and 6-hour periods of time.</p>
+<p>Here’s the CDL fragment that declares OM_resultTime (the time the result became available):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span>     <span class="n">long</span> <span class="n">OM__resultTime</span><span class="p">(</span><span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( OM__resultTime )&quot;</span><span class="p">;</span>
+<span class="o">|</span>       <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">2</span><span class="n">U</span><span class="p">;</span> <span class="o">//</span> <span class="n">uint</span>
+</pre></div>
+</div>
+<p>OM_resultTime has one dimension that tracks the forecast cycle, and uses PROV__specializationOf</p>
+<p>Finally, here’s the CDL fragment that declares ValidTime (the time of intended use of the result):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">long</span> <span class="n">ValidTime</span><span class="p">(</span><span class="n">lead_times</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">default_time_coordinate_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">begin_end_size</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">L</span><span class="p">;</span> <span class="o">//</span> <span class="n">long</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( StatPP__concepts/TimeBoundsSyntax/BeginEnd OM2__Data/Time/ValidTime )&quot;</span><span class="p">;</span>
+<span class="o">|</span>   <span class="p">:</span><span class="n">_ChunkSizes</span> <span class="o">=</span> <span class="mi">40</span><span class="n">U</span><span class="p">,</span> <span class="mi">2</span><span class="n">U</span><span class="p">,</span> <span class="mi">2</span><span class="n">U</span><span class="p">;</span> <span class="o">//</span> <span class="n">uint</span>
+</pre></div>
+</div>
+<p>As we saw with OM__phenomenonTime, ValidTime has two dimensions that track lead time and forecast cycle.  ValidTime, however, includes a third dimension
+that holds the beginning and end times of this period of time.</p>
+<p>Note that the PROV__specializationOf attribute takes on two values.
+This is because two different concepts are associated with this variable–the concept of validTime and the BeginEnd concept.
+This latter concept makes it clear that a value of 1 in the last dimension indicates the beginning of the period of time, and a value of 2 indicates the end.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Sep 30, 2020.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
