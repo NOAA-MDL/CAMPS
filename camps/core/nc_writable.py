@@ -1,19 +1,17 @@
-from abc import ABCMeta, abstractmethod
+import abc
 from netCDF4 import Dataset
 
 """Interface ensuring there is a method to produce a netCDF4 Variable object.
 """
+ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})
 
+class nc_writable(ABC):
 
-class nc_writable(object):
-
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
+    @abc.abstractmethod
     def write_to_nc(self, nc_handle):
         """Abstract method to write a netCDF Variable to the nc_handle
 
-        Args: 
+        Args:
             nc_handle (netCDF4.Dataset): netCDF4 filehandle object
         """
         pass

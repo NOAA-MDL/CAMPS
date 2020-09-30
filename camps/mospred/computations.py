@@ -64,7 +64,7 @@ def sum(arr1, arr2):
 
 
 def difference(arr1, arr2):
-    """Element-wise subtraction of array arr2 from array arr1, where 
+    """Element-wise subtraction of array arr2 from array arr1, where
     these arrays have identical dimensions.
     """
 

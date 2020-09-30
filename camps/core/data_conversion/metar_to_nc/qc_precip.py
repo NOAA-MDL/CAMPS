@@ -1,9 +1,9 @@
 import logging
-import qc_general
-import qc_weather
+from . import qc_general
+from . import qc_weather
 import pdb
 import numpy as np
-from qc_error import qc_error
+from .qc_error import qc_error
 
 
 
@@ -32,9 +32,6 @@ def qc_precip(station_list):
         dew_point = station.get_obs("DEW")
         temperature = station.get_obs("TMP")
         station_type = station.get_obs("TYPE")
-        if precip_24h[:] is None:
-            print(station.name)
-            print(station.get_obs['TMP'])
         if station.is_canadian() or station.is_russian():
             precip_1h[:] = MISSING_VALUE
             precip_3h[:] = MISSING_VALUE
@@ -99,7 +96,7 @@ def qc_precip(station_list):
             p1 = precip_1h[i:i + 6]
             for j in range(0, len(p1)):
                 date = station.hours[i + j]
-                if date > 2006111300 and date < 2007032800:
+                if int(date) > 2006111300 and int(date) < 2007032800:
                     udef_amount = 0
                 else:
                     undef_amount = MISSING_VALUE

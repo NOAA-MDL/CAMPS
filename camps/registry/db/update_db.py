@@ -11,6 +11,7 @@ import sys
 import os
 import glob
 from netCDF4 import Dataset
+import pdb
 
 from ...core.reader import read
 from ...core.fetch import get_id
@@ -25,11 +26,11 @@ def update(filepath):
 
     # Loop over all provided filepaths
     file_id = get_id(filepath) #get the file_id
-    if not file_id: #If there is no file_id then the file is not CAMPS compliant 
+    if not file_id: #If there is no file_id then the file is not CAMPS compliant
         raise ValueError('%s not CAMPS compliant, please provide a CAMPS compliant netCDF file' %(filepath))
 
     #query the db table "file_info" to see if file data is already in the variable table
-    file_info = get_file_info(filepath,file_id) 
+    file_info = get_file_info(filepath,file_id)
     if len(file_info) > 0: #if it is, return
         logging.info('file already used to populate db, skipping update_db')
         return file_id

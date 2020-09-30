@@ -5,6 +5,9 @@ import csv
 import logging
 import string
 import pdb
+import re
+import numpy as np
+from netCDF4 import Dataset
 from . import Time
 
 
@@ -15,6 +18,7 @@ Methods:
     read_station_list
     read_station_table
     station_trunc
+    equations_summary
 """
 
 
@@ -44,7 +48,7 @@ def generate_date_range(drlist):
             dt_start = Time.str_to_datetime(dr_range.split("-")[0])
             dt_stop = Time.str_to_datetime(dr_range.split("-")[1])
             if any(h in dr_stride for h in ['h','H']):
-                delta = timedelta(hours=int(dr_stride.translate(None,string.letters)))
+                delta = timedelta(hours=int(re.sub(r'[a-zA-Z]','',dr_stride)))
             #Stride from start to stop.  Note that stop time may not be in list.
             while dt_start <= dt_stop:
                 dates.append(Time.datetime_to_str(dt_start))
@@ -137,7 +141,7 @@ def read_station_table(file_path,stalist):
 
     #The station table has been read, now make sure each station
     #in the list is in the table.  Remove, if not.
-    stalist_from_table = station_dict.keys()
+    stalist_from_table = list(station_dict.keys())
     stalist_new = []
     for sta in stalist:
         if sta in stalist_from_table:
@@ -157,3 +161,204 @@ def station_trunc(station_list):
     station_list = [station.replace('_','').replace(' ','') for station in station_list if station is not None]
 
     return station_list
+
+def equations_summary(**kwargs):
+    """Writes out a summary of information from a regression equation, including:
+    Reduction of Variance
+    Standard Error
+    Predictors used in the equation and their coefficients
+    Equation Constant
+
+    Usage:
+    EITHER coefficients AND predictors (usage 1) OR filepath (usage 2) are required
+
+    coefficients is an array or nested list of equation cofficients
+    predictors is a string array of predictor names
+    filepath is a string which points to an equations_driver output file
+
+    other allowed keywords are:
+    stations - a station name or list of station names (usage 1 and 2)
+
+    predictands - a string array of predictand names (usage 1)
+
+    variance - an array of Reduction of Variance (usage 1)
+
+    error - an array of Standard Error Estimate (usage 1)
+
+    consts - an array of Equation Constants (usage 1)
+
+    outname - a filepath and filename to which the summary is written (usage 1 and 2)
+    if outname is not provided, summary will be written to "equations_summary.txt"
+    in the current working directory
+    """
+
+    # Get information from kwargs and open file to be written
+    if "outname" not in kwargs:
+        outname = "equations_summary.txt"
+    else:
+        outname = kwargs['outname']
+    outfile = open(outname,"w")
+    if "variance" in kwargs:
+        variance = kwargs['variance']
+    if "error" in kwargs:
+        error = kwargs['error']
+    if "consts" in kwargs:
+        consts = kwargs['consts']
+    if "averages" in kwargs:
+        averages = kwargs['averages']
+    if "stations" in kwargs:
+        stations = kwargs['stations']
+        if not isinstance(stations,list):
+            stations = [stations] #Set stations to list if it isn't already
+    #First use case: coefficients and predictors are provided.
+    #Output will be created directly from these input
+    if "coefficients" in kwargs and "predictors" in kwargs:
+        coefficients = kwargs['coefficients']
+        predictors = kwargs['predictors']
+        #Loop over input stations
+        for n,sta in enumerate(stations):
+            if isinstance(sta,list): sta = sta[0]
+            if isinstance(sta,bytes): sta = sta.decode()
+            if isinstance(coefficients,list): coefficients = np.array(coefficients)
+            #Find indices coefficients for station which are nonzero
+            #and find the associated predictor names
+            #If predictands was provided, the output will name the predictand,
+            #otherwise a numeral will be provided
+            if "predictands" in kwargs:
+                predictands = kwargs['predictands']
+                for m,tand in enumerate(predictands):
+                    coefs_ind = np.nonzero(coefficients[n,:,m])[0]
+                    preds = predictors[coefs_ind,:]
+                    coefs = coefficients[n,coefs_ind,m]
+                    try:
+                        avg = averages[n,m]
+                    except NameError:
+                        avg = None
+                    try:
+                        var = variance[n,m]
+                    except NameError:
+                        var = None
+                    try:
+                        err = error[n,m]
+                    except NameError:
+                        err = None
+                    try:
+                        const = consts[n,m]
+                    except NameError:
+                        const = None
+                    pred_strings = [pred.tostring() for pred in preds]
+                    # Make sure tand is byte strings, convert to str and combine characters in array
+                    if isinstance(tand[0],bytes): tand = (tand.tostring()).decode()
+                    if pred_strings:
+                        # Construct an output string based on all input information
+                        info_string1 = "Equation Summary for station: {sta} for predictand: {tand}\n".format(sta=sta,tand=tand)
+                        if avg:
+                            info_string1 += "Predictand Average: "+str(avg)+"\n"
+                        if var:
+                            info_string1 += "Variance of Reduction: "+str(var)+" "
+                        if err:
+                            info_string1 += "Standard Error Estimate: "+str(err)+"\n"
+                        if var and not err:
+                            info_string1 += "\n"
+                        info_string2=''
+                        for i,pred in enumerate(pred_strings): info_string2+=str(pred.decode())+","+str(coefs[i])+"\n"
+                        if const:
+                            info_string2+="Equation Constant: "+str(const)+"\n"
+                        info_string = info_string1+info_string2+"\n"
+                        outfile.write(info_string)
+                    elif not pred_strings:
+                        info_string = "No equation information available for station: "+sta+" for predictand: "+tand+"\n\n"
+                        outfile.write(info_string)
+                outfile.write("\n")
+            # If no predictand list is provided, denote predictand with a numeral
+            else:
+                for m in range(coefficients[n].shape[1]):
+                    coefs_ind = np.nonzero(coefficients[n,:,m])[0]
+                    preds = predictors[coefs_ind,:]
+                    coefs = coefficients[n,coefs_ind,m]
+                    try:
+                        avg = averages[n,m]
+                    except NameError:
+                        avg = None
+                    try:
+                        var = variance[n,m]
+                    except NameError:
+                        var = None
+                    try:
+                        err = error[n,m]
+                    except NameError:
+                        err = None
+                    try:
+                        const = consts[n,m]
+                    except NameError:
+                        const = None
+                    pred_strings = [pred.tostring() for pred in preds]
+                    if pred_strings:
+                        # Construct an output string based on all input information
+                        info_string1 = "Equation Summary for station: {sta} for predictand #{tand_n}:\n".format(sta=sta,tand_n=str(m+1))
+                        if avg:
+                            info_string1 += "Predictand Average: "+str(avg)+"\n"
+                        if var:
+                            info_string1 += "Variance of Reduction: "+str(var)+" "
+                        if err:
+                            info_string1 += "Standard Error Estimate: "+str(err)+"\n"
+                        if var and not err:
+                            info_string1 += "\n"
+                        info_string2=''
+                        for i,pred in enumerate(pred_strings): info_string2+=str(pred)+","+str(coefs[i])+"\n"
+                        if const:
+                            info_string2+="Equation Constant: "+str(const)+"\n"
+                        info_string = info_string1+info_string2+"\n"
+                        outfile.write(info_string)
+                    elif not pred_strings:
+                        outfile.write("No equation information available for station: "+sta+" for predictand #"+str(m+1)+".\n\n")
+                outfile.write("\n")
+        outfile.close()
+    #Second use case: a path to a file is provided.
+    #Necessary equation information will be drawn from file.
+    #If a station or list of stations is not provided, will run for all stations in file.
+    elif "filepath" in kwargs:
+        filepath = kwargs['filepath']
+        pred_file = Dataset(filepath)
+        if "stations" not in kwargs:
+            file_stations = station_trunc([sta.tostring() for sta in pred_file.variables['station'][:]])
+            stations = file_stations
+
+        coefficients = pred_file.variables['MOS_Equations'][:,:-1,:]
+        consts = pred_file.variables['MOS_Equations'][:,-1,:]
+        variance = pred_file.variables['Reduction_of_Variance'][:]
+        error = pred_file.variables['Standard_Error_Estimate'][:]
+        averages = pred_file.variables['Predictand_Average'][:]
+        predictors = pred_file.variables['Equations_List'][:-1,:]
+        predictands = pred_file.variables['Predictand_List'][:]
+        for n,sta in enumerate(stations):
+            if isinstance(sta,list): sta = sta[0]
+            #Find indices coefficients for station which are nonzero
+            #and find the associated predictor names
+            for m,tand in enumerate(predictands):
+                coefs_ind = np.nonzero(coefficients[n,:,m])[0]
+                preds = predictors[coefs_ind,:]
+                coefs = coefficients[n,coefs_ind,m]
+                var = variance[n,m]
+                err = error[n,m]
+                const = consts[n,m]
+                avg = averages[n,m]
+                pred_strings = [pred.tostring() for pred in preds]
+                if pred_strings:
+                    # Contstruct output string based on all input information
+                    info_string1 = "Equation Summary for station: {sta} for predictand: {tand}\n".format(sta=sta,tand=tand.tostring())
+                    info_string1 += "Predictand Average: "+str(avg)+"\n"
+                    info_string1 += "Variance of Reduction: "+str(var)+" "
+                    info_string1 += "Standard Error Estimate: "+str(err)+"\n"
+                    info_string2=''
+                    for i,pred in enumerate(pred_strings): info_string2+=str(pred)+","+str(coefs[i])+"\n"
+                    info_string2+="Equation Constant: "+str(const)+"\n"
+                    info_string = info_string1+info_string2+"\n"
+                    outfile.write(info_string)
+                elif not pred_strings:
+                    outfile.write("No equation information available for station: "+sta+" for predictand: "+tand.tostring()+"\n\n")
+            outfile.write("\n")
+        outfile.close()
+    # Raise error if neither first nor second use case are met
+    else:
+        raise ValueError("Either coefficients and predictors arguments OR filepath argument must be given")

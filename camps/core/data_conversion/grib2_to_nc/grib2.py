@@ -1,18 +1,17 @@
-#!/usr/bin/env python
+from datetime import datetime,timedelta
 import sys
 import os
 import pygrib
+import pyproj
 import pdb
 import re
 import logging
 import numpy as np
-from datetime import timedelta
-import time as modTime
-from datetime import datetime
+import time
 
 from ....core import Camps_data
-from ....core import writer as writer
-from ....core import Time as Time
+from ....core import writer
+from ....core import Time
 from ....registry import util as yamlutil
 
 """Module: grib2.py
@@ -23,15 +22,10 @@ Methods:
     get_forecast_hash
     get_levelless_forecast_hash
     sort_by_lead_time
-    get_output_filename
-    get_fcst_time
-    get_PhenomenonTime
-    get_LeadTime
-    get_ValidTime
-    get_ResultTime
-    get_ForecastReferenceTime
 """
 
+
+GRIB2_MAXIMUM_LEAD_HOURS = 400
 
 
 def convert_grib2(control):
@@ -41,24 +35,23 @@ def convert_grib2(control):
 
     #Grab some information from control file
     filename = control['input']
-    outpath = control['outpath']
-    max_lead_times = control['maximum_lead_hours']
+    output = control['output']
 
     #Open the grib file
     logging.info("Reading grib file")
-    start = modTime.time()
+    start = time.time()
     grbs = pygrib.open(filename)
-    end = modTime.time()
+    end = time.time()
     time_tot = end - start
     logging.info("Time to read " + str(filename) + " was " + str(time_tot) + " seconds.")
 
     # Sort the grib messages by lead time,
     # where each index is a forecast hour (lead time)
-    lead_times = sort_by_lead_time(grbs,max_lead_times)
+    lead_times = sort_by_lead_time(grbs,GRIB2_MAXIMUM_LEAD_HOURS)
 
     # Save temporary grb to easily access common information
     grbs.seek(0)
-    tmp_grb = grbs.next()
+    tmp_grb = next(grbs)
 
     #---------------------------------------------------------------------------
     # Save grb information that will be shared between variables
@@ -69,25 +62,59 @@ def convert_grib2(control):
     year = tmp_grb.year
     month = tmp_grb.month
 
+    #############################################################################
+    # Set up time array
+    rstart = control['start']
+    rend = control['end']
+    dates = np.arange(datetime.strptime(rstart, '%Y%m%d%H%M'),datetime.strptime(rend, '%Y%m%d%H%M') + timedelta(days=1),timedelta(days=1))
+    dates_str = [d.astype(datetime).strftime('%Y%m%d') for d in dates]
+    full_start = rstart[0:8]+str(run_time).zfill(2)
+    full_end = rend[0:8]+str(run_time).zfill(2)
+    #############################################################################
+
     # Convert to run_time to seconds
     fcst_time = run_time
 
     # Grid information -- Construct metadata dictionary
     grid_meta_dict = {}
-    grid_meta_dict['OM__observedProperty'] = 'projection'
-    grid_meta_dict['grid_mapping_name'] = tmp_grb.gridType
-    grid_meta_dict['radius'] = tmp_grb.radius
-    grid_meta_dict['Lat1'] = tmp_grb.latitudeOfFirstGridPointInDegrees
-    grid_meta_dict['Lon1'] = tmp_grb.longitudeOfFirstGridPointInDegrees
-    grid_meta_dict['stnd_parallel'] = tmp_grb.LaDInDegrees
-    grid_meta_dict['orientation'] = tmp_grb.orientationOfTheGridInDegrees
-    grid_meta_dict['Dx'] = tmp_grb.DxInMetres
-    grid_meta_dict['Dy'] = tmp_grb.DyInMetres
-    grid_meta_dict['Nx'] = tmp_grb.Nx
-    grid_meta_dict['Ny'] = tmp_grb.Ny
+    if tmp_grb.gridType == "lambert":
+        isProjected = True
+        dx = tmp_grb.Dx/1000.0
+        dy = tmp_grb.Dy/1000.0
+        grid_meta_dict['OM__observedProperty'] = 'projection'
+        grid_meta_dict['grid_mapping_name'] = "lambert_conformal_conic" # CF-conventions name
+        grid_meta_dict['standard_parallel'] = tmp_grb.LaDInDegrees
+        grid_meta_dict['longitude_of_central_meridian'] = tmp_grb.LoVInDegrees
+        grid_meta_dict['latitude_of_projection_origin'] = tmp_grb.LaDInDegrees
+    elif tmp_grb.gridType == "mercator":
+        isProjected = True
+        dx = tmp_grb.Di/1000.0
+        dy = tmp_grb.Dj/1000.0
+        grid_meta_dict['OM__observedProperty'] = 'projection'
+        grid_meta_dict['grid_mapping_name'] = "mercator" # CF-conventions name
+        grid_meta_dict['standard_parallel'] = tmp_grb.LaDInDegrees
+        grid_meta_dict['longitude_of_projection_origin'] = tmp_grb.projparams['lon_0']
+        grid_meta_dict['scale_factor_at_projection_origin'] = 1
+    elif tmp_grb.gridType == "polar_stereographic":
+        isProjected = True
+        dx = tmp_grb.Dx/1000.0
+        dy = tmp_grb.Dy/1000.0
+        grid_meta_dict['OM__observedProperty'] = 'projection'
+        grid_meta_dict['grid_mapping_name'] = "polar_stereographic" # CF-conventions name
+        grid_meta_dict['straight_vertical_longitude_from_pole'] = tmp_grb.orientationOfTheGridInDegrees
+        grid_meta_dict['latitude_of_projection_origin'] = 90.0
+        grid_meta_dict['standard_parallel'] = tmp_grb.LaDInDegrees
+        grid_meta_dict['scale_factor_at_projection_origin'] = 1
+    elif tmp_grb.gridType == "regular_ll":
+        isProjected = False
+        grid_meta_dict['OM__observedProperty'] = 'projection'
+        grid_meta_dict['grid_mapping_name'] = "latitude_longitude" # CF-conventions name
+
 
     # Get the projection x, y data in meters
-    x_proj_data, y_proj_data = get_projection_data(tmp_grb)
+    if isProjected:
+        projstring,x_proj_data,y_proj_data = get_projection_data(tmp_grb)
+        grid_meta_dict['PROJ_string'] = projstring
 
     #---------------------------------------------------------------------------
     # Loop through each forecast hour
@@ -102,7 +129,7 @@ def convert_grib2(control):
     data_dict = {} #dictionary to hold variable metadata
 
     # Main loop over maximum possible lead times
-    for hour in range(max_lead_times):
+    for hour in range(GRIB2_MAXIMUM_LEAD_HOURS):
 
         #Get pointer to the variable dictionary at current lead time.
         vars_dict = lead_times[hour]
@@ -113,21 +140,49 @@ def convert_grib2(control):
 
         #Loop through each grb message variable for given forecast hour
         logging.info("Creating variables for lead time:"+str(hour))
-        for name, values in vars_dict.iteritems():
+        for name, values in vars_dict.items():
+            valid_dt = []  #Holds valid time data
 
-            stacked = []  #Array to hold stacked grids for every day
-            valid = []  #Holds valid time data
-            #Looping over grb message strings for variable (usually just one)
+            ##################################################################
+            # Create stacked array full of missing data
+            stacked = [np.full((tmp_grb.Ny,tmp_grb.Nx),9999.0) for t in range(len(dates_str))]
+
+            # Get the leadtime we are on currently
+            lead = values[0].endStep
+
+            # Loop over days and create the actual full date value with time added for current leadtime
+            dates_dt = []
+            for d in dates_str:
+                new_date_dt = datetime.strptime(d,'%Y%m%d') + timedelta(hours=lead)
+                dates_dt.append(new_date_dt.strftime('%Y%m%d%H%M'))
+            dates_dt = np.array(dates_dt)
+
+            # Get the datetime strings where there is real data
             for grb in values:
-                #Add to the validTime array
-                valid.append(str(grb.validityDate) +
+                valid_dt.append(str(grb.validityDate) +
                              str(grb.validityTime).zfill(4))
-                #Add the 2D actual model data
-                stacked.append(grb.values)
+            #Get indices where real times matc our expected times
+            valid = []
+            indices = []
+            valid_values = []
+            for i,v in enumerate(valid_dt):
+                index = np.where(v == dates_dt)[0]
+                if len(index) == 0:
+                    continue
+                valid.append(v)
+                indices.append(index[0])
+                valid_values.append(values[i])
+
+            #indices = [np.where(v == dates_dt)[0] for v in valid]
+
+            # Fill in stacked array based on these indices
+            for i,v in enumerate(valid_values):
+                stacked[indices[i]] = v.values
+            ###################################################################
+
             stacked = np.dstack(stacked) #stack 3rd dimension (makes variable shape len 3)
-            valid = np.array(valid)
             #Save the grb message for use later
-            example_grb = values[0]
+            example_grb = valid_values[0]
 
             #If it's only one cycle, add a 1 dimensional time component
             #I'm not sure this is necessary...doing np.dstack will make stacked
@@ -144,7 +199,7 @@ def convert_grib2(control):
                 #append data and time info to dictionary
                 data_dict[name]['data'].append(stacked)
                 data_dict[name]['lead_time'].append(example_grb.endStep)
-                data_dict[name]['valid_time'].append(valid)
+                data_dict[name]['valid_time'].append(dates_dt)
 
             #If we have not encountered variable before, create new dictionary key
             else:
@@ -152,7 +207,7 @@ def convert_grib2(control):
                 data_dict[name] = {
                     'data': [stacked],
                     'lead_time': [example_grb.endStep],
-                    'valid_time': [valid],
+                    'valid_time': [dates_dt],
                     'projection': example_grb.gridType,
                     'example_grb' : example_grb,
                     'units' : example_grb.units,
@@ -167,7 +222,7 @@ def convert_grib2(control):
                     data_dict[name]['level'] = (example_grb.topLevel, example_grb.bottomLevel)
 
                 #Defined for a time span or time instant
-                if 'lengthOfTimeRange' in example_grb.keys():
+                if 'lengthOfTimeRange' in list(example_grb.keys()):
                     data_dict[name]['period'] = example_grb.lengthOfTimeRange
                 else:
                     data_dict[name]['period'] = 0
@@ -182,16 +237,13 @@ def convert_grib2(control):
     lat = dimensions['lat']
     lon = dimensions['lon']
     lead_time_dim = dimensions['lead_time']
-    time = dimensions['time']
+    nctime = dimensions['time']
     x_proj = dimensions['x_proj']
     y_proj = dimensions['y_proj']
 
-    #Save first grb msg in collection of grb messages
-    values = lead_times[0].values()[0]
-
     #Iterate over the dictionaries of grb variable information and create
     #objects for each. Stacking and formatting data where necessary.
-    for name, grb_dict in data_dict.iteritems():
+    for name, grb_dict in data_dict.items():
         example_grb = grb_dict['example_grb']
 
         #Get a generic name for the variable to instantiate the object
@@ -231,10 +283,11 @@ def convert_grib2(control):
         obj.add_fcstTime(fcst_time)
 
         #Set dimensions of variable data in object
-        obj.dimensions = [time, lead_time_dim, y_proj, x_proj]
+        obj.dimensions = [nctime, lead_time_dim, y_proj, x_proj]
 
-        #Add projection type to variable metadata
-        obj.add_metadata('grid_mapping', grb_dict['projection'])
+        # Add "grid_mapping" attribute. NOTE: The attribute value must be the variable
+        # name of the grid mapping variable.
+        obj.add_metadata('grid_mapping', grid_meta_dict['grid_mapping_name']+'_grid')
 
         #Add Vertical coordinate(s)
         vert_coords = grb_dict['level']
@@ -243,15 +296,12 @@ def convert_grib2(control):
             vert_type = 'plev'
         else:
             vert_type = 'elev'
-
-        ### TODO: Find which key codes for the 'cell_method' of the vertical level and add below back
-        #if len(vert_coords) > 1:
-        #    obj.add_coord(vert_coords[0], vert_coords[1], vert_type)
-        #elif len(vert_coords) == 1:
         obj.add_coord(vert_coords[0], vert_type=vert_type)
+
         #Add units
         obj.metadata['units'] = grb_dict['units']
 
+        #Add period info
         if grb_dict['period'] > 0:
             obj.metadata['hours'] = grb_dict['period']
 
@@ -275,11 +325,11 @@ def convert_grib2(control):
         obj.time.append(ptime)
 
         #Add ResultTime
-        rtime = get_ResultTime(values)
+        rtime = Time.ResultTime(start_time=full_start, end_time=full_end, stride=Time.ONE_DAY)
         obj.time.append(rtime)
 
         #Add ForecastReferenceTime
-        ftime = get_ForecastReferenceTime(values)
+        ftime = Time.ForecastReferenceTime(start_time=full_start, end_time=full_end, stride=Time.ONE_DAY)
         obj.time.append(ftime)
 
         #Add ValidTime
@@ -291,30 +341,34 @@ def convert_grib2(control):
         obj.time.append(vtime)
 
         #Add LeadTime
-        ltime = get_LeadTime(lead_time)
+        ltime = Time.LeadTime(data=lead_time)
+        #ltime = get_LeadTime(lead_time)
         obj.time.append(ltime)
 
-    #Make longitude and latitude variables
+    # Make longitude and latitude variables
     lat = Camps_data('latitude')
     lon = Camps_data('longitude')
     lat.dimensions = ['y', 'x']
     lon.dimensions = ['y', 'x']
     lat_lon_data = tmp_grb.latlons()
     lat.data = lat_lon_data[0]
-    lon.data = lat_lon_data[1]
+    lon.data = np.where(lat_lon_data[1]>180.0,-1.*(360.-lat_lon_data[1]),lat_lon_data[1])
     all_objs.append(lat)
     all_objs.append(lon)
 
-    #Make x and y projection variables
-    x_obj = Camps_data('x')
-    x_obj.dimensions = ['x']
-    x_obj.data = x_proj_data
-    all_objs.append(x_obj)
+    # Make x and y projection variables
+    if isProjected:
+        x_obj = Camps_data('x')
+        x_obj.dimensions = ['x']
+        x_obj.add_metadata('grid_spacing',dx)
+        x_obj.data = x_proj_data
+        all_objs.append(x_obj)
 
-    y_obj = Camps_data('y')
-    y_obj.dimensions = ['y']
-    y_obj.data = y_proj_data
-    all_objs.append(y_obj)
+        y_obj = Camps_data('y')
+        y_obj.dimensions = ['y']
+        y_obj.add_metadata('grid_spacing',dy)
+        y_obj.data = y_proj_data
+        all_objs.append(y_obj)
 
     #Make the grid information a variable
     proj = Camps_data(grid_meta_dict['grid_mapping_name']+'_grid',autofill=False) # Instantiate the object
@@ -328,27 +382,24 @@ def convert_grib2(control):
     #Append object to list of objects
     all_objs.append(proj)
 
-    outfile = outpath + get_output_filename(year, month, run_time)
-    writer.write(all_objs, outfile, write_to_db=True)
+    writer.write(all_objs, output, write_to_db=True)
 
 
 def get_projection_data(grb):
     """Retrieves the projection data from grb"""
 
-    x_proj = np.zeros(grb.Nx)
-    y_proj = np.zeros(grb.Ny)
-
-    prev_val = 0
-    for i in range(grb.Nx):
-        x_proj[i] = prev_val
-        prev_val = prev_val + grb.DxInMetres
-
-    prev_val = 0
-    for i in range(grb.Ny):
-        y_proj[i] = prev_val
-        prev_val = prev_val + grb.DyInMetres
-
-    return (x_proj,y_proj)
+    # Use pyproj parameters from pygrib
+    projstring = ""
+    for k,v in grb.projparams.items():
+        projstring+="+"+k+"="+str(v)+" "
+    p = pyproj.Proj(projstring)
+    latslons = grb.latlons()
+    x,y = p(latslons[1],latslons[0])
+    x_proj = x[0,:]
+    y_proj = y[:,0]
+    projstring+="+x_0="+str(abs(x[0,0]))+" +y_0="+str(abs(y[0,0]))
+    del x,y
+    return projstring,x_proj,y_proj
 
 
 def get_forecast_hash(grb):
@@ -357,7 +408,7 @@ def get_forecast_hash(grb):
     """
 
     #Exception of variable defined over a time period.
-    if 'lengthOfTimeRange' in grb.keys():
+    if 'lengthOfTimeRange' in list(grb.keys()):
         fcst_hash = str(grb.name) + '_' \
             + str(grb.lengthOfTimeRange) + 'hr' + '_' \
             + str(grb.stepTypeInternal) + '_'\
@@ -389,7 +440,7 @@ def get_levelless_forecast_hash(grb):
     """
 
     #Exception of variable defined over a time period.
-    if 'lengthOfTimeRange' in grb.keys():
+    if 'lengthOfTimeRange' in list(grb.keys()):
         fcst_hash = str(grb.name) + '_' \
             + str(grb.lengthOfTimeRange) + 'hr' + '_' \
             + str(grb.stepTypeInternal)
@@ -414,7 +465,7 @@ def get_levelless_forecast_hash(grb):
     return fcst_hash
 
 
-def sort_by_lead_time(grbs, max_lead_times):
+def sort_by_lead_time(grbs, GRIB2_MAXIMUM_LEAD_HOURS):
     """Sort a collection of gribs by lead time.
     Returns array where each index represents the forecast hour.
     Each array index contains a dictionary representing
@@ -423,16 +474,16 @@ def sort_by_lead_time(grbs, max_lead_times):
     """
 
     # Time processing through this code.
-    start = modTime.time()
+    start = time.time()
 
     # Init lead_time array
-    lead_times = [None] * (max_lead_times + 1)
+    lead_times = [None] * (GRIB2_MAXIMUM_LEAD_HOURS + 1)
     logging.info("organizing grbs into lead times.")
     for i,grb in enumerate(grbs):
         # If the grb forecast time is greater than the set max lead time then we skip
         # otherwise the program fails
-        # if grb.forecastTime > max_lead_times:
-        if grb.endStep > max_lead_times:
+        # if grb.forecastTime > GRIB2_MAXIMUM_LEAD_HOURS:
+        if grb.endStep > GRIB2_MAXIMUM_LEAD_HOURS:
             logging.warning('grb forecastTime greater than max lead time')
             continue
 
@@ -456,122 +507,7 @@ def sort_by_lead_time(grbs, max_lead_times):
         else:
             vars_dict[fcst_hash].append(grb)
 
-    end = modTime.time() #Note time process ended.
+    end = time.time() #Note time process ended.
     logging.info("Elapsed time to sort: " + str(end-start) + "seconds")
 
     return lead_times
-
-
-def get_output_filename(year, month, run_time):
-    """Returns the netcdf filename of gfs model data"""
-
-    year = str(year)
-    month = str(month).zfill(2)
-    run_time= str(run_time).zfill(2)
-
-    return 'gfs00' + year + month + run_time + '.nc'
-
-
-def get_fcst_time(fcst_time_str):
-    """Returns only the forecast hour from the grib string.
-    Also returns boundedTime information if it exists, assuming
-    that it consists of two entries: start and end time.
-    """
-
-    matches = re.findall(r'\d+', fcst_time_str)
-    if len(matches) == 0:
-        raise IOError("fcst_time_str doesn't contain a numbered hour")
-    if len(matches) > 3:
-        raise IOError("fcst_time_str contains too many numbers")
-
-    if len(matches) == 1:
-        bounded = False
-        return (bounded, matches[0])
-
-    if len(matches) == 2:
-        bounded = True
-        return (bounded, matches[1])
-
-
-def get_PhenomenonTime(grbs, deep_check=False):
-    """Get the Phenomenon Times for a collection of related grbs"""
-
-    #Not yet executed.
-    #if deep_check:
-    #    #Search all grbs to ensure the stride is consistent and dates are in order
-    #    pass
-
-    start_date = str(grbs[0].dataDate)
-    start_hour = str(grbs[0].hour).zfill(2)
-    end_date = str(grbs[-1].dataDate)
-    end_hour = str(grbs[-1].hour).zfill(2)
-
-    #lead time or forecast projection
-    ftime = timedelta(hours=grbs[0].endStep)
-
-    start = Time.str_to_datetime(start_date + start_hour)
-    end = Time.str_to_datetime(end_date + end_hour)
-    start = start + ftime
-    end = end + ftime
-    stride = Time.ONE_DAY
-
-    return Time.PhenomenonTime(start_time=start, end_time=end, stride=stride)
-
-
-def get_LeadTime(lead_time_data, deep_check=False):
-    """Get the Lead Times from a collection of related grbs"""
-
-    return Time.LeadTime(data=lead_time_data)
-
-
-def get_ValidTime(grbs, deep_check=False):
-    """Get the Valid Times for a collection of related grbs"""
-
-    #Refer to grb attribute: validityDate and validityTime
-    start_date = str(grbs[0].dataDate)
-    start_hour = str(grbs[0].hour).zfill(2)
-    end_date = str(grbs[-1].dataDate)
-    end_hour = str(grbs[-1].hour).zfill(2)
-
-    start = start_date + start_hour
-    end = end_date + end_hour
-    stride = Time.ONE_DAY
-    #offset here is the lead time
-    offset = timedelta(seconds=(grbs[0].endStep * Time.ONE_HOUR))
-
-    return Time.ValidTime(start_time=start, end_time=end, stride=stride, offset=offset)
-
-
-def get_ResultTime(grbs, deep_check=False):
-    """Get the Result Times for a collection of related grbs"""
-
-    start_date = str(grbs[0].dataDate)
-    start_hour = str(grbs[0].hour).zfill(2)
-    end_date = str(grbs[-1].dataDate)
-    end_hour = str(grbs[-1].hour).zfill(2)
-
-    start = start_date + start_hour
-    end = end_date + end_hour
-    stride = Time.ONE_DAY
-
-    return Time.ResultTime(start_time=start, end_time=end, stride=stride)
-
-
-def get_ForecastReferenceTime(grbs, deep_check=False):
-    """Get the ForecastReference Times for a collection of related grbs"""
-
-    #Not yet executed.
-    #if deep_check:
-    #    # Search all grbs to ensure the stride is consistent and dates are in order
-    #    pass
-
-    start_date = str(grbs[0].dataDate)
-    start_hour = str(grbs[0].hour).zfill(2)
-    end_date = str(grbs[-1].dataDate)
-    end_hour = str(grbs[-1].hour).zfill(2)
-
-    start = start_date + start_hour
-    end = end_date + end_hour
-    stride = Time.ONE_DAY
-
-    return Time.ForecastReferenceTime(start_time=start, end_time=end, stride=stride)

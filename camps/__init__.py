@@ -4,6 +4,9 @@ import shutil
 import pkg_resources
 import glob
 
+from .version import version as __version__
+from .core.reader import read
+
 # Init a basic logger in case a module isn't run from a driver
 logging.getLogger('').handlers = []
 level = logging.getLevelName('INFO')
@@ -24,5 +27,7 @@ if not os.path.isdir(camps_control_dir):
 #--------------------------------------------------------------------
 resource_package = __name__
 resource_path = pkg_resources.resource_filename(resource_package,'registry/')
-file_list = glob.glob(resource_path+'*.yaml') + glob.glob(resource_path+'*.tbl') + glob.glob(resource_path+'*.lst') 
+file_list = glob.glob(resource_path+'*.yaml') + glob.glob(resource_path+'*.tbl') + glob.glob(resource_path+'*.lst')
 [shutil.copy(f,camps_control_dir) for f in file_list if not os.path.isfile(camps_control_dir+os.path.basename(f))]
+
+__all__ = ['__version__','read']

@@ -24,6 +24,10 @@ The purpose of this document is to propose conventions for encoding binary data 
    CAMPS version 1.0 was built to support an older version of these standards.
    These documents describe a data encoding standard that will be used for CAMPS version 2.0.
 
+.. note::
+   WISPS version 1.0 was built to support an older version of these standards.
+   These documents describe a data encoding standard that will be used for WISPS version 2.0.
+
   NetCDF (CF) is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data
   The conventions for climate and forecast (CF) metadata are designed to promote the processing and sharing of netCDF files
   The conventions define metadata that provide a definitive description of what the data represents, and the spatial and temporal properties of the data.

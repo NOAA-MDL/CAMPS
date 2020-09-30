@@ -6,8 +6,8 @@ import re
 import logging
 from netCDF4 import Dataset
 
-from nc_writable import nc_writable
-from Process import Process
+from .nc_writable import nc_writable
+from .Process import Process
 from . import Time
 from ..registry import util as cfg
 from ..registry.db import db as db
@@ -127,10 +127,11 @@ class Camps_data(nc_writable):
         self.data = np.array([])
         self.dimensions = []  # The name of the dimensions
         self.processes = []
+        self.preprocesses = []
         self.metadata = {}
         self.time = []
         self.properties = {}
-        #self.components = [] #This feature on hold for now
+        self.components = []
         self.location = None
         if autofill:
             self.add_db_metadata()
@@ -316,7 +317,7 @@ class Camps_data(nc_writable):
     def get_time(self, time_type):
         """Returns a Time object of type time_type or None if there's no such instance"""
 
-        time_arr = filter(lambda time: type(time) is time_type, self.time)
+        time_arr = [time for time in self.time if type(time) is time_type]
 
         if len(time_arr) == 0:
             return None
@@ -340,22 +341,46 @@ class Camps_data(nc_writable):
 #        return self
 
 
-#    def add_component(self, c_obj):
-#        """Adds a component object c_obj to the component list.
-#        The object c_obj is a component of self.
-#        """
-#        if not isinstance(c_obj, Camps_data):
-#            return None
-#
-##        sizes = list(c_obj.data.shape)
-##        dict_sizes = dict(zip(c_obj.dimensions, sizes))
-##        for key,value in dict_sizes.iteritems():
-##            c_obj.metadata.update({key : value})
-##        c_obj.metadata.update({'sizes' : sizes})
-#
-##        c_obj.data = None
-#
-#        self.components.append(c_obj)
+    def add_preprocess(self, process):
+        """Adds a Process object to the Preprocesses list or creates one if given a str."""
+
+        if process.__class__ is not Process and type(process) is str:
+            process = Process(process)
+
+        self.preprocesses.append(process)
+
+
+    def add_component(self, c_obj):
+        """Adds a Camps data object to the component list of another
+        Camps data object.  The variable of the former object is a component
+        of the variable of the latter object, i.e. it is used in computing
+        the latter object's variable.  For examples, temperature and relative
+        humidity are components of dewpoint temperature.  Data of the components
+        are suppressed.
+        """
+
+        #Add the lead time to the metadata
+        c_obj.metadata.update({'leadtime' : int(c_obj.get_lead_time().data.data[0]/3600)})
+
+        #Record the component's data dimensions and sizes in its metadata.
+        grid_dimSizes = '( '
+        for dim,size in zip(c_obj.dimensions,c_obj.data.shape):
+            grid_dimSizes += dim + ' : ' + str(size) + ', '
+        c_obj.metadata.update({'grid_dimSizes' : grid_dimSizes[:-2] + ' )'})
+
+        #Remove the metadata key 'filepath' and its value.
+        try:
+            c_obj.metadata.pop('filepath')
+        except:
+            pass
+
+        #Remove the component's data.
+        c_obj.dimensions = []
+        c_obj.data = None
+
+        #Add component's Camps object sans data to component list of
+        #computed variable's object.
+        self.components.append(c_obj)
 
 
     def add_data(self, data):
@@ -574,7 +599,7 @@ class Camps_data(nc_writable):
         if self.has_time_bounds():
             bounds = self.get_time_bounds() #get bounds object
             cell_method = self.get_cell_methods() #get cell method
-            method = str(cell_method.values()[0]) #grab value from dictionary
+            method = str(list(cell_method.values())[0]) #grab value from dictionary
             name += '_'+method+'_'+str(bounds.get_duration())+'hr' #will add the duration and type (ex: avg, max, min) to name
         else:
             name += '_instant'
@@ -600,19 +625,50 @@ class Camps_data(nc_writable):
         except:
             pass
 
-        #Write leadtime if exists
+        #Write leadtime, given in hours.
         try:
             leadtime = self.metadata['leadtime']
             name += '_%shr'%(str(leadtime))
         except:
             pass
 
-        #Write smoothing, if metadata indicates smoothing was performed
+        #Include preprocess name pieces that are features of interest.
+        proc_names = self.get_preprocess_str().split(' ')
         try:
-            smooth = self.metadata['smooth']
-            name += '_%spt_smooth'%(str(smooth))
-        except:
+            proc_names.remove('(')
+        except ValueError:
             pass
+        try:
+            proc_names.remove(')')
+        except ValueError:
+            pass
+        for i, process in enumerate(self.preprocesses):
+            if process.attributes['feature_of_interest'] == "yes":
+                name += '_' + proc_names[i]
+                if re.search('smooth', proc_names[i], re.IGNORECASE):
+                    try:
+                        name += str(self.metadata['smooth'])
+                    except KeyError:
+                        pass
+
+        #Include process name pieces that are features of interest.
+        proc_names = self.get_process_str().split(' ')
+        try:
+            proc_names.remove('(')
+        except ValueError:
+            pass
+        try:
+            proc_names.remove(')')
+        except ValueError:
+            pass
+        for i, process in enumerate(self.processes):
+            if process.attributes['feature_of_interest'] == "yes":
+                name += '_' + proc_names[i]
+                if re.search('smooth', proc_names[i], re.IGNORECASE):
+                    try:
+                        name += str(self.metadata['smooth'])
+                    except KeyError:
+                        pass
 
         #For MOS forecast output, add either "MOS" or "CmpChk" to variable name
         if 'TmpDewCmpChk' in self.get_process_str():
@@ -635,7 +691,7 @@ class Camps_data(nc_writable):
         all_vars = nc_handle.variables
         #Return if name exists for given values of vertical coordinate.
         #Otherwise increment 'num', the digital suffix of the coordinate name.
-        for v in all_vars.keys():
+        for v in list(all_vars.keys()):
             if re.match(r'^' + coord_name + '\d+$',  v, re.I): #match 'coord_name' with 'v' ignoring case.
                 if is_bounds:
                     first_num_matches = coord_data[0] == all_vars[v][0][0]
@@ -691,18 +747,25 @@ class Camps_data(nc_writable):
 
         #Time bounds
         if self.has_time_bounds():
-            success = self._write_time_bounds(nc_handle) 
-            self.add_bounds_process()
+            success = self._write_time_bounds(nc_handle)
+            #self.add_bounds_process() #removing these processes 
 
         #Add grid dimension names or station dimension names
         #to metadata entry 'coordinates'
         if 'coordinates' in self.metadata:
             coord_str = self.metadata['coordinates']
             coords_to_add = [coord_str]
-            if 'x' in self.dimensions:
-                coords_to_add.append('x')
-            if 'y' in self.dimensions:
-                coords_to_add.append('y')
+            if 'grid_mapping' in self.metadata.keys():
+                if 'latitude_longitude' in self.metadata['grid_mapping']:
+                    if 'x' in self.dimensions:
+                        coords_to_add.append('longitude')
+                    if 'y' in self.dimensions:
+                        coords_to_add.append('latitude')
+                else:
+                    if 'x' in self.dimensions:
+                        coords_to_add.append('x')
+                    if 'y' in self.dimensions:
+                        coords_to_add.append('y')
             if 'number_of_stations' in self.dimensions:
                 coords_to_add.append('station')
             add_str = ' '.join(coords_to_add)
@@ -852,7 +915,7 @@ class Camps_data(nc_writable):
         """
 
         if 'level' in self.dimensions:
-             return
+            return
 
         #Return if neither 'plev' nor 'elev' are in metadata.
         try:
@@ -893,11 +956,10 @@ class Camps_data(nc_writable):
         nc_handle.createDimension(dimension_name, dim_length)
 
 
-    def write_to_nc(self, nc_handle):
-        """Writes a variable into a netCDF file, including its data and metadata."""
-
-        #Log that we are writing the variable into a netCDF file.
-        logging.info("Writing " + self.name)
+    def write_to_nc(self, nc_handle, write_components=False):
+        """Writes a variable into a netCDF file, including its data and metadata.
+        Returns variable name.
+        """
 
         #Add the vertical dimension to the variable
         #and ensure that its dimensions exist in netCDF Dataset dimensions.
@@ -910,24 +972,35 @@ class Camps_data(nc_writable):
         for t in self.time: #add time ancillary variables
             time_name = t.write_to_nc(nc_handle)
             ancillary_variables += time_name + " "
-
+        for p in self.preprocesses: #add process ancillary variables
+            proc_name = p.write_to_nc(nc_handle)
+            ancillary_variables += proc_name + " "
         for p in self.processes: #add process ancillary variables
-            p.write_to_nc(nc_handle)
-            ancillary_variables += p.name + " "
-
-
-        #feature on hold temporarily
-#        for c in self.components: #add component ancillary variables
-#            comp_name = c.write_to_nc(nc_handle)
-#            ancillary_variables += comp_name + " "
+            proc_name = p.write_to_nc(nc_handle)
+            ancillary_variables += proc_name + " "
+        space = ' '
+        av_list = ancillary_variables.split(space)
+        av_uniq = []
+        for av in av_list:
+            if av not in av_uniq:
+                av_uniq.append(av)
+        ancillary_variables = (space.join(av_uniq))
         self.metadata['ancillary_variables'] = ancillary_variables
 
-        self.check_correct_shape() #check consistency between variable's dimensions and its data shap
+        # if true, write components metadata recursively, components of components.
+        if write_components:
+            comp_names = []
+            for c in self.components: #add components of variable
+                comp_name = c.write_to_nc(nc_handle, write_components)
+                comp_names.append(comp_name)
+            if len(comp_names) > 0:
+                self.metadata.update({'PROV__wasDerivedFrom' : '( ' + ' '.join(comp_names) + ' )'})
+
+        self.check_correct_shape() #check consistency between variable's dimensions and its data shape
         self.create_dimensions(nc_handle) #add those variable's dimensions with names that do not exist in netCDF.
         self.check_dimensions(nc_handle) #readjust dimension names so that dimensions with matching names
                                          #have equal sizes.
 
- 
         #Create the netCDF variable.
         fill_value = self.get_fill_value()
         chunksize = self.get_chunk_size()
@@ -937,14 +1010,68 @@ class Camps_data(nc_writable):
         else:
             dtype = self.data.dtype
 
+        #Determine if variable has not already been written into the netCDF file.
+        #NOTE: I tried to have this portion at the beginning of the function in order to
+        #avoid doing the above code, but I get an error.
+        #Get the basename of the variable and collect names of variables already written
+        #into the netCDF file with the same basename.
         variable_name = self.get_variable_name()
+        var_names = []
+        var_name = variable_name
+        number = 0
+        while var_name in list(nc_handle.variables.keys()):
+            var_names.append(var_name)
+            number += 1
+            var_name = variable_name + str(number)
+        variable_name = var_name
 
-        if variable_name in nc_handle.variables:
-            counter = 1
-            while variable_name + str(counter) in nc_handle.variables:
-                counter += 1
-            variable_name = variable_name + str(counter)
+        #Determine if the variable is a primary variable or a component.
+        #Select from the existing netCDF variables those of the same type.
+        is_primary = 'number_of_stations' in self.dimensions
+        v_names = []
+        if is_primary:
+            for v_name in var_names:
+                if 'number_of_stations' in nc_handle.variables[v_name].dimensions:
+                    v_names.append(v_name)
+        else:
+            for v_name in var_names:
+                if 'number_of_stations' not in nc_handle.variables[v_name].dimensions:
+                    v_names.append(v_name)
 
+        #Determine if the variable is identical in substance to one of the collection of
+        #existing netCDF variables.  If so, return the name of the identical netCDF variable.
+        for v_name in v_names:
+            match = True
+            #
+            for attr in ['OM__observedProperty', 'standard_name', 'long_name', 'units', 'coordinates', \
+                'filepath', 'smooth']:
+                try:
+                    if self.metadata[attr] != nc_handle.variables[v_name].getncattr(attr)[:]:
+                        match = False
+                        break
+                except:
+                    pass
+            if match: #values of model cycle time and leadtime, and sizes of x, y, and level.
+                for attr in ['FcstTime_hour', 'x', 'y', 'level', 'leadtime']:
+                    try:
+                        if self.metadata[attr] != nc_handle.variables[v_name].getncattr(attr):
+                            match = False
+                            break
+                    except:
+                        pass
+            if match: #names and order of ancillary variables, including white space.
+                if ancillary_variables != nc_handle.variables[v_name].getncattr('ancillary_variables'):
+                    match = False
+                    break
+            #if match:
+            #    if not np.array_equal(self.get_forecast_reference_time().data[:], \
+            #        nc_handle.variables['FcstRefTime'][:].data[:]):
+            #        match = False
+            if match:
+                return v_name
+
+        #Write the variable into the netCDF file.
+        logging.info("Writing " + variable_name + " into the netCDF file.")
         nc_var = nc_handle.createVariable(
             variable_name,
             dtype,
@@ -955,13 +1082,27 @@ class Camps_data(nc_writable):
             shuffle=False,
             fill_value=fill_value)
 
-        # Add the metadata
+        #Add the metadata
+        try:
+            self.metadata.pop('SOSA__usedProcedure')
+        except KeyError:
+            pass
         self._add_nc_metadata(nc_var) #add variable's metadata entries as attributes
 
-        if not self.is_feature_of_interest(): #add variables's processes as attributes
+        if not self.is_feature_of_interest(): #add variables's preprocesses and processesas attributes
+            preprocess_str = self.get_preprocess_str()
+            preprocess_list = preprocess_str.split(space)
+            preprocess_unique = []
+            for proc in preprocess_list:
+                if proc not in preprocess_unique:
+                    preprocess_unique.append(proc)
+            process_str = (space.join(preprocess_unique))
+            setattr(nc_var, "PROV__wasInformedBy", process_str)
             process_str = self.get_process_str()
             setattr(nc_var, "SOSA__usedProcedure", process_str)
-        self.add_nc_data(nc_var) #add variable's data
+
+        #add variable's data
+        self.add_nc_data(nc_var)
 
         #Return the variable name written into the netCDF file
         return variable_name
@@ -973,6 +1114,11 @@ class Camps_data(nc_writable):
 
         #Exclude feature of interests.
         if self.is_feature_of_interest():
+            return
+
+        #Exclude components.  Components have their attribute dimensions tuple
+        #stripped of elements.
+        if not len(self.dimensions):
             return
 
         #Glean information to be inserted into database.
@@ -999,7 +1145,7 @@ class Camps_data(nc_writable):
 
         #Second, get time duration and duration method
         try:
-            btime = filter(lambda t: t.name=='OM__phenomenonTimePeriod', self.time)[0]
+            btime = [t for t in self.time if t.name=='OM__phenomenonTimePeriod'][0]
             duration = btime.get_duration()
             time_dim = cfg.read_dimensions()['time']
             duration_method = self.get_cell_methods()[time_dim]
@@ -1049,17 +1195,26 @@ class Camps_data(nc_writable):
         #in the variable's properties attribute, usually the lead time.
         reserved2 = None
         if 'reserved2' in self.properties:
-            reserved2 = (self.properties['reserved2'])
+            if not type(self.properties['reserved2']) == str:
+                res2 = str(self.properties['reserved2']) 
+            reserved2 = (res2)
         #Add smooth information to database if present in metadata
         if 'smooth' in self.metadata:
             smooth = int(self.metadata['smooth'])
         else:
             smooth = None
 
+        #Get Source information. If Source is None, raise error with information about variable
+        src = self.get_source()
+        logging.info("Adding "+var_name+" to database.")
+        if src is None:
+            pdb.set_trace()
+            raise ValueError("Source for "+var_name+" returned as "+str(src)+". A source is required.")
+
         #With the information collected, insert it into the database table 'variable'
         #for variable 'name'.
         db.insert_variable(property=self.get_observedProperty(),
-                           source=self.get_source(),
+                           source=src,
                            start=start,
                            end=end,
                            duration=duration,
@@ -1161,7 +1316,7 @@ class Camps_data(nc_writable):
             if size != nc_dim_size:
                 #Seek a match with all existing dimensions where the variable dimension name is a
                 #substring of netCDF Dataset dimension name.
-                for nc_dim in nc_handle.dimensions.keys():
+                for nc_dim in list(nc_handle.dimensions.keys()):
                     nc_dim_size = len(nc_handle.dimensions[nc_dim])
                     if dim in nc_dim and nc_dim_size == size: #substring and sizes match, so force names to match
                         self.dimensions[index] = nc_dim       #by setting dimension name to that of its netCDF Dataset.
@@ -1184,9 +1339,9 @@ class Camps_data(nc_writable):
     def _add_nc_metadata(self, nc_var):
         """Adds, with some processing, the variable's metadata to netCDF file handle."""
 
-        for name, value in self.metadata.iteritems():
+        for name, value in list(self.metadata.items()):
             if name != 'name' and name != 'fill_value': #skip name and fill_value
-                if type(value) is unicode:  #To prevent 'string' prefix
+                if type(value) is str:  #To prevent 'string' prefix
                     value = str(value)
                 #If feature of interest, skip the following metadata attributes
                 if db.get_property(self.name, 'feature_of_interest'):
@@ -1208,13 +1363,24 @@ class Camps_data(nc_writable):
     def get_source(self):
         """Return the source metadata attribute."""
 
+        #if 'source' in self.metadata.keys():
+        #    return os.path.basename(self.metadata['source'])
         if 'PROV__Used' in self.metadata:
-            return os.path.basename(self.metadata['PROV__Used'])
+            if isinstance(self.metadata['PROV__Used'], list):
+                return os.path.basename(' '.join(self.metadata['PROV__Used']))
+            else:
+                return os.path.basename(self.metadata['PROV__Used'])
         else:
-            # Look for PROV__Used in processes
+            for proc in self.preprocesses:
+                if 'PROV__Used' in proc.attributes:
+                    return os.path.basename(proc.attributes['PROV__Used'])
+                elif 'source' in proc.attributes:
+                    return os.path.basename(proc.attributes['source'])
             for proc in self.processes:
                 if 'PROV__Used' in proc.attributes:
                     return os.path.basename(proc.attributes['PROV__Used'])
+                elif 'source' in proc.attributes:
+                    return os.path.basename(proc.attributes['source'])
 
         return None
 
@@ -1270,7 +1436,7 @@ class Camps_data(nc_writable):
 
 
     def get_process_str(self):
-        """Returns a string representation of the process.
+        """Returns a string representation of the processes.
         i.e. A comma separated name of the process enclosed in parentheses.
         """
 
@@ -1282,20 +1448,36 @@ class Camps_data(nc_writable):
         return process_str
 
 
+    def get_preprocess_str(self):
+        """Returns a string representation of the preprocesses.
+        i.e. A comma separated name of the process enclosed in parentheses.
+        """
+
+        process_str = "( "
+        for proc in self.preprocesses:
+            process_str += proc.name + " "
+        process_str = process_str[0:-1] + " )"
+
+        return process_str
+
+
     def add(self, other, axis=1):
         """Add the data of other Camps_data object to self."""
 
         # Correct shape
         while len(other.data.shape) <= axis:
-            other.data = np.array([other.data])
+            #other.data = np.array([other.data])
+            other.data = np.ma.array([other.data])
 
         while len(self.data.shape) <= axis:
-            self.data = np.array([self.data])
+            #self.data = np.array([self.data])
+            self.data = np.ma.array([self.data])
 
         if len(other.data.shape) != len(self.data.shape):
             raise ValueError("all input arrays must have the same shape")
 
-        new_data = np.concatenate((self.data, other.data),axis-1)
+        #new_data = np.concatenate((self.data, other.data),axis-1)
+        new_data = np.ma.concatenate((self.data, other.data),axis-1)
         return new_data
 
 
@@ -1332,11 +1514,9 @@ class Camps_data(nc_writable):
         for i in self.time:
             for j in other.time:
                 if type(i) == type(j):
-                    i = i + j #Magic operator '+' assumed for time objects.
-#Commented-out code in temporary hold until we include components.
-#        for k in range(len(self.components)):
-#            self.components[k].add_times(other.components[k])
-
+                    i = i + j
+        for k in range(len(self.components)):
+            self.components[k].add_times(other.components[k])
 
     def __getattr__(self, name):
         """Returns metadata using '.' operator"""
@@ -1344,6 +1524,14 @@ class Camps_data(nc_writable):
             return self.metadata[name]
         else:
             raise AttributeError
+
+    def __copy__(self):
+        """Creates a copy of the object"""
+        cls = self.__class__
+        result = cls.__new__(cls)
+        result.__dict__.update(self.__dict__)
+        return result
+
 
     # TODO
     #def __eq__(self, other):
@@ -1362,7 +1550,7 @@ class Camps_data(nc_writable):
             except:
                 obj_str += "\n"
         obj_str += "Metadata:\n"
-        for k, v in self.metadata.iteritems():
+        for k, v in list(self.metadata.items()):
             num_chars = len(k)
             obj_str += "* " + k
             obj_str += " " * (20 - num_chars)

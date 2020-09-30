@@ -5,9 +5,9 @@ import pdb
 import logging
 
 from . import Time
-from Camps_data import Camps_data
-from Process import Process
-from Location import Location
+from .Camps_data import Camps_data
+from .Process import Process
+from .Location import Location
 
 
 """Module: reader.py
@@ -58,7 +58,6 @@ def read(*filenames):
     for filename in filenames:
         nc = Dataset(filename, mode='r', format="NETCDF4")
         variables_dict = nc.variables
-
         #Cull the process variables, the time variables, and the coordinate
         #variables out of the dictionary of netCDF4 file variables, leaving
         #a dictionary of primary netCDF4 variables to be input for creating
@@ -72,7 +71,7 @@ def read(*filenames):
 
         #Append the list of camps data objects, one element
         #per primary netCDF4 variable in the current netCDF4 file.
-        for varname,vardata in variables_dict.iteritems():
+        for varname,vardata in variables_dict.items():
             logging.info("Reading "+str(varname))
             w_obj = read_var(filename, varname) #create the camps data object
             camps_data.append(w_obj)            #and append it to the list.
@@ -121,7 +120,7 @@ def read_var(filepath, name, lead_time=None, forecast_time=None):
         nc = Dataset(filepath, mode='r', format="NETCDF4")
         file_cache[filepath] = {'filehandle':nc}
     nc_var = nc.variables[name] #Reference of the variable of interest.
-
+    
     #If lead_time is not None then it needs to be in seconds here
     if lead_time is not None:
         lead_time = lead_time*3600
@@ -139,11 +138,29 @@ def read_var(filepath, name, lead_time=None, forecast_time=None):
             value = nc_var.getncattr(key)
             w_obj.add_metadata(key, value)
 
-    #Add process attributes to the camps data object's process list.
+    #Fill in list of preprocesses from two sources: the read variable's
+    #preprocesses and processes
+    try:
+        p_string = nc_var.getncattr('PROV__wasInformedBy')
+        procedures = parse_list_attribute_string(p_string)
+        for ip, p in enumerate(procedures):
+            p = str(p)
+            w_obj.add_preprocess(p)
+            attributes = nc.variables[p].ncattrs()
+            for attr in attributes:
+                if attr not in list(w_obj.preprocesses[ip].attributes.keys()):
+                    w_obj.preprocesses[ip].add_attribute(attr, nc.variables[p].getncattr(attr))
+    except AttributeError:
+        pass
     p_string = nc_var.getncattr('SOSA__usedProcedure')
     procedures = parse_list_attribute_string(p_string)
-    for p in procedures:
-        w_obj.add_process(str(p))
+    for ip, p in enumerate(procedures):
+        p = str(p)
+        w_obj.add_preprocess(p)
+        attributes = nc.variables[p].ncattrs()
+        for attr in attributes:
+            if attr not in list(w_obj.preprocesses[ip].attributes.keys()):
+                w_obj.preprocesses[ip].add_attribute(attr, nc.variables[p].getncattr(attr))
 
     #Grab the netCDF4 time variables and then, create and insert time
     #objects into the camps data object.
@@ -164,7 +181,6 @@ def read_var(filepath, name, lead_time=None, forecast_time=None):
             j = list(w_obj.time[i].data[:]).index(forecast_time)
         except ValueError:
             logging.info("Specified forecast reference time not found.")
-            pdb.set_trace()
             return None
         if lead_time is not None:
             i = t_names.index('LeadTime')
@@ -311,16 +327,16 @@ def subset_time(w_obj, nc_var, lead_time, time):
 
     if w_obj.is_model() and w_obj.is_vector():
         if p_time_index is not None:
-            data = nc_var[p_time_index,:]
+            data = nc_var[:][p_time_index,:]
     elif w_obj.is_model():
         if l_time_index is not None and p_time_index is not None:
-            data = nc_var[p_time_index,l_time_index,:,:]
+            data = nc_var[:][p_time_index,l_time_index,:,:]
         elif l_time_index is not None:
-            data = nc_var[:,l_time_index,:,:]
+            data = nc_var[:][:,l_time_index,:,:]
         elif p_time_index is not None:
-            data = nc_var[p_time_index,:,:,:]
+            data = nc_var[:][p_time_index,:,:,:]
     elif w_obj.is_vector():
-        data = nc_var[p_time_index,:]
+        data = nc_var[:][p_time_index,:]
 
     w_obj.data = data
 
@@ -622,7 +638,7 @@ def separate_procedure_and_data(variables_dict):
     process_identifier = 'PROV__Activity'
     process_dict = {}
     var_dict = {}
-    for var_name, variable in variables_dict.iteritems():
+    for var_name, variable in variables_dict.items():
         if process_identifier in set(variable.ncattrs()):
             process_dict[var_name] = variable
         else:
@@ -649,7 +665,7 @@ def separate_time_and_data(variables_dict):
     time_identifiers = ['Time','time','begin_end_size']
     time_dict = {}
     var_dict = {}
-    for name, var in variables_dict.iteritems():
+    for name, var in variables_dict.items():
         for identifier in time_identifiers:
             if identifier in name:
                 time_dict[name] = var
@@ -682,7 +698,7 @@ def separate_coordinate_and_data(variables_dict):
 
     coordinate_dict = {}
     var_dict = {}
-    for name, var in variables_dict.iteritems():
+    for name, var in variables_dict.items():
         if 'OM__observedProperty' not in var.ncattrs():
             coordinate_dict[name] = var
         else:

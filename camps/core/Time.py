@@ -7,7 +7,7 @@ import pdb
 from time import tzname
 from datetime import datetime
 from datetime import timedelta
-from nc_writable import nc_writable
+from .nc_writable import nc_writable
 from ..registry import util as cfg
 
 
@@ -182,13 +182,12 @@ def epoch_time(time):
     """Return time as seconds since the epoch,
     where time can be a datetime or str.
     """
-
     #time must be a datetime object, str object, or an array of fixed-width byte strings.
-    if type(time) is not datetime and type(time) is not str and type(time) is not np.string_:
+    if type(time) is not datetime and type(time) is not str and type(time) is not np.str_:
         raise TypeError("argument is not of type datetime or str")
 
     #Convert time of type string to that of type datetime.
-    if type(time) is str or type(time) is np.string_:
+    if type(time) is str or type(time) is np.str_:
         time = str_to_datetime(time)
 
     #Get start of epoch in datetime format
@@ -336,7 +335,7 @@ class Time(nc_writable):
             nc_time[:] = self.data
             #Add attributes
             self.add_common_metadata(nc_time)
-            for meta_name, value in self.metadata.iteritems():
+            for meta_name, value in self.metadata.items():
                 setattr(nc_time, meta_name, value)
 
         #Return the name of the Time variable.
@@ -376,12 +375,12 @@ class Time(nc_writable):
         """
 
         all_vars = nc_handle.variables
-        varkeys = all_vars.keys()
+        varkeys = list(all_vars.keys())
 
         #Matching pattern consists of Time variable name plus a digital suffix.
         #Case of letters are immaterial.
         def match(var): return re.match(r'^' + self.name + '\d*$', var, re.I)
-        time_vars = filter(match, varkeys) #gleans the matching names from netCDF Dataset
+        time_vars = list(filter(match, varkeys)) #gleans the matching names from netCDF Dataset
         for name in reversed(time_vars):
             var = all_vars[name]
             #Return name and True with first match in data array.
@@ -432,7 +431,7 @@ class Time(nc_writable):
         'size' of the variable dimension 'dim'.  Otherwise, returns None.
         """
 
-        for nc_dim in nc_dimensions.keys():
+        for nc_dim in list(nc_dimensions.keys()):
             if dim in nc_dim and len(nc_dimensions[nc_dim]) == size:
                 return nc_dim
 
@@ -476,7 +475,7 @@ class Time(nc_writable):
                     #stride = self.get_stride() #stride between time entries will be in dimension name
                     #hours = int(stride/3600)
                     #name = dim + '_' + str(hours) + 'hr'
-                    name = dim 
+                    name = dim
                     #Ensure that name of new dimension is unique via a digital suffix
                     alt_name = name
                     while alt_name in nc_dims:
@@ -626,7 +625,7 @@ class PhenomenonTimePeriod(Time):
                     new_time[i][0] = self.data[i]-(period*ONE_HOUR) # Beginning of time period
                     new_time[i][1] = self.data[i]                   # Ending of time period
                 self.diff = new_time[i][1] - new_time[i][0] #diff is period in seconds, and
-                self.duration = self.diff/3600              #duration is periond in hours.
+                self.duration = int(self.diff/3600)              #duration is periond in hours.
 
 
                 self.data = new_time
@@ -669,7 +668,7 @@ class PhenomenonTimePeriod(Time):
 
             #diff is the predictor period in seconds and duration the period in hours.
             self.diff = period # Set duration of period (s)
-            self.duration = self.diff/3600
+            self.duration = int(self.diff/3600)
 
         self.metadata.update({ 'standard_name' : 'time' })
         self.metadata.update({ 'PROV__specializationOf' : '( StatPP__concepts/TimeBoundsSyntax/BeginEnd OM__phenomenonTimePeriod )' })
@@ -717,18 +716,18 @@ class PhenomenonTimePeriod(Time):
             indices = np.where(self.data[:,1] == num_seconds)
             if len(indices[0]):
                 if len(indices[0]) > 1:
-                    print("More than one period found in PhenomenonTimePeriod object with end time %d.", num_seconds)
+                    print(("More than one period found in PhenomenonTimePeriod object with end time %d.", num_seconds))
                 indices = int(indices[0][0]),
             else:
-                print("No period found in PhenomenonTimePeriod object with end_time %d found.", num_seconds)
+                print(("No period found in PhenomenonTimePeriod object with end_time %d found.", num_seconds))
         elif num_dims == 3:
             indices = np.where(self.data[:,:,1] == num_seconds)
             if len(indices[0]):
                 if len(indices[0]) > 1:
-                    print("More than one period found in PhenomenonTimePeriod object with end time %d.", num_seconds)
+                    print(("More than one period found in PhenomenonTimePeriod object with end time %d.", num_seconds))
                 indices = int(indices[0][0]), int(indices[1][0])
             else:
-                print("No period found in PhenomenonTimePeriod object with end_time %d found.", num_seconds)
+                print(("No period found in PhenomenonTimePeriod object with end_time %d found.", num_seconds))
         else:
             raise AssertionError("The number of dimensions of the data of phenomenon time period must be 2 or 3.")
 
@@ -752,12 +751,12 @@ class PhenomenonTimePeriod(Time):
         """
 
         all_vars = nc_handle.variables #dictionary of netCDF Dataset variable objects
-        varkeys = all_vars.keys() #list of netCDF Dataset variable names
+        varkeys = list(all_vars.keys()) #list of netCDF Dataset variable names
 
         #Match pattern consists of variable name, duration, and a digital suffix.
-        period_name = self.name + str(self.diff/3600) + 'hr'
+        period_name = self.name + str(int(self.diff/3600)) + 'hr'
         def match(var): return re.match(r'^' + period_name + '\d*$', var, re.I)
-        time_vars = filter(match, varkeys) #list of matching netCDF Dataset variable names
+        time_vars = list(filter(match, varkeys)) #list of matching netCDF Dataset variable names
         for name in reversed(time_vars):
             var = all_vars[name]
             # Check for a data match
@@ -1100,7 +1099,7 @@ class ForecastReferenceTime(Time):
         else:
             raise Exception("More arguments needed in forecastReferenceTime constructor")
 
-        self.metadata.update({ 'standard_name' :  self.name })
+        self.metadata.update({'standard_name':'forecast_reference_time'})
 
         if 'reference_time' in kwargs:
             self.append_reference_time(kwargs['reference_time'])
@@ -1175,9 +1174,9 @@ class LeadTime(Time):
                 duration = self.data[1] - self.data[0]
                 last = self.data[-1]
 
-                self.metadata['firstLeadTime'] = 'P' + str(first/60/60) + 'H'
-                self.metadata['PeriodicTime'] = 'P' + str(duration/60/60) + 'H'
-                self.metadata['lastLeadTime'] = 'P' + str(last/60/60) + 'H'
+                self.metadata['firstLeadTime'] = 'P' + str(int(first/60/60)) + 'H'
+                self.metadata['PeriodicTime'] = 'P' + str(int(duration/60/60)) + 'H'
+                self.metadata['lastLeadTime'] = 'P' + str(int(last/60/60)) + 'H'
 
         self.metadata.update({ 'standard_name' : "forecast_period" })
         self.metadata.update({ 'PROV__specializationOf' : '( StatPP__Data/Time/LeadTime )' })
@@ -1241,11 +1240,11 @@ class LeadTime(Time):
         ret_str += "Data:\n"
         if len(self.data) > 6:
             for i in range(3):
-                ret_str += str(self.data[i]/3600)
+                ret_str += str(int(self.data[i]/3600))
                 ret_str += "hr,\n"
             ret_str += "   ...\n"
             for i in range(-3,0):
-                ret_str += str(self.data[i]/3600)
+                ret_str += str(int(self.data[i]/3600))
                 ret_str += "hr,\n"
         return ret_str
 

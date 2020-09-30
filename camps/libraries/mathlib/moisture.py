@@ -5,12 +5,13 @@ import re
 import pdb
 import string
 import copy
-import metpy
+import metpy.calc as calc
 from metpy.units import units
 import math
 import numpy as np
 from operator import itemgetter
 
+from ...mospred import create as create
 from ...registry.db import db as db
 from ...core.fetch import *
 from ...core.Time import epoch_to_datetime
@@ -36,14 +37,14 @@ def dewpoint_temperature_setup(filepaths, time, predictor):
 
     """
 
-#   Instatiate the camps data object for the dewpoint temperature.  
+#   Instatiate the camps data object for the dewpoint temperature.
 #   The camps data base is read for specific attribute values, initially
 #   set in the camps registry netcdf.yaml file.
     dewpt = Camps_data("dew_point_temperature")
     international_units = { 'temperature' : 'kelvin' } #this will be a global dictionary.
 
 #   Obtain the standard international units for this predictor.
-#   The unit dimensionality of other objects will be checked against this international standard 
+#   The unit dimensionality of other objects will be checked against this international standard
 #   for correct dimensionality.
     intl_unit = international_units['temperature']
     iu_pint = units.Quantity(1., intl_unit)
@@ -71,9 +72,10 @@ def dewpoint_temperature_setup(filepaths, time, predictor):
     pred.change_property('Temp')
     temp = fetch(filepaths, time, **pred.search_metadata)
     assert(isinstance(temp, Camps_data)),"temp expected to be camps data object"
+    mask = np.ma.getmaskarray(temp.data)
 
 #   Copy any processes from temp object to dewpt object
-    dewpt.processes = copy.deepcopy(temp.processes)
+    #dewpt.processes = copy.deepcopy(temp.processes)
 
 #   Create the met.py version of the air temperature
 #   to be used in calculating the dewpoint temperature.
@@ -87,11 +89,14 @@ def dewpoint_temperature_setup(filepaths, time, predictor):
         logging.info("temp: ")
         logging.info("    Fetched temperature does not have defined units!")
         raise
+    #q_temp = units.Quantity(temp.data, t_unit)
     q_temp = units.Quantity(temp.data, t_unit)
-#    dewpt.add_component(temp)
+    dewpt.dimensions = copy.deepcopy(temp.dimensions)
+    dewpt.add_component(temp)
     if unit is None:
         unit = t_unit
         dewpt.metadata.update({'units' : unit})
+    dewpt.preprocesses = temp.preprocesses
 
 #   Fetch atmospheric relative humidity and test if its
 #   a camps data object.  Its unit is dimensionless, either
@@ -100,6 +105,7 @@ def dewpoint_temperature_setup(filepaths, time, predictor):
     pred.change_property('RelHum')
     rel_hum = fetch(filepaths, time, **pred.search_metadata)
     assert(isinstance(rel_hum, Camps_data)),"rel_hum expected to be camps data object"
+    mask += np.ma.getmaskarray(rel_hum.data)
 #   Create the met.py version of the relative humidity, casting
 #   it as a proportion with range [0,1].
 ##   Declare the camps data object for relative humidity a
@@ -107,14 +113,15 @@ def dewpoint_temperature_setup(filepaths, time, predictor):
     q_relhum = units(None) * rel_hum.data
     if np.amax(rel_hum.data) > 2:
         q_relhum = q_relhum/100
-#    dewpt.add_component(rel_hum)
-    
+    dewpt.add_component(rel_hum)
+    for proc in rel_hum.preprocesses:
+        dewpt.add_preprocess(proc)
+
 #   Call the function dewpoint that calls the metpy.calc function
 #   calculating dewpoint temperature.  Convert values to units of 'unit'.
     q_data = dewpoint(q_temp, q_relhum).to(unit)
 #   Before loading the data attribute, declare the its dimensions.
-    dewpt.dimensions = copy.deepcopy(temp.dimensions)
-    dewpt.add_data(np.array(q_data))
+    dewpt.add_data(np.ma.array(np.array(q_data), mask=mask))
 
 #   Finish constructing the dewpoint temperature Camps data object
 #   and return it.
@@ -123,6 +130,7 @@ def dewpoint_temperature_setup(filepaths, time, predictor):
     dewpt.add_coord(temp.get_coordinate())
     dewpt.metadata.update({'coordinates' : temp.metadata.get('coordinates')})
     dewpt.metadata.update({'FcstTime_hour' : temp.metadata.get('FcstTime_hour')})
+    dewpt.add_process('DewPointCalc')
 
     return dewpt
 
@@ -136,7 +144,7 @@ def dewpoint(temp, rel_hum):
 
     """
 
-    q_dewpt = metpy.calc.dewpoint_rh(temp, rel_hum)
+    q_dewpt = calc.dewpoint_from_relative_humidity(temp, rel_hum)
 
     return q_dewpt
 
@@ -160,7 +168,7 @@ def mixing_ratio_setup(filepaths, time, predictor):
 
     """
 
-#   Instatiate the camps data object for the mixing ratio.  
+#   Instatiate the camps data object for the mixing ratio.
 #   The camps data base is read for specific attribute values, initially
 #   set in the camps registry netcdf.yaml file.
     mixr = Camps_data("mixing_ratio_instant")
@@ -168,7 +176,7 @@ def mixing_ratio_setup(filepaths, time, predictor):
     international_units.update({ 'temperature' : 'kelvin'})
 
 #   Obtain the standard international units for this predictor.
-#   The unit dimensionality of other objects will be checked against this international standard 
+#   The unit dimensionality of other objects will be checked against this international standard
 #   for correct dimensionality.
     intl_unit = international_units.get('mixing_ratio')
     iu_pint = units.Quantity(1., intl_unit)
@@ -209,6 +217,7 @@ def mixing_ratio_setup(filepaths, time, predictor):
     iu_pint = units.Quantity(1., iu_unit)
     temp = fetch(filepaths, time, **pred.search_metadata)
     assert(isinstance(temp, Camps_data)),"temp expected to be camps data object"
+    mask = np.ma.getmaskarray(temp.data)
     try:
         u_temp = temp.metadata['units']
         t_pint = units.Quantity(1., u_temp)
@@ -219,14 +228,15 @@ def mixing_ratio_setup(filepaths, time, predictor):
         raise
 
 #   Copy processes from temp object
-    mixr.processes = copy.deepcopy(temp.processes)
-    
+    #mixr.processes = copy.deepcopy(temp.processes)
+
 #   Create the met.py version of the air temperature
 #   to be used in calculating the dewpoint temperature.
 #   Declare the camps data object for temperature a component
 #   of dewpoint temperature.
     q_temp = units.Quantity(temp.data, u_temp)
-#    mixr.add_component(temp)
+    mixr.add_component(temp)
+    mixr.preprocesses = temp.preprocesses
 
 #   Fetch atmospheric relative humidity and test if its
 #   a camps data object.  Its unit is dimensionless, either
@@ -235,6 +245,7 @@ def mixing_ratio_setup(filepaths, time, predictor):
     pred.change_property('RelHum')
     rh = fetch(filepaths, time, **pred.search_metadata)
     assert(isinstance(rh, Camps_data)),"rh expected to be camps data object"
+    mask += np.ma.getmaskarray(rh.data)
 #   Create the met.py version of the relative humidity, casting
 #   it as a proportion with range [0,1].
 ##   Declare the camps data object for relative humidity a
@@ -242,7 +253,10 @@ def mixing_ratio_setup(filepaths, time, predictor):
     q_rh = units(None) * rh.data
     if np.amax(rh.data) > 2:
         q_rh = q_rh/100
-#    mixr.add_component(rh)
+    mixr.dimensions = copy.deepcopy(rh.dimensions)
+    mixr.add_component(rh)
+    for proc in rh.preprocesses:
+        mixr.add_preprocess(proc)
 
 #   Call the mixing ratio function, which uses metpy quantities
 #   and calls metpy functions to create the mixing ratio.
@@ -250,40 +264,40 @@ def mixing_ratio_setup(filepaths, time, predictor):
 #   into the mixing ratio camps data object.
     q_data = mixing_ratio(q_plev, q_temp, q_rh).to(unit)
 #   Before inserting data, declare its dimensions.
-    mixr.dimensions = copy.deepcopy(rh.dimensions)
-    mixr.add_data(np.array(q_data))
+    mixr.add_data(np.ma.array(np.array(q_data), mask=mask))
 
 #   Construct the rest of the mixing ratio data camps object.
     mixr.time = copy.deepcopy(rh.time)
     mixr.location = rh.location
     mixr.metadata.update({'coordinates' : rh.metadata.get('coordinates')}) #needed for reshape to work.
     mixr.metadata.update({'FcstTime_hour' : rh.metadata.get('FcstTime_hour')})
+    mixr.add_process('MixRatioCalc')
 
     return mixr
 
 
 def mixing_ratio(pressure_arr, temperature_arr, rel_hum_arr):
     """
-    Compute the mixing ratio, 
+    Compute the mixing ratio,
     using the metpy module to obtain the saturation mixing ratio.
     Mixing ratio is the product of saturation mixing ratio and
-    the relative humidity times the number of grams in a kilogram.  
-    It's value is the mass of water vapor in grams in each 1000 grams 
+    the relative humidity times the number of grams in a kilogram.
+    It's value is the mass of water vapor in grams in each 1000 grams
     (1 kg) of atmosphere.
     """
 
-    sat_mix_ratio = metpy.calc.saturation_mixing_ratio(pressure_arr, temperature_arr)
+    sat_mix_ratio = calc.saturation_mixing_ratio(pressure_arr, temperature_arr)
     mixing_ratio = sat_mix_ratio * rel_hum_arr
 
     return mixing_ratio
 #
-#    
+#
 #
 def equivalent_potential_temperature_setup(filepaths, time, predictor):
     r"""This method prepares relevant parameters for the calculation of
         the equivalent potential temperature at a specified pressure level.
-        The equivalent potential temperature is the temperature achieved 
-        by adiabatically moving a parcel of air at a given temperature and 
+        The equivalent potential temperature is the temperature achieved
+        by adiabatically moving a parcel of air at a given temperature and
         isobaric level to the reference pressure level of 1000 millibars,
         while accounting for phase transitions of water.
 
@@ -341,6 +355,7 @@ def equivalent_potential_temperature_setup(filepaths, time, predictor):
     pred.change_property('Temp')
     temp = fetch(filepaths, time, **pred.search_metadata)
     assert(isinstance(temp, Camps_data)),"Fetched temperature is not a Camps data object."
+    mask = np.ma.getmaskarray(temp.data)
     try:
         u_temp = temp.metadata['units']
         u_pint = units.Quantity(1., u_temp)
@@ -354,22 +369,25 @@ def equivalent_potential_temperature_setup(filepaths, time, predictor):
         eqpotemp.metadata.update({ 'units' : unit })
 
 #   Copy the processes from the temp object
-    eqpotemp.processes = copy.deepcopy(temp.processes)
- 
+    #eqpotemp.processes = copy.deepcopy(temp.processes)
+
 
 #   Create the metpy object for temperature and then
 #   add the camps data object for temperature to the list
 #   of components of equivalent potential temperature.
-    q_temp = units.Quantity(temp.data, u_temp)
-#    eqpotemp.add_component(temp)
+    q_temp = units.Quantity(np.array(temp.data), u_temp) #wrapping with numpy array skirts MetPy 0.12.1 bug.
+    eqpotemp.dimensions = copy.deepcopy(temp.dimensions)
+    eqpotemp.add_component(temp)
+    eqpotemp.preprocesses = temp.preprocesses
 
 #   Fetch the dewpoint temperature.
 #   If that fails, then calculate it.
     pred.change_property('DewPt')
     dewpt = fetch(filepaths, time, **pred.search_metadata)
     if dewpt is None:
-        dewpt = dewpoint_temperature_setup(filepaths, time, pred)
+        dewpt = create.calculate(filepaths, time, pred)
     assert(isinstance(dewpt, Camps_data)),"Fetched dewpoint temperature is not a Camps data object."
+    mask += np.ma.getmaskarray(dewpt.data)
     try:
         u_dewpt = dewpt.metadata['units']
         d_pint = units.Quantity(1.,u_dewpt)
@@ -379,17 +397,17 @@ def equivalent_potential_temperature_setup(filepaths, time, predictor):
         logging.info("Fetched dewpoint temperature has no units.")
         raise
 #   Create the metpy object for dewpoint temperature, and then
-##   add the camps data object of it to the list of components
-##   of equivalent potential temperature.
-    q_dewpt = units.Quantity(dewpt.data, u_dewpt)
-#    eqpotemp.add_component(dewpt)
+#   add the camps data object of it to the list of components
+#   of equivalent potential temperature.
+    q_dewpt = units.Quantity(np.array(dewpt.data), u_dewpt) #wrapping with numpy array skirts MetPy 0.12.1 bug.
+    eqpotemp.add_component(dewpt)
+    for proc in dewpt.preprocesses:
+        eqpotemp.add_preprocess(proc)
 
-#   Call the function returning the equivalent potential temperature
-#   as a Metpy object, convert that returning object to a numpy array, and
-#   after declaring its dimensions, insert it into the camps data object.
+#   Obtain the equivalent potential temperature and with 'mask', add the masked data array to
+#   the Camps data object. 
     q_data = equivalent_potential_temperature(q_isobar, q_temp, q_dewpt).to(unit)
-    eqpotemp.dimensions = copy.deepcopy(temp.dimensions)
-    eqpotemp.add_data(np.array(q_data))
+    eqpotemp.add_data(np.ma.array(np.array(q_data), mask=mask, fill_value=9999.))
 
 #   Construct the rest of the Camps data object of the
 #   equivalent potential temperature.
@@ -397,31 +415,41 @@ def equivalent_potential_temperature_setup(filepaths, time, predictor):
     eqpotemp.location = temp.location
     eqpotemp.metadata.update({ 'coordinates' : temp.metadata.get('coordinates') }) #needed for reshape to work.
     eqpotemp.metadata.update({ 'FcstTime_hour' : temp.metadata.get('FcstTime_hour') })
+    eqpotemp.metadata.update({ 'ReferencePressure_in_hPa' : 1000 })
+    eqpotemp.add_process('EqPotTempCalc')
 
     return eqpotemp
 
 
 def equivalent_potential_temperature(pressure, temperature, dewpoint):
     r"""This method calls the metpy.calc function equivalent_potential_temperature
-        which takes the pint.Quantity objects containing the isobaric level value 
+        which takes the pint.Quantity objects containing the isobaric level value
         and the temperature at that level and, assuming saturated water vapor,
-        produces the corresponding equivalent potential temperature with the reference 
+        produces the corresponding equivalent potential temperature with the reference
         pressure being 1000 millibars.
 
     """
 
-    eqpotemp = metpy.calc.equivalent_potential_temperature(pressure, temperature, dewpoint)
+    #eqpotemp = calc.equivalent_potential_temperature(pressure, temperature, dewpoint)
 
-    return eqpotemp
+    return  calc.equivalent_potential_temperature(pressure, temperature, dewpoint)
 
 
 
 def heat_index_setup(filepaths, time, predictor):
-    """
-    Calculate the heat index.
+    """Calculate the heat index.
     We use the method provided by MetPy, which is based on
     work presented in Steadman (1979) and Rothfusz(1990).
     """
+
+# Create camps data object for the heat index.
+    ht_index = Camps_data('heat_index_instant')
+    hi_unit = 'degF' # degrees Fahrenheit is the default unit
+    if ht_index.units:
+        hi_unit = ht_index.units
+    elif ht_index.metadata['units']:
+        hi_unit = ht_index.metadata['units']
+    ht_index.metadata.update({ 'units' : hi_unit })
 
 # Produce a copy of the predictor object that is independent
 # of the original object.  This avoids inadvertent changes to
@@ -429,12 +457,13 @@ def heat_index_setup(filepaths, time, predictor):
     pred = predictor.copy()
 
 # Obtain the parameters that are assumed to be available
-# either directly from the weather model output or created 
+# either directly from the weather model output or created
 # earlier by this software package.  The formula for heat
 # index requires temperature and relative humidity.
     pred.search_metadata['vert_coord1'] = 2
     pred.change_property('Temp')
     temp = fetch(filepaths, time, **pred.search_metadata)
+    mask = np.ma.getmaskarray(temp.data)
     if temp.units:
         u_temp = temp.units
     elif temp.metadata['units']:
@@ -442,9 +471,14 @@ def heat_index_setup(filepaths, time, predictor):
     else:
         logging.info("heat_index: the air temperature must have units.")
         return None
+    q_temp = units.Quantity(temp.data, u_temp).to('kelvin')
+    ht_index.dimensions = temp.dimensions
+    ht_index.add_component(temp)
+    ht_index.preprocesses = temp.preprocesses
 
     pred.change_property('RelHum')
     rh = fetch(filepaths, time, **pred.search_metadata)
+    mask += np.ma.getmaskarray(rh.data)
     if rh.units:
         u_rh = rh.units
     elif rh.metadata['units']:
@@ -452,36 +486,17 @@ def heat_index_setup(filepaths, time, predictor):
     else:
         logging.info("heat_index: the relative humidity must have units.")
         return None
-    if u_rh == u"%":
-        u_rh = u"percent"
-
-# Create camps data object for the heat index.
-# The temperature camps data object is the key guide in
-# constructing the heat index camps data object.
-    ht_index = Camps_data('heat_index_instant')
-    hi_unit = 'degF' # degrees Fahrenheit is the default unit
-    if ht_index.units:
-        hi_unit = ht_index.units
-    elif ht_index.metadata['units']:
-        hi_unit = ht_index.metadata['units']
-    ht_index.time = temp.time
-    ht_index.location = temp.location
-    ht_index.dimensions = temp.dimensions
-    ht_index.processes = temp.processes
-    ht_index.properties = temp.properties
-    ht_index.add_coord(temp.get_coordinate())
-    for k,v in temp.metadata.iteritems():
-        if not 'name' in k \
-        and not 'Property' in k \
-        and not 'units' in k:
-            ht_index.metadata[k] = v
+    if u_rh == "%":
+        u_rh = "percent"
+    q_rh = units.Quantity(rh.data, u_rh).to('dimensionless')
+    ht_index.add_component(rh)
+    for proc in rh.preprocesses:
+        ht_index.add_preprocess(proc)
 
 # Calculate the heat index using a method in MetPy.
 # To do so, we have to contain the temperature and relative
 # humidity data into pint.Quantity objects, which require
 # that the units be specified.
-    q_temp = units.Quantity(temp.data, u_temp).to('kelvin')
-    q_rh = units.Quantity(rh.data, u_rh).to('dimensionless')
     q_data = heat_index(q_temp, q_rh).to(hi_unit)
 
 # The MetPy method returns heat index values where it was valid
@@ -493,7 +508,22 @@ def heat_index_setup(filepaths, time, predictor):
     q_tf = q_temp.to(hi_unit)
     mask_invalid = q_data.mask.astype(np.int)
     mask_valid = 1-mask_invalid
-    ht_index.data = mask_valid*np.array(q_data) + mask_invalid*np.array(q_tf)
+    data = mask_valid*np.array(q_data) + mask_invalid*np.array(q_tf)
+    ht_index.add_data(np.ma.array(data, mask=mask))
+
+# The temperature camps data object is the key guide in
+# constructing the heat index camps data object.
+    ht_index.time = copy.deepcopy(temp.time)
+    ht_index.location = temp.location
+    #ht_index.processes = temp.processes
+    ht_index.properties = temp.properties
+    ht_index.add_coord(temp.get_coordinate())
+    for k,v in list(temp.metadata.items()):
+        if not 'name' in k \
+        and not 'Property' in k \
+        and not 'units' in k:
+            ht_index.metadata[k] = v
+    ht_index.add_process('HtIndexTempCalc')
 
     return ht_index
 #
@@ -508,7 +538,7 @@ def heat_index(temperature, relative_humidity):
     is defined.
     """
 
-    hi = metpy.calc.heat_index(temperature,relative_humidity,mask_undefined=True)
+    hi = calc.heat_index(temperature,relative_humidity,mask_undefined=True)
 
     return hi
 
@@ -531,7 +561,6 @@ def TotalPrecip(filepaths, time, predictor):
             over a specified duration.
 
     """
-    #pdb.set_trace()
 #   total precipitation over a specified time period can have two
 #   different unit dimensionalities: mass per unit area or length.
 #   Mass per unit area is a superior unit in that it's value is
@@ -583,7 +612,7 @@ def TotalPrecip(filepaths, time, predictor):
 #   contained in the Camps database.
 
 #   Construct lookup dictionary
-    info_dict = {'duration_method': duration_method, 'source': model, 'property': 'TotalPrecip', 
+    info_dict = {'duration_method': duration_method, 'source': model, 'property': 'TotalPrecip',
                  'vert_coord1': vert_coord1, 'reserved1': 'grid', 'file_id': file_id}
 #   Fetch variables from netcdf file, allow for multiple objects returned via list
     info = fetch(filepaths, time, repeat=True, **info_dict)
@@ -614,7 +643,7 @@ def TotalPrecip(filepaths, time, predictor):
     data = []
     ndata = len(info)
     for inc in range(ndata):
-        dict = {'duration_method': duration_method, 'source': model, 'duration': durations_hrs[inc], 
+        dict = {'duration_method': duration_method, 'source': model, 'duration': durations_hrs[inc],
                 'property': 'TotalPrecip', 'vert_coord1': vert_coord1, 'reserved1': 'grid', 'file_id': file_id}
         data.append(fetch(filepaths, time, **dict))
 
@@ -665,37 +694,47 @@ def TotalPrecip(filepaths, time, predictor):
     if q_totpcp.dimensionality == ipa_pint.dimensionality:
         for i in range(len(data)):
             dt = data[i]
-            dt.data.mask = np.ma.nomask
-            q_data = units.Quantity(dt.data, dt.metadata.get('units'))
+            #dt.data.mask = np.ma.nomask
+            #q_data = units.Quantity(dt.data, dt.metadata.get('units'))
+            q_data = units.Quantity(np.ma.getdata(dt.data), dt.metadata.get('units'))
+            mask = np.ma.getmaskarray(dt.data)
             if q_data.dimensionality == ilt_pint.dimensionality:
                 q_data *= q_h2oDensity
                 q_data.ito(unit)
-            dt.data = np.ma.array(q_data)
+            dt.data = np.ma.array(np.array(q_data), mask=mask)
             dt.metadata.update({ 'units' : unit })
     else:
         for i in range(len(data)):
             dt = data[i]
-            dt.data.mask = np.ma.nomask
-            q_data = units.Quantity(dt.data, dt.metadata.get('units'))
+            #dt.data.mask = np.ma.nomask
+            #q_data = units.Quantity(dt.data, dt.metadata.get('units'))
+            q_data = units.Quantity(np.ma.getdata(dt.data), dt.metadata.get('units'))
+            mask = np.ma.getmaskarray(dt.data)
             if q_data.dimensionality == ipa_pint.dimensionality:
                 q_data /= q_h2oDensity
                 q_data.ito(unit)
-            dt.data = np.ma.array(q_data)
+            dt.data = np.ma.array(np.array(q_data), mask=mask)
             dt.metadata.update({ 'units' : unit })
 
 #   Force the dimensions of the data arrays in the camps data objects
 #   to be ('y', 'x', 'lead_time').  This code was written back when
 #   this was the order of dimensions for the fetched total precip.
-    ilt = data[0].dimensions.index('lead_times')
+    for ilt,dim in enumerate(data[0].dimensions):
+        if 'lead_times' in dim:
+            break
+    #ilt = data[0].dimensions.index('lead_times')
     for i in data:
-        dt = np.moveaxis(i.data,[iy,ix,ilt],[-3,-2,-1])
+        dta = np.ma.getdata(i.data)
+        mask = np.ma.getmaskarray(i.data)
+        dt = np.moveaxis(dta,[iy,ix,ilt],[-3,-2,-1])
+        msk = np.moveaxis(mask,[iy,ix,ilt],[-3,-2,-1])
         dims = [i.dimensions[j] for j in [iy,ix,ilt]]
-        i.data=dt
-        i.dimensions=dims
+        i.data = np.ma.array(dt, mask=msk)
+        i.dimensions = dims
 
 #   Is the data stored as a running sum or discrete units of
-#   precipitation amount.  A running sum where the precip is 
-#   accumulated along lead time, increasing from zero at the 
+#   precipitation amount.  A running sum where the precip is
+#   accumulated along lead time, increasing from zero at the
 #   lead time of zero.
 #
 #   The algorithm to determine how total precip is stored is
@@ -722,11 +761,13 @@ def TotalPrecip(filepaths, time, predictor):
         pass
 #        totpcp = sum_amts_discrete(pred, data)
 
-    
+
 #   Here starts the essential construction of the total precipitation
 #   from the addition/subtraction of the fetched set.
     durations = [dur*3600 for dur in durations_hrs] #duration_hrs used be in units of hours, but now is in seconds.
-    totpcp.data = np.ma.zeros((ny_grid,nx_grid))
+    tp_data = np.zeros((ny_grid, nx_grid))
+    tp_mask = np.zeros((ny_grid, nx_grid), dtype=np.int)
+    totpcp.data = np.ma.array(tp_data, mask=tp_mask)
     t0 = time + (leadTime*3600)
     t1 = t0 - (duration*3600)
 
@@ -754,7 +795,7 @@ def TotalPrecip(filepaths, time, predictor):
         path = [-t1]
         intervals_selected = interval_selection(path,-t0,intvls_negrev)
 
-#   Go through the selected intervals adding/subtracting the 
+#   Go through the selected intervals adding/subtracting the
 #   the fetched total precip within that interval.
     if intervals_selected:
         front = intervals_selected.pop()
@@ -773,42 +814,52 @@ def TotalPrecip(filepaths, time, predictor):
                 idata = i
                 ilt = intervals[i].index(intvl)
                 break
-        totpcp.data[:,:] += sign*data[idata].data[:,:,ilt]
+        #totpcp.data[:,:] += sign*data[idata].data[:,:,ilt]
+        tp_data[:,:] += sign*data[idata].data[:,:,ilt]
+        tp_mask += np.ma.getmaskarray(data[idata].data[:,:,ilt])
         front = back
+    totpcp.data = np.ma.array(tp_data, mask=tp_mask)
+
 #   The data matrix of the CAMPS data object has been filled.
 #   Construct the rest of this data object, starting with the
 #   various times.
     phenomTpd = Time.PhenomenonTimePeriod(data=np.array([[[time+(leadTime*3600)-(duration*3600),time+(leadTime*3600)]]]))
     phenomTpd.duration = duration
     totpcp.time.append(phenomTpd)
-    fcstRefTime = Time.ForecastReferenceTime(data=np.array([time]))
+    fcstRefTime = Time.ForecastReferenceTime(data=np.ma.masked_array([time],mask=[0]))
     totpcp.time.append(fcstRefTime)
-    leadT = Time.LeadTime(data=np.array([(leadTime*3600)]))
+    leadT = Time.LeadTime(data=np.ma.masked_array([(leadTime*3600)],mask=[0]))
     totpcp.time.append(leadT)
-    resultT = Time.ResultTime(data=np.array([time]))
+    resultT = Time.ResultTime(data=np.ma.masked_array([time],mask=[0]))
     totpcp.time.append(resultT)
-    validT = Time.ValidTime(data=np.array([[[time,t0]]]))
+    validT = Time.ValidTime(data=np.ma.masked_array([[[time,t0]]],mask=[[[0,0]]]))
     totpcp.time.append(validT)
 
-#   Inherit from the fetched object with the shortest duration 
+#   Inherit from the fetched object with the shortest duration
 #   the non-time objects.
     totpcp.location = data[0].location
     totpcp.dimensions = copy.deepcopy(data[0].dimensions[0:2])
     totpcp.properties = copy.deepcopy(data[0].properties)
     totpcp.processes = copy.deepcopy(data[0].processes)
+    for tp_obj in data:
+        totpcp.add_component(tp_obj)
+        for proc in tp_obj.preprocesses:
+            totpcp.add_preprocess(proc)
+    totpcp.add_process('TotalPrecipCalc')
 #   Insert the necessary metadata.
     totpcp.properties.update({ 'hours' : duration })
     totpcp.metadata.update({ 'coordinates' : data[0].metadata.get('coordinates') })
     totpcp.metadata.update({ 'FcstTime_hour' : data[0].metadata.get('FcstTime_hour') })
     totpcp.metadata['hours'] = duration
+
     return totpcp
-            
+
 
 def interval_selection(path,ll,i):
-    """
-    This function is called by TotalPrecip to search for intervals
+    """This function is called by TotalPrecip to search for intervals
     that can construct the desired total precip.
     """
+
     while path != []:
         if path[0] > ll:
             intvl = interval_retrieval_and_removal(i,path[0],1)
@@ -833,8 +884,7 @@ def interval_selection(path,ll,i):
 
 
 def interval_retrieval_and_removal(array, time, index):
-    """
-    This function is called by interval_selection to present
+    """This function is called by interval_selection to present
     time intervals that may work in calculating the total
     precipitation.
     """
@@ -846,4 +896,5 @@ def interval_retrieval_and_removal(array, time, index):
         if b != []:
             j = array[i].index(b[0])
             return array[i].pop(j)
+
     return b

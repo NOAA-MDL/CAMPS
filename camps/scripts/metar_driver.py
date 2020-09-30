@@ -64,7 +64,7 @@ def main():
         level = logging.getLevelName(debug_level)
         logging.basicConfig(level=level)
     except:
-        print "Logging setup failed"
+        print("Logging setup failed")
         raise
 
     logging.info("Starting main")
@@ -111,8 +111,8 @@ def main():
         save_object(stations, 'postqc.pkl')
     logging.info("Construct 2D observation arrays")
     camps_data = []
-    example_station = stations.values()[0]
-    obs = example_station.observations.keys()
+    example_station = list(stations.values())[0]
+    obs = list(example_station.observations.keys())
     obs.remove('TIME')
     start_time = dates[0]
     end_time = dates[-1]
@@ -132,7 +132,7 @@ def main():
 
         # Loop through the stations and stitch together the current observation
         temp_obs = []
-        for station_name, cur_station in stations.iteritems():
+        for station_name, cur_station in stations.items():
             temp_obs.append(cur_station.get_obs(metar_name))
         obs_data = np.array(temp_obs)
         logging.info(observation_name)
@@ -162,15 +162,15 @@ def main():
 
         camps_data.append(camps_obj)
 
-    camps_obj = pack_station_names(stations.keys())
+    camps_obj = pack_station_names(list(stations.keys()))
     camps_obj.add_source('StatPP__Data/Source/NCEPSfcObsMETAR')
     camps_obj.time = add_time(start_time, end_time)
     camps_data.append(camps_obj)
 
     if qc_flag:
-       extra_globals = {"source": "Data from METAR with MDL Quality Control"}
+        extra_globals = {"source": "Data from METAR with MDL Quality Control"}
     else:
-       extra_globals = {"source": "Data from METAR (No MDL Quality Control)"}
+        extra_globals = {"source": "Data from METAR (No MDL Quality Control)"}
 
     # Write into netCDF4 file
     writer.write(camps_data, filename, extra_globals, write_to_db=True)

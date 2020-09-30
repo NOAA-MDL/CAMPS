@@ -10,12 +10,12 @@ date_range : ['2018040100-2018040523,1h']
 # ----------------------------------------------------------------------------------------
 # input_data filepath:
 # ----------------------------------------------------------------------------------------
-input_data : "/scratch1/NCEPDEV/mdl/Emily.Schlie/METAR_hrly/2018_warm_season/warm_season_2018"
+input_data : "/path/to/directory/metar_data.txt"
 
 # ----------------------------------------------------------------------------------------
 # Output filepath
 # ----------------------------------------------------------------------------------------
-output : "/scratch1/NCEPDEV/mdl/Emily.Schlie/hre201804_test.nc"
+output : "/path/to/directory/METAR_output.nc"
 
 # ----------------------------------------------------------------------------------------
 # Can be DEBUG, INFO, WARNING, ERROR, CRITICAL.
@@ -35,7 +35,7 @@ log_file : ""
 err_file : "./metar_errlog"
 
 # ----------------------------------------------------------------------------------------
-# Specify the number of processors to be used during the run
+# Specify number of processors to be used during the run 
 # ----------------------------------------------------------------------------------------
 num_processors : 16
 
@@ -44,11 +44,11 @@ num_processors : 16
 # File provides stations with colon delimeted information about the station, including lat, 
 # lon, long name.
 # ----------------------------------------------------------------------------------------
-station_table : "/home/Emily.Schlie/repositories/camps/camps/registry/alldevsites.tbl"
+station_table : "/path/to/directory/stations.tbl"
 # ----------------------------------------------------------------------------------------
 # Proide list of stations to use
 # ----------------------------------------------------------------------------------------
-station_list : "/home/Emily.Schlie/repositories/camps/camps/registry/metar.lst"
+station_list : "/path/to/directory/metar_stations.lst"
 
 # ----------------------------------------------------------------------------------------
 # Set to False if no QC required.

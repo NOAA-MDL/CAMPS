@@ -5,20 +5,20 @@
 # If only processing a single day just provide the date (YYYYMMDDHH) with no stride
 # (ex: ['2016070100'])
 
-range : ['2018040100-2018043000,24h']
+range : ['2018040100-2018040300,24h']
 
 #----------------------------------------------------------------------------------------------
 # Specify explicitly the filepaths where observation/model and equation data is held.
 #----------------------------------------------------------------------------------------------
 
-predictand_data_path : ["/scratch1/NCEPDEV/mdl/Justin.Wilkerson/predictand_201804.nc"]
-predictor_data_path : ["/scratch1/NCEPDEV/mdl/Justin.Wilkerson/test_out/pred_201804.nc"]
-equation_file : "/scratch1/NCEPDEV/mdl/Justin.Wilkerson/test_out/equations_201804.nc"
+predictand_data_path : ["/path/to/directory/predictand_file.nc"]
+predictor_data_path : ["/path/to/directory/predictor_file.nc"]
+equation_file : "/path/to/directory/equations_file.nc"
 
 #----------------------------------------------------------------------------------------------
 # Specify the path to file you want output to be saved.
 #----------------------------------------------------------------------------------------------
-output_file : "/scratch1/NCEPDEV/mdl/Justin.Wilkerson/test_out/forecast_201804.nc"
+output_file : "/path/to/directory/forecast_file.nc"
 
 #----------------------------------------------------------------------------------------------
 # Log file that records the status of a run.
@@ -32,20 +32,20 @@ log_file : ""
 debug_level : "DEBUG"
 
 #----------------------------------------------------------------------------------------------
-# Specify the number of processors to be used during the run
+# Specify the number of processors to be used during the run - not used, for future version
 #----------------------------------------------------------------------------------------------
-num_processors : 16
+#num_processors : 16
 
 # Provide all stations with colon delimeted information about the station,
 # including lat, lon, long name.
 #----------------------------------------------------------------------------------------------
-station_defs : "/scratch1/NCEPDEV/mdl/Justin.Wilkerson/camps/camps/registry/alldevsites.tbl"
+station_defs : "/path/to/directory/stations.tbl"
 
 #----------------------------------------------------------------------------------------------
 # Provides a list of all stations that will be used in observations
 #----------------------------------------------------------------------------------------------
-selected_stations : "/scratch1/NCEPDEV/mdl/Justin.Wilkerson/camps/camps/registry/alldevsites.lst"
+selected_stations : "/path/to/directory/stations.lst"
 
 # Provides metadata for desired predictands
-pred_file : "/scratch1/NCEPDEV/mdl/Justin.Wilkerson/camps/camps/registry/pred.yaml"
+pred_file : "/path/to/directory/pred.yaml"
 

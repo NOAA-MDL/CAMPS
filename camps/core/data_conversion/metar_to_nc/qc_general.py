@@ -1,5 +1,5 @@
 import logging
-from qc_error import qc_error
+from .qc_error import qc_error
 import pdb
 
 
@@ -32,7 +32,7 @@ def check_consistency(in_array, type_array, tolerance=10):
     # element 0 is previous temp
     # element 1 is current temp
     # element 2 is next temp
-    array_iterable = zip(first_num, second_num, third_num)
+    array_iterable = list(zip(first_num, second_num, third_num))
     for counter, i in enumerate(array_iterable):
         is_auto = type_array[counter] >= 2 and type_array[counter] <= 8
         if tolerance < 10:

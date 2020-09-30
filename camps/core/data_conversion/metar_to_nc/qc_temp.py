@@ -1,9 +1,9 @@
 import logging
 import os
-import qc_general
-from qc_error import qc_error
-from qc_error import set_all_attr
-from qc_error import stats
+from . import qc_general
+from .qc_error import qc_error
+from .qc_error import set_all_attr
+from .qc_error import stats
 import pdb
 from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool

@@ -1,67 +1,101 @@
-#------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------- 
+# CAMPS equations control file
+# ----------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------- 
 # Specify the date_range
-#------------------------------------------------------------------------------
 # Date range and stride should be a single string (ex: ['2016070106-2016071006,24h'])
 # If only processing a single day just provide the date (YYYYMMDDHH) with no stride
+# ---------------------------------------------------------------------------------------- 
 date_range: ['2018040100-2018040200,24h']
 
+# ---------------------------------------------------------------------------------------- 
 # Specify the season
+# ---------------------------------------------------------------------------------------- 
 forecast_season: "warm"
 
+# ---------------------------------------------------------------------------------------- 
 # The operational state of the resulting equations.
 # Valid options are "Developmental", "Experimental", "Operational", or "Prototype"
+# ---------------------------------------------------------------------------------------- 
 status: 'developmental'
 
+# ---------------------------------------------------------------------------------------- 
 # Role is used to denote the equations use within operations.
 # Only used if status is "Operational"
 # Valid options are "Primary" and "Backup"
+# ---------------------------------------------------------------------------------------- 
 role: None
 
+#-----------------------------------------------------------------------------------------
+# Specify number of processors to be used during the run - not used, for future version
+#-----------------------------------------------------------------------------------------
+#num_processors : 16
+
+
+# ---------------------------------------------------------------------------------------- 
 # Specify explicitly the directory where output data is held
-output_directory : "/scratch1/NCEPDEV/mdl/Emily.Schlie/"
+# ---------------------------------------------------------------------------------------- 
+output_directory : "/path/to/directory/"
 
+# ---------------------------------------------------------------------------------------- 
 # Provide an output filename
-filename : "equations_201804_test.nc"
+# ---------------------------------------------------------------------------------------- 
+filename : "filename.nc"
 
+# ---------------------------------------------------------------------------------------- 
 # Specify explicitly the filepath where observation/model data is held.
-predictand_data_file : ["/scratch1/NCEPDEV/mdl/Emily.Schlie/full_test/sample_data/predictand_201804_sample.nc"]
-predictor_data_file : ["/scratch1/NCEPDEV/mdl/Emily.Schlie/full_test/sample_data/pred_201804_linear_sample.nc"]
+# ---------------------------------------------------------------------------------------- 
+predictand_data_file : ["/path/to/directory/predictand_file.nc"]
+predictor_data_file : ["/path/to/directory/predictor_file.nc"]
 
+# ---------------------------------------------------------------------------------------- 
 # Specify explicitly the filepath to the  control file containing the predictors and predictands to process
-pred_file : "/home/Emily.Schlie/repositories/camps/camps/registry/pred.yaml"
+# ---------------------------------------------------------------------------------------- 
+pred_file : "/path/to/directory/pred.yaml"
 
+# ---------------------------------------------------------------------------------------- 
 # Can be DEBUG, INFO, WARNING, ERROR, CRITICAL.
+# ---------------------------------------------------------------------------------------- 
 debug_level : "DEBUG"  
 
+# ---------------------------------------------------------------------------------------- 
 # Log file that records the status of a run.
 # Set log_file to null or "" to print to stdout.
+# ---------------------------------------------------------------------------------------- 
 log_file : ""
 
-# Specify the number of processors to be used during the run
-num_processors : 16
-
-
+# ---------------------------------------------------------------------------------------- 
 # Specify the regression parmeters to use for the MOS2k like regression 
+# ---------------------------------------------------------------------------------------- 
 regression_parameters : 
-    nskip : null     # Not used
-    jstop : null     # Not used
-    nselt : 1        # Selection method  -- Not implemented: single pred RoV
-    nsmeth : 1       # Stopping method -- Not used
-    mforce : 0       # Number of predictors to force
-    cutoff : 0.01    # The reduction of variance necessary for Adding a predictor.
-    varnb : .05       # Varience necessary for a point binary to be used.
-    nst : 5         # Number of predictors to select.
-    coln : 0.10      # Remaining RV of a continuous predictor for it to be selected
-    colnb : 0.10     # Remaining RV of a point binary predictor for it ot be selected
-    neccas : 1       # Number of cases required for development
+   nst : 5          # Number of predictors to select.
+   mforce : 0       # Number of predictors to force.
+   nselt : 1        # Selection method.
+   nsmeth : 1       # Stopping method.
+   neccas : 1       # Number of cases required for an equation to be developed.
+   cutoff : 0.01    # The reduction of variance necessary for adding a predictor.
+   forcut : 0.01    # The reduction of variance necessary for adding a forced predictor.
+   varnb : .05      # Variance necessary for a point binary to be used.
+   varngb : .05     # Variance necessary for a grid binary to be used.
+   coln : 0.10      # Remaining RV of a continuous predictor for it to be selected
+   colnb : 0.10     # Remaining RV of a point binary predictor for it to be selected
+   colngb : 0.10    # Remaining RV of a grid binary predictor for it to be selected
 
-
-
+# ---------------------------------------------------------------------------------------- 
 # Provide the filepath to the file containing all station information
 # Station information is colon delimeted including lat, lon, long name.
-station_defs : "/home/Emily.Schlie/repositories/camps/camps/registry/alldevsites.tbl"
+# ---------------------------------------------------------------------------------------- 
+station_defs : "/path/to/directory/stations.tbl"
 
+# ---------------------------------------------------------------------------------------- 
 # Provide the filepath to a list of all stations to process
-selected_stations : "/home/Emily.Schlie/repositories/camps/camps/registry/short.lst"
+# ---------------------------------------------------------------------------------------- 
+selected_stations : "/path/to/directory/stations.lst"
 
-
+# ---------------------------------------------------------------------------------------- 
+# Specify if a summary of equations will be saved at end of program.
+# Valid options are: None or a string. String will be used as a filename
+# for an output text file
+# ---------------------------------------------------------------------------------------- 
+equations_summary : "/path/to/directory/equations_summary.txt"

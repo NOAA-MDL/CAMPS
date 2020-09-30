@@ -72,7 +72,7 @@ def check_valid_keys(in_dict):
         'Procedure'
             ])
 
-    for k in in_dict.keys():
+    for k in list(in_dict.keys()):
         try:  
             assert k in valid_keys
         except AssertionError:
@@ -84,7 +84,7 @@ def check_valid_keys(in_dict):
 def separate_entries(in_str):
     """Seperates terms of a time string of the format
     '(number)(time units) (period method)' and returns a
-    dictionary with key/value pairs of time in seconds and, 
+    dictionary with key/value pairs of time in seconds and,
     if available, cell (period) method.
     """
 
@@ -103,10 +103,10 @@ def separate_entries(in_str):
     #Convert time value to that in seconds
     if len(groups) >= 2:
         mult = get_time_multiplier(groups[1])
-        if mult == 24: 
+        if mult == 24:
             time = groups[0] * mult
         else:
-            time = groups[0]/mult
+            time = int(groups[0]/mult)
     #Check if cell method exists and is valid
     if len(groups) == 3 and groups[2]:
         cell_method_name = cell_method(groups[2]) #'None' if not valid
@@ -119,7 +119,7 @@ def get_time_multiplier(time_unit):
     """Returns a multiplier to convert time to seconds"""
 
     time_unit = time_unit.lower()
-    for regex, mult in time_mult.iteritems():
+    for regex, mult in list(time_mult.items()):
         if regex.match(time_unit):
             return mult
 
@@ -132,7 +132,7 @@ def cell_method(in_str):
     """
 
     in_str = in_str.lower()
-    for regex, cell_method in cell_methods_regex.iteritems():
+    for regex, cell_method in list(cell_methods_regex.items()):
         if regex.match(in_str):
             return cell_method
 
@@ -196,7 +196,7 @@ def vertical_coordinate(in_str):
         vertical_dict['units'] = 'm'
         return vertical_dict
 
-    #Identify the character seperating the coordinate values of the 
+    #Identify the character seperating the coordinate values of the
     #bottom and top levels of a layer.
     sep = None
     if "to" in in_str:
@@ -208,7 +208,7 @@ def vertical_coordinate(in_str):
 
     #Write into the dictionary depending on whethet the vertical structure
     #is a layer or a level.
-    if multi_layered:  
+    if multi_layered:
         #Split string by space and identify the last element to be the cell method.
         in_str_arr = in_str.split(" ")
         cell_method_name = cell_method(in_str_arr[-1])
@@ -231,7 +231,7 @@ def vertical_coordinate(in_str):
         vertical_dict['units'] = units
         vertical_dict['cell_method'] = cell_method_name
 
-    elif single_layered: 
+    elif single_layered:
         exp = re.compile("^ *(\d+) *([a-z]*) *")
         layer = exp.match(in_str).groups()
         if len(layer) <= 1 or not layer[1]:

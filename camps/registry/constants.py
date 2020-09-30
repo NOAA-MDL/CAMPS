@@ -52,5 +52,3 @@ international_units = {
 'WindSpd' : 'm/s',
 'Wwind' : 'Pa s**-1'
 }
-
-

@@ -5,8 +5,9 @@ import pdb
 import copy
 
 from ..core.fetch import fetch
+from ..core.Camps_data import Camps_data as Camps_data
 from . import computations
-from ..libraries.mathlib import miscellaneous
+#from ..libraries.mathlib import miscellaneous
 from ..libraries.mathlib import mass
 from ..libraries.mathlib import momentum
 from ..libraries.mathlib import stability
@@ -18,10 +19,10 @@ from . import read_pred
 """Module: create.py
 Creates a predictor object, which essentially contains
 information necessary for finding or creating its data.
- 
+
 Methods:
     is_valid_property
-    get_met_function       
+    get_met_function
     get_common_function
     calculate
     calc_with_multiple_vertical_layers
@@ -32,11 +33,11 @@ Classes:
 
 
 #Dictionary of functions that create predictors whose names
-#are encoded in the keys and the corresponding function in 
-#the value. 
+#are encoded in the keys and the corresponding function in
+#the value.
 creation_functions = {
         'Ozone' : None,
-        'DOY' : miscellaneous.DOY,
+        #'DOY' : miscellaneous.DOY,
         'CilgHght' : None,
         'CilgHghtProb' : None,
         'CldAmt' : None,
@@ -200,7 +201,7 @@ def get_met_function(observedProperty):
 
 
 def get_common_function(method):
-    """Returns function name for common math or stat operation 
+    """Returns function name for common math or stat operation
     indicated by method
     """
 
@@ -233,10 +234,10 @@ def calculate(filepaths, time, predictor, station_list=None, station_defs=None):
     #Fork the creation process between single vertical layer predictors
     #and multi-level ones.
     if has_multiple_vertical_layers(predictor):
-        #Get vertical method 
+        #Get vertical method
         vert_method = predictor.search_metadata['vert_method']
-        #Check if vert_method is in common_functions 
-        if vert_method in common_functions:  
+        #Check if vert_method is in common_functions
+        if vert_method in common_functions:
             ret_obj = calc_with_multiple_vertical_layers(filepaths, time, predictor)
         #If no vert_method, then see if observed_property is in creation_functions
         elif observed_property in creation_functions:
@@ -249,6 +250,21 @@ def calculate(filepaths, time, predictor, station_list=None, station_defs=None):
             ret_obj = variable_calculation_function(filepaths, time, predictor, station_list=station_list, station_defs=station_defs) #Pass station information
         else:
             ret_obj = variable_calculation_function(filepaths, time, predictor) # Pass standard information
+
+    #Add source to metadata if it is not in there.
+    if isinstance(ret_obj,Camps_data):
+        processes = []
+        for process in ret_obj.processes:
+            processes.append(process.name)
+            if 'Calc' in process.name:
+                process.add_attribute('source', predictor.search_metadata['source'])
+        #if 'Calculated' not in processes:
+        #    ret_obj.add_process('Calculated')
+        #    for index,proc in enumerate(ret_obj.processes):
+        #        if 'Calculate' in proc.name:
+        #            break
+        #    calc = ret_obj.processes[index]
+        #    calc.add_attribute('source', predictor.search_metadata['source'])
 
     return ret_obj
 
@@ -321,7 +337,7 @@ This is a simple class for objects that hold the necessary information
 to define a predictor.
 
 Methods:
-    __init__   
+    __init__
     copy
     change_property
     __getitem__

@@ -195,7 +195,7 @@ variables :
     attribute :
       OM__observedProperty : "StatPP__Data/Met/longitude"
       long_name : "longitude"
-      units : "degrees_west"
+      units : "degrees_east"
       valid_min : -180.0
       valid_max : 180.0
       standard_name : "longitude"
@@ -416,7 +416,7 @@ variables :
       standard_name : "precipitation_amount"
       units : "kg m**-2"
       valid_min : 0
-      valid_max : 1
+      valid_max : ""
       coordinates : "elev"
       cell_methods : "default_time_coordinate_size : sum"
   total_precipitation_3hr_accum_surface : &TotalPrecip3
@@ -443,7 +443,7 @@ variables :
       standard_name : "precipitation_amount"
       long_name : "total precipitation 6hr accum surface"
       valid_min : 0
-      valid_max : 2
+      valid_max : ""
       cell_methods :  "default_time_coordinate_size : sum"
       units : "kg m**-2"
       coordinates : "elev"
@@ -457,7 +457,7 @@ variables :
       standard_name : "precipitation_amount"
       long_name : "total precipitation 12hr accum surface"
       valid_min : 0
-      valid_max : 4
+      valid_max : ""
       cell_methods :  "default_time_coordinate_size : sum"
       units : "kg m**-2"
       coordinates : "elev"
@@ -471,7 +471,7 @@ variables :
       standard_name : "precipitation_amount"
       long_name : "total precipitation 24hr accum surface"
       valid_min : 0
-      valid_max : 8
+      valid_max : ""
       cell_methods :  "default_time_coordinate_size : sum"
       units : "kg m**-2"
       coordinates : "elev"
@@ -639,6 +639,16 @@ variables :
       OM__observedProperty : "StatPP__Data/Met/Temp/EquPotTemp"
       long_name : "equivalent potential temperature"
       standard_name : "equivalent_potential_temperature"
+      units : "K"
+      valid_min : ""
+      valid_max : ""
+  2_metre_apparent_temperature_2 : &AppTemp
+    data_type : float32
+    dimensions : []
+    attribute :
+      OM__observedProperty : "StatPP__Data/Met/Temp/AppTemp"
+      long_name : "2 meter apparent temperature instant"
+      standard_name : "apparent_temperature"
       units : "K"
       valid_min : ""
       valid_max : ""
@@ -1035,9 +1045,9 @@ variables :
       standard_name : "precipitation_amount"
       long_name : "Hourly precipitation amount"
       valid_min : 0
-      valid_max : 3.75
+      valid_max : ""
       cell_methods : "default_time_coordinate_size: sum"
-      units : "in"
+      units : "kg m**-2"
       scale_factor : !!float 100
       coordinates : "elev"
       comment : "A -4 is used to represent a trace amount\n
@@ -1053,8 +1063,8 @@ variables :
       long_name : "3-hour precipitation amount"
       cell_methods : "default_time_coordinate_size: sum"
       valid_min : 0
-      valid_max : 9
-      units : "in"
+      valid_max : ""
+      units : "kg m**-2"
       coordinates : "elev"
       scale_factor : !!float 100
   precipitation_amount_6_hour  :
@@ -1067,9 +1077,9 @@ variables :
       standard_name : "precipitation_amount"
       long_name : "6-hour precipitation amount"
       valid_min : 0
-      valid_max : 12
+      valid_max : ""
       cell_methods : "default_time_coordinate_size: sum"
-      units : "in"
+      units : "kg m**-2"
       coordinates : "elev"
       scale_factor : !!float 100
   precipitation_amount_9_hour  :
@@ -1082,9 +1092,9 @@ variables :
       standard_name : "precipitation_amount"
       long_name : "9-hour precipitation amount"
       valid_min : 0
-      valid_max : 18
+      valid_max : ""
       cell_methods : "default_time_coordinate_size: sum"
-      units : "in"
+      units : "kg m**-2"
       coordinates : "elev"
       scale_factor : !!float 100
   precipitation_amount_12_hour  :
@@ -1097,9 +1107,9 @@ variables :
       standard_name : "precipitation_amount"
       long_name : "12-hour precipitation amount"
       valid_min : 0
-      valid_max : 24
+      valid_max : ""
       cell_methods : "default_time_coordinate_size: sum"
-      units : "in"
+      units : "kg m**-2"
       coordinates : "elev"
       scale_factor : !!float 100
   precipitation_amount_18_hour  :
@@ -1112,9 +1122,9 @@ variables :
       standard_name : "precipitation_amount"
       long_name : "18-hour precipitation amount"
       valid_min : 0
-      valid_max : 36
+      valid_max : ""
       cell_methods : "default_time_coordinate_size: sum"
-      units : "in"
+      units : "kg m**-2"
       coordinates : "elev"
       scale_factor : !!float 100
   precipitation_amount_24_hour  :
@@ -1127,11 +1137,11 @@ variables :
       standard_name : "precipitation_amount"
       long_name : "24-hour precipitation amount"
       valid_min : 0
-      valid_max : 48
+      valid_max : ""
       cell_methods : "default_time_coordinate_size: sum"
       scale_factor : !!float 100
       coordinates : "elev"
-      units : "in"
+      units : "kg m**-2"
   duration_of_sunshine :
     data_type : int16
     dimensions : [*nstations,*time]
@@ -1246,7 +1256,7 @@ variables :
   "2 metre dewpoint temperature_instant" : *DewPt
   "Dew point temperature_instant" : *DewPt
   "2 metre temperature_instant" : *Temp
-  "Apparent temperature_instant" : *Temp
+  "Apparent temperature_instant" : *AppTemp
   "Temperature_instant" : *Temp
   "Geopotential Height_instant" : *GeoHght
   "PLThick" : *PLThick

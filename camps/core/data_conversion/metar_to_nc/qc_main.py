@@ -1,14 +1,13 @@
 import logging
 import sys
 import os
-import qc_clouds
-import qc_precip
-import qc_temp
-import qc_winds
-import qc_main
-import qc_pressure
-import qc_weather
-import qc_error
+from . import qc_clouds
+from . import qc_precip
+from . import qc_temp
+from . import qc_winds
+from . import qc_pressure
+from . import qc_weather
+from . import qc_error
 import pdb
 import time
 
@@ -26,7 +25,7 @@ def qc(station_dict,err_file=None):
     all_errors = []
 
     logging.info("Starting QC...")
-    station_list = station_dict.values()
+    station_list = list(station_dict.values())
 
     start = time.time()
     logging.info("QC Temperature")

@@ -12,7 +12,7 @@ import copy
 import pdb
 
 from ....registry import util as cfg
-from metarreader import metarreader
+from .metarreader import metarreader
 
 from ... import util
 from ... import Time
@@ -55,9 +55,9 @@ def save_object(obj, filename):
 def remove_time_buffer(station_list):
     """ """
 
-    for s in station_list.values():
+    for s in list(station_list.values()):
         s.hours = s.hours[25:-2]
-        for k, v in s.observations.iteritems():
+        for k, v in s.observations.items():
             s.observations[k] = v[25:-2]
 
 
@@ -115,14 +115,14 @@ def scale_observation(observation, observation_array):
         return observation_array
 
     def scale(value): return int(float(value) * scale_factor)
-    scaled_array = map(scale, observation_array)
+    scaled_array = list(map(scale, observation_array))
     return scaled_array
 
 
 def fix_rounding_errors(station_list):
     """Takes a dictionary of stations and rounds the float arrays."""
 
-    for station in station_list.values():
+    for station in list(station_list.values()):
         msl = station.get_obs('MSL')
         alt = station.get_obs('ALT')
         vis = station.get_obs('VIS')
@@ -138,7 +138,7 @@ def convert_to_numpy(station_list,obs_type='METAR'):
 
     nc_definitions = cfg.read_nc_config()
     for counter, station in enumerate(station_list.values()):
-        for predictor, predictor_array in station.observations.iteritems():
+        for predictor, predictor_array in station.observations.items():
             data_type = get_data_type(predictor,nc_definitions,obs_type=obs_type)
             # predictor_array = scale_observation(predictor,predictor_array)
             try:
@@ -177,7 +177,7 @@ def read_obs(input_data,dates,stn_tbl,stn_lst,qc_flag):
         #       msg = "First date read not equal to expected first date "+dates[0]
         #       logging.error(msg)
         #       raise ValueError
-        if reader.obs_time < date:
+        if int(reader.obs_time) < int(date):
             reader.read(date)
         elif reader.obs_time >= date:
             reader.read(date,advance=False)
@@ -193,7 +193,7 @@ def read_obs(input_data,dates,stn_tbl,stn_lst,qc_flag):
 def write_call(stations, call_var):
 
     station_name_arr = []
-    for station_name, station in stations.iteritems():
+    for station_name, station in stations.items():
         char_arr = np.array(list(station_name), 'c')
         if len(station_name_arr) == 0:
             station_name_arr = char_arr
@@ -205,7 +205,7 @@ def write_call(stations, call_var):
 def write_type(stations, type_var):
 
     station_type_arr = []
-    for station_name, station in stations.iteritems():
+    for station_name, station in stations.items():
         station_type_arr.append(station.type)
     station_type_arr = np.array(station_type_arr, dtype='uint8')
     type_var[:] = station_type_arr
@@ -227,7 +227,7 @@ def write_dims(dimensions_dict, nc):
     the dimension and the size of that dimension respectively
     """
 
-    for dimension in dimensions_dict.values():
+    for dimension in list(dimensions_dict.values()):
         dim_size = 0
         if dimension == 'num_characters':
             dim_size = 4
@@ -237,7 +237,7 @@ def write_dims(dimensions_dict, nc):
 def write_globals(structured_config, nc):
     """Writes nc globals that are packed into a structured format."""
 
-    for attribute, value in structured_config.iteritems():
+    for attribute, value in structured_config.items():
         setattr(nc, attribute, value)
 
 
@@ -253,7 +253,7 @@ def write_variables(structured_nc_format, nc):
     logging.info("Writing variables...")
     var_dict = {}
     MISSING_VALUE = 9999
-    for name, var_info in structured_nc_format.iteritems():
+    for name, var_info in structured_nc_format.items():
         # Must have a 'name', 'data_type', and 'dimensions' key
         var_dims = tuple(var_info['dimensions'])  # needs to be a tuple
         var_dims = cfg.read_dimensions()
@@ -274,7 +274,7 @@ def write_variables(structured_nc_format, nc):
                                    zlib=True, complevel=7, shuffle=True,
                                    fill_value=9999)  # May want to change
         if 'attribute' in var_info:
-            for attribute, value in var_info['attribute'].iteritems():
+            for attribute, value in var_info['attribute'].items():
                 setattr(nc_var, attribute, value)
         var_dict[name] = nc_var
 
@@ -299,7 +299,7 @@ def init_netcdf_output(filename):
     variables = {}
     all_variables = nc.variables
     metar_variables = cfg.read_metar_lookup()
-    for var in metar_variables.keys():
+    for var in list(metar_variables.keys()):
         try:
             variables[var] = all_variables[var]
         except:

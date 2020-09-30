@@ -6,7 +6,14 @@
 # Specify lead times as a comma separated list
 # Ex: lead_times : ['0 h', '3 h', '6 h']
 global_config :
-    lead_times : ['12 h', '18 h','24 h','30 h','36 h','42 h']
+    lead_times : ['3 h', '6 h', '9 h', '12 h']
+#    lead_times : ['15 h', '18 h', '21 h', '24 h']
+#    lead_times : ['27 h', '30 h', '33 h', '36 h']
+#    lead_times : ['39 h', '42 h', '45 h', '48 h']
+#    lead_times : ['51 h', '54 h', '57 h', '60 h']
+#    lead_times : ['63 h', '66 h', '69 h', '72 h']
+#    lead_times : ['75 h', '78 h', '81 h', '84 h']
+#    lead_times : ['87 h', '90 h', '93 h', '96 h']
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
@@ -17,214 +24,217 @@ predictors :
 #--------------------------
 # Temperature
 #--------------------------
-- property : 'Temp'
-  Source : 'GFS13'
-  Vertical_Coordinate : "2m"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'Temp'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "2m"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'Temp'
-  Source : 'GFS13'
-  Vertical_Coordinate : "1000hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'Temp'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "1000hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'Temp'
-  Source : 'GFS13'
-  Vertical_Coordinate : "975hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'Temp'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "975hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'Temp'
-  Source : 'GFS13'
-  Vertical_Coordinate : "950hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'Temp'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "950hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'Temp'
-  Source : 'GFS13'
-  Vertical_Coordinate : "925hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'Temp'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "925hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'Temp'
-  Source : 'GFS13'
-  Vertical_Coordinate : "850hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'Temp'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "850hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'Temp'
-  Source : 'GFS13'
-  Vertical_Coordinate : "700 mb"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'Temp'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "700 mb"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
 #-----------------------------------
 # Dewpoint
 #-----------------------------------
-- property : 'DewPt'
-  Source : 'GFS13'
-  Vertical_Coordinate : "2m"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'DewPt'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "2m"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
+#  lead_times : ['6 h']
 
-- property : 'DewPt'
-  Source : 'GFS13'
-  Vertical_Coordinate : "1000hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'DewPt'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "1000hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'DewPt'
-  Source : 'GFS13'
-  Vertical_Coordinate : "975hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'DewPt'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "975hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'DewPt'
-  Source : 'GFS13'
-  Vertical_Coordinate : "950hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'DewPt'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "950hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'DewPt'
-  Source : 'GFS13'
-  Vertical_Coordinate : "925hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'DewPt'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "925hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'DewPt'
-  Source : 'GFS13'
-  Vertical_Coordinate : "850hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'DewPt'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "850hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'DewPt'
-  Source : 'GFS13'
-  Vertical_Coordinate : "700hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'DewPt'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "700hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
 #-----------------------------------
 # Relative Humidity
 #-----------------------------------
-- property : 'RelHum'
-  Source : 'GFS13'
-  Vertical_Coordinate : "2m"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'RelHum'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "2m"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'RelHum'
-  Source : 'GFS13'
-  Vertical_Coordinate : "1000hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'RelHum'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "1000hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'RelHum'
-  Source : 'GFS13'
-  Vertical_Coordinate : "975hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'RelHum'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "975hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'RelHum'
-  Source : 'GFS13'
-  Vertical_Coordinate : "950hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'RelHum'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "950hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'RelHum'
-  Source : 'GFS13'
-  Vertical_Coordinate : "925hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'RelHum'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "925hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'RelHum'
-  Source : 'GFS13'
-  Vertical_Coordinate : "850hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'RelHum'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "850hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'RelHum'
-  Source : 'GFS13'
-  Vertical_Coordinate : "700hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'RelHum'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "700hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 ##----------------------------------
 # Thickness
 #----------------------------------
-- property : 'PLThick'
-  Source : 'GFS13'
-  Vertical_Coordinate : "500-700hPa Thick"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'PLThick'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "500-700hPa Thick"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
+#  lead_times: ['6 h']
 
-- property : 'PLThick'
-  Source : 'GFS13'
-  Vertical_Coordinate : "700-850hPa Thick"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'PLThick'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "700-850hPa Thick"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'PLThick'
-  Source : 'GFS13'
-  Vertical_Coordinate : "850-1000hPa Thick"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'PLThick'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "850-1000hPa Thick"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
 #----------------------------------
 # Wind
 #----------------------------------
-- property : 'Uwind'
-  Source : 'GFS13'
-  Vertical_Coordinate : "10 m"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'Uwind'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "10 m"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'Vwind'
-  Source : 'GFS13'
-  Vertical_Coordinate : "10m"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'Vwind'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "10m"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'WindSpd'
-  Source : 'GFS13'
-  Vertical_Coordinate : "10m"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'WindSpd'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "10m"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
+#  lead_times : ['6 h']
 
-- property : 'WindSpd'
-  Source : 'GFS13'
-  Vertical_Coordinate : "1000hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'WindSpd'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "1000hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'WindSpd'
-  Source : 'GFS13'
-  Vertical_Coordinate : "975hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'WindSpd'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "975hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'WindSpd'
-  Source : 'GFS13'
-  Vertical_Coordinate : "950hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'WindSpd'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "950hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'WindSpd'
-  Source : 'GFS13'
-  Vertical_Coordinate : "925hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'WindSpd'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "925hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'WindSpd'
-  Source : 'GFS13'
-  Vertical_Coordinate : "850hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'WindSpd'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "850hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
-- property : 'WindSpd'
-  Source : 'GFS13'
-  Vertical_Coordinate : "700hPa"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'WindSpd'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "700hPa"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
 
 #-----------------------------------
 # Vertical Velocity
@@ -249,6 +259,7 @@ predictors :
 #  Vertical_Coordinate : "500-700hPa Lapse"
 #  Duration : "0"
 #  Procedure : ['smooth 25pt', 'interp bilinear']
+#  lead_times : ['6 h']
 
 #- property : 'TLapse'
 #  Source : 'GFS13'
@@ -269,20 +280,22 @@ predictors :
   Source : 'GFS13'
   Vertical_Coordinate : "0"
   Duration : '6 hour sum'
-  Procedure : ['interp budget']
+  Procedure : ['grid_binary >= 0.04 inches', 'interp linear']
+  lead_times : ['12 h']
 
 #- property : 'TotalPrecip'
 #  Source : 'GFS13'
 #  Vertical_Coordinate : "0"
 #  Duration : '12 hour sum'
-#  Procedure : ['interp budget']
+#  Procedure : ['grid_binary >= 2.00', 'interp linear']
+#  lead_times : ['12 h']
 
 #- property : 'TotalPrecip'
 #  Source : 'GFS13'
 #  Vertical_Coordinate : "0"  
 #  Duration : '3 hour sum'
 #  Procedure : ['interp budget']
-
+#  lead_times : ['3 h', '6 h', '9 h', '12 h']
 
 #- property : 'PWat'
 #  Source : 'GFS13'
@@ -297,61 +310,67 @@ predictors :
 #-------------------------------------
 # Misc.
 #-------------------------------------
-- property : 'WChill'
-  Source : 'GFS13'
-  Vertical_Coordinate : "2 m"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'WChill'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "2 m"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
+#  lead_times : ['6 h']
 
-- property : 'KIndex'
-  Source : 'GFS13'
-  Vertical_Coordinate : "0 m"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'KIndex'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "0 m"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
+#  lead_times : ['6 h']
 
-- property : 'MixR'
-  Source : 'GFS13'
-  Vertical_Coordinate : "700 mb"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'MixR'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "700 mb"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
+#  lead_times : ['6 h']
 
 #- property : 'PotTemp'
 #  Source : 'GFS13'
 #  Vertical_Coordinate : "700 mb"
-#  Procedure : ['smooth 25pt']
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
+#  lead_times : ['6 h']
 
 #- property : 'EquPotTemp'
 #  Source : 'GFS13'
 #  Vertical_Coordinate : "700 mb"
-#  Procedure : ['smooth 25pt']
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
+#  lead_times : ['6 h']
 
-- property : 'HtIndex'
-  Source : 'GFS13'
-  Vertical_Coordinate : "2 m"
-  Duration : "0"
-  Procedure : ['smooth 25pt', 'interp bilinear']
+#- property : 'HtIndex'
+#  Source : 'GFS13'
+#  Vertical_Coordinate : "2 m"
+#  Duration : "0"
+#  Procedure : ['smooth 25pt', 'interp bilinear']
+#  lead_times : ['6 h']
 
 predictands:
 
-- property : 'Temp'
-  Source : ['NCEPSfcObsMETAR','NDBC']
-#  Source : ['NCEPSfcObsMETAR']
-  Vertical_Coordinate : "2m"
+#- property : 'Temp'
+#  Source : ['NCEPSfcObsMETAR','NDBC']
+#  Vertical_Coordinate : "2m"
+#  lead_times : ['12 h']
 
-- property : 'DewPt'
-  Source : ['NCEPSfcObsMETAR','NDBC']
-#  Source : ['NCEPSfcObsMETAR']
-  Vertical_Coordinate : "2m"
+#- property : 'DewPt'
+#  Source : ['NCEPSfcObsMETAR','NDBC']
+#  Vertical_Coordinate : "2m"
+#  lead_times : ['12 h']
 
-- property : 'DayMaxT'
-  Source : ['NCEPSfcObsMETAR','NDBC']
-#  Source : ['NCEPSfcObsMETAR']
-  Vertical_Coordinate : "2m"
-  lead_times : ['30 h', '42 h']
+#- property : 'DayMaxT'
+#  Source : ['NCEPSfcObsMETAR','NDBC']
+#  Vertical_Coordinate : "2m"
+#  lead_times : ['30 h']
 
-- property : 'NightMinT'
-  Source : ['NCEPSfcObsMETAR','NDBC']
-#  Source : ['NCEPSfcObsMETAR']
-  Vertical_Coordinate : "2m"
-  lead_times : ['30 h', '42 h']
+#- property : 'NightMinT'
+#  Source : ['NCEPSfcObsMETAR','NDBC']
+#  Vertical_Coordinate : "2m"
+#  lead_times : ['42 h']
 

@@ -30,7 +30,7 @@ Methods:
 """
 
 
-def fetch(filepaths, time=None, lead_time=None, repeat=False,ids=None, **metadata_dict):
+def fetch(filepaths, time=None, lead_time=None, repeat=False, ids=None, **metadata_dict):
     """Given a properly formated metadata dictionary, finds the variable amongst
     the files. If the Observed property is recognized as a variable that needs
     to be computed, then a routine will be called to compute the variable.
@@ -68,14 +68,14 @@ def fetch(filepaths, time=None, lead_time=None, repeat=False,ids=None, **metadat
     if time is not None and type(time) is datetime:
         time = Time.epoch_time(time)
     # Get a start and end range
-    if 'start' not in metadata_dict.keys() and 'end' not in metadata_dict.keys() and time is not None:
+    if 'start' not in list(metadata_dict.keys()) and 'end' not in list(metadata_dict.keys()) and time is not None:
         start=None
         end=None
         if time is not None:
             start = time
             end = time
         if lead_time is not None:
-            end += lead_time
+            end += lead_time*3600
 
         metadata_dict['start'] = start
         metadata_dict['end'] = end
@@ -115,10 +115,10 @@ def fetch(filepaths, time=None, lead_time=None, repeat=False,ids=None, **metadat
                 record = r
                 log_str = "Found one of %s Matching record." %(str(len(ret)))
                 logging.info(log_str)
-                filepath = record['filename']
+                filepath = get_matching_id(filepaths,record['file_id'])
                 nc_variable_name = record['name']
                 if 'reserved1' not in metadata_dict: #reserved1 should really always be set to either 'grid' or 'vector'
-                    logging.warning("reserved1 is missing from  metatdata_dict")
+                    logging.warning("reserved1 is missing from  metadata_dict")
                 else:
                     if metadata_dict['reserved1'] == 'vector': #if data is vector then we can't subset from lead_time
                         lead_time = None
@@ -128,7 +128,7 @@ def fetch(filepaths, time=None, lead_time=None, repeat=False,ids=None, **metadat
                 var_list.append(variable)
             return var_list
 
-    elif num_records_returned  == 0:
+    elif num_records_returned == 0:
         # Check if another fetch without start and end might yield a variable
         # If a variable is returned. Compare returned start and end times to
         # initial search parameters and determine if desired time is invalid.
@@ -144,7 +144,7 @@ def fetch(filepaths, time=None, lead_time=None, repeat=False,ids=None, **metadat
             if start < var_start or end > var_end or start > var_end or end < var_start:
                 logging.error("Fetch for "+metadata_dict['property']+" with start: "+str(start)+
                               " and end: "+str(end)+" failed. Outside of valid times for variable.")
-                raise AssertionError(str(start)+" and "+str(end)+" must be within the bounds of "+str(var_start)+" and "+str(var_end)+".")
+                raise AssertionError("Start time: "+str(start)+" and End time: "+str(end)+" could not be found within valid times for variable in input files")
         elif len(ret)>1:
             logging.error("Number of returned variables is: "+str(len(ret))+". Too many returned variables.")
             raise ValueError
@@ -162,18 +162,17 @@ def fetch(filepaths, time=None, lead_time=None, repeat=False,ids=None, **metadat
         record = ret[0]
         log_str = "Found one Matching record."
         logging.info(log_str)
-        filepath = record['filename']
+        filepath = get_matching_id(filepaths,record['file_id'])
         nc_variable_name = record['name']
         if 'reserved1' not in metadata_dict: #reserved1 should really always be set to either 'grid' or 'vector'
             logging.warning("reserved1 is missing from  metatdata_dict")
         else:
-            if metadata_dict['reserved1'] == 'vector': #if data is vector then we can't subset from lead_time 
-            	lead_time = None
-	variable = reader.read_var(filepath, nc_variable_name, lead_time, time)
+            if metadata_dict['reserved1'] == 'vector': #if data is vector then we can't subset from lead_time
+                lead_time = None
+        variable = reader.read_var(filepath, nc_variable_name, lead_time, time)
         if variable is not None:
-        	variable.add_metadata('filepath',filepath)
-	return variable
-
+            variable.add_metadata('filepath',filepath)
+        return variable
 
 def get_matching_id(files, id):
     """Return absolute path if id matches a netcdf file in list of files."""
@@ -221,7 +220,7 @@ def fetch_many_dates(filepaths, start, end, stride, metadata_dict, lead_time=Non
         # fetch data
         if ids is None:
             var = fetch(filepaths, Time.epoch_time(cur), lead_time=lead_time, **metadata_dict)
-        elif isinstance(ids,list):            
+        elif isinstance(ids,list):
             var = fetch(filepaths, Time.epoch_time(cur), lead_time=lead_time,ids=ids, **metadata_dict)
         all_data.append(var)
         cur += stride

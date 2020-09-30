@@ -8,7 +8,7 @@ from scipy.interpolate import griddata
 from pyproj import Proj
 
 from ..registry import util as cfg
-from . import util
+#from . import util
 from ..core.Camps_data import Camps_data
 
 
@@ -19,6 +19,8 @@ Methods:
     interp
     bilinear_interp
     budget_interp
+    biquadratic_interp
+    nearest_neighbor_interp
     get_projparams
     reproject
     test
@@ -29,29 +31,38 @@ def interp_setup(w_obj, xi_x, xi_y, interp_method):
     """Performs interpolation of gridded model data onto stations.
     Interpolation method is set in the predictors conrol file.
     """
-    #--------------------------------------------------------------------------
-    # Get some relevant information for interpolation
-    #--------------------------------------------------------------------------
+
     # Extract x,y variables
     x = w_obj.location.get_x()
     y = w_obj.location.get_y()
+
     # Extract model_values
     model_values = w_obj.data
-    if len(model_values.shape) > 2: 
+    if len(model_values.shape) > 2:
         model_values = model_values[:,:,0]
-    #--------------------------------------------------------------------------
+
+    # Convert station x and y to grid referenced x and y
+    xind = xi_x
+    yind = xi_y
 
     #--------------------------------------------------------------------------
     # Perform interpolation
     #--------------------------------------------------------------------------
     if 'bilinear' in interp_method:
-        data = bilinear_interp(x, y, model_values, xi_x, xi_y)
+        data = bilinear_interp(model_values, xind, yind)
         w_obj.add_process('BiLinInterp')
     elif 'budget' in interp_method:
-        data = budget_interp(model_values,np.hstack((xi_x[:,None],xi_y[:,None])),x[1],y[1])
+        data = budget_interp(model_values.harden_mask(),xind,yind)
         w_obj.add_process('BudgetInterp')
+    elif 'biquadratic' in interp_method:
+        data = biquadratic_interp(model_values, xind, yind)
+        w_obj.add_process('BiQuadInterp')
+    elif 'nearest' in interp_method:
+        data = nearest_neighbor_interp(model_values, xind, yind)
+        w_obj.add_process('NearestInterp')
     elif 'linear' in interp_method:
-        data = interp(x,y, model_values, xi_x,xi_y)
+        data = interp(x,y, model_values.harden_mask(), xi_x,xi_y)
+        w_obj.add_process('LinInterp')
     else: 
         logging.warning('Must pass valid interpolation method')
     #--------------------------------------------------------------------------
@@ -78,29 +89,39 @@ def interp(x, y, model_values, xi_x, xi_y):
     # Set up model data and x, y points in 1-d format
     #--------------------------------------------------------------------------
 
+    # Form the location array for stations
+    # and form the totally maske array to be returned
+    # when no data is available or griddata routine 
+    # returns a ValueError exception.
+    stn_locs = np.array((xi_x, xi_y)).T
+    n_stns = stn_locs.shape[0]
+    values = np.ones((n_stns,), dtype=np.int) * 9999.
+    no_values_array = np.ma.array(values, mask=True)
+
     # Flatten data array
-    model_values_1d = model_values.flatten()
+    mask = np.ma.getmaskarray(model_values)
+    data = np.ma.getdata(model_values)
+    model_values_1d = data[~mask].flatten()
+    if model_values_1d.size == 0:
+        return no_values_array
 
     # Create 2d grid of x and y coordinates
     # e.g. xx will have shape (len(x),len(y))
     xx, yy = np.meshgrid(x,y)
 
     # Must make then make them 1d
-    x_1d = xx.flatten()
-    y_1d = yy.flatten()
+    x_1d = xx[~mask].flatten()
+    y_1d = yy[~mask].flatten()
 
-    # Stack and transpose. griddata expects shape (n, D)
-    # Where n in size of array and D is number of dimensions... or 2
+    # Stack and transpose grid x and y. griddata expects shape (n, D)
+    # Where n in size of array and D is number of dimensions...
     points = np.array((x_1d, y_1d)).T
-
-    # The point(s) at which to interpolate in grid space.
-    #xi_x,xi_y = reproject(projparams, station_lon, station_lat)
 
     #--------------------------------------------------------------------------
     # Perform interpolation onto stations
     #--------------------------------------------------------------------------
     try:
-        grid_z0 = griddata(points, model_values_1d, (xi_x, xi_y), method='linear')
+        grid_z0 = griddata(points, model_values_1d, stn_locs, method='linear')
     except ValueError:
         logging.error("Could not complete griddata routine.")
         logging.error("Shape of points" + str( points.shape))
@@ -110,98 +131,180 @@ def interp(x, y, model_values, xi_x, xi_y):
         raise
     #--------------------------------------------------------------------------
 
-    return grid_z0
+    return np.ma.array(grid_z0)
 
 
-def bilinear_interp(x,y,model_values,xi_x,xi_y):
-    """Performs the MOS bilinear interpolations scheme from grid to stations"""
+def bilinear_interp(model_values,xind,yind):
+    """Performs a bilinear interpolation scheme from a grid to stations."""
+
+    # Convert to indices for data points and get distances
+    # between grid points and data points
+    xi = xind.astype(int)
+    yi = yind.astype(int)
+    dx = xind-xi
+    dy = yind-yi
+
+    # Get 'next' index in each direction
+    xi1 = xi+1
+    yi1 = yi+1
+
+    # Adjust end points of indices
+    xi[xi<0] = 0
+    yi[yi<0] = 0
+    xi[xi>model_values.shape[1]-2] = model_values.shape[1]-2
+    yi[yi>model_values.shape[0]-2] = model_values.shape[0]-2
+
+    # Get 'next' index in each direction
+    xi1 = xi+1
+    yi1 = yi+1
+
+    # Perform bilinear interpolation
+    data = model_values[yi,xi] + \
+              (model_values[yi,xi1]-model_values[yi,xi])*dx + \
+              (model_values[yi1,xi]-model_values[yi,xi])*dy + \
+              (model_values[yi,xi]+model_values[yi1,xi1]-model_values[yi1,xi]-model_values[yi,xi1])*dx*dy
+
+    return data
+
+
+def budget_interp(a,xind,yind):
+    """Part of MOS2K routine intrp.f which performs interpolation for precipitation
+    amount fields. This is also known as "budget" interpolation, but might not be
+    1:1 exact as NCEP's IPLIB budget interpolation routine, polates3.f90
+    """
+
+    # IMPORTANT: 2D grids in CAMPS are ordered j/y,i/x
+    ny = a.shape[0]
+    nx = a.shape[1]
+
+    adata = np.ma.getdata(a)
+    amask = np.ma.getmaskarray(a)
+
+    awork = np.ma.copy(a)
+    awork.soften_mask()
+    awdata = np.ma.getdata(awork)
+    awmask = np.ma.getmaskarray(awork)
+
+    # Pre-process input 2D grid
+    it = np.nditer([adata,awdata],flags=['multi_index',],op_flags=[['readonly'],['readwrite']])
+    for a1,aw1 in it:
+        j = it.multi_index[0]
+        i = it.multi_index[1]
+        asum = 0.
+        acount = 0
+        if a1[...] <= 0.0:
+            if j+1 in range(ny):
+                asum += adata[j+1,i]
+                acount += 1
+            if j-1 in range(ny):
+                asum += adata[j-1,i]
+                acount += 1
+            if i+1 in range(nx):
+                asum += adata[j,i+1]
+                acount += 1
+            if i-1 in range(nx):
+                asum += adata[j,i-1]
+                acount += 1
+            if acount > 0:
+                aw1[...] = -1.0*(asum/np.float32(acount))
+
+    # Setup output data array using xind shape info.
+    data = np.zeros((xind.shape[0]),dtype=np.float32)
+    mask = np.zeros((xind.shape[0]),dtype=np.int8)
+
+    it = np.nditer([xind,yind,data,mask],flags=['multi_index',],op_flags=[['readonly'],['readonly'],['readwrite'],['readwrite']])
+    for x1,y1,d1,m1 in it:
+        # Convert to indices for data points
+        i = x1.astype(int)
+        j = y1.astype(int)
+
+        # Make sure i,j are within grid domain [0:ny-1,0:nx-1]
+        if i < 0:
+            i = 0
+        elif i >= nx:
+            i = nx-1
+        if j < 0:
+            j = 0
+        elif j >= ny:
+            j = ny-1
+
+        ip1 = i+1 if i < nx-2 else nx-1
+        jp1 = j+1 if j < ny-2 else ny-1
+
+        dx = x1-np.float32(i)
+        dy = y1-np.float32(j)
+
+        if dx == 0.0 and dy == 0.0:
+            d1[...] = adata[j,i]
+            m1[...] = amask[j,i]
+        else:
+            d1[...] = awdata[j,i]+\
+                      ((awdata[j,ip1]-awdata[j,i])*dx)+\
+                      ((awdata[jp1,i]-awdata[j,i])*dy)+\
+                      ((awdata[j,i]+awdata[jp1,ip1]-awdata[jp1,i]-awdata[j,ip1])*dx*dy)
+            m1[...] = awmask[j,i]+awmask[jp1,i]+awmask[j,ip1]+awmask[jp1,ip1]
+
+    data = np.where(data<0.0,0.0,data)
+
+    return np.ma.array(data, mask=mask)
+
+
+def biquadratic_interp(model_values,xind,yind):
 
     #Convert to indices for data points and get distances
     #between grid points and data points
-    xind = xi_x/x[1]
-    yind = xi_y/y[1]
     dx = xind.round(0)-xind
     dy = yind.round(0)-yind
     xi = xind.astype(int)
     yi = yind.astype(int)
-
-    #Get 'next' index in each direction    
-    xi1 = xi+1
-    yi1 = yi+1
 
     #Adjust end points of indices
     xi[xi<0] = 0
     yi[yi<0] = 0
     xi[xi>model_values.shape[1]-2] = model_values.shape[1]-2
     yi[yi>model_values.shape[0]-2] = model_values.shape[0]-2
-    #Get 'next' index in each direction
+
+    #Get several 'adjacent' indices.
     xi1 = xi+1
     yi1 = yi+1
+    yi2 = yi+2
+    yiM1 = yi-1
 
-    #Perform bilinear interpolation
-    grid_z0 = model_values[yi,xi] + (model_values[yi,xi1]-model_values[yi,xi])*dx + (model_values[yi1,xi]-model_values[yi,xi])*dy + (model_values[yi,xi]+model_values[yi1,xi1]-model_values[yi1,xi]-model_values[yi,xi1])*dx*dy
+    FCT = (dy**2-dy)/4
+    FET = (dx**2-dx)/4
+    # For points not along the grid boundary, perform biquadratic interpolation
+    inner_ind = np.where((xi!=0) & (yi!=0) & (yi!=model_values.shape[0]-2) & (xi!=model_values.shape[1]-2))[0]
+    D = []
+    for j in range(4):
+        X = xi[inner_ind] - 1 + j
+        M = model_values[yi[inner_ind],X] + (model_values[yi1[inner_ind],X] - model_values[yi[inner_ind],X])*dy[inner_ind] + (model_values[yiM1[inner_ind],X]+model_values[yi2[inner_ind],X]-model_values[yi[inner_ind],X]-model_values[yi1[inner_ind],X])*FCT[inner_ind]
+        D.append(M)
 
-    return grid_z0
+    data = np.ma.ones(xi.shape)*9999
+    data[inner_ind] = D[1]+(D[2]-D[1])*dx[inner_ind]+(D[0]+D[3]-D[1]-D[2])*FET[inner_ind]
+
+    # For points along the grid boundary, perform bilinear interpolation
+    bound_ind = np.where((xi==0) | (yi==0) | (xi==model_values.shape[1]-2) | (yi==model_values.shape[0]-2))
+    data[bound_ind] = model_values[yi[bound_ind],xi[bound_ind]] + \
+    (model_values[yi[bound_ind],xi1[bound_ind]] - model_values[yi[bound_ind],xi[bound_ind]])*dx[bound_ind] + \
+    (model_values[yi1[bound_ind],xi[bound_ind]] - model_values[yi[bound_ind],xi[bound_ind]])*dy[bound_ind] + \
+    (model_values[yi[bound_ind],xi[bound_ind]] + model_values[yi1[bound_ind],xi1[bound_ind]] - \
+    model_values[yi1[bound_ind],xi[bound_ind]] - model_values[yi[bound_ind],xi1[bound_ind]])*dx[bound_ind]*dy[bound_ind]
+
+    return data
 
 
-def budget_interp(a,coords,ref_x,ref_y):
-    """Port of MOS2K routine intrp.f which performs interpolation for precipitation
-    amount fields. This is also known as "budget" interpolation, but might not be
-    1:1 exact as NCEP's IPLIB budget interpolation routine, polates3.f90
-    """
+def nearest_neighbor_interp(model_values,xind,yind):
 
-    if len(coords.shape) == 1: coords = coords.reshape(1,coords.shape[0],order='F')
-    nx = a.shape[0]
-    ny = a.shape[1]
-    awork = np.copy(a)
+    # Round index values to nearest grid point
+    xi = np.round(xind).astype(int)
+    yi = np.round(yind).astype(int)
 
-    #print " ===== INSIDE FUNCTION BUDGET_INTERP ===== "
-    #print "(1) A = ",np.transpose(awork)
-    #print "(2) AWORK = ",np.transpose(awork)
-    #print "(3) AWORK = A? ",np.array_equal(a,awork)
 
-    it = np.nditer([a,awork],flags=['multi_index','f_index'],op_flags=[['readonly'],['readwrite']])
-    for a1,aw1 in it:
-        i = it.multi_index[0]
-        j = it.multi_index[1]
-        asum = 0.
-        acount = 0
-        if a1[...] <= 0.0:
-            if j+1 >= 0 and j+1 <= ny-1:
-                asum += a[i,j+1]
-                acount += 1
-            if j-1 >= 0 and j-1 <= ny-1:
-                asum += a[i,j-1]
-                acount += 1
-            if i+1 >= 0 and i+1 <= nx-1:
-                asum += a[i+1,j]
-                acount += 1
-            if i-1 >= 0 and i-1 <= nx-1:
-                asum += a[i-1,j]
-                acount += 1
-            if acount > 0:
-                aw1[...] = -1.0*(asum/np.float32(acount))
-
-    #print "(4) AWORK UPDATED= ",np.transpose(awork)
-            
-    data = np.zeros((coords.shape[0]),dtype=np.float32,order='F')
-    xcoords = coords[:,1]
-    ycoords = coords[:,0]
-    it = np.nditer([xcoords,ycoords,data],flags=['multi_index','f_index'],op_flags=[['readonly'],['readonly'],['readwrite']])
-    for x1,y1,d1 in it:
-        #convert to indices for data points
-        i = (x1/ref_x).astype(int)
-        j = (y1/ref_y).astype(int)
-        dx = x1-np.float32(x1)
-        dy = y1-np.float32(y1)
-        if dx == 0.0 and dy == 0.0:
-            d1[...] = a[i,j]
-        else:
-            d1[...] = awork[i,j]+\
-                   ((awork[i+1,j]-awork[i,j])*dx)+\
-                   ((awork[i,j+1]-awork[i,j])*dy)+\
-                   (awork[i,j]+awork[i+1,j+1]-awork[i,j+1]-awork[i+1,j])*dx*dy
-    data = np.where(data<0.0,0.0,data)
+    # Perform nearest neighbor interpolation, leaving points outside of grid boundary as missing.
+    data = np.ma.ones(xi.shape)*9999
+    valid_ind = np.where((xi>=0) & (yi>=0) & (xi<model_values.shape[1]) & (yi<model_values.shape[0]))
+    data[valid_ind] = model_values[yi[valid_ind],xi[valid_ind]]
 
     return data
 
@@ -209,10 +312,10 @@ def budget_interp(a,coords,ref_x,ref_y):
 def get_projparams(filepath):
     """Gets projection metadata for variable and formats it correctly
     as a dictionary, to be passed into Proj function.
-    """ 
+    """
 
     with Dataset(filepath, mode='r', format="NETCDF4") as nc:
-        vnames = nc.variables.keys()
+        vnames = list(nc.variables.keys())
         pname = [n for n in vnames if 'grid' in n]
         var = nc.variables[pname[0]]
         pobj = Camps_data(pname, autofill=False)
@@ -223,37 +326,25 @@ def get_projparams(filepath):
             if key not in metadata_exceptions:
                 value = var.getncattr(key)
                 pobj.add_metadata(key, value)
+        LL_lat = nc.variables['latitude'][0,0]
+        LL_lon = nc.variables['longitude'][0,0]
+        dx = nc.variables['x'].grid_spacing
+        dy = nc.variables['y'].grid_spacing
 
-        projparams = {}
-        # Get lower left grid info
-        LL_lat = pobj.Lat1
-        LL_lon = pobj.Lon1
-        # Set keys from file
-        projparams['a'] = pobj.radius
-        projparams['b'] = pobj.radius
-        projparams['lon_0'] = pobj.orientation
-        projparams['lat_ts'] = pobj.stnd_parallel
-        # Set projection specific keys (put in yaml file later??)
-        if pobj.grid_mapping_name == 'polar_stereographic':
-            projparams['to_meters'] = True
-            projparams['x_0'] = 8001120.943743927
-            projparams['y_0'] = 8001120.943743927
-            projparams['proj'] = 'stere'
-            projparams['lat_0'] = 90.0
+    projparams = {}
+    for item in pobj.PROJ_string.split(" "):
+        k,v = item.replace('+','').split('=')
+        projparams[k] = float(v) if k != 'proj' else v
 
-    return projparams, LL_lat, LL_lon
+    return projparams, LL_lat, LL_lon, dx, dy
 
 
-def reproject(projparams, LL_lat, LL_lon, lon=None, lat=None):
+def reproject(projparams, LL_lat, LL_lon, dx, dy, lon=None, lat=None):
     """Given collection of lat and lon, reproject into appropriate grid space."""
 
     # Get projection information
-    #pdb.set_trace()
     assert lon is not None and lat is not None
     p = Proj(projparams=projparams)
-    x,y = p(lon, lat)
-    #LL_x,LL_y = p(LL_lon, LL_lat)
-    #x_corr = np.array(x) - LL_x
-    #y_corr = np.array(y) - LL_y 
+    x,y = p(lon,lat)
 
-    return (np.array(x),np.array(y))
+    return (np.array(x/dx),np.array(y/dy))

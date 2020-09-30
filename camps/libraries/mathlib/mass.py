@@ -81,6 +81,7 @@ def thickness(filepaths, time, predictor):
     pred.search_metadata.update({'vert_coord1' : pl})
     ght_pl = fetch(filepaths, time, **pred.search_metadata)
     assert(isinstance(ght_pl,Camps_data)),"ght_pl expected to be camps data object"
+    mask = np.ma.getmaskarray(ght_pl.data)
     try:
         hpl_unit = ght_pl.metadata['units']
         hpl_pint = units.Quantity(1., hpl_unit)
@@ -92,12 +93,14 @@ def thickness(filepaths, time, predictor):
     if unit is None:
         unit = hpl_unit
         thickness.metadata.update({ 'units' : unit })
-#    thickness.add_component(ght_pl)
+    thickness.add_component(ght_pl)
+    thickness.preprocesses = ght_pl.preprocesses
 
     #Fetch the geopotential height corresponding to the greater isobar.
-    pred.search_metadata.update({'vert_coord1' : pg}) 
+    pred.search_metadata.update({'vert_coord1' : pg})
     ght_pg = fetch(filepaths, time, **pred.search_metadata)
     assert(isinstance(ght_pg,Camps_data)),"ght_pg expected to be camps data object"
+    mask += np.ma.getmaskarray(ght_pg.data)
     try:
         hpg_unit = ght_pg.metadata['units']
         hpg_pint = units.Quantity(1., hpg_unit)
@@ -106,17 +109,17 @@ def thickness(filepaths, time, predictor):
         logging.info("Fetched geopotential height has no units!")
         raise
     q_ghtPG = units.Quantity(ght_pg.data, hpg_unit)
-#    thickness.add_component(ght_pg)
+    thickness.add_component(ght_pg)
+    for proc in ght_pg.preprocesses:
+        thickness.add_preprocess(proc)
 
-#   Copy the processes from ght_pg 
-    thickness.processes = copy.deepcopy(ght_pg.processes)
-
-
+#   Copy the processes from ght_pg
+    #thickness.processes = copy.deepcopy(ght_pg.processes)
     q_thick = (q_ghtPL - q_ghtPG).to(unit)
-    thickness.add_dimensions(u'y')
-    thickness.add_dimensions(u'x')
-    thickness.add_dimensions(u'plev_bounds')
-    thickness.add_data(np.array(q_thick))
+    thickness.add_dimensions('y')
+    thickness.add_dimensions('x')
+    thickness.add_dimensions('plev_bounds')
+    thickness.add_data(np.ma.array(np.array(q_thick), mask=mask))
 
     #Construct the pressure layer thickness camps data object.
     #The object is built by instantiating an object with empty substructures
@@ -124,9 +127,9 @@ def thickness(filepaths, time, predictor):
     #database table 'metadata'.  We further fill in the substructures with
     #references to the fetched object ght_pl, and edit portions to be
     #relevant for the constructed predictor.
-    thickness.add_process('PressThickness')
     thickness.location = ght_pl.location
     thickness.time = copy.deepcopy(ght_pl.time)
     thickness.metadata.update({'FcstTime_hour' : ght_pl.metadata.get('FcstTime_hour')})
- 
+    thickness.add_process('PressLayerThickCalc')
+
     return thickness

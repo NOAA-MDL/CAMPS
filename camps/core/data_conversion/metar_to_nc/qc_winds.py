@@ -1,7 +1,7 @@
 import logging
-import qc_general
+from . import qc_general
 import pdb
-from qc_error import qc_error
+from .qc_error import qc_error
 
 
 """Module: qc_winds.py

@@ -27,9 +27,9 @@ TZ_MAX = -4
 def extreme_temperature_setup(filepaths, time, predictor, station_list=None, station_defs=None):
     """Compute the extreme temperature, either the daytime maximum temperature
     or the nighttime minimum temperature.  The daytime maximum temperature is the
-    maximum temperature found in the time window between 7am and 7pm inclusiv
-    local standard time.  The window for nighttime minimum temperature is between 
-    8am and 7pm inclusive local standard time.  The daytime maximum temperature
+    maximum temperature found in the time window between 7am and 7pm inclusive
+    local standard time.  The window for nighttime minimum temperature is between
+    7pm and 8am (next day) inclusive local standard time.  The daytime maximum temperature
     is stored at 06Z the next day and the nighttime minimum temperature is stored
     at 18Z that same day.
 
@@ -58,15 +58,16 @@ def extreme_temperature_setup(filepaths, time, predictor, station_list=None, sta
 
     #Method constants specific to whether the extreme temperature
     #is nighttime minimum or daytime maximum.  We specify the UTC
-    #hour at which the variable is stored, the variable name, and 
+    #hour at which the variable is stored, the variable name, and
     #the statistical method used.  In addition, we include the start
-    #and end of the time window of each variable given in hours of 
+    #and end of the time window of each variable given in hours of
     #of the day.  Finally, assuming variable values given hourly, we
     #denote the variable data indices for a time zone offset of 0.
     IS_MIN = predictor.search_metadata['property'] == 'NightMinT'
     if IS_MIN:
         HOUR_UTC = 18
         NAME = 'nighttime_minimum_temperature'
+        CALCULATION = 'NightMinTempCalc'
         DURATION_METHOD = 'minimum'
         START_LST = 19
         END_LST = 8 #the next day from START_LST.
@@ -74,6 +75,7 @@ def extreme_temperature_setup(filepaths, time, predictor, station_list=None, sta
     else:
         HOUR_UTC = 6
         NAME = 'daytime_maximum_temperature'
+        CALCULATION = 'DayMaxTempCalc'
         DURATION_METHOD = 'maximum'
         START_LST = 7
         END_LST = 19 #the same day as in START_LST
@@ -148,7 +150,7 @@ def extreme_temperature_setup(filepaths, time, predictor, station_list=None, sta
                 logging.info("Could not fetch hourly temperatures and 6-hour maximum temperatures.")
             return None
 
-    #At this point, we have some data with which to come up with 
+    #At this point, we have some data with which to come up with
     #extremum Temperature values.  So lets instantiate a data object.
     ExtremeT = Camps_data(NAME)
 
@@ -160,9 +162,8 @@ def extreme_temperature_setup(filepaths, time, predictor, station_list=None, sta
     #the minimum of the true values.  The initial value is the default
     #value.  It is only changed if a true maximum is found.
     extT = np.full(len(station_list),-9999)
-
     if TIME_CHK:
-        #Reduce hrly to a camps data object with just the times and 
+        #Reduce hrly to a camps data object with just the times and
         #data within the time range [start_hrly_min,end_hrly_max].
         #This data is fed into the method that finds the maximum.
         if not hrly_missing:
@@ -187,11 +188,11 @@ def extreme_temperature_setup(filepaths, time, predictor, station_list=None, sta
                     ind = np.where(hrly_stations==sta)[0][0]
                     hourlies.update({sta : (SIGN*hrly.data.filled()[:,ind,0]).tolist()})
             if len(extT)>len(hourlies):
-                 extT = extT[0:len(hourlies)]
+                extT = extT[0:len(hourlies)]
             find_max_in_hourlies(hourlies, I_UTC, sta_tz, station_list, extT)
         #Reduce the extT_6hr to those which have a period that at least
         #part is within the above hourly window [start_hrly_min, end_hrly_max].
-        #Feed these values to the method 'adjust_max_with_6hours' that looks 
+        #Feed these values to the method 'adjust_max_with_6hours' that looks
         #for a maximum and compares it the value of extT that may have been
         #set in 'find_max_in_hourlies'.
         if not extT6_missing:
@@ -222,42 +223,45 @@ def extreme_temperature_setup(filepaths, time, predictor, station_list=None, sta
 #    for istn,stn in enumerate(station_list):
 #        if stn in sta_tz.keys():
 #            print stn, hourlies[stn], maxt6[stn], extT[istn]
-
     #Complete construction of the camps data object and return.
     phenomenonTime = Time.PhenomenonTime(data=np.array([time]))
     ExtremeT.time.append(phenomenonTime)
     resultTime = Time.ResultTime(data=np.array([time]))
     resultTime.append_result(None)
     ExtremeT.time.append(resultTime)
-    ExtremeT.add_dimensions(u'number_of_stations')
+    ExtremeT.add_dimensions('number_of_stations')
     if TIME_CHK:
         #Adopt the station list from the 6-hour extremum data object.
         #If not fetched, then use that from the hourly data object.
         if not extT6_missing:
             ExtremeT.location=copy.copy(extT_6hr.location)
-            ExtremeT.location.set_stations(maxt6.keys())
+            ExtremeT.location.set_stations(list(maxt6.keys()))
             ExtremeT.processes = copy.deepcopy(extT_6hr.processes)
             for meta in extT_6hr.metadata:
-                if meta not in ExtremeT.metadata.keys():
+                if meta not in list(ExtremeT.metadata.keys()):
                     if meta != 'hours':
-                        ExtremeT.metadata[meta] = extT_6hr.metadata[meta] 
+                        ExtremeT.metadata[meta] = extT_6hr.metadata[meta]
             for prop in extT_6hr.properties:
                 if 'coord_val' in prop:
                     ExtremeT.properties[prop] = extT_6hr.properties[prop]
         elif not hrly_missing:
             ExtremeT.location=copy.copy(hrly.location)
-            ExtremeT.location.set_stations(hourlies.keys())
+            ExtremeT.location.set_stations(list(hourlies.keys()))
             ExtremeT.processes = copy.deepcopy(hrly.processes)
             ExtremeT.add_process('BoundsProcMax')
             for meta in hrly.metadata:
-                if meta not in ExtremeT.metadata.keys():
+                if meta not in list(ExtremeT.metadata.keys()):
                     ExtremeT.metadata[meta] = hrly.metadata[meta]
             ExtremeT.properties = copy.copy(hrly.properties)
+   
     #Make a masked array of the data and insert it into the data object.
     ExtremeT.add_data(ma.masked_outside(SIGN*extT, -9998, 9998))
     ExtremeT.data[ExtremeT.data.data==-9999] = 9999
     if cfg.read_dimensions()['time'] not in ExtremeT.dimensions:
         ExtremeT.dimensions.insert(0,cfg.read_dimensions()['time'])
+    ExtremeT.data = np.ma.masked_equal(ExtremeT.data, 9999) 
+    ExtremeT.add_process(CALCULATION)
+    
     return ExtremeT
 
 
@@ -270,14 +274,14 @@ def find_max_in_hourlies(hourlies, iwin, tzs, station_list, extT):
         the time window.
 
     Arguments:
-        hourlies (dict): keys are station names and values the hourly 
+        hourlies (dict): keys are station names and values the hourly
             temperature series (25 hours).
-        iwin (list): list of length 2 of start and end indices of 
+        iwin (list): list of length 2 of start and end indices of
             time window at Greenwich.
         tzs (dict): keys are station names and values the time zone offsets.
         station_list (list): contains station names.
-        extT (list): contains the maximum values of daytime maximum 
-            temperature or negative nighttime minimum temperature found 
+        extT (list): contains the maximum values of daytime maximum
+            temperature or negative nighttime minimum temperature found
             for stations in the station list.
 
     """
@@ -288,7 +292,7 @@ def find_max_in_hourlies(hourlies, iwin, tzs, station_list, extT):
     #define a maximum in each segment restricted by certain conditions.
     #These restrictions are noted below.
     for I,stn in enumerate(hourlies.keys()):
-        if stn in tzs.keys():
+        if stn in list(tzs.keys()):
             dh = -tzs[stn]
             i_start = iwin[0] + dh
             i_end = iwin[1] + dh
@@ -310,11 +314,11 @@ def find_max_in_hourlies(hourlies, iwin, tzs, station_list, extT):
                 nmiss = len([j for j, value in enumerate(seg) if value == -9999])
                 if nmiss <= 1:
                     maxes[i] = max(seg)
-                
+
             #Define a boolean value for the slope between the segments at the time window edges.
             #The slope is favorable towards the maximum being within the window if it is
             #positive(negative) between segments A(C) and B(D).  This value will be used as
-            #a tiebreaker if the maximu is at the window edge and is the same in each segment 
+            #a tiebreaker if the maximu is at the window edge and is the same in each segment
             #at the edge.
             slope = [False, False]
             indicesA = [i for i, value in enumerate(tsegA) if value != -9999]
@@ -334,7 +338,7 @@ def find_max_in_hourlies(hourlies, iwin, tzs, station_list, extT):
                 if tsegD[1] < tsegC[3]:
                     slope[1] = True
 
-            #Find the maximum of the set of segment maxima.  Locate those within 
+            #Find the maximum of the set of segment maxima.  Locate those within
             #the time window.  Also identify the segments with a missing maxima.
             #Then apply criteria to identify a legitimate maximum within the time
             #window.
@@ -343,11 +347,11 @@ def find_max_in_hourlies(hourlies, iwin, tzs, station_list, extT):
             n_maxth = len(i_maxth)
             i_missh = [i for i, value in enumerate(maxes) if value == -9999]
             n_missh = len(i_missh)
-            #We divide our search for a maximum into the number of the three middle 
+            #We divide our search for a maximum into the number of the three middle
             #segments (covering the time window) having the same maximum value.
             #Starting with one middle segment, first check that maxes in neighboring
             #segments exist.  If they do, then if the middle segment with the max of
-            #interest is the left one, at the left edge, then accept its max if it 
+            #interest is the left one, at the left edge, then accept its max if it
             #exceeds the max of the extreme left segment that is outside the time window
             #or if equal, the slope is True (positive).  If the central segment has the
             #the max, then if the neighboring middle segments are not missing, accept
@@ -404,8 +408,8 @@ def find_max_in_hourlies(hourlies, iwin, tzs, station_list, extT):
                             if slope[0] and slope[1]:
                                 extT[I] = maxth
             #Finally, there is the case where all three middle segments have the same
-            #max.  Here we compare the maxes of the left and right middle segments with 
-            #their neighbors outside of the time window. 
+            #max.  Here we compare the maxes of the left and right middle segments with
+            #their neighbors outside of the time window.
             elif n_maxth == 3:
                 if 0 not in i_missh and 4 not in i_missh:
                     if maxes[0] < maxes[1] and maxes[3] > maxes[4]:
@@ -429,23 +433,23 @@ def adjust_max_with_6hours(maxt6, iwin, tzs, station_list, extT):
         on its own.
 
     Arguments:
-        maxt6 (list): list of length 4 of 6-hour maximums of either the 
+        maxt6 (list): list of length 4 of 6-hour maximums of either the
             maximum temperature or the negative of minimum temperature.
-        iwin (list): list of length 2 of start and end indices of 
+        iwin (list): list of length 2 of start and end indices of
             time window at Greenwich.
         tzs (dict): keys are station names and values the time zone offsets.
         station_list (list): contains station names.
-        extT (list): contains the maximum values of daytime maximum 
-            temperature or negative nighttime minimum temperature found 
+        extT (list): contains the maximum values of daytime maximum
+            temperature or negative nighttime minimum temperature found
             for stations in the station list.
 
     """
 
-    #Loope through each station.  Find the appropriate triplet of 
+    #Loope through each station.  Find the appropriate triplet of
     #6-hour maximums, obtain the triplet's maximum, and determine
     #if it is useful to set or adjust the value of extT.
     for I,stn in enumerate(maxt6):
-        if stn in tzs.keys():
+        if stn in list(tzs.keys()):
             dh = -tzs[stn]
             i_start = iwin[0] + dh
             i_end = iwin[1] + dh
@@ -464,26 +468,26 @@ def adjust_max_with_6hours(maxt6, iwin, tzs, station_list, extT):
             n_max_triplet = len(i_max_triplet)
             i_miss6 = [i for i, value in enumerate(triplet) if value == -9999]
             n_miss6 = len(i_miss6)
-            #Divide the adjustment process by the number of missing 
+            #Divide the adjustment process by the number of missing
             #values in the triplet.  If none are missing and only one
             #member has the maximum and its the central member, then
             #set extT to that value.  Otherwise if the one member
             #with the maximum is not the central one, then we depend
             #on extT already having a non-missing value, and we chose
             #the max of that value and the triplet max.  If more than
-            #one of the triplets has the maximum value in the triplet 
+            #one of the triplets has the maximum value in the triplet
             #non-missing case, then we again need a non-missing value
             #of extT to compare to and pick the max of the two.
             if n_miss6 == 0:
                 if n_max_triplet == 1:
                     if 1 in i_max_triplet:
-                       extT[I] = max_triplet
+                        extT[I] = max_triplet
                     elif success:
                         extT[I] = max(extT[I], max_triplet)
                 else:
                     if success:
                         extT[I] = max(extT[I], max_triplet)
-            #In the case of there are one or two missing values in the 
+            #In the case of there are one or two missing values in the
             #triplet, then we need a non-missing value of extT to compare
             #to the triplet max, and choose the max of the two.
             #the case of three missing values means there is no triplet value.
@@ -505,14 +509,14 @@ def temp_corr_setup(filepaths, temp, pred):
     temp = fetch(filepaths, property='Temp', source='GFS', vert_coord1=level)
     pres = fetch(filepaths, property='Pres', source='GFS', vert_coord1=None)
     rel_hum = fetch(filepaths, property='RelHum', source='GFS', vert_coord1=level)
-    
+
     # Package into quantity
     q_temp = units('K') * temp.data
     q_pres = units('Pa') * pres.data
     q_rel_hum = units(None) * rel_hum.data # Dimensionless
     return temp
 
-     
+
 
 def temp_corr(pressure_arr, temperature_arr):
     """Compute the temperature correction
@@ -546,7 +550,7 @@ def temp_lapse_setup(filepaths, time, predictor):
     international_units = { 'temperature' : 'kelvin' } #this will be a global dictionary.
 
 #   Obtain the standard international units for this predictor.
-#   The unit dimensionality of other objects will be checked against this international standard 
+#   The unit dimensionality of other objects will be checked against this international standard
 #   for correct dimensionality.
     intl_unit = international_units.get('temperature')
     iu_pint = units.Quantity(1., intl_unit)
@@ -570,7 +574,7 @@ def temp_lapse_setup(filepaths, time, predictor):
 
 #   Make a deep copy of the predictor object with which to edit for each fetch.
     pred = predictor.copy()
-    
+
 #   Identify the lesser and large isobars.
     plevel1 = pred.search_metadata.get('vert_coord1')
     plevel2 = pred.search_metadata.get('vert_coord2')
@@ -595,6 +599,7 @@ def temp_lapse_setup(filepaths, time, predictor):
     pred.search_metadata.update({'vert_coord1' : pl})
     temp_pl = fetch(filepaths, time, **pred.search_metadata)
     assert(isinstance(temp_pl,Camps_data)),"temp_pl expected to be camps data object"
+    mask = np.ma.getmaskarray(temp_pl.data)
     try:
         t_unit = temp_pl.metadata['units']
         t_pint = units.Quantity(1.,t_unit)
@@ -608,13 +613,15 @@ def temp_lapse_setup(filepaths, time, predictor):
 #   This object will be used in forming the temperature lapse data.
 ##   And add the temperature camps data object as a component of the temperature lapse.
     q_tempPL = units.Quantity(temp_pl.data, t_unit)
-#    temp_lapse_object.add_component(temp_pl)
+    temp_lapse_object.add_component(temp_pl)
+    temp_lapse_object.preprocesses = temp_pl.preprocesses
 
 #   Fetch temperature at the greater isobar and
 #   ensure that it is a camps data object.
     pred.search_metadata.update({'vert_coord1' : pg})
     temp_pg = fetch(filepaths, time, **pred.search_metadata)
     assert(isinstance(temp_pg,Camps_data)),"temp_pg expected to be camps data object"
+    mask += np.ma.getmaskarray(temp_pg.data)
     try:
         t_unit = temp_pl.metadata['units']
         t_pint = units.Quantity(1.,t_unit)
@@ -626,24 +633,25 @@ def temp_lapse_setup(filepaths, time, predictor):
 #   This object will be used in forming the temperature lapse data.
 ##   And add the temperature camps data object as a component of the temperature lapse.
     q_tempPG = units.Quantity(temp_pg.data, t_unit)
-#    temp_lapse_object.add_component(temp_pg)
+    temp_lapse_object.add_component(temp_pg)
+    for proc in temp_pg.preprocesses:
+        temp_lapse_object.add_preprocess(proc)
 
-#   Call the temperature lapse function and set the units of the 
+#   Call the temperature lapse function and set the units of the
 #   returned data.  Note that we use metpy to calculate the data
 #   because it accounts for differences in units.
 #   And insert the result into the camps data object.
     q_temp_lapse = temp_lapse(q_tempPG, q_tempPL).to(unit)
-    temp_lapse_object.add_dimensions(u'y')
-    temp_lapse_object.add_dimensions(u'x')
-    temp_lapse_object.add_dimensions(u'plev_bounds')
-    temp_lapse_object.add_data(np.array(q_temp_lapse))
-    temp_lapse_object.processes = copy.deepcopy(temp_pg.processes)
+    temp_lapse_object.add_dimensions('y')
+    temp_lapse_object.add_dimensions('x')
+    temp_lapse_object.add_dimensions('plev_bounds')
+    temp_lapse_object.add_data(np.ma.array(np.array(q_temp_lapse), mask=mask))
 #   Construct the rest of the camps data object for temperature lapse.
-    temp_lapse_object.add_process('TempLapse')
     temp_lapse_object.time = copy.deepcopy(temp_pg.time)
     temp_lapse_object.location = temp_pg.location
     temp_lapse_object.metadata.update({'FcstTime_hour' : temp_pg.metadata.get('FcstTime_hour')})
     temp_lapse_object.metadata.update({'coordinates' : temp_pg.get_coordinate()})
+    temp_lapse_object.add_process('TempLapseCalc')
 
     return temp_lapse_object
 
@@ -687,11 +695,11 @@ def potential_temperature_setup(filepaths, time, predictor):
 
 #   Obtain the international standard unit for temperature
 #   and create a metpy object with that unit.  The metpy
-#   object is to be used to test the dimensionality of 
+#   object is to be used to test the dimensionality of
 #   potential units adopted for potential temperature.
     intl_unit = international_units.get('temperature')
     iu_pint = units.Quantity(1., intl_unit)
-    
+
 #   Test the unit for potential temperature stored in the database.
     unit = None
     try:
@@ -723,6 +731,7 @@ def potential_temperature_setup(filepaths, time, predictor):
     iu_pint = units.Quantity(1.,intl_unit)
     temp = fetch(filepaths, time, **pred.search_metadata)
     assert(isinstance(temp,Camps_data)),"temp expected to be camps data object"
+    mask = np.ma.getmaskarray(temp.data)
     try:
         t_unit = temp.metadata['units']
         t_pint = units.Quantity(1.,t_unit)
@@ -738,18 +747,18 @@ def potential_temperature_setup(filepaths, time, predictor):
 ##   Then, add the temperature camps data object to the list of components
 ##   of the potential temperature.
     q_temp = units.Quantity(temp.data, t_unit)
-#    potemp.add_component(temp)
+    potemp.dimensions = copy.deepcopy(temp.dimensions)
+    potemp.add_component(temp)
+    potemp.preprocesses = temp.preprocesses
 
 #   The air pressure is also a component of the potential temperature,
 #   but I cannot construct a camps data object of it to add to the
-#   component list.  
+#   component list.
 #   Call the potential temperature function.
-#   Declare the dimensions of the data before putting the data into 
+#   Declare the dimensions of the data before putting the data into
 #   the camps data object for potential temperature.
     q_data = potential_temperature(q_isobar, q_temp).to(unit)
-    potemp.dimensions = copy.deepcopy(temp.dimensions)
-    potemp.processes = copy.deepcopy(temp.processes)
-    potemp.add_data(np.array(q_data))
+    potemp.add_data(np.ma.array(np.array(q_data), mask=mask))
 
 #   Construct the rest of the camps data object for
 #   potential temperature.
@@ -757,6 +766,8 @@ def potential_temperature_setup(filepaths, time, predictor):
     potemp.location = temp.location
     potemp.metadata.update({'FcstTime_hour' : temp.metadata.get('FcstTime_hour')})
     potemp.metadata.update({ 'coordinates' : temp.metadata.get('coordinates') })
+    potemp.metadata.update({'ReferencePressure_in_hPa' : 1000})
+    potemp.add_process('PotTempCalc')
 
     return potemp
 
@@ -765,13 +776,13 @@ def potential_temperature(pressure, temperature):
     r"""This method calls the metpy.calc function potential_temperature
         which takes the pint.Quantity objects containing the
         isobaric level value and the temperature at that level
-        and produces the corresponding potential temperature 
+        and produces the corresponding potential temperature
         with the reference pressure being 1000 millibars.
 
     """
 
     return calc.potential_temperature(pressure, temperature)
-    
+
 
 
 # TempAdv : libraries.mathlib.temperature.temp_advection_setup
@@ -794,7 +805,6 @@ def temp_advection_setup(filepaths, time, predictor):
     pred.change_property('Lon_grid')
     lon = fetch(filepaths, time, **pred.search_metadata)
 
-    #pdb.set_trace()
     la, lo = geo_direct(lat, lon)
 
     q_t = units.Quantity(temp.data, temp.units)
@@ -816,7 +826,7 @@ def temp_advection_setup(filepaths, time, predictor):
     temp_adv.processes = temp.processes
     temp_adv.add_coord(temp.get_coordinate())
     temp_adv.data = np.array(q_ta)
-    for k,v in temp.metadata.iteritems():
+    for k,v in list(temp.metadata.items()):
         if not 'name' in k \
         and not 'Property' in k:
             temp_adv.metadata[k] = v
