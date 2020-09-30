@@ -13,11 +13,11 @@ import logging
 from netCDF4 import Dataset
 from ..registry import util as cfg
 from ..mospred import read_pred as read_pred
-from ..mospred import util as util
+from ..core import util as util
 from . import Time as Time
 from . import writer as writer
-from fetch import *
-from Camps_data import Camps_data
+from .fetch import *
+from .Camps_data import Camps_data
 
 
 
@@ -79,13 +79,13 @@ def write_globals(nc, control, primary_vars, file_id):
         pass
     # Gather additional global attributes
     nc_globals = cfg.read_globals()
-    for name,value in nc_globals.iteritems():
+    for name,value in nc_globals.items():
         if name == 'organization':
             name = 'PROV__wasAttributedTo'
             value = "StatPP__Data/Source/MDL"
         if value:
             global_dict[name] = value
-    for name, value in global_dict.iteritems():
+    for name, value in global_dict.items():
         setattr(nc, name, value)
 
 
@@ -107,7 +107,7 @@ def write_process_variables(nc, proc_vars):
     for proc in proc_vars:
         proc_var = nc.createVariable(proc,int)
         proc_def = cfg.read_procedures()[proc]
-        for name, value in proc_def.iteritems():
+        for name, value in proc_def.items():
             if name == 'process_step':
                 name = 'PROV__Activity'
             setattr(proc_var,name,value)
@@ -115,7 +115,6 @@ def write_process_variables(nc, proc_vars):
 
 def write_data(nc, control, equations, nparams=5):
     """Writes station forecast equations into the netCDF file."""
-
     num_stations = len(equations)
 
     #Write stations/groups
@@ -132,7 +131,6 @@ def write_data(nc, control, equations, nparams=5):
     #Format coefficients
     coefs = [np.array(x['coefs']) for x in equations]
     coefs = np.array(coefs)
-
     # Create variables for MOS equation parameters
     pred_coef = nc.createVariable("MOS_Predictor_Coeffs", int,())
     setattr(pred_coef, 'standard_name', 'source')
@@ -188,20 +186,21 @@ def write_data(nc, control, equations, nparams=5):
     setattr(MOS_eq, 'ancillary_variables', '( MOS_Predictor_Coeffs Equation_Constant )')
     setattr(MOS_eq, 'units', 1)
 
-    ancils = [np.array(x['ancil'].values()) for x in equations]
+    ancils = [np.array(list(x['ancil'].values())) for x in equations]
     shape = (nparams,nc.dimensions['number_of_predictands'].size)
     for n,a in enumerate(ancils):
         if a.shape != shape:
             ancils[n] = np.zeros(shape)
             logging.info("Not enough ancils. Adding")
+
     ancils = np.dstack(ancils)
     MOS_eq[:,0:-1,:] = coefs
-    MOS_eq[:,-1,:] = ancils[4,:,:].T
+    MOS_eq[:,-1,:] = ancils[0,:,:].T
 
-    SEE[:] = ancils[1,:,:].T
-    RoV[:] = ancils[2,:,:].T
-    MCC[:] = ancils[3,:,:].T
-    Pred_avg[:] = ancils[0,:,:].T
+    SEE[:] = ancils[2,:,:].T
+    RoV[:] = ancils[3,:,:].T
+    MCC[:] = ancils[1,:,:].T
+    Pred_avg[:] = ancils[4,:,:].T
 
     #Create prefix list
     prefixes =  { "OM__" : "http://opengeospatial.org/standards/om/",
@@ -213,8 +212,10 @@ def write_data(nc, control, equations, nparams=5):
             "SOSA__" : "http://www.w3.org/ns/sosa/"
             }
     group = nc.createGroup('prefix_list')
-    for name,value in prefixes.iteritems():
-            setattr(group, name, value)
+    for name,value in prefixes.items():
+        setattr(group, name, value)
+
+    return ancils, coefs
 
 
 def write_stations(nc, equations):
@@ -225,7 +226,7 @@ def write_stations(nc, equations):
     stations = [x['stations'] for x in equations]
     for station in stations:
         if len(station) > 1:
-            # Handle writing groups here
+        # Handle writing groups here
             logging.info("writing station groups")
 
     writer.write_stations(nc,[x[0] for x in stations])
@@ -271,6 +272,7 @@ def write_equations(filename, control, predictors, predictands, equations):
         var = predictor.write_to_nc(nc)
         nc.variables[var].coordinates += ' station'
     predictor_var[-1] = "Equation_Constant"+' '*(max_char_predictor-len("Equation_Constant"))
+    pred_list = predictor_var[:-1]
     setattr(predictor_var,'PROV__Entity','StatPP__Methods/Stat/OrdrdInpt')
     setattr(predictor_var,'long_name','Ordered List of Equation Terms')
 
@@ -290,13 +292,17 @@ def write_equations(filename, control, predictors, predictands, equations):
             counter +=1
             entry_name = tand_name+str(counter)+' '*(max_char_predictand-name_len-len(str(counter)))
         predictand_var[n] = entry_name
+    tand_list = predictand_var[:]
     setattr(predictand_var,'PROV__Entity', 'StatPP__Methods/Stat/OrdrdOutpt')
     setattr(predictand_var,'long_name','Ordered List of Predictand Outputs')
 
     # Writes equation coefficients, constants, and regression parameters and any other ancillary variables
-    write_data(nc, control, equations)
+    ancils, coefs = write_data(nc, control, equations)
     T = datetime.now().strftime("%Y-%m-%dT%H:00:00")
     setattr(nc,'PROV__generatedAtTime',T)
     logging.info('Wrote to '+ full_filename)
 
     nc.close()
+    if control.equations_summary is not None:
+        logging.info("Writing equations summary to "+control.output_directory+control.equations_summary)
+        util.equations_summary(stations=[x['stations'] for x in equations],coefficients=coefs,predictors=pred_list,predictands=tand_list,outname=control.output_directory+control.equations_summary,variance=ancils[3,:,:].T,error=ancils[2,:,:].T, consts=ancils[0,:,:].T, averages=ancils[4,:,:].T)

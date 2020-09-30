@@ -5,7 +5,7 @@ import numpy as np
 import logging
 import pdb
 
-from ..core.data_conversion.grib2_to_nc import grib2 as grib2
+from ..core.data_conversion.grib2_to_nc import grib2
 from ..registry import util as cfg
 
 
@@ -34,7 +34,7 @@ def main():
         level = logging.getLevelName(debug_level)
         logging.basicConfig(level=level)
     except:
-        print "Logging setup failed"
+        print("Logging setup failed")
         raise
 
     # function that converts grib2 to netcdf
@@ -45,4 +45,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

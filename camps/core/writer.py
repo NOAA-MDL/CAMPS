@@ -10,15 +10,15 @@ from netCDF4 import Dataset
 
 from ..registry.db import db as db
 from ..registry import util as util
-from Camps_data import Camps_data
+from .Camps_data import Camps_data
 
 """
 Module to handle writing Camps netCDF data
 """
 
 
-def write(camps_data, filename, global_attrs={}, overwrite=True,
-          write_to_db=True):
+def write(camps_data, filename, write_components=False, 
+          global_attrs={}, overwrite=True, write_to_db=True):
     """Writes a list of Camps_data to NetCDF file.
     camps_data is expected to be a list of Camps_data objects.
     filename is the filename to write to.
@@ -61,7 +61,7 @@ def write(camps_data, filename, global_attrs={}, overwrite=True,
     try:
         dims = get_dimensions(camps_data)
         #Write dimensions
-        for d_name, size in dims.iteritems():
+        for d_name, size in dims.items():
             nc.createDimension(d_name, size)
     except:
         pass
@@ -76,7 +76,7 @@ def write(camps_data, filename, global_attrs={}, overwrite=True,
         #what if it fails for only some predictors but not others?
 
     for da in camps_data:
-        name = da.write_to_nc(nc)
+        name = da.write_to_nc(nc, write_components)
         primary_vars.append(name)
         if write_to_db:
             try:
@@ -133,7 +133,7 @@ def write_prefixes(nc):
 
     prefixes = util.read_prefixes()
     group = nc.createGroup('prefix_list')
-    for name, value in prefixes.iteritems():
+    for name, value in prefixes.items():
         setattr(group, name, value)
 
 
@@ -151,7 +151,7 @@ def write_global_attributes(nc, extra_globals):
 
     nc_globals = util.read_globals()
     nc_globals.update(extra_globals)
-    for name, value in nc_globals.iteritems():
+    for name, value in nc_globals.items():
         setattr(nc, name, value)
 
 

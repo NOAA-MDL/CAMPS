@@ -16,11 +16,12 @@ except KeyError:
     if not os.path.isdir(db_dir):
         os.mkdir(db_dir)
 
+
 def connect(db):
-    """
-    Returns sqlite3.Connection object for a given database
+    """Returns sqlite3.Connection object for a given database
     housed in the db directory.
     """
+
     return sqlite3.connect(db, detect_types=sqlite3.PARSE_DECLTYPES)
 
 
@@ -28,10 +29,10 @@ conn = connect(db_name)
 c = conn.cursor()
 
 def create_file_id_table():
-    """
-    Creates a table in the database to keep track of processed
+    """Creates a table in the database to keep track of processed
     files and file_id informaion.
     """
+
     table_name = 'file_info'
     conn = connect(db_name)
     c = conn.cursor()
@@ -42,18 +43,19 @@ def create_file_id_table():
     except sqlite3.OperationalError:
         pass
 
+
 def create_variable_db():
-    """
-    Creates a variable database based off of dictionary.
+    """Creates a variable database based off of dictionary.
     Clears table if called.
     """
+
     table_name = 'variable'
     conn = connect(db_name)
     c = conn.cursor()
     #c.execute('DROP TABLE IF EXISTS ' + table_name)
     # Create the table
-    fields = get_variable_ftypes().keys()
-    types = get_variable_ftypes().values()
+    fields = list(get_variable_ftypes().keys())
+    types = list(get_variable_ftypes().values())
 
     column_names_str = "("
     for f, t in zip(fields, types):
@@ -68,6 +70,7 @@ def create_variable_db():
 
 
 def get_variable_ftypes():
+
     return OrderedDict([
        ('property', 'TEXT'),
        ('source', 'TEXT'),
@@ -118,8 +121,9 @@ def insert_variable(property=None, source=None, start=None, end=None,
     reserved2,
     reserved3
     """
+
     table_name = 'variable'
-    fields_string = ('?,' * len(get_variable_ftypes().keys()))[:-1]
+    fields_string = ('?,' * len(list(get_variable_ftypes().keys())))[:-1]
     sql = "INSERT INTO " + table_name + " VALUES (" + fields_string + ")"
     sql_values = [
         property,
@@ -144,9 +148,9 @@ def insert_variable(property=None, source=None, start=None, end=None,
     c.execute(sql, sql_values)
     conn.commit()
 
+
 def insert_file_info(filename,file_id):
-    """Insert file information into the file_info table
-    """
+    """Insert file information into the file_info table"""
     table_name = 'file_info'
     sql_str1 = "INSERT INTO " + table_name + " (filename, file_id) "
     sql_str2 = "VALUES ('" + filename + "', '" + file_id + "')"
@@ -161,6 +165,7 @@ def create_new_metadata_db():
     This removes the existing metadata table.
     This is recreated at the start of every session importing CAMPS.
     """
+
     table_name = 'metadata'
     variables = cfg.read_variables()
     attr_names = get_dictionary_attribute_keys(variables)
@@ -175,7 +180,7 @@ def create_new_metadata_db():
 
         # Fill the table
         fields_string = ('?,' * len(attr_names))[:-1]
-        for name, values in variables.iteritems():
+        for name, values in variables.items():
             sql = "INSERT INTO " + table_name + " VALUES (" + fields_string + ")"
             sql_values = []
             for attr_name in attr_names:
@@ -192,10 +197,10 @@ def create_new_metadata_db():
 
 
 def create_new_properties_db():
-    """
-    Deletes old properties table and replaces it with a new table
+    """Deletes old properties table and replaces it with a new table
     based on the configuration.
     """
+
     table_name = 'properties'
     variables = cfg.read_variables()
     properties = get_dictionary_properties_keys(variables)
@@ -209,7 +214,7 @@ def create_new_properties_db():
         c.execute(sql)
         # Fill the table
         fields_string = ('?,' * len(properties))[:-1]
-        for name, values in variables.iteritems():
+        for name, values in variables.items():
             sql = "INSERT INTO " + table_name + " VALUES (" + fields_string + ")"
             sql_values = []
             for property_name in properties:
@@ -224,10 +229,12 @@ def create_new_properties_db():
     except sqlite3.OperationalError:
         pass
 
+
 def get_file_info(filename,file_id):
     """queries the file_info table in the db to see if input file has already
     populated the db
     """
+
     db = 'file_info'
     where_str = 'file_id = "' + file_id + '"'
     sql_str = "SELECT DISTINCT * FROM " + db + " WHERE " + where_str
@@ -235,12 +242,12 @@ def get_file_info(filename,file_id):
     finfo = c.fetchall()
     return finfo
 
+
 def get_variable(**kwargs):
-    """
-    Returns the value of of the attribute for
-    the name.
+    """ Returns the value of of the attribute for the name.
     str name : name of predictor. e.g. wind_speed
     """
+
     db = 'variable'
     c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
@@ -254,16 +261,16 @@ def get_variable(**kwargs):
     #    kwargs['vert_method'] = None
     # Construct a 'WHERE' string from kwargs
     where_str = ""
-    for k,v in kwargs.iteritems():
+    for k,v in kwargs.items():
         operator = "="
         if k == "start":
             operator = "<="
         elif k == "end":
             operator = ">="
         if v is None:
-            where_str += k + " IS NULL" + " AND "
+            where_str += k.lower() + " IS NULL" + " AND "
         else:
-            where_str += k + " "+operator+" '" + str(v) + "' AND "
+            where_str += k.lower() + " "+operator+" '" + str(v) + "' AND "
     where_str = where_str[0:-4] # Remove trailing 'AND'
     filename_index = name_arr.index('filename')
     name_index = name_arr.index('name')
@@ -276,37 +283,42 @@ def get_variable(**kwargs):
     #if res:
     #    return (res[filename_index], res[name_index])
 
+
 def associate(names, values):
     """Given a list of names and their associated values,
     return a dictionary
     """
+
     return dict((x,y) for x, y in zip(names,values))
 
 
 def delete_variables_by_metadata(**kwargs):
-    """
-    Deletes variables matching given metadata.
+    """Deletes variables matching given metadata.
     example: delete_variables_by_metadata(filename='brokenfile.nc')
     """
+
     db = 'variable'
-    for k,v in kwargs.iteritems():
+    for k,v in kwargs.items():
         sql = 'DELETE FROM ' + db + " WHERE " + k + "=" +"\""+v+"\""
         c.execute(sql)
         conn.commit()
 
+
 def update_variables(column_name, match_value, update_column, value_change):
     """Updates value where key matches value"""
+
     db = 'variable'
     sql = "update "+db+" set "+update_column+" = '"+value_change+"' where "+column_name+" = '"+match_value+"'"
     c.execute(sql)
     conn.commit()
 
+
 def get_all_variables(**kwargs):
-    """
-    Returns the value of of the attribute for
+    """Returns the value of of the attribute for
     the name.
     str name : name of predictor. e.g. wind_speed
     """
+
     db = 'variable'
     c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
@@ -314,7 +326,7 @@ def get_all_variables(**kwargs):
     name_arr = [ele[1] for ele in name_arr]
     # Construct a 'WHERE' string from kwargs
     where_str = ""
-    for k,v in kwargs.iteritems():
+    for k,v in kwargs.items():
         v = str(v)
         where_str += k + " = '" + v + "' AND "
     where_str = where_str[0:-4] # Remove 'AND'
@@ -322,6 +334,7 @@ def get_all_variables(**kwargs):
     name_index = name_arr.index('name')
     sql = "SELECT * FROM " + db + " WHERE " + where_str
     c.execute(sql)
+
     return c.fetchall()
 
 
@@ -334,11 +347,11 @@ def dump_db():
 
 
 def get_metadata(name, attr):
-    """
-    Returns the value of of the attribute for
+    """Returns the value of of the attribute for
     the name.
     str name : name of predictor. e.g. wind_speed
     """
+
     db = 'metadata'
     c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
@@ -353,12 +366,12 @@ def get_metadata(name, attr):
         logging.error(attr + " is not a known metadata attribute")
         return False
 
+
 def get_by_metadata(**kwargs):
-    """
-    Returns the value of of the attribute for
-    the name.
+    """Returns the value of of the attribute for the name.
     str name : name of predictor. e.g. wind_speed
     """
+
     db = 'metadata'
     c.execute("PRAGMA table_info(" + db + ")")
     name_arr = c.fetchall()
@@ -366,7 +379,7 @@ def get_by_metadata(**kwargs):
     name_arr = [ele[1] for ele in name_arr]
     # Construct a 'WHERE' string from kwargs
     where_str = ""
-    for k,v in kwargs.iteritems():
+    for k,v in kwargs.items():
         where_str += k + " = '" + v + "' AND "
     where_str = where_str[0:-4] # Remove 'AND'
     sql = "SELECT * FROM " + db + " WHERE " + where_str
@@ -444,22 +457,22 @@ def get_dimensions_type(name):
 
 def print_properties(name):
     """Prints out the fields in database table 'properties' for
-    variable 'name'."""
+    variable 'name'.
+    """
 
     db = "properties"
     print_from(db, name)
 
 
 def print_metadata(name):
-    """Prints out the fields in database table 'metadata' for
-    variable 'name'."""
+    """Prints out the fields in database table 'metadata' for variable 'name'."""
 
     db = "metadata"
     print_from(db, name)
 
+
 def print_variable(name):
-    """Prints out the fields in database table 'variable' for
-    variable 'name'."""
+    """Prints out the fields in database table 'variable' for variable 'name'."""
 
     db = "variable"
     print_from(db, name)
@@ -496,17 +509,17 @@ def get_dictionary_attribute_keys(variables):
     """
 
     # if there's more that one data type for the same variable,
-    # then use the least common denomenator. e.g. float are favored over ints
+    # then use the least common denominator. e.g. float are favored over ints
 
     # Add name manually
     all_attributes = {'name': str}
-    for i in variables.values():
+    for i in list(variables.values()):
         try:
             attributes = i['attribute']
         except KeyError:
             logging.info("Keyword 'attribute' not in "+i)
             raise
-        for name, value in attributes.iteritems():
+        for name, value in attributes.items():
             if name in all_attributes and all_attributes[name] is float:
                 pass  # to keep the float. Because we prefer floats.
             else:
@@ -516,8 +529,7 @@ def get_dictionary_attribute_keys(variables):
 
 
 def get_dictionary_properties_keys(variables):
-    """
-    Gets all of the unique properties names for each variable and
+    """Gets all of the unique properties names for each variable and
     returns an set of the results.
     Parsing the config is specific to the nc_vars yaml file.
     """
@@ -525,8 +537,8 @@ def get_dictionary_properties_keys(variables):
     # if there's more that one data type for the same variable,
     # then use the least common denomenator. e.g. ints are favored over floats
     all_properties = {'name': str}
-    for i in variables.values():
-        for name, value in i.iteritems():
+    for i in list(variables.values()):
+        for name, value in i.items():
             if name != 'attribute' and name != 'dimensions':
                 if name in all_properties and all_properties[name] is int:
                     pass  # because we prefer integers
@@ -537,12 +549,12 @@ def get_dictionary_properties_keys(variables):
 
 
 def get_column_names_string(names):
-    """
-    returns a sqlite string for column names
+    """returns a sqlite string for column names
     given a set of names. Assumes all columns are of type 'text'
     """
+
     db_names = "("
-    for name, dtype in names.iteritems():
+    for name, dtype in names.items():
         if dtype is float:
             db_names = db_names + str(name) + " REAL, "
         elif dtype is int:
@@ -550,4 +562,5 @@ def get_column_names_string(names):
         else:
             db_names = db_names + str(name) + " TEXT, "
     db_names = db_names[:-2] + ")"
+
     return db_names

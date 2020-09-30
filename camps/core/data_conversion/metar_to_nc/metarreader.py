@@ -6,9 +6,9 @@ import os
 import logging
 import pdb
 
-from station import station
-from qc_error import qc_error as qce
-import qc_error
+from .station import station
+from .qc_error import qc_error as qce
+from . import qc_error
 from ....registry import util as cfg
 
 
@@ -67,7 +67,7 @@ class metarreader():
 
         # We have now read all obs for a given hour. Some stations might be missing, so
         # here check for missing obs for expected stations
-        for name in self.station_list.keys():
+        for name in list(self.station_list.keys()):
             if name not in stations:
                 logging.debug("No obs available for station "+name+" for date = "+str(self.obs_time))
                 self.station_list[name].add_empty_record(self.observations,-1,self.obs_time)
@@ -78,9 +78,9 @@ class metarreader():
 
         station_list_check = []
         if advance:
-            file_header = self._metar_reader.next()
+            file_header = next(self._metar_reader)
             self.parse_header(file_header)
-            self.observations = self._metar_reader.next()
+            self.observations = next(self._metar_reader)
             self.observations.pop(0) # This removes "CALL" from the ob name row
             self.observations.pop()  # Remove extra column
             self.observations = strip_array(self.observations)
@@ -107,7 +107,7 @@ class metarreader():
                 name = row.pop(0).strip() # Get the station name
                 station_list_check.append(name)
                 row.pop()                 # Remove last empty element
-                if name in self.station_list.keys():
+                if name in list(self.station_list.keys()):
                     self.station_list[name].add_record(self.observations,
                                                        row,
                                                        self.obs_time)
@@ -136,7 +136,7 @@ class metarreader():
         are within bounds of station definitions.
         """
 
-        for station in self.station_list.values():
+        for station in list(self.station_list.values()):
             station_def = self.station_definitions[station.name]
             lat = float(station.get_obs('LAT')[0])
             lon = float(station.get_obs('LON')[0])

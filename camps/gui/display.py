@@ -45,7 +45,7 @@ def map_set(in_data,variable,time,plot_type='grid',bounds='Full',LCOlon=None,UCO
     #
     # Version 2.3:
     #    Inputs are:
-    #       in_data: (Required) Can either be a netcdf Dataset object or a str indicating the name of a 
+    #       in_data: (Required) Can either be a netcdf Dataset object or a str indicating the name of a
     #                netcdf file to be opened
     #
     #       variable: (Required) The variable in "in_data" to be plotted.
@@ -96,25 +96,25 @@ def map_set(in_data,variable,time,plot_type='grid',bounds='Full',LCOlon=None,UCO
     '''
      map_set takes a netcdf file or netcdf Dataset object and retrieves data and projection information.
         This information is then given to the displaymap function to plot the data on a geographical map.
-    
+
         Inputs are:
            in_data: (Required) Can either be a netcdf Dataset object or a str indicating the name of a
                     netcdf file to be opened
-    
+
            variable: (Required) The variable in "in_data" to be plotted.
-    
+
            time: (Required) an integer value indicating the forecast reference time of the data to be
                  plotted. Must match a time found in in_data.
-    
+
            bounds: a string indicating the expanse of "in_data" to be plotted. Default is "Full",
                    indicating the entire lat/lon grid provided. Other options are "SW","NW","NE", & "SE"
                    which would plot the bottom left, top left, top right, and bottom right corners of the
                    full field, respectively.
-    
+
            Alternatively, custom bounds can be provided:
            LCOlon/LCOlat: Lower Corner Longitude and Latitude. The coordinates for the lower left corner
                           of the desired grid.
-    
+
            UCOlon/UCOlat: Upper Corner Longitude and Latitude. The coordinates for the upper right corner
                           of the desired grid.
            plot_type: The type of desired output plot. Valid values are 'grid' or 'station'. A grid plot
@@ -128,22 +128,22 @@ def map_set(in_data,variable,time,plot_type='grid',bounds='Full',LCOlon=None,UCO
                     levels will be evenly spaced between the first and second items of Thresh. If a list
                     or tuple of length >2 is given, contour levels will be set equal to the provided
                     values. All data below first level will be masked. Default: Thresh=0
-   
+
            **kwargs are passed on to displaymap. Accepted additional arguments are:
            filename: If set, resulting image will be saved as a .png file. If None, resulting image will
                      be displayed. Default is None.
-    
+
            grid: A value of Fill will create a filled contour plot. A value of Contour will create a
                  regular contour plot. A value of None will create a plot based solely on station data.
                  Note: stations argument must also be 'True' for stations data plot.
                  Default: Fill
-    
+
            stations: Boolean value. If True with a grid argument value of 'Fill' or 'Contour', data value
                      at point of stations is plotted on grid. If True with a grid argument value of 'None',
                      station data will be plotted. If False, no station data will be plotted. Which stations
                      are plotted is based upon scale of grid. If grid is None, stations must be True.
                      Default: True
-    
+
     '''
     #-----------------------------------------------------------------------------
     # Several checks to be sure input arguments are valid
@@ -161,7 +161,7 @@ def map_set(in_data,variable,time,plot_type='grid',bounds='Full',LCOlon=None,UCO
     try:
         data_info = F.variables[variable]
     except:
-        raise KeyError("VARIABLE "+str(variable)+" NOT FOUND. AVAILABLE VARIABLES ARE: "+str(F.variables.keys()))
+        raise KeyError("VARIABLE "+str(variable)+" NOT FOUND. AVAILABLE VARIABLES ARE: "+str(list(F.variables.keys())))
 
     # Retrieve data and time information
     S = data_info.shape
@@ -302,7 +302,7 @@ def map_set(in_data,variable,time,plot_type='grid',bounds='Full',LCOlon=None,UCO
         data = np.rollaxis(data,iLo,1)
         ile = data.shape.index(len(leads))
         data = np.rollaxis(data,ile,2)
-        inds = range(0,len(data.shape))
+        inds = list(range(0,len(data.shape)))
         iother = [i for i in inds if i != iLa and i != iLo and i != ile]
         idx = [slice(latstart,latend),slice(lonstart,lonend),ilead]+[slice(0,1)]*(len(S)-3)
         D = np.squeeze(data[idx])
@@ -318,32 +318,32 @@ def map_set(in_data,variable,time,plot_type='grid',bounds='Full',LCOlon=None,UCO
 def displaymap(data, filename=None, iproj=4,LCOlon=-127, LCOlat=19, UCOlon=-59, UCOlat=54,lon=-95,lat=25,grid='Fill',statlons=None,statlats=None,stations=True,levels=None,title=None):
     '''
     Displaymap takes input data and projection information to display data on a geographical map
-    
+
         Inputs are:
            Data: An array of data to be plotted. The dimensions must match the desired lat and lon grid.
-    
+
            filename: If set, resulting image will be saved as a .png file. If None, resulting image will
                      be displayed. Default is None.
-    
+
            iproj: an integer value related to the grid projection from a grib gds. The integer is read
                   into a dictionary to determine the exact projection to plot.
                   Default is 3 = Lambert Conformal Conic
-    
+
            LCOlon/LCOlat: Lower Corner Longitude and Latitude. The coordinates for the lower left corner
                           of the desired grid. Default: 127W, 19N
-    
+
            UCOlon/UCOlat: Upper Corner Longitude and Latitude. The coordinates for the upper right corner
                           of the desired grid. Default: 95W, 54N
-    
+
            lon: A central or reference longitude used by different projections. Default: 95W
-    
+
            lat: A central or reference latitude used by different projections. Default: 25N
-    
+
            grid: A value of Fill will create a filled contour plot. A value of Contour will create a
                  regular contour plot. A value of None will create a plot based solely on station data.
                  Note: stations argument must also be 'True' for stations data plot.
                  Default: Fill
-    
+
            stations: Boolean value. If True with a grid argument value of 'Fill' or 'Contour', data value
                      at point of stations is plotted on grid. If True with a grid argument value of 'None',
                      station data will be plotted. If False, no station data will be plotted. Which stations
@@ -352,13 +352,13 @@ def displaymap(data, filename=None, iproj=4,LCOlon=-127, LCOlat=19, UCOlon=-59, 
 
            levels: A list of values to use as levels for contours. Also, data below the first value will be
                    masked. Default: An evenly spaced array from data min to data max.
-    
+
     '''
     #Checks stations and grid arguments for validity
     if not stations and not grid:
         raise ValueError('grid and stations arguments cannot both be empty.')
     proj = projs[str(iproj)]
-    print "LCOlon = ",LCOlon, " UCOlon = ", UCOlon, " LCOlat = ", LCOlat, " UCOlat = ", UCOlat
+    print("LCOlon = ",LCOlon, " UCOlon = ", UCOlon, " LCOlat = ", LCOlat, " UCOlat = ", UCOlat)
     #set a "zoom_level" based on the span of lat and lon. zoom_level is used to determine how many stations
     #Would be plotted to reduce oversaturation
     if(UCOlon-LCOlon>=50 or UCOlat-LCOlat>=30):
@@ -419,7 +419,7 @@ def displaymap(data, filename=None, iproj=4,LCOlon=-127, LCOlat=19, UCOlon=-59, 
                 statlats.append(float(re.split('[NS]',re.split(':',L)[6])[1]))
                 if 'S' in re.split(':',L)[6]:
                     statlats[-1] = statlats[-1]*-1
-            statlatlon = zip(statlats,statlons)
+            statlatlon = list(zip(statlats,statlons))
             plotstats = []
             plotdata = []
             # Set a skip value based on zoom_level
@@ -430,7 +430,7 @@ def displaymap(data, filename=None, iproj=4,LCOlon=-127, LCOlat=19, UCOlon=-59, 
             xmin = mapplot.xmin
             ymin = mapplot.ymin
             xs,ys = mapplot(statlons,statlats)
-            xys = zip(xs,ys)
+            xys = list(zip(xs,ys))
             xy_valid = [xy for xy in xys if xy[0]>xmin and xy[0]<xmax and xy[1]>ymin and xy[1]<ymax]
             for i,xy in enumerate(xy_valid):
                 dists = np.sqrt((X-xy[0])**2+(Y-xy[1])**2)
@@ -456,7 +456,7 @@ def displaymap(data, filename=None, iproj=4,LCOlon=-127, LCOlat=19, UCOlon=-59, 
             xmin = mapplot.xmin
             ymin = mapplot.ymin
             xs,ys = mapplot(statlons,statlats)
-            xys = zip(xs,ys)
+            xys = list(zip(xs,ys))
             xy_valid, data_valid = [],[]
             # Determine which stations are within plot bounds
             for i,xy in enumerate(xys):
@@ -464,7 +464,7 @@ def displaymap(data, filename=None, iproj=4,LCOlon=-127, LCOlat=19, UCOlon=-59, 
                     xy_valid.append(xy),data_valid.append(data[i])
             xy_sort = sorted(xy_valid,key=lambda tup: tup[0])
             data_sort = [d for _,d in sorted(zip(xy_valid,data_valid))]
-            dists = np.sqrt((np.array(zip(*xy_sort)[0][0:-1])-np.array(zip(*xy_sort)[0][1:]))**2+(np.array(zip(*xy_sort)[1][0:-1])-np.array(zip(*xy_sort)[1][1:]))**2)
+            dists = np.sqrt((np.array(list(zip(*xy_sort))[0][0:-1])-np.array(list(zip(*xy_sort))[0][1:]))**2+(np.array(list(zip(*xy_sort))[1][0:-1])-np.array(list(zip(*xy_sort))[1][1:]))**2)
             xy_apart = [xy[0] for xy in np.array(xy_sort)[np.argwhere(dists>.5)]]
             data_apart = [d[0] for d in np.array(data_sort)[np.argwhere(dists>.5)]]
             # Plot station values on map, skipping values based on skip value
@@ -518,5 +518,3 @@ projs = {
 '50' : '',
 '90' : 'ortho'
 }
-
-    

@@ -28,7 +28,7 @@ def main():
     # Read control file and assign vales
     if control_file:
         control = cfg.read_yaml(control_file)
-        print("Reading Control File: "+control_file)
+        print(("Reading Control File: "+control_file))
 
     date_range = control['date_range']
     input_data = control['input_data']
@@ -53,7 +53,7 @@ def main():
         level = logging.getLevelName(debug_level)
         logging.basicConfig(level=level)
     except:
-        print "Logging setup failed"
+        print("Logging setup failed")
         raise
 
     logging.info("Starting main")
@@ -100,7 +100,7 @@ def main():
 
         # Loop through the stations and stitch together the current observation
         temp_obs = []
-        for station_name, cur_station in stations.iteritems():
+        for station_name, cur_station in stations.items():
             temp_obs.append(cur_station.get_obs(obs_name))
         obs_data = np.array(temp_obs)
 
@@ -131,7 +131,7 @@ def main():
         camps_data.append(camps_obj)
 
     # Fill in object with common metadata and append to list
-    camps_obj = pack_station_names(stations.keys())
+    camps_obj = pack_station_names(list(stations.keys()))
     camps_obj.add_source('StatPP__Data/Source/NDBC')
     camps_obj.time=add_time(start_time, end_time)
     camps_data.append(camps_obj)

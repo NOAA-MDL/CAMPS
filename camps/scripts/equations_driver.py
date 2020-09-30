@@ -10,13 +10,13 @@ import re
 from pint import UnitRegistry
 from netCDF4 import Dataset
 from datetime import timedelta
+from operator import add
 
 from ..registry import util as cfg
 from ..registry.db.update_db import update
-from ..StatPP.regression import plr_new as plr
+from ..StatPP.regression import plr
 
 from ..mospred import read_pred as read_pred
-#from ..mospred import util as util
 from ..mospred import create as create
 from ..mospred.create import Predictor
 from ..mospred import parse_pred as parse_pred
@@ -28,6 +28,7 @@ from ..core.fetch import *
 from ..core.writer import write
 from ..core import equations as eq_writer
 from ..core import reader as reader
+from ..core.Camps_data import Camps_data as Camps_data
 from ..core import util as util
 from ..registry.constants import international_units
 
@@ -81,34 +82,46 @@ def main():
     selected_stations, station_defs = util.read_station_table(control.station_defs, selected_stations)
 
     # Determine Start and end time, and stride.
-    fcst_ref_time = control.date_range[0].split('-')[0][-2:]
-    start,end,stride = read_pred.parse_range(control.date_range[0])
-    start_time = Time.str_to_datetime(start)
-    end_time = Time.str_to_datetime(end)
-    stride_time = timedelta(seconds=int(stride))
-    logging.info('start: ' + str(start))
-    logging.info('end: ' + str(end))
-    logging.info('stride: ' + str(stride))
+    i_season = 0 #set index of date range (implicitly consists of a season).
+    for i,times in enumerate(control.date_range):
 
-    # Get predictor/predictand yaml file
-    pred_file = control.pred_file
+        fcst_ref_time = times.split('-')[0][-2:]
+        start,end,stride = read_pred.parse_range(times)
+        start_time = Time.str_to_datetime(start)
+        end_time = Time.str_to_datetime(end)
+        stride_time = timedelta(seconds=int(stride))
+        logging.info('start: ' + str(start))
+        logging.info('end: ' + str(end))
+        logging.info('stride: ' + str(stride))
 
-    # Get global lead times if available
-    try:
-        lead_times = cfg.read_yaml(pred_file).global_config['lead_times']
-        for i in range(len(lead_times)):
-            lead_times[i] = parse_pred.lead_time(lead_times[i])
-    except TypeError:
-        lead_times = None
+        # Get predictor/predictand yaml file
+        pred_file = control.pred_file
 
-    # Retrieve predictands and station list
-    predictands,stations = get_predictands(pred_file,start_time, end_time, stride_time, selected_stations,control, lead_times)
-    logging.info("Finished reading predictands")
-
-    # Retrieve predictors
-    predictors = get_predictors(pred_file, start_time, end_time, stride_time, fcst_ref_time, control, lead_times, stations)
-    logging.info("Finished reading predictors")
-
+        # Get global lead times if available
+        try:
+            lead_times = cfg.read_yaml(pred_file).global_config['lead_times']
+            for i in range(len(lead_times)):
+                lead_times[i] = parse_pred.lead_time(lead_times[i])
+        except TypeError:
+            lead_times = None
+        # Retrieve predictands and station list
+        pands,stations = get_predictands(pred_file,start_time, end_time, stride_time, selected_stations,control, lead_times)
+        logging.info("Finished reading predictands")
+        # Retrieve predictors
+        pors = get_predictors(pred_file, start_time, end_time, stride_time, fcst_ref_time, control, lead_times, stations)
+        logging.info("Finished reading predictors")
+        # Append data from current date range.
+        if i_season == 0:
+            predictands = pands
+            predictors = pors
+        else:
+            #predictands = [sum(i) for i in zip(predictands, pands)]
+            #predictors = [sum(i) for i in zip(predictorss, pors)]
+            for i_pand, pand in enumerate(pands):
+                predictands[i_pand] += pand
+            for i_por, por in enumerate(pors):
+                predictors[i_por] += por
+        i_season += 1
     # Run regression
     equations = plr.main_camps(control, predictors, predictands)
 
@@ -164,18 +177,34 @@ def get_predictors(pred_file, start, end, stride, fcst_ref_time, control, lead_t
             logging.info('pred_dict is:'+str(pred_dict))
 
             # Fetch predictor
-            vars_arr = fetch_many_dates(control.input_data_path, start, end, stride, pred_dict, lead*3600, ids=file_ids)
+            vars_arr = fetch_many_dates(control.input_data_path, start, end, stride, pred_dict, lead, ids=file_ids)
             if None in vars_arr:
                 logging.warning('Could not fetch all '+pred_dict['property']+'  predictors for lead time '+str(lead))
                 logging.warning(str(vars_arr))
                 continue
 
             # Stack retrieved data together and append to list of predictor data
+            #ncases = 0
+            #for var in vars_arr:
+            #    if isinstance(var, Camps_data):
+            #        if ncases == 0:
+            #            stacked_var = var
+            #            var_dummy = copy.copy(var)
+            #            var_dummy.data = np.ma.array(data=np.ones(var.data.shape)*9999, mask=np.ones(var.data.shape))
+            #        else:
+            #            stacked_var += var
+            #        ncases += 1
+            #    else:
+            #        if ncases > 0:
+            #            stacked_var += var_dummy
+            #            ncases += 1
+            #if stacked_var.data.shape[0] > ncases:
+            #    stacked_var.data = np.reshape(stacked_var.data, (ncases, var.data.shape[0]))
             for i,var in enumerate(vars_arr):
                 if i==0:
-                   stacked_var = var
+                    stacked_var = var
                 else:
-                   stacked_var += var
+                    stacked_var += var
             if stacked_var.data.shape[0]>len(vars_arr):
                 stacked_var.data = np.reshape(stacked_var.data, (len(vars_arr),var.data.shape[0]))
             if len(stacked_var.data.shape)>1 and stacked_var.dimensions.index('number_of_stations') == 0:
@@ -217,8 +246,8 @@ def get_predictands(pred_file, start, end, stride, selected_stations,control, le
 
         # Adjust entry dictionary to be found in database
         if isinstance(entry_dict['Source'],list):
-                Source = entry_dict.pop('Source')
-                entry_dict['Source'] = ' '.join(Source)
+            Source = entry_dict.pop('Source')
+            entry_dict['Source'] = ' '.join(Source)
         vertical_coordinate = entry_dict.pop('Vertical_Coordinate')
         logging.info('entry_dict is:'+str(entry_dict))
 
@@ -238,16 +267,16 @@ def get_predictands(pred_file, start, end, stride, selected_stations,control, le
             # Stack retrieved data together and append to list of predictand data
             for i,var in enumerate(vars_arr):
                 if i==0:
-                   stacked_var = var
+                    stacked_var = var
                 else:
-                   stacked_var += var
+                    stacked_var += var
             stacked_var.data = np.reshape(stacked_var.data, (len(vars_arr),var.data.shape[0]))
+            stacked_var.data = np.ma.masked_equal(stacked_var.data, 9999)
 
             # Check time variables to be sure it is dimensioned properly. If not, reshape it.
             for t in stacked_var.time:
                 if t.get_dimensions().index('default_time_coordinate_size')!=0:
-                   t.data = t.data.reshape((-1,stacked_var.data.shape[stacked_var.dimensions.index('default_time_coordinate_size')]))
-            stacked_var.data = np.ma.masked_greater_equal(stacked_var.data,9999)
+                    t.data = t.data.reshape((-1,stacked_var.data.shape[stacked_var.dimensions.index('default_time_coordinate_size')]))
             stacked_var.add_metadata('leadtime',L)
             try:
                 stacked_var.get_result_time().append_result(None)
@@ -255,7 +284,6 @@ def get_predictands(pred_file, start, end, stride, selected_stations,control, le
                 pass
             if not np.all(stacked_var.data.data==9999):
                 predictands.append(stacked_var)
-
     stations = predictands[0].location.get_stations()
     return (predictands,stations)
 

@@ -1,7 +1,7 @@
 import numpy as np
-from nc_writable import nc_writable
+from .nc_writable import nc_writable
 import netCDF4
-
+import pdb
 
 class Location(nc_writable):
     """Class holding location data.  Includes location information such
@@ -80,4 +80,7 @@ class Location(nc_writable):
 
         for i in self.location_data:
             if i.name == 'station':
-                return netCDF4.chartostring(i[:])
+                if isinstance(i[:][0][0], str):
+                    return netCDF4.chartostring(i[:].astype('S1'))
+                else:
+                    return netCDF4.chartostring(i[:])

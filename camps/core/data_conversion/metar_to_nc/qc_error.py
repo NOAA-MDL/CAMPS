@@ -108,19 +108,16 @@ def stats(err_list, list_len=10):
 
     for i in range(1, 10):
 
-        num_errors = len(filter(
-            lambda err: err.get_code_type() == i, err_list))
+        num_errors = len([err for err in err_list if err.get_code_type() == i])
         num_type = get_qc_type(i)
         logging.info("Errors corrected during " + num_type + ": " + str(num_errors))
 
-    mostoften = Counter(map(lambda err: err.station_name,
-                            err_list)).most_common(list_len)
+    mostoften = Counter([err.station_name for err in err_list]).most_common(list_len)
     logging.info("Stations most qc'd:")
 
     for i in mostoften:
         logging.info(i[0] + " -- " + str(i[1]))
-    mostoften = Counter(map(lambda err: err.error_code,
-                            err_list)).most_common(list_len)
+    mostoften = Counter([err.error_code for err in err_list]).most_common(list_len)
     logging.info("Most errors of type:")
     for i in mostoften:
         logging.info(str(i[0]) + " -- " + str(i[1]))
@@ -128,11 +125,9 @@ def stats(err_list, list_len=10):
 
 def errors_of_type(err_list, err_str):
 
-    return filter(
-        lambda err: err.get_code_type == get_qc_type_by_string(err_str),
-        err_list)
+    return [err for err in err_list if err.get_code_type == get_qc_type_by_string(err_str)]
 
 
 def errors_of_code(err_list, err_code):
 
-    return filter(lambda err: err.error_code == err_code, err_list)
+    return [err for err in err_list if err.error_code == err_code]

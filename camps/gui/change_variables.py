@@ -50,7 +50,7 @@ def var_editing(stdscr):
 
     stdscr.addstr(START_EDIT, 0, "Variable metadata:")
     if clipboard in nc_vars:
-        for i, (key, value) in enumerate(nc_vars[clipboard]['attribute'].iteritems()):
+        for i, (key, value) in enumerate(nc_vars[clipboard]['attribute'].items()):
             stdscr.addstr(START_EDIT + 1 + i, 0, key)
             stdscr.addstr(START_EDIT + 1 + i, 25, str(value))
     else:  # If a new variable
@@ -71,7 +71,7 @@ def var_editing(stdscr):
         elif char == curses.KEY_UP:
             pass
         else:
-            ascii_char = unichr(char)
+            ascii_char = chr(char)
     clear(stdscr)
 
 
@@ -94,7 +94,7 @@ def display_help(stdscr):
 
 def search_nc(all_vars, subset):
     possible_matches = []
-    for name, metadata in all_vars.iteritems():
+    for name, metadata in all_vars.items():
         if subset in name:
             possible_matches.append(name)
             continue
@@ -158,7 +158,7 @@ def search(stdscr):
                 selection = len(possible_matches)
             selection -= 1
         else:
-            ascii_char = unichr(char)
+            ascii_char = chr(char)
             stdscr.addstr(ascii_char)
             s += ascii_char
             # stdscr.addstr(str(char))
@@ -207,7 +207,7 @@ def display_matches(stdscr, matches, selection):
 if __name__ == "__main__":
 
     username = getpass.getuser()
-    
+
     stdscr = curses.initscr()
     curses.start_color()
     curses.noecho()
@@ -217,13 +217,13 @@ if __name__ == "__main__":
     cols = curses.COLS - 1
     #center = lambda str_len : int(cols/2) - int(str_len/2) - 1
     curses.curs_set(False)
-    
+
     # Init Color Pairs
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
     curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_YELLOW)
     curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_RED)
     curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_GREEN)
-    
+
     s = "Hello " + username + "!"
     stdscr.addstr(1, center(len(s)), s, curses.color_pair(1))
     s = "Welcome to the interactive netcdf variable editor!"
@@ -231,7 +231,7 @@ if __name__ == "__main__":
     s = '-' * cols
     stdscr.addstr(4, 0, s, curses.color_pair(2))
     stdscr.refresh()
-    
+
     ans = 0
     while ans != ord('q'):
         print_options(stdscr)
@@ -242,7 +242,7 @@ if __name__ == "__main__":
             search(stdscr)
         elif ans == ord('h'):
             display_help(stdscr)
-    
+
     # Terminate curses
     curses.nocbreak()
     stdscr.keypad(False)

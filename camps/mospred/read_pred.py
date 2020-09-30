@@ -88,7 +88,7 @@ def get_variable(entry_dict):
     parse_pred.check_valid_keys(entry_dict)
 
     #The dict that will be populated with key/value pairs to enquire the database.
-    exit_dict = {} 
+    exit_dict = {}
 
     #database table 'variable' column 'property'
     if 'property' not in entry_dict:
@@ -148,7 +148,5 @@ def get_variable(entry_dict):
 #            exit_dict['vert_units'] = units
 #        except:
 #            pass
-    
+
     return exit_dict
-
-

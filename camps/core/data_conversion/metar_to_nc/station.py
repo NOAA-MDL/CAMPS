@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from datetime import timedelta
 import pdb
-import enumerations
+from . import enumerations
 from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool
 
@@ -151,7 +151,7 @@ class station:
         """
 
         # Get a middle date in the record.
-        date = self.hours[len(self.hours) / 2]
+        date = self.hours[int(len(self.hours)/2)]
         month = int(date[4:6])
 
         if month >= 3 and month <= 5:
@@ -188,12 +188,12 @@ class station:
             self.empty_obs = False
 
         if index == -1:
-            for obs_name, obs_list in self.observations.iteritems():
+            for obs_name, obs_list in self.observations.items():
                 obs_list.append(MISSING_VALUE)
             self.hours.append(hour)
 
         elif index >= 0:
-            for obs_name, obs_list in self.observations.iteritems():
+            for obs_name, obs_list in self.observations.items():
                 obs_list.insert(index, MISSING_VALUE)
             self.hours.insert(index, hour)
 

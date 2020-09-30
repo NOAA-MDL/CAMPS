@@ -49,7 +49,7 @@ A new array with a matching index is also declared, and this array contains the 
 
 **Best Practce**
 
-*Percentile variables that are encoded using the indexed encoding technique should declare an attribute StatPPUncert__PrcntlRnk or some similar concept.  This attribute will take on the value of a character array of the form " ( v1 ) ", where the token v1 is replaced with the name of a variable in the file with appropriate dimensionality that serves as the percentile rank variable.*
+*Percentile variables that are encoded using the indexed encoding technique should declare an attribute StatPPUncert__PrcntlRnk or some similar concept.  This attribute will take on the value of a character array of the form " ( v1 ) ", where the token v1 is replaced with the name of a variable in the file with appropriate dimensionality that serves as the percentile rank variable.
 
 **Best Practce**
 

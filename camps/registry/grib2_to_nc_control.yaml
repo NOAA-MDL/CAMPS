@@ -1,20 +1,41 @@
-# Specify how many lead hours to extend out to. Can be greater than is available.
-maximum_lead_hours : 400
+# ---------------------------------------------------------------------------------------- 
+# CAMPS grib2_to_nc control file
+# ---------------------------------------------------------------------------------------- 
 
-# input file
-input : "/scratch1/NCEPDEV/mdl/Emily.Schlie/GFS_processed/mdl.gfs47.t00z.201804_d1_d5.pgrb2"
+# ---------------------------------------------------------------------------------------- 
+# The start and end date/time of the desired date range in YYYYMMDDHHMM format
+# ---------------------------------------------------------------------------------------- 
+start : '201804010000'
+end : '201804060000'
 
-# Directory where output files are stored
-outpath : "/scratch1/NCEPDEV/mdl/Emily.Schlie/"
+# ---------------------------------------------------------------------------------------- 
+# Input GRIB2 file
+# ---------------------------------------------------------------------------------------- 
+input : "/path/to/directory/model_output.pgrb2"
 
+# ---------------------------------------------------------------------------------------- 
+# Output CAMPS-NetCDF file
+# ---------------------------------------------------------------------------------------- 
+output : "/path/to/directory/model_output.nc"
+
+# ---------------------------------------------------------------------------------------- 
 # Specify "" or None to output log to stdout
+# ---------------------------------------------------------------------------------------- 
 log : ""
 
+# ---------------------------------------------------------------------------------------- 
 # Can be DEBUG, INFO, WARNING, ERROR, CRITICAL
+# ---------------------------------------------------------------------------------------- 
 debug_level : "INFO"
 
-# Number of processors to use
-num_processors : 16
+# ---------------------------------------------------------------------------------------- 
+# Number of processors to use - not used, for future version
+# ---------------------------------------------------------------------------------------- 
+#num_processors : 16
 
+# ---------------------------------------------------------------------------------------- 
 # A list of the processes applied to the input grib2 data
+# Check procedures.yaml for the definitions of GFSModProcStep1(2)
+# Any valid procedure can be added to the list below
+# ---------------------------------------------------------------------------------------- 
 processes : ['GFSModProcStep1','GFSModProcStep2']

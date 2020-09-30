@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------------------
-# WISPS: Control File for marine_to_nc
+# CAMPS: Control File for marine_to_nc
 # ----------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------
@@ -10,12 +10,12 @@ date_range : ['2018040100-2018040523,1h']
 # ----------------------------------------------------------------------------------------
 # Input filepath:
 # ----------------------------------------------------------------------------------------
-input_data : "/scratch1/NCEPDEV/mdl/camps_data/obs/mar/nbd201804.txt.qc.final"
+input_data : "/path/to/directory/marine.txt.qc.final"
 
 # ----------------------------------------------------------------------------------------
 # Output filepath
 # ----------------------------------------------------------------------------------------
-output : "/scratch1/NCEPDEV/mdl/Emily.Schlie/mar201804_test.nc"
+output : "/path/to/directory/marine_file.nc"
 
 # ----------------------------------------------------------------------------------------
 # Can be DEBUG, INFO, WARNING, ERROR, CRITICAL.
@@ -32,9 +32,9 @@ log_file : ""
 # Provide all stations with colon delimeted information about the station,
 # including lat, lon, long name.
 # ----------------------------------------------------------------------------------------
-station_table : "/home/Emily.Schlie/repositories/camps/camps/registry/alldevsites.tbl"
+station_table : "/path/to/directory/stations.tbl"
 
 # ----------------------------------------------------------------------------------------
 # Provide list of all stations to be processed
 # ----------------------------------------------------------------------------------------
-station_list : "/home/Emily.Schlie/repositories/camps/camps/registry/marine.lst"
+station_list : "/path/to/directory/marine_stations.lst"

@@ -24,43 +24,37 @@ Methods:
 procedures_regex = {
     # Smooth functions
     # match: 'smooth', group(any number of digits), any number of characters, end of line
-    re.compile(r'smooth (\d*).*$'): smooth.smooth_var,
+    re.compile(r'[Ss]mooth (\d*).*$'): smooth.smooth_var,
 
     # Map projections
-    re.compile(r'lambert'): None,
-    re.compile(r'polar'): None,
+    re.compile(r'[Ll]ambert'): None,
+    re.compile(r'[Pp]olar'): None,
 
     # Thresholding
-    #match: "thresh", any number of characters, group(any number of characters),
+    # match: "thresh", any number of characters, group(any number of characters),
     # group(any word character, 0 or more alpha/num character any number of times, any word char any number of times)
-    #pretty sure this is wrong...should be
-    #re.compile(r'thresh.* (.*) (\w*[\.]\w*)'): thresh.thresh_setup
-    #this is assuming that the last group is meant to be of the form "operator.gt" or "opterator.lt", etc...
-    re.compile(r'thresh.* (.*) (\w[\.]*\w*)'): thresh.thresh_setup,
+    re.compile(r'[Tt]hresh.* ([<>=].*) \((.*)\).* :.* \((.*)\)'): thresh.thresh_setup,
+
+    # Grid binary
+    re.compile(r'[Gg]rid_bin.* ([<>][=]?) ([+-]?\d*\.?\d*)(\s?\w*)') : thresh.grid_binary,
 
     # Interpolation
-    #match: "interp", any character any number of times, group(any word char any number of times),
+    # match: "interp", any character any number of times, group(any word char any number of times),
     # anything then end of line.
-    re.compile(r'interp.* (\w*) *$') : interp.interp_setup,
+    re.compile(r'[Ii]nterp.* (\w*) *$') : interp.interp_setup,
 
     # Scalar multiplication
-    #match: "*", group(word character, any number of ".", any number of word characters), anything then end of line
+    # match: "*", "times", or "multi", group(word character, any number of ".", any number of word characters), anything then end of line
     re.compile(r'\* (\w[\.]*\w*) *$') : computations.multiply,
-    #match: "times", any character any number of tiems, group(any word character, "." any number of times, word char any num of times),
-    # anything then end of line.
-    re.compile(r'times.* (\w[\.]*\w*) *$') : computations.multiply,
-    #match: "mult", any char any num of times, any character from "by " any number of times,
-    # group(any word char, any "." any number of times, any word char any num of times), anything then end of line
-    re.compile(r'mult.* [by ]*(\w[\.]*\w*) *$') : computations.multiply,
+    re.compile(r'[Tt]imes.* (\w[\.]*\w*) *$') : computations.multiply,
+    re.compile(r'[Mm]ult.* [by ]*(\w[\.]*\w*) *$') : computations.multiply,
 
     # Scalar division
-    #match: "/" group(any number of word characters), anything then end of line
+    # match: "/", "divide", group(any number of word characters), anything then end of line
     re.compile(r'\/ (\w*) *$') : computations.divide,
-    #match: "divide", any number of characters, characters "b,y" any number of times, any word char any num of times), 
-    # anything then end of line
-    re.compile(r'divide.* [by]* *(\w[\.]*\w*) *$') : computations.divide,
+    re.compile(r'[Dd]ivide.* [by]* *(\w[\.]*\w*) *$') : computations.divide,
 
-    # Trig
+    # Trig Functions
     re.compile(r'cos') : computations.cos,
     re.compile(r'sin') : computations.sin,
     re.compile(r'tan') : computations.tan,
@@ -72,8 +66,7 @@ def get_procedure(string):
     Otherwise, execution ceases.
     """
 
-    string = string.lower()
-    for key, func in procedures_regex.iteritems():
+    for key, func in list(procedures_regex.items()):
         match = key.search(string)
         if match:
             log_str = "arguments for " + func.__name__ + " are: " + str(match.groups())

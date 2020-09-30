@@ -9,8 +9,9 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set(style="whitegrid",palette='tab10')
-from dataframe import *
-from loc_dataframe import *
+from .dataframe import *
+from .loc_dataframe import *
+
 from ..registry import util as cfg
 from ..mospred import read_pred as read_pred
 from ..core import Time as Time
@@ -44,55 +45,55 @@ def main():
         data_name = 'loc_'+start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H")+'_'+str(ctrl.lead_time)+'hrs_'+str(ctrl.LCOlat)+'_'+str(ctrl.UCOlat)+'_'+str(ctrl.LCOlon)+'_'+str(ctrl.UCOlon)+'.csv'
         data_name = ctrl.output_file_path + data_name
         if not os.path.exists(data_name):
-                loc_dataframe(ctrl.LCOlat,ctrl.UCOlat,ctrl.LCOlon,ctrl.UCOlon)
+            loc_dataframe(ctrl.LCOlat,ctrl.UCOlat,ctrl.LCOlon,ctrl.UCOlon)
         suffix = '_'+str(ctrl.lead_time)+'hr_lead_loc_subset_'+str(random.randint(1,50))
 
     #calls this if user specifies saved region
     elif ctrl.region == True:
         if ctrl.region_name == 'CONUS':
-                data_name = 'loc_' + start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time)+'hrs_25_47_70_125.csv'
-                data_name = ctrl.output_file_path + data_name
-                if not os.path.exists(data_name):
-                        loc_dataframe(25,47,70,125)
-                suffix = '_'+str(ctrl.lead_time)+'hr_lead_CONUS_'+str(random.randint(1,50))
+            data_name = 'loc_' + start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time)+'hrs_25_47_70_125.csv'
+            data_name = ctrl.output_file_path + data_name
+            if not os.path.exists(data_name):
+                loc_dataframe(25,47,70,125)
+            suffix = '_'+str(ctrl.lead_time)+'hr_lead_CONUS_'+str(random.randint(1,50))
         if ctrl.region_name == 'SE':
-                data_name = 'loc_' + start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time)+'hrs_-90_35_-180_100.csv'
-                data_name = ctrl.output_file_path + data_name
-                if not os.path.exists(data_name):
-                        loc_dataframe(-90,35,-180,100)
-                suffix = '_'+str(ctrl.lead_time)+'hr_lead_SE_'+str(random.randint(1,50))
+            data_name = 'loc_' + start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time)+'hrs_-90_35_-180_100.csv'
+            data_name = ctrl.output_file_path + data_name
+            if not os.path.exists(data_name):
+                loc_dataframe(-90,35,-180,100)
+            suffix = '_'+str(ctrl.lead_time)+'hr_lead_SE_'+str(random.randint(1,50))
         if ctrl.region_name == 'SW':
-                data_name = 'loc_' + start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time)+'hrs_-90_35_100_180.csv'
-                data_name = ctrl.output_file_path + data_name
-                if not os.path.exists(data_name):
-                        loc_dataframe(-90,35,100,180)
-                suffix = '_'+str(ctrl.lead_time)+'hr_lead_SW_'+str(random.randint(1,50))
+            data_name = 'loc_' + start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time)+'hrs_-90_35_100_180.csv'
+            data_name = ctrl.output_file_path + data_name
+            if not os.path.exists(data_name):
+                loc_dataframe(-90,35,100,180)
+            suffix = '_'+str(ctrl.lead_time)+'hr_lead_SW_'+str(random.randint(1,50))
         if ctrl.region_name == 'NE':
-                data_name = 'loc_' + start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time)+'hrs_35_50_-180_100.csv'
-                data_name = ctrl.output_file_path + data_name
-                if not os.path.exists(data_name):
-                        loc_dataframe(35,50,-180,100)
-                suffix = '_'+str(ctrl.lead_time)+'hr_lead_NE_'+str(random.randint(1,50))
+            data_name = 'loc_' + start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time)+'hrs_35_50_-180_100.csv'
+            data_name = ctrl.output_file_path + data_name
+            if not os.path.exists(data_name):
+                loc_dataframe(35,50,-180,100)
+            suffix = '_'+str(ctrl.lead_time)+'hr_lead_NE_'+str(random.randint(1,50))
         if ctrl.region_name == 'NW':
-                data_name = 'loc_' + start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time)+'hrs_35_50_100_180.csv'
-                data_name = ctrl.output_file_path + data_name
-                if not os.path.exists(data_name):
-                        loc_dataframe(35,50,100,180)
-                suffix = '_'+str(ctrl.lead_time)+'hr_lead_NW_'+str(random.randint(1,50))
+            data_name = 'loc_' + start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time)+'hrs_35_50_100_180.csv'
+            data_name = ctrl.output_file_path + data_name
+            if not os.path.exists(data_name):
+                loc_dataframe(35,50,100,180)
+            suffix = '_'+str(ctrl.lead_time)+'hr_lead_NW_'+str(random.randint(1,50))
         if ctrl.region_name == 'FN':
-                data_name = 'loc_' + start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time)+'hrs_50_90_-180_180.csv'
-                data_name = ctrl.output_file_path + data_name
-                if not os.path.exists(data_name):
-                        loc_dataframe(50,90,-180,180)
-                suffix = '_'+str(ctrl.lead_time)+'hr_lead_FN_'+str(random.randint(1,50))
+            data_name = 'loc_' + start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time)+'hrs_50_90_-180_180.csv'
+            data_name = ctrl.output_file_path + data_name
+            if not os.path.exists(data_name):
+                loc_dataframe(50,90,-180,180)
+            suffix = '_'+str(ctrl.lead_time)+'hr_lead_FN_'+str(random.randint(1,50))
 
-    #otherwise creates name of csv file to search for, calls dataframe if none is found 
+    #otherwise creates name of csv file to search for, calls dataframe if none is found
     else:
-	data_name = start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time) + 'hrs.csv'
+        data_name = start.strftime("%Y%m%d%H")+'_'+end.strftime("%Y%m%d%H") + '_' + str(ctrl.lead_time) + 'hrs.csv'
         data_name = ctrl.output_file_path + data_name
-	if not os.path.exists(data_name):
-        	dataframe()
-	suffix = '_'+str(ctrl.lead_time)+'hr_lead_'+str(random.randint(1,50))
+        if not os.path.exists(data_name):
+            dataframe()
+        suffix = '_'+str(ctrl.lead_time)+'hr_lead_'+str(random.randint(1,50))
 
     #reads csv file containing dataframe
     data = pd.read_csv(data_name,delimiter =',',index_col=0)
@@ -109,7 +110,7 @@ def main():
         plt.xlabel(x)
         plt.ylabel(y)
         if show == True:
-	    plt.show()
+            plt.show()
         if save == True:
             plt.savefig(ctrl.output_file_path+'scatter_'+x+'_'+y+suffix+'.png')
 
@@ -121,16 +122,16 @@ def main():
         plt.clf()
         arr = data.loc[:,variables]
         if names != []:
-                arr.columns=names
+            arr.columns=names
         corr = arr.corr()
         mask = np.zeros_like(corr,dtype=np.bool)
         mask[np.triu_indices_from(mask)]=True
         sns.heatmap(corr,mask=mask,annot=True)
         plt.yticks(va='center')
         if show == True:
-                plt.show()
+            plt.show()
         if save == True:
-                plt.savefig(ctrl.output_file_path+'diag_corr_matrix'+suffix+'.png')
+            plt.savefig(ctrl.output_file_path+'diag_corr_matrix'+suffix+'.png')
 
     def scatter_matrix(data,variables,names = [],show=False,save=True):
         #--------------------------------------------------------------------------
@@ -141,12 +142,12 @@ def main():
         arr = data.loc[:,variables]
         arr = arr.dropna()
         if names != []:
-                arr.columns=names
+            arr.columns=names
         sns.pairplot(arr,plot_kws=dict(linewidth=0))
         if show == True:
-                plt.show()
+            plt.show()
         if save == True:
-                plt.savefig(ctrl.output_file_path+'scatter_matrix'+suffix+'.png')
+            plt.savefig(ctrl.output_file_path+'scatter_matrix'+suffix+'.png')
 
     def corr_table(data,variables):
         #--------------------------------------------------------------------------
@@ -163,9 +164,9 @@ def main():
         stat = data.loc[data['Station'].isin(stations)]
         sns.lineplot(x=x,y=y,hue='Station',data = stat)
         if show == True:
-                plt.show()
+            plt.show()
         if save == True:
-                plt.savefig(ctrl.output_file_path+'line_plot_'+x+'_'+y+suffix+'.png')
+            plt.savefig(ctrl.output_file_path+'line_plot_'+x+'_'+y+suffix+'.png')
 
     def time_series(data,stations,var,show=False,save=True):
         #--------------------------------------------------------------------------
@@ -176,9 +177,9 @@ def main():
         sns.lineplot(x='Time',y=var,hue='Station',data = stat)
         plt.xticks([stat['Time'].iloc[0], stat['Time'].iloc[-1]], visible=True, rotation="horizontal")
         if show == True:
-                plt.show()
+            plt.show()
         if save == True:
-                plt.savefig(ctrl.output_file_path+'time_series_'+var+suffix+'.png')
+            plt.savefig(ctrl.output_file_path+'time_series_'+var+suffix+'.png')
 
     def time_scatter(data,x,y,time1,time2,show=False,save=True):
         #--------------------------------------------------------------------------
@@ -197,9 +198,9 @@ def main():
         plt.xlabel(x)
         plt.ylabel(y)
         if show == True:
-                plt.show()
+            plt.show()
         if save == True:
-                plt.savefig(ctrl.output_file_path+'time_scatter_'+x+'_'+y+suffix+'.png')
+            plt.savefig(ctrl.output_file_path+'time_scatter_'+x+'_'+y+suffix+'.png')
 
     def violin_plot(data,stations,var,show=False,save=True):
         #--------------------------------------------------------------------------
@@ -209,10 +210,10 @@ def main():
         stat = data.loc[data['Station'].isin(stations)]
         sns.violinplot(x='Station',y=var,data = stat)
         if show == True:
-                plt.show()
+            plt.show()
         if save == True:
-                plt.savefig(ctrl.output_file_path+'violin_plot_'+var+suffix+'.png')
-    
+            plt.savefig(ctrl.output_file_path+'violin_plot_'+var+suffix+'.png')
+
     def split_violin(data,stations,var1,var2,var_type,show=False,save=True):
         #--------------------------------------------------------------------------
         #side-by-side violinplots of given stations comparing two variables
@@ -230,9 +231,9 @@ def main():
         stat = pd.concat([stat1,stat2])
         sns.violinplot(x='Station',y=var_type,hue = 'Variable',split=True,inner = 'quart',palette = ['C4','C9'],data = stat)
         if show == True:
-                plt.show()
+            plt.show()
         if save == True:
-                plt.savefig(ctrl.output_file_path+'split_violin_'+var_type+suffix+'.png')
+            plt.savefig(ctrl.output_file_path+'split_violin_'+var_type+suffix+'.png')
 
 
     def joint_plot(data,x,y,show=False,save=True):
@@ -245,9 +246,9 @@ def main():
         data = data[pd.notnull(data[y])]
         j=sns.jointplot(x=x,y=y,data=data)
         if show == True:
-                plt.show()
+            plt.show()
         if save == True:
-                j.savefig(ctrl.output_file_path+'joint_plot_'+x+'_'+y+suffix+'.png')
+            j.savefig(ctrl.output_file_path+'joint_plot_'+x+'_'+y+suffix+'.png')
 
     def joint_reg_plot(data,x,y,show=False,save=True):
         #--------------------------------------------------------------------------
@@ -260,9 +261,9 @@ def main():
         data = data[pd.notnull(data[y])]
         j=sns.jointplot(x=x,y=y,data=data,kind='reg')
         if show == True:
-                plt.show()
+            plt.show()
         if save == True:
-                j.savefig(ctrl.output_file_path+'joint_reg_plot_'+x+'_'+y+suffix+'.png')
+            j.savefig(ctrl.output_file_path+'joint_reg_plot_'+x+'_'+y+suffix+'.png')
 
 
     def hexbin_distribution(data,x,y,show=False,save=True):
@@ -275,9 +276,9 @@ def main():
         data = data[pd.notnull(data[y])]
         j=sns.jointplot(x=x,y=y,data=data,kind='hex')
         if show == True:
-                plt.show()
+            plt.show()
         if save == True:
-                j.savefig(ctrl.output_file_path+'hexbin_distribution_plot_'+x+'_'+y+suffix+'.png')
+            j.savefig(ctrl.output_file_path+'hexbin_distribution_plot_'+x+'_'+y+suffix+'.png')
 
     def density_plot(data,x,y,show=False,save=True):
         #--------------------------------------------------------------------------
@@ -289,10 +290,10 @@ def main():
         data = data[pd.notnull(data[y])]
         sns.kdeplot(data[x],data[y],shade=True, shade_lowest=False)
         if show == True:
-                plt.show()
+            plt.show()
         if save == True:
-                plt.savefig(ctrl.output_file_path+'density_plot_'+x+'_'+y+suffix+'.png')
- 
+            plt.savefig(ctrl.output_file_path+'density_plot_'+x+'_'+y+suffix+'.png')
+
     #--------------------------------------------------------------------------
     #calls functions based on control file
     #--------------------------------------------------------------------------
@@ -327,7 +328,6 @@ def main():
     #needs to be last, otherwise messes with the size of the other plots
     if ctrl.scatter_matrix == True:
         scatter_matrix(data,ctrl.scatt_matrix_vars,ctrl.scatt_matrix_names,ctrl.show,ctrl.save)
- 
+
 if __name__ == '__main__':
     main()
-

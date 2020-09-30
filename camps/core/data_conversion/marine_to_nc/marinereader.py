@@ -61,8 +61,10 @@ class marinereader():
         # contains variable names; the second contains a decimal scale factor
         # for each
         eof = False
-        file_header = self._marine_reader.next()[4:]
-        decscale_header = self._marine_reader.next()[4:]
+        #file_header = self._marine_reader.next()[4:]
+        #decscale_header = self._marine_reader.next()[4:]
+        file_header = next(self._marine_reader)[4:]
+        decscale_header = next(self._marine_reader)[4:]
         decscale_header.pop()
         decscale = [10.0**float(s) for s in decscale_header] # Convert to actual scale floats
         self.observations = file_header
@@ -119,7 +121,7 @@ class marinereader():
             row.append(obs_hour+'00')
 
             # Added the station observation to the marinereader object.
-            if name in self.station_list.keys():
+            if name in list(self.station_list.keys()):
                 self.station_list[name].add_record(self.observations,
                                                    row,
                                                    self.obs_time)
@@ -129,7 +131,7 @@ class marinereader():
 
         # We have now read all obs for a given hour. Some stations might be missing, so
         # here check for missing obs for expected stations
-        for name in self.station_list.keys():
+        for name in list(self.station_list.keys()):
             if name not in stnlist:
                 logging.debug("NO OBS AVAILABLE FOR STATION "+name+" FOR HOUR "+str(self.obs_time))
                 self.station_list[name].add_empty_record(self.observations,-1,self.obs_time)
@@ -140,7 +142,7 @@ class marinereader():
         are within bounds of station definitions.
         """
 
-        for station in self.station_list.values():
+        for station in list(self.station_list.values()):
             station_def = self.station_definitions[station.name]
             lat = float(station.get_obs('LAT')[0])
             lon = float(station.get_obs('LON')[0])

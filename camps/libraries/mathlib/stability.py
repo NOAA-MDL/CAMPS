@@ -17,6 +17,7 @@ import math
 import numpy as np
 import operator
 
+from ...mospred import create as create
 from ...core.fetch import *
 from ...core.Time import epoch_to_datetime
 from ...core import Time as Time
@@ -36,7 +37,7 @@ def KIndex_setup(filepaths, time, predictor):
         control(instance): contains mospred_control.yaml file variables.
         time (int): The time in seconds since January 1, 1970 00Z
         predictor (Predictor): a generic predictor object carrying
-            information necessary to fetch Camps data objects from 
+            information necessary to fetch Camps data objects from
             netCDF4 files via a database.
 
     Returns:
@@ -44,7 +45,7 @@ def KIndex_setup(filepaths, time, predictor):
             and data of the K index.
 
     """
-    
+
 #   Instantiate the camps data object for the K index.
 #   Certain attributes are set in this instantiation.
     kindex = Camps_data("k_index_instant")
@@ -71,7 +72,7 @@ def KIndex_setup(filepaths, time, predictor):
 #   Make a hard copy of the Predictor object predictor to
 #   use in fetching the components of the K index.  It is
 #   necessary to do this in order to prevent inadvertently
-#   changing the key/value pairs for 
+#   changing the key/value pairs for
     pred = predictor.copy()
 
 #   Fetch the weather parameters that make up K index.
@@ -83,6 +84,7 @@ def KIndex_setup(filepaths, time, predictor):
     pred.search_metadata.update({'vert_coord1' : 850})
     t850 = fetch(filepaths, time, **pred.search_metadata)
     assert(isinstance(t850,Camps_data)),"t850 expected to be camps data object"
+    mask = np.ma.getmaskarray(t850.data)
     try:
         t850_unit = t850.metadata['units']
         t_pint = units.Quantity(1., t850_unit)
@@ -94,12 +96,14 @@ def KIndex_setup(filepaths, time, predictor):
 ##   And add the camps data object of the 850 mb air temperature to
 ##   the list of components of the K index.
     q_t850 = units.Quantity(t850.data, t850_unit)
-#    kindex.add_component(t850)
+    kindex.add_component(t850)
+    kindex.preprocesses = t850.preprocesses
 
 #   Fetch temperature at isobar 700 mbar
     pred.search_metadata.update({'vert_coord1' : 700})
     t700 = fetch(filepaths, time, **pred.search_metadata)
     assert(isinstance(t700,Camps_data)),"t700 expected to be camps data object"
+    mask += np.ma.getmaskarray(t700.data)
     try:
         t_unit = t700.metadata['units']
         t_pint = units.Quantity(1., t_unit)
@@ -112,12 +116,15 @@ def KIndex_setup(filepaths, time, predictor):
 ##   the list of components of the K index.
     q_t700 = units.Quantity(t700.data, t_unit)
     q_t700.ito(t850_unit)
-#    kindex.add_component(t700)
+    kindex.add_component(t700)
+    for proc in t700.preprocesses:
+        kindex.add_preprocess(proc)
 
 #   Fetch temperature at isobar 500 mbar
     pred.search_metadata.update({'vert_coord1' : 500})
     t500 = fetch(filepaths, time, **pred.search_metadata)
     assert(isinstance(t500,Camps_data)),"t500 expected to be camps data object"
+    mask += np.ma.getmaskarray(t500.data)
     try:
         t_unit = t500.metadata['units']
         t_pint = units.Quantity(1., t_unit)
@@ -130,7 +137,9 @@ def KIndex_setup(filepaths, time, predictor):
 ##   the list of components of the K index.
     q_t500 = units.Quantity(t500.data, t_unit)
     q_t500.ito(t850_unit)
-#    kindex.add_component(t500)
+    kindex.add_component(t500)
+    for proc in t500.preprocesses:
+        kindex.add_preprocess(proc)
 
 #   Dewpoint temperature components of K index.
 #   These parameters may not be available from netCDF files.
@@ -143,8 +152,9 @@ def KIndex_setup(filepaths, time, predictor):
     pred.search_metadata.update({'vert_coord1' : 850})
     td850 = fetch(filepaths, time, **pred.search_metadata)
     if td850 is None:
-        td850 = moisture.dewpoint_temperature_setup(filepaths, time, pred)
+        td850 = create.calculate(filepaths, time, pred)
     assert(isinstance(td850,Camps_data)),"td850 expected to be camps data object"
+    mask += np.ma.getmaskarray(td850.data)
     try:
         t_unit = td850.metadata['units']
         t_pint = units.Quantity(1., t_unit)
@@ -157,15 +167,18 @@ def KIndex_setup(filepaths, time, predictor):
 ##   the list of components of the K index.
     q_td850 = units.Quantity(td850.data, t_unit)
     q_td850.ito(t850_unit)
-#    kindex.add_component(td850)
+    kindex.add_component(td850)
+    for proc in td850.preprocesses:
+        kindex.add_preprocess(proc)
 
 #   Fetch dewpoint temperature at isobar 700 mbar.
 #   If fetch fails, try the dewpoint temperature function.
     pred.search_metadata.update({'vert_coord1' : 700})
     td700 = fetch(filepaths, time, **pred.search_metadata)
     if td700 is None:
-        td700 = moisture.dewpoint_temperature_setup(filepaths, time, pred)
+        td700 = create.calculate(filepaths, time, pred)
     assert(isinstance(td700,Camps_data)),"td700 expected to be camps data object"
+    mask += np.ma.getmaskarray(td700.data)
     try:
         t_unit = td700.metadata['units']
         t_pint = units.Quantity(1., t_unit)
@@ -178,7 +191,9 @@ def KIndex_setup(filepaths, time, predictor):
 ##   the list of components of the K index.
     q_td700 = units.Quantity(td700.data, t_unit)
     q_td700.ito(t850_unit)
-#    kindex.add_component(td700)
+    kindex.add_component(td700)
+    for proc in td700.preprocesses:
+        kindex.add_preprocess(proc)
 
 #   Call the function that constructs the K index as a pint.Quantity object.
 #   The key advantage of using pint.Quantity objects is that their
@@ -186,11 +201,11 @@ def KIndex_setup(filepaths, time, predictor):
 #   Add the dimensions to the camps data object before inserting the data
 #   into it.
     q_kindex = KIndex(q_t850, q_t700, q_t500, q_td850, q_td700).to(unit)
-    kindex.add_dimensions(u'y')
-    kindex.add_dimensions(u'x')
-    kindex.add_dimensions(u'elev')
-    kindex.add_data(np.array(q_kindex))
-    kindex.processes = copy.deepcopy(td700.processes)
+    kindex.add_dimensions('y')
+    kindex.add_dimensions('x')
+    kindex.add_dimensions('elev')
+    kindex.add_data(np.ma.array(np.array(q_kindex), mask=mask))
+    kindex.add_process('KIndexCalc')
 
 #   Create the rest of the camps data object for K index
     kindex.add_coord(0,vert_type='elev')
