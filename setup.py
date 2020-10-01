@@ -1,6 +1,13 @@
 from setuptools import find_packages, setup
 import urllib.request, urllib.error, urllib.parse
 
+# Pygrib is a dependency of CAMPS and should be installed prior to installing CAMPS
+try:
+    import pygrib
+except(ImportError):
+    raise ImportError('Pygrib is a dependency for CAMPS, please install Pygrib before attempting to install CAMPS')
+
+
 # Set information about CAMPS
 NAME = 'camps'
 VERSION = '1.1.0'
