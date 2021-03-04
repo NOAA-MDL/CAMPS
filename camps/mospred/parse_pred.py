@@ -184,7 +184,6 @@ def vertical_coordinate(in_str):
 
     #Process the input string.
     in_str = str(in_str)
-    in_str = in_str.lower()
     in_str = in_str.strip(" ")
 
     #Create the dictionary to be filled in and returned.
@@ -217,7 +216,7 @@ def vertical_coordinate(in_str):
         in_str = "".join(in_str_arr[0:-1])
         in_str_arr = in_str.split(sep)
         assert len(in_str_arr) == 2 #Stop execution if the number of levels exceeds two.
-        exp = re.compile("^ *(\d+) *([a-z]*)") #pattern of level string
+        exp = re.compile("^ *(\d+) *([a-zA-Z]*)") #pattern of level string
         layer1 = exp.match(in_str_arr[0]).groups()
         layer2 = exp.match(in_str_arr[1]).groups()
         if layer1[1]:
@@ -232,7 +231,7 @@ def vertical_coordinate(in_str):
         vertical_dict['cell_method'] = cell_method_name
 
     elif single_layered:
-        exp = re.compile("^ *(\d+) *([a-z]*) *")
+        exp = re.compile("^ *(\d+) *([a-zA-Z]*) *")
         layer = exp.match(in_str).groups()
         if len(layer) <= 1 or not layer[1]:
             raise LookupError("units in Vertical_Coordinate not defined")

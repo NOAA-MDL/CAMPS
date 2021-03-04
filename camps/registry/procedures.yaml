@@ -1,58 +1,77 @@
-MesoObProcStep1 :
-    process_step : "StatPP__Methods/SfcObs/Mesonet"
-    long_name : 'Mesonet Observation'
-    feature_of_interest : "no"
-MesoObProcStep2 :
-    process_step : "StatPP__Methods/QC/SfcQC"
-    long_name : 'Mesonet Quality Control'
-    feature_of_interest : "no"
-BoundsProcMin :
-    process_step : "StatPP__Methods/Arith/Min"
-    long_name : 'Minimum within bounds'
-    feature_of_interest : "no"
-BoundsProcMax :
-    process_step : "StatPP__Methods/Arith/Max"
-    long_name : 'Maximum within bounds'
-    feature_of_interest : "no"
-BoundsProcSum :
-    process_step : "StatPP__Methods/Arith/Sum"
-    long_name : 'summation within bounds'
-    feature_of_interest : "no"
-MetarObProcStep1 :
+###############################################################################
+## Configuration file containing procedures currently supported by CAMPS
+##
+## New procedures should be added to this control file and should follow
+## this format:
+##
+## NameOfProcedure : 
+##     process_step : "Path/to/codes_registry/concept" (required)
+##     PROV__used : "Path/to/codes_registry/concept" (optional)
+##     PROV__wasInformedBy : "name of informing method" (optional)
+##     PROV__wasGeneratedBy : "name of method source" (optional)
+##     long_name : "A suitable description of the concept" (required)
+##     standard_name : "source" (required)
+##     feature_of_interest : "yes/no" (required)
+##     units : "appropriate units" (optional)
+##
+##
+## Attribute clarifications:
+## ---------------------------
+## process_step:         Should be a path that resolves to a codes registry entry.
+##                       The entry should further define the procedure.
+##                       Ex: StatPP__Methods/Arith/Max
+##
+## PROV__used:           Should be a path that resolves to a codes registry entry.
+##                       This should give information aboout the source of the data 
+##                       used for this procedure.  This is optional and should only
+##                       be included when appropriate.
+##
+## PROV__wasInformedBy:  This is the procedure performed prior to the current
+##                       procedure, if applicable.
+##
+## PROV__wasGeneratedBy: This should be a path to a codes registry concept 
+##                       which defines the type, or originating source, of the 
+##                       current procedure.  Ex: "CAMPS_Calculated" is frequently
+##                       used. It is defined as a calculation/method performed 
+##                       interal to CAMPS. "MetPy" refers to the python package 
+##                       used to perform the procedure.
+##
+## long_name:            The human readble name of the variable. This is often more 
+##                       of a short definition than a "name".
+##
+## standard_name:        The standard_name should be NetCDF CF compliant. For a 
+##                       procedure, the likely standard_name is "source".  If a more 
+##                       appropriate standard_name exists, it should be used instead.
+## 
+##
+## feature_of_interest:  If set to "yes" then the procedure will be included in
+##                       the unique variable name to which it applies.
+##
+## units:                Only if applicable, and will probably be "units of observed
+##                        property".      
+##
+## NOTE: If the procedure name contains the string "Calc" it will NOT be added
+##       to the unique variable name to which it would apply.  Even if 
+##       feature_of_interest is set to "yes". 
+## 
+##       Not all metadata attributes are required.  The user should
+##       provide as much information as needed to properly describe
+##       their method.The user may add additional metadata attributes if desired.
+##
+##############################################################################
+
+DecodeBUFR :
     process_step : "StatPP__Methods/Ingest/DecodeBUFR"
-    PROV__Used : "StatPP__Data/NCEPSfcObsMETAR"
+    PROV__used : "StatPP__Data/Source/NCEPSfcObsMETAR"
     long_name : 'Ingest BUFR encoded METAR observations from NCEP repository'
     standard_name : "source"
     feature_of_interest : "no"
-MetarObProcStep2 :
+METARQC :
     process_step : "StatPP__Methods/QC/METARQC"
+    PROV__wasInformedBy : "DecodeBUFR"
     long_name : "Apply MDL METAR Quality Control procedure"
     standard_name : "source"
     feature_of_interest : "no"
-VertDiffStep :
-    process_step : "StatPP__Methods/Arith/Diff"
-    long_name : "Difference in observed property between two vertical levels"
-    standard_name : "vert_diff_property"
-    feature_of_interest : "no"
-    units : "unit of observed property"
-HorizAdvect :
-    process_step : "StatPP__Methods/Dyn/Adv"
-    long_name : "Tendency of a scalar observed property at some vertical level"
-    standard_name : "horizontal_advection_scalar"
-    feature_of_interest : "no"
-    units : "unit of scalar divided by time"
-TempAdvectIsobaric :
-    process_step : "StatPP__Methods/Dyn/Adv"
-    long_name : "Tendency of air temperature at some isobar"
-    standard_name : "horizontal_advection_temperature"
-    feature_of_interest : "no"
-    units : u"K/s"
-TempAdvectAGL :
-    process_step : "StatPP__Methods/Dyn/Adv"
-    long_name : "Tendency of air temperature at some height above ground level"
-    standard_name : "horizontal_advection_temperature"
-    feature_of_interest : "no"
-    units : u"K/s"
 BinaryGrid :
     process_step : "StatPP__Methods/Arith/Binary"
     long_name : "Conversion to binary grid via threshold condition"
@@ -68,46 +87,28 @@ ThreshStep :
     long_name : "Binarization based on threshold"
     standard_name : "source"
     feature_of_interest : "no"
-MarineObProcStep1 :
+ProcMarine:
     process_step : "StatPP__Methods/Ingest/DecodeTabularText"
-    PROV__Used : "StatPP__Data/NDBC"
+    PROV__used : "StatPP__Data/Source/NDBC"
     long_name : 'Decode tabular text data'
     standard_name : "source"
     feature_of_interest : "no"
-MarineObProcStep2 :
+MarineQC:
     process_step : "StatPP__Methods/QC/MarineQC"
+    PROV__wasInformedBy : "ProcMarine"
     long_name : 'Marine Observation Quality Control'
     standard_name : "source"
     feature_of_interest : "no"
-mosLinearInterpolation :
-    process_step : "StatPP__Methods/Geosp/LinInterp"
-    long_name : "MOS Linear Interpolation"
-    feature_of_interest : "no"
-GFSModProcStep1 :
-    process_step : "StatPP__Methods/Ingest/DecodeGRIB2"
-    PROV__Used : "StatPP__Data/GFS13"
-    long_name : "Ingest GRIB2-encoded GFS13 forecasts from NCEP repository"
+FilterGRIB2 :
+    process_step : "StatPP__Methods/Ingest/FilterGRIB2"
+    PROV__used : "StatPP__Data/Source/GFS13"
+    long_name : "Filter GRIB2-encoded forecasts"
     standard_name : "source"
     feature_of_interest : "no"
-GFSModProcStep2 :
-    process_step : "StatPP__Methods/Geosp/LinInterp"
-    long_name : "Apply MDL bilinear interpolation technique"
-    standard_name : "source"
-    feature_of_interest : "no"
-MesoObProcStep1 :
-    process_step : "StatPP__Methods/Ingest/DecodeTabularText"
-    PROV__Used : "StatPP__Data/MADISMesonet"
-    long_name : "Ingest tabular text-encoded mesonet data from MADIS"
-    standard_name : "source"
-    feature_of_interest : "no"
-MesoObProcStep2 :
-    process_step : "StatPP__Methods/QC/MesoQC"
-    long_name : "Apply MDL mesonet Quality Control technique"
-    standard_name : "source"
-    feature_of_interest : "no"
-MesoObProcStep3 :
-    process_step : "StatPP__Methods/QC/GeospatialQC"
-    long_name : "Identify and resolve geospatial inconsistencies"
+ResampleGRIB2 :
+    process_step : "StatPP__Methods/Ingest/ResampleGRIB2"
+    PROV__wasInformedBy : "FilterGRIB2"
+    long_name : "Resampling of GRIB2 data onto a new grid"
     standard_name : "source"
     feature_of_interest : "no"
 LinSmooth :
@@ -115,166 +116,142 @@ LinSmooth :
     long_name : "Linear Smoothing"
     feature_of_interest : "yes"
 LinInterp :
-    process_step : "StatPP__Methods/Geosp/InterpLinear"
-    long_name : "Linear Interpolation"
+    process_step : "StatPP__Methods/Geosp/LinInterp"
+    long_name : "A curve fitting method that uses linear polynomials to construct new data points with the range of a discrete set of known data"
     feature_of_interest : "yes"
 BiLinInterp :
     process_step : "StatPP__Methods/Geosp/BiLinInterp"
     long_name : "Bilinear Interpolation"
     feature_of_interest : "yes"
 BiQuadInterp :
-    process_step : "StatPP_Methods/Geosp/BiQuadraticInterp"
+    process_step : "StatPP_Methods/Geosp/BiQuadInterp"
     long_name : "Biquadratic Interpolation"
     feature_of_interest : "yes"
 BudgetInterp :
     process_step : "StatPP__Methods/Geosp/BudgetInterp"
-    long_name : "Budget Interpolation"
+    long_name : "Interpolation using the four nearest grid points to the point of interest, attempting to preserve gradients"
     feature_of_interest : "yes"
 NearestInterp :
-    process_step : "StatPP__Methods/Geosp/NearestNeighborInterp"
+    process_step : "StatPP__Methods/Geosp/NNInterp"
     long_name : "Nearest Neighbor Interpolation"
     feature_of_interest : "yes"
 PolyLinReg :
     process_step : "StatPP__Methods/Stat/PolyLinReg"
     long_name : "Polynomial Linear Regression"
     feature_of_interest : "no"
-Sin :
-    process_step : "StatPP__Methods/Arith/Sin"
-    long_name : "Apply sin"
-    feature_of_interest : "no"
-Sin2 :
-    process_step : "StatPP__Methods/Arith/Sin2"
-    long_name : "Apply sin to twice the value"
-    feature_of_interest : "no"
-Cos :
-    process_step : "StatPP__Methods/Arith/Cos"
-    long_name : "Apply cos"
-    feature_of_interest : "no"
-Cos2 :
-    process_step : "StatPP__Methods/Arith/Cos2"
-    long_name : "Apply cos to twice the value"
-    feature_of_interest : "no"
 MOS_Method :
-    process_step : "StatPP__Methods/MOS"
+    process_step : "StatPP__Methods/Stat/MOS"
     long_name : "Model Output statistical method: Multiple Linear Regression "
     feature_of_interest : "no"
 TmpDewCmpChk :
-    process_step : "StatPP__Methods/TmpDewCmpChk"
+    process_step : "StatPP__Methods/QC/TmpDewCmpChk"
     long_name : "Consistency Check for Temperature and Dew point"
     feature_of_interest : "no"
 Max :
     process_step : "StatPP__Methods/Arith/Max"
     long_name : "Maximum of a sample"
-    feature_of_interest : "yes"
+    feature_of_interest : "no"
 Min :
     process_step : "StatPP__Methods/Arith/Min"
     long_name : "Minimum of a sample"
-    feature_of_interest : "yes"
+    feature_of_interest : "no"
+Sum :
+    process_step : "StatPP__Methods/Arith/Sum"
+    long_name : "Sum of a sample"
+    feature_of_interest : "no"
 Mean :
     process_step : "StatPP__Methods/Arith/Mean"
     long_name : "Mean of a sample"
-    feature_of_interest : "yes"
+    feature_of_interest : "no"
 DewPointCalc :
     process_step : "StatPP__Methods/Thermo/DewPt"
     PROV__wasGeneratedBy : "StatPP__Methods/Package/MetPy"
-    source : ""
-    standard_name : "dewpoint_temperature"
+    standard_name : "source"
     long_name : "The temperature to which a given air parcel must be cooled at constant pressure and constant water vapor content in order for saturation to occur"
     feature_of_interest : "no"
     units : "unit of observed property"
 KIndexCalc :
     process_step : "StatPP__Methods/Thermo/KIndex"
-    PROV__wasGeneratedBy : "StatPP__Methods/Package/CAMPS_calculated"
-    source : ""
-    standard_name : "stability_index_KIndex"
+    PROV__wasGeneratedBy : "StatPP__Methods/Package/CAMPS_calculated"    
+    standard_name : "source"
     long_name : "A heuristic stability index consisting of a sum of temperatures and dewpoints at specified pressure levels"
     feature_of_interest : "no"
     units : "unit of observed property"
 MixRatioCalc :
     process_step : "StatPP__Methods/Thermo/MixingRatio"
     PROV__wasGeneratedBy : "StatPP__Methods/Package/MetPy"
-    source : ""
-    standard_name : "mixing ratio"
+    standard_name : "source"
     long_name : "number of grams of water in a kilogram of air"
     feature_of_interest : "no"
     units : "unit of observed property"
 EqPotTempCalc:
     process_step : "StatPP__Methods/Thermo/EquPotTemp"
     PROV__wasGeneratedBy : "StatPP__Methods/Package/MetPy"
-    source : ""
-    standard_name : "equivalent_potential_temperature"
+    standard_name : "source"
     long_name : "The equivalent potential temperature is"
     feature_of_interest : "no"
     units : "unit of observed property"
 HtIndexTempCalc:
     process_step : "StatPP__Methods/Thermo/HtIndexTempCalc"
     PROV__wasGeneratedBy : "StatPP__Methods/Package/MetPy"
-    source : ""
-    standard_name : "heat_index_temperature"
+    standard_name : "source"
     long_name : "heat index temperature as defined in (reference)"
     feature_of_interest : "no"
     units : "unit of observed property"
 TotalPrecipCalc:
     process_step : "StatPP__Methods/Thermo/TotalPrecipCalc"
     PROV__wasGeneratedBy : "StatPP__Methods/Package/CAMPS_calculated"
-    source : ""
-    standard_name : "total_precipitation"
-    long_name : "total liquid water precipation"
+    standard_name : "source"
+    long_name : "total liquid water precipitation"
     feature_of_interest : "no"
     units : "unit of observed property"
 TempLapseCalc :
     process_step : "StatPP__Methods/Thermo/TempLapseCalc"
     PROV__wasGeneratedBy : "StatPP__Methods/Package/CAMPS_calculated"
-    source : ""
-    standard_name : "air_temperature_lapse"
+    standard_name : "source"
     long_name : "Difference of air temperature between two pressure levels"
     feature_of_interest : "no"
     units : "unit of observed property"
 PotTempCalc :
     process_step : "StatPP__Methods/Thermo/PotTemp"
     PROV__wasGeneratedBy : "StatPP__Methods/Package/MetPy"
-    source : ""
-    standard_name : "potential_temperature"
+    standard_name : "source"
     long_name : "temperature of a air parcel in dropping adiabatically from specified pressure level to 1000 hPa"
     feature_of_interest : "no"
     units : "unit of observed property"
 WindSpeedCalc :
     process_step : "StatPP__Methods/Thermo/WindSpeed"
     PROV__wasGeneratedBy : "StatPP__Methods/Package/CAMPS_calculated"
-    source : ""
-    standard_name : "wind_speed"
+    standard_name : "source"
     long_name : "speed of bulk air movement"
     feature_of_interest : "no"
     units : "unit of observed property"
 WindChillCalc :
     process_step : "StatPP__Methods/Thermo/WindChill"
     PROV__wasGeneratedBy : "StatPP__Methods/Package/MetPy"
-    source : ""
-    standard_name : "wind_chill_temperature"
+    standard_name : "source"
     long_name : "heuristic temperature representing the temperature a human would feel subject to cool air temperature and significant wind"
     feature_of_interest : "no"
     units : "unit of observed property"
 PressLayerThickCalc :
     process_step : "StatPP__Methods/Thermo/Thick"
     PROV__wasGeneratedBy : "StatPP__Methods/Package/CAMPS_calculated"
-    source : ""
-    standard_name : "pressure_layer_thickness"
-    long_name : "thickness of a pressure layer defined by two pressure levels"
+    standard_name : "source"
+    long_name : "calculation of thickness of specified layer"
     feature_of_interest : "no"
     units : "unit of observed property"
 NightMinTempCalc :
     process_step : "StatPP__Methods/Thermo/NightMinTemp"
     PROV__wasGeneratedBy : "StatPP__Methods/Package/CAMPS_calculated"
-    source : ""
-    standard_name : "nighttime_minimum_temperature"
+    standard_name : "source"
     long_name : "minimum temperature reached in the local time span (7pm-8am)"
     feature_of_interest : "no"
     units : "unit of observed property"
 DayMaxTempCalc :
     process_step : "StatPP__Methods/Thermo/DayMaxTemp"
     PROV__wasGeneratedBy : "StatPP__Methods/Package/CAMPS_calculated"
-    source : ""
-    standard_name : "daytime_maximum_temperature"
+    standard_name : "source"
     long_name : "maximum temperature reached in the local time span (7am-7pm)"
     feature_of_interest : "no"
     units : "unit of observed property"
+

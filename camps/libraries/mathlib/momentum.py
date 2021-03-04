@@ -15,10 +15,12 @@ import numpy as np
 import operator
 
 from ...mospred import create as create
-from ...core.fetch import *
+from ...mospred import parse_pred as parse_pred
 from ...core.Time import epoch_to_datetime
 from ...core import Time as Time
 from ...core.Camps_data import Camps_data
+from ...core.reader import read_var
+from ...registry import constants as const
 
 
 
@@ -30,8 +32,7 @@ def wind_speed_setup(filepaths, time, predictor):
         control(instance): contains mospred_control.yaml file variables.
         time (int): The number of seconds since January 1, 1970 00Z.
         predictor (Predictor): a container that holds key/value pairs
-            used to enquire the database for information about the
-            specified predictor.  A hard copy is modified within this method to
+            used for retrieving variables.  A hard copy is modified within this method to
             fetch components of the wind speed.
 
     Returns:
@@ -50,15 +51,15 @@ def wind_speed_setup(filepaths, time, predictor):
     iu_unit = international_units.get('speed')
     iu_pint = units.Quantity(1., iu_unit)
 
-#   Obtain the wind speed unit specified in the database, determine if it
+#   Obtain the wind speed unit specified in netcdf.yaml, determine if it
 #   exists, and, if so, test its dimensionality.
     unit = None
     try:
         unit = wspd.metadata['units']
         q_pint = units.Quantity(1., unit)
-        assert(q_pint.dimensionality == iu_pint.dimensionality),"Wind speed units given in the database have the wrong dimensionality."
+        assert(q_pint.dimensionality == iu_pint.dimensionality),"Wind speed units given in the metadata have the wrong dimensionality."
     except KeyError:
-        logging.info("metadata key \'units\' does not exist or has no value within the database.")
+        logging.info("metadata key \'units\' does not exist or has no value within netcdf metadata.")
         logging.info("Adopt the units of the fetched wind components.")
 
 #   Now set up for fetching the u- and v-components of the horizontal wind
@@ -66,12 +67,12 @@ def wind_speed_setup(filepaths, time, predictor):
 #   Make a hard copy of the predictor and use it in fetching the u- and v-
 #   components of wind.  Using the hard copy prevents any changes we make
 #   here from leaking outside this method.
-    pred = predictor.copy()
+    pred = copy.deepcopy(predictor)
 
 #   Fetch the u-component of the horizontal wind.
 #   The result is a camps data object.
-    pred.change_property('Uwind')
-    u_wind = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('Uwind')})
+    u_wind = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     assert(isinstance(u_wind,Camps_data)), "u_wind is expected to be a camps data object."
     mask = np.ma.getmaskarray(u_wind.data)
     try:
@@ -97,8 +98,8 @@ def wind_speed_setup(filepaths, time, predictor):
 
 #   Fetch the v-component of the horizontal wind.
 #   The result is a camps data object.
-    pred.change_property('Vwind')
-    v_wind = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('Vwind')})
+    v_wind = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     assert(isinstance(v_wind,Camps_data)), "v_wind is expected to be a camps data object."
     mask += np.ma.getmaskarray(v_wind.data)
     try:
@@ -131,9 +132,11 @@ def wind_speed_setup(filepaths, time, predictor):
 #   Construct the rest of the Camps data object wspd.
     wspd.time = copy.deepcopy(u_wind.time)
     wspd.location = u_wind.location
-    wspd.add_coord(u_wind.get_coordinate())
+    wspd.add_vert_coord(u_wind.get_coordinate())
+    wspd.metadata[const.VERT_COORD] = u_wind.metadata[const.VERT_COORD]
     wspd.metadata.update({'coordinates' : u_wind.metadata.get('coordinates')})
     wspd.metadata.update({'FcstTime_hour' : u_wind.metadata.get('FcstTime_hour')})
+    wspd.metadata.update({'PROV__hadPrimarySource' : u_wind.metadata.get('PROV__hadPrimarySource')})
     wspd.add_process('WindSpeedCalc')
 
     return wspd
@@ -188,7 +191,7 @@ def WindChill_setup(filepaths, time, predictor):
 
 # Create a copy of the predictor object that you can
 # alter without affecting the original.  That's a deep copy.
-    pred = predictor.copy()
+    pred = copy.deepcopy(predictor)
 
 # Fetch the air temperature at 2 meters and the wind speed at 10 meters.
 # These are needed to calculate the wind chill where it is valid to do so.
@@ -196,9 +199,9 @@ def WindChill_setup(filepaths, time, predictor):
 # Note that we assume that the temperature is available from model output.
 # It is critical that the fetched temperature camps data object specify
 # units.  Abandon calculating wind chill if no units found.
-    pred.change_property('Temp')
-    pred.search_metadata['vert_coord1'] = 2
-    temp = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('Temp')})
+    pred['search_metadata']['vert_coord1'] = 2
+    temp = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     assert(isinstance(temp, Camps_data)), "temp is expected to be a camps data object."
     mask = np.ma.getmaskarray(temp.data)
     if temp.units:
@@ -217,9 +220,9 @@ def WindChill_setup(filepaths, time, predictor):
 # calculated and stored in a netcdf file.  So a fetch may succeeed.  If
 # not, calculate it.  Like for temperature, it is critical that the
 # wind speed camps data object specify units.
-    pred.change_property('WindSpd')
-    pred.search_metadata['vert_coord1'] = 10
-    wspd = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('WindSpd')})
+    pred['search_metadata']['vert_coord1'] = 10
+    wspd = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     if wspd is None:
         wspd = create.calculate(filepaths, time, pred)
     assert(isinstance(wspd, Camps_data)), "wspd is expected to be a camps data object."
@@ -256,12 +259,11 @@ def WindChill_setup(filepaths, time, predictor):
     windchill.time = copy.deepcopy(temp.time)
     windchill.location = temp.location
     windchill.properties = temp.properties
-    windchill.add_coord(temp.get_coordinate())
-    for k,v in list(temp.metadata.items()):
-        if not 'name' in k \
-        and not 'Property' in k \
-        and not 'units' in k:
-            windchill.metadata[k] = v
+    windchill.add_vert_coord(temp.get_coordinate())
+    windchill.metadata[const.VERT_COORD] = temp.metadata[const.VERT_COORD]
+    windchill.metadata.update({'coordinates' : temp.metadata.get('coordinates')})
+    windchill.metadata.update({'FcstTime_hour' : temp.metadata.get('FcstTime_hour')})
+    windchill.metadata.update({'PROV__hadPrimarySource' : temp.metadata.get('PROV__hadPrimarySource')})
     windchill.add_process('WindChillCalc')
 
     return windchill
@@ -286,43 +288,3 @@ def wind_chill(temperature, wind_speed):
     wchill = calc.windchill(temperature, wind_speed)
 
     return wchill
-
-
-
-#def vorticity_setup():
-#    r"""
-#    """
-#
-#    predictor.change_property('AbsVort')
-#    absv = fetch(time, **predictor.search_metadata)
-#
-#    return absv
-#
-#
-#
-#def RelativeVorticity_setup(time, grid, rv_obj):
-#    r"""
-#    """
-#
-#    predictor.change_property('Uwind')
-#    u_wind = fetch(time, **predictor.search_metadata)
-#    predictor.change_property('Vwind')
-#    v_wind = fetch(time, **predictor.search_metadata)
-#    udelta = None
-#    vdelta = None
-#
-#    relvort = u_wind
-#    relvort.data = relative_vorticity(u_wind.data, v_wind.data, udelta, vdelta)
-#    relvort.metadata['property'] = 'RelVort'
-#
-#    return relvort
-#
-#
-#
-#def relative_vorticity(uwind, vwind, udelta, vdelta):
-#    relvort() = (u(:,2:)-u(:,0:nv-2))/(vdelta(:,1:nv-1)) \
-#               - (v(2:,:)-v(0:nv-2,:))/(2.*udelta()))
-#    Linearly interpolate for the edge values
-#    relvort()
-#    return relvort
-#    return None

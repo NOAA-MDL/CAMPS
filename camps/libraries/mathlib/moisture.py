@@ -12,11 +12,12 @@ import numpy as np
 from operator import itemgetter
 
 from ...mospred import create as create
-from ...registry.db import db as db
-from ...core.fetch import *
+from ...mospred import parse_pred as parse_pred
 from ...core.Time import epoch_to_datetime
 from ...core import Time as Time
 from ...core import Camps_data
+from ...core.reader import read_var
+from ...registry import constants as const
 
 
 def dewpoint_temperature_setup(filepaths, time, predictor):
@@ -64,13 +65,13 @@ def dewpoint_temperature_setup(filepaths, time, predictor):
 
 #   Create a deep copy of the inputted predictor object to use in
 #   fetching various predictor components.
-    pred = predictor.copy()
+    pred = copy.deepcopy(predictor)
 
 #   Fetch air temperature and adopt its units if one has not
 #   been set so far.  The fetched object is tested for type
 #   and, if its unit is adopted adopted, its unit dimensionality.
-    pred.change_property('Temp')
-    temp = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('Temp')})
+    temp = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     assert(isinstance(temp, Camps_data)),"temp expected to be camps data object"
     mask = np.ma.getmaskarray(temp.data)
 
@@ -89,7 +90,6 @@ def dewpoint_temperature_setup(filepaths, time, predictor):
         logging.info("temp: ")
         logging.info("    Fetched temperature does not have defined units!")
         raise
-    #q_temp = units.Quantity(temp.data, t_unit)
     q_temp = units.Quantity(temp.data, t_unit)
     dewpt.dimensions = copy.deepcopy(temp.dimensions)
     dewpt.add_component(temp)
@@ -102,8 +102,8 @@ def dewpoint_temperature_setup(filepaths, time, predictor):
 #   a camps data object.  Its unit is dimensionless, either
 #   ranging from 0 to 100 as a percentage or 0 to 1 as a
 #   proportion.
-    pred.change_property('RelHum')
-    rel_hum = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('RelHum')})
+    rel_hum = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     assert(isinstance(rel_hum, Camps_data)),"rel_hum expected to be camps data object"
     mask += np.ma.getmaskarray(rel_hum.data)
 #   Create the met.py version of the relative humidity, casting
@@ -127,9 +127,11 @@ def dewpoint_temperature_setup(filepaths, time, predictor):
 #   and return it.
     dewpt.time = copy.deepcopy(temp.time)
     dewpt.location = temp.location
-    dewpt.add_coord(temp.get_coordinate())
+    dewpt.metadata[const.VERT_COORD] = temp.metadata[const.VERT_COORD]
+    dewpt.add_vert_coord(temp.get_coordinate())
     dewpt.metadata.update({'coordinates' : temp.metadata.get('coordinates')})
     dewpt.metadata.update({'FcstTime_hour' : temp.metadata.get('FcstTime_hour')})
+    dewpt.metadata.update({'PROV__hadPrimarySource' : temp.metadata.get('PROV__hadPrimarySource')})
     dewpt.add_process('DewPointCalc')
 
     return dewpt
@@ -200,22 +202,22 @@ def mixing_ratio_setup(filepaths, time, predictor):
 #   Deep copy the inputted predictor object to use in
 #   fetching various predictor components without having these
 #   changes leaking outside of the method.
-    pred = predictor.copy()
+    pred = copy.deepcopy(predictor)
 
 #   The air pressure is a factor in calculating the mixing ratio.
 #   Get its value and create a metpy object of it.
-    p_level = pred.search_metadata.get('vert_coord1')
+    p_level = pred['search_metadata'].get('vert_coord1')
     q_plev = units.Quantity(p_level, units.mbar).to('millibars') #millibars assumed.
 #   Note: the above line will change when the vertical coordinate units are read in
 #         and not assumed.
-    mixr.add_coord(p_level, vert_type='plev')
+    mixr.add_vert_coord(p_level, vert_type='plev')
 
 #   Fetch air temperature.  The fetched object is tested for type
 #   and unit dimensionality.
-    pred.change_property('Temp')
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('Temp')})
     iu_unit = international_units.get('temperature')
     iu_pint = units.Quantity(1., iu_unit)
-    temp = fetch(filepaths, time, **pred.search_metadata)
+    temp = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     assert(isinstance(temp, Camps_data)),"temp expected to be camps data object"
     mask = np.ma.getmaskarray(temp.data)
     try:
@@ -242,8 +244,8 @@ def mixing_ratio_setup(filepaths, time, predictor):
 #   a camps data object.  Its unit is dimensionless, either
 #   ranging from 0 to 100 as a percentage or 0 to 1 as a
 #   proportion.
-    pred.change_property('RelHum')
-    rh = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('RelHum')})
+    rh = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     assert(isinstance(rh, Camps_data)),"rh expected to be camps data object"
     mask += np.ma.getmaskarray(rh.data)
 #   Create the met.py version of the relative humidity, casting
@@ -269,8 +271,10 @@ def mixing_ratio_setup(filepaths, time, predictor):
 #   Construct the rest of the mixing ratio data camps object.
     mixr.time = copy.deepcopy(rh.time)
     mixr.location = rh.location
+    mixr.metadata[const.VERT_COORD] = rh.metadata[const.VERT_COORD]
     mixr.metadata.update({'coordinates' : rh.metadata.get('coordinates')}) #needed for reshape to work.
     mixr.metadata.update({'FcstTime_hour' : rh.metadata.get('FcstTime_hour')})
+    mixr.metadata.update({'PROV__hadPrimarySource' : rh.metadata.get('PROV__hadPrimarySource')})
     mixr.add_process('MixRatioCalc')
 
     return mixr
@@ -324,36 +328,36 @@ def equivalent_potential_temperature_setup(filepaths, time, predictor):
     iu_unit = international_units.get('temperature')
     iu_pint = units.Quantity(1., iu_unit)
 
-#   Get the units that the database has for the equivalent potential temperature.
+#   Get the units that netcdf.yaml has for the equivalent potential temperature.
 #   Test dimensionality.
 #   If no unit is specified, pick it up from the fetched temperature below.
     unit = None
     try:
         unit = eqpotemp.metadata['units']
         u_pint = units.Quantity(1., unit)
-        assert(u_pint.dimensionality == iu_pint.dimensionality),"The units from the database has the wrong dimensionality."
+        assert(u_pint.dimensionality == iu_pint.dimensionality),"The units from metadata have the wrong dimensionality."
     except KeyError:
-        logging.info("The database does not have units for equivalent potential temperature.")
+        logging.info("The metadata does not have units for equivalent potential temperature.")
         logging.info("Obtain these units from the fetched temperature.")
 
 #   Fetch the components needed for the equivalent potential temperature.
 #   Make a hard copy of the search keys to keep them from contaminating
 #   other searches outside of this method.
-    pred = predictor.copy()
+    pred = copy.deepcopy(predictor)
 
 #   Air pressure is a component of equivalent potential temperature.
 #   Get the isobaric value, add its value to the camps data object,
 #   and create a metpy object of it to be used in calculating the
 #   equivalent potential temperature.
-    isobar = pred.search_metadata.get('vert_coord1')
-    eqpotemp.add_coord(isobar, vert_type='plev')
+    isobar = pred['search_metadata'].get('vert_coord1')
+    eqpotemp.add_vert_coord(isobar, vert_type='plev')
     q_isobar = units.Quantity(isobar, units.mbar)
 
 #   Fetch the air temperature
 #   Adopt its unit for equivalent potential temperature if
 #   that unit has not been set yet.
-    pred.change_property('Temp')
-    temp = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('Temp')})
+    temp = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     assert(isinstance(temp, Camps_data)),"Fetched temperature is not a Camps data object."
     mask = np.ma.getmaskarray(temp.data)
     try:
@@ -382,8 +386,8 @@ def equivalent_potential_temperature_setup(filepaths, time, predictor):
 
 #   Fetch the dewpoint temperature.
 #   If that fails, then calculate it.
-    pred.change_property('DewPt')
-    dewpt = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('DewPt')})
+    dewpt = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     if dewpt is None:
         dewpt = create.calculate(filepaths, time, pred)
     assert(isinstance(dewpt, Camps_data)),"Fetched dewpoint temperature is not a Camps data object."
@@ -413,8 +417,10 @@ def equivalent_potential_temperature_setup(filepaths, time, predictor):
 #   equivalent potential temperature.
     eqpotemp.time = copy.deepcopy(temp.time)
     eqpotemp.location = temp.location
+    eqpotemp.metadata[const.VERT_COORD] = temp.metadata[const.VERT_COORD]
     eqpotemp.metadata.update({ 'coordinates' : temp.metadata.get('coordinates') }) #needed for reshape to work.
     eqpotemp.metadata.update({ 'FcstTime_hour' : temp.metadata.get('FcstTime_hour') })
+    eqpotemp.metadata.update({'PROV__hadPrimarySource' : temp.metadata.get('PROV__hadPrimarySource')})
     eqpotemp.metadata.update({ 'ReferencePressure_in_hPa' : 1000 })
     eqpotemp.add_process('EqPotTempCalc')
 
@@ -454,15 +460,15 @@ def heat_index_setup(filepaths, time, predictor):
 # Produce a copy of the predictor object that is independent
 # of the original object.  This avoids inadvertent changes to
 # one object when effecting it on the other.
-    pred = predictor.copy()
+    pred = copy.deepcopy(predictor)
 
 # Obtain the parameters that are assumed to be available
 # either directly from the weather model output or created
 # earlier by this software package.  The formula for heat
 # index requires temperature and relative humidity.
-    pred.search_metadata['vert_coord1'] = 2
-    pred.change_property('Temp')
-    temp = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'vert_coord1' : 2})
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('Temp')})
+    temp = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     mask = np.ma.getmaskarray(temp.data)
     if temp.units:
         u_temp = temp.units
@@ -476,8 +482,8 @@ def heat_index_setup(filepaths, time, predictor):
     ht_index.add_component(temp)
     ht_index.preprocesses = temp.preprocesses
 
-    pred.change_property('RelHum')
-    rh = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('RelHum')})
+    rh = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     mask += np.ma.getmaskarray(rh.data)
     if rh.units:
         u_rh = rh.units
@@ -517,12 +523,10 @@ def heat_index_setup(filepaths, time, predictor):
     ht_index.location = temp.location
     #ht_index.processes = temp.processes
     ht_index.properties = temp.properties
-    ht_index.add_coord(temp.get_coordinate())
-    for k,v in list(temp.metadata.items()):
-        if not 'name' in k \
-        and not 'Property' in k \
-        and not 'units' in k:
-            ht_index.metadata[k] = v
+    ht_index.add_vert_coord(temp.get_coordinate())
+    ht_index.metadata.update({'coordinates' : temp.metadata.get('coordinates')})
+    ht_index.metadata.update({'FcstTime_hour' : temp.metadata.get('FcstTime_hour')})
+    ht_index.metadata.update({'PROV__hadPrimarySource' : temp.metadata.get('PROV__hadPrimarySource')})
     ht_index.add_process('HtIndexTempCalc')
 
     return ht_index
@@ -553,8 +557,8 @@ def TotalPrecip(filepaths, time, predictor):
     Args:
         control(instance): a container possessing information from mospred_control.yaml.
         time(int): the forecast reference time in seconds since 1970 Jan 1, 00:00:00.
-        predictor(Predictor): chiefly contains the key/value pairs used to enquire the
-            database for locating the desired data.
+        predictor(Predictor): chiefly contains the key/value pairs used to retrieve
+        variables.
 
     Returns:
         totpcp(Camps_data): a container of the data and metadata for total precipitation
@@ -573,17 +577,17 @@ def TotalPrecip(filepaths, time, predictor):
     ilt_pint = units.Quantity(1, ilt_unit)
 
 #   Make a hard copy of the predictor object and use that copy
-#   in enquiring the database.  Changes in the copy will not
+#   to retrieve neeeded variables.  Changes in the copy will not
 #   leak outside of this method.
-    pred = predictor.copy()
-    duration_method = pred.search_metadata['duration_method']
+    pred = copy.deepcopy(predictor)
+    duration_method = pred['search_metadata'].get('duration_method')
 #   vertical coordinate is not relevant.  Precipitation is measured at ground level.
-    vert_coord1 = pred.search_metadata['vert_coord1']
-    duration = pred.search_metadata['duration']
-    model = pred.search_metadata['source']
-    cycle = int(pred.fcst_ref_time)
-    leadTime = pred.leadTime
-    file_id = pred.search_metadata['file_id']
+    vert_coord1 = pred['search_metadata'].get('vert_coord1')
+    vert_units = pred['search_metadata'].get('vert_units')
+    duration = pred['search_metadata'].get('duration')
+    model = pred['search_metadata'].get('source')
+    cycle = int(pred.get('fcst_ref_time'))
+    leadTime = pred.get('leadTime')
     if leadTime < duration:
         return None
 #
@@ -600,7 +604,7 @@ def TotalPrecip(filepaths, time, predictor):
         tp_pint = units.Quantity(1, unit)
         assert(tp_pint.dimensionality == ipa_pint.dimensionality \
             or tp_pint.dimensionality == ilt_pint.dimensionality), \
-            "Unit from database has wrong dimensionality."
+            "Unit in metadata has wrong dimensionality."
     except KeyError:
         logging.info("Database has no information about units.")
         logging.info("Adopt the unit from fetched total precipitations.")
@@ -608,14 +612,13 @@ def TotalPrecip(filepaths, time, predictor):
 #   Fetch total precipitation of all available positive durations.
 
 #   First see if we can get the precipitation amount for the specified
-#   duration from predictors in direct model output whose metadata is
-#   contained in the Camps database.
+#   duration from predictors in direct model output.
 
 #   Construct lookup dictionary
-    info_dict = {'duration_method': duration_method, 'source': model, 'property': 'TotalPrecip',
-                 'vert_coord1': vert_coord1, 'reserved1': 'grid', 'file_id': file_id}
+    info_dict = {'duration_method': duration_method, 'source': model, 'property': parse_pred.observedProperty('TotalPrecip'),
+                 'vert_coord1': vert_coord1, 'vert_units': vert_units, 'reserved1': 'grid'}
 #   Fetch variables from netcdf file, allow for multiple objects returned via list
-    info = fetch(filepaths, time, repeat=True, **info_dict)
+    info = read_var(filepath=filepaths, forecast_time=time, retrieve_mult=True, **info_dict)
 
 #   If zero objects returned, exit function
     if info == None:
@@ -630,7 +633,13 @@ def TotalPrecip(filepaths, time, predictor):
     for tup in info:
         if tup.FcstTime_hour == cycle:
             durations_hrs_nosort.append(tup.properties['hours'])
-    durations_hrs = sorted(durations_hrs_nosort)
+    indices_sorted = sorted(range(len(durations_hrs_nosort)), key=lambda k: durations_hrs_nosort[k])
+    durations_hrs = []
+    data = []
+    for i in indices_sorted:
+        durations_hrs.append(durations_hrs_nosort[i])
+        data.append(info[i])
+    ndata = len(data)
 
 #   Stop if the specified duration of this method's product
 #   is less than the smallest fetched duration.
@@ -640,12 +649,13 @@ def TotalPrecip(filepaths, time, predictor):
 #   Fianlly, fetch the available total precip data objects and collect them into a list
 #   These will be used to construct the total precip of a specified duration at a specified
 #   time that is not available in the fetched set.
-    data = []
-    ndata = len(info)
-    for inc in range(ndata):
-        dict = {'duration_method': duration_method, 'source': model, 'duration': durations_hrs[inc],
-                'property': 'TotalPrecip', 'vert_coord1': vert_coord1, 'reserved1': 'grid', 'file_id': file_id}
-        data.append(fetch(filepaths, time, **dict))
+    #data = []
+    #ndata = len(info)
+    #for inc in range(ndata):
+    #    info_dict.update({'duration' : durations_hrs[inc]})
+#        dict = {'duration_method': duration_method, 'source': model, 'hours': durations_hrs[inc],
+#                'property': parse_pred.observedProperty('TotalPrecip'), 'vert_coord1': vert_coord1, 'reserved1': 'grid', 'vert_units': vert_units}
+    #    data.append(read_var(filepath=filepaths, forecast_time=time, retrieve_mult=True, **info_dict))
 
 #   Lets make the data objects in the list consistent with
 #   one another.  First, they must correspond to the same grid.
@@ -654,6 +664,7 @@ def TotalPrecip(filepaths, time, predictor):
 #   Grids must match.
 #   Right now it is a weak match in that we match only
 #   the number of grid points along each axis.
+    idf = data[0].dimensions.index('phenomenonTime')
     iy = data[0].dimensions.index('y')
     ix = data[0].dimensions.index('x')
     location = data[0].location
@@ -726,9 +737,9 @@ def TotalPrecip(filepaths, time, predictor):
     for i in data:
         dta = np.ma.getdata(i.data)
         mask = np.ma.getmaskarray(i.data)
-        dt = np.moveaxis(dta,[iy,ix,ilt],[-3,-2,-1])
-        msk = np.moveaxis(mask,[iy,ix,ilt],[-3,-2,-1])
-        dims = [i.dimensions[j] for j in [iy,ix,ilt]]
+        dt = np.moveaxis(dta,[idf,iy,ix,ilt],[-4,-3,-2,-1])
+        msk = np.moveaxis(mask,[idf,iy,ix,ilt],[-4,-3,-2,-1])
+        dims = [i.dimensions[j] for j in [idf,iy,ix,ilt]]
         i.data = np.ma.array(dt, mask=msk)
         i.dimensions = dims
 
@@ -742,33 +753,34 @@ def TotalPrecip(filepaths, time, predictor):
 #   by index (j,i), and follow its value along increasing lead time.
 #   If the value never decreases, then the data is stored as a running
 #   sum.  Otherwise, its in discrete units.
-    cumulative = 1
-    for dt in data:
-        amts = dt.data
-#        amts.mask = np.ma.nomask
-        j,i,k = np.unravel_index(amts.argmax(), amts.shape)
-        for ilt in range(1,amts[0,0,:].size):
-            cumulative *= (amts[j,i,ilt] >= amts[j,i,ilt-1])
-
+    #cumulative = 1
+    #for dt in data:
+    #    amts = dt.data
+#   #     amts.mask = np.ma.nomask
+    #    j,i,k = np.unravel_index(amts.reshape(amts.shape[0],-1).argmax(1), amts.shape[1:])
+    #    l = np.arange(amts.shape[0])
+    #    for ilt in range(1,amts.shape[-1]):
+    #        cumulative *= (amts[l,j,i,ilt] >= amts[l,j,i,ilt-1])
+    
 #   NOTE: The functions called below are not yet available.
 #   The code below this conditional statement block (FORTRAN!)
 #   assumes discrete buckets.  An error is raised if the fetched
 #   data is cumulative.
-    if cumulative:
-        raise
+    #if np.any(cumulative):
+    #    raise
 #        totpcp = sum_amts_cumulative(pred, data)
-    else:
-        pass
+    #else:
+    #    pass
 #        totpcp = sum_amts_discrete(pred, data)
 
 
 #   Here starts the essential construction of the total precipitation
 #   from the addition/subtraction of the fetched set.
     durations = [dur*3600 for dur in durations_hrs] #duration_hrs used be in units of hours, but now is in seconds.
-    tp_data = np.zeros((ny_grid, nx_grid))
-    tp_mask = np.zeros((ny_grid, nx_grid), dtype=np.int)
+    tp_data = np.zeros((len(time),ny_grid, nx_grid))
+    tp_mask = np.zeros((len(time),ny_grid, nx_grid), dtype=np.int)
     totpcp.data = np.ma.array(tp_data, mask=tp_mask)
-    t0 = time + (leadTime*3600)
+    t0 = np.array(time) + (leadTime*3600)
     t1 = t0 - (duration*3600)
 
 #   intervals will contain a list of times denoting the front and back times of
@@ -781,75 +793,96 @@ def TotalPrecip(filepaths, time, predictor):
         bcktimes = [x-durations[i] for x in frntimes]
         intervals.append(list(zip(bcktimes, frntimes)))
     intvls = []
-    for i in range(len(intervals[:])):
-        intvls.append([intvl for intvl in intervals[i] if intvl[0] <= t0 and intvl[1] >= t1])
-    fronts = [intvl[1] for sublist in intvls[:] for intvl in sublist]
-    backs = [intvl[0] for sublist in intvls[:] for intvl in sublist]
-    if t0 in fronts:
-        path = [t0]
+    intervals = np.array(intervals)
+    INDS = np.where((intervals[:,:,0,:]<=t0) & (intervals[:,:,1,:]>=t1))
+    I0,I1,I2 = np.unique(INDS[0]), np.unique(INDS[1]), np.unique(INDS[2])
+    fronts = np.ma.array(np.zeros((I0.size,I1.size,I2.size)),mask=True)
+    backs = np.ma.array(np.zeros((I0.size,I1.size,I2.size)),mask=True)
+    fronts[INDS[0],np.where(INDS[1][:,None]==I1[None,:])[1],INDS[2]] = intervals[INDS[0],INDS[1],1,INDS[2]]
+    backs[INDS[0],np.where(INDS[1][:,None]==I1[None,:])[1],INDS[2]] = intervals[INDS[0],INDS[1],0,INDS[2]]
+    intvls = np.ma.stack((backs,fronts),axis=2)
+    if np.any(t0==fronts):
+        path = t0[None,:]
         intervals_selected = interval_selection(path,t1,intvls)
-    elif t1 in backs:
-        intvls_negrev = []
-        for i in range(len(intvls[:])):
-            intvls_negrev.append([(-intvl[1],-intvl[0]) for intvl in intvls[i]])
-        path = [-t1]
+    elif np.any(t1==backs):
+        intvls_negrev = -intvls
+        path = -t1[None,:]
         intervals_selected = interval_selection(path,-t0,intvls_negrev)
 
 #   Go through the selected intervals adding/subtracting the
 #   the fetched total precip within that interval.
-    if intervals_selected:
-        front = intervals_selected.pop()
-    while intervals_selected:
-        back = intervals_selected.pop()
+    components = []
+    ilt_comps = []
+    if intervals_selected.size>0:
+        front = intervals_selected[-1,:]
+    for n in range(-2,-intervals_selected.shape[0]-1,-1):
+        back = intervals_selected[n,:]
 
-        sign = math.copysign(1., front - back)
+        sign = np.sign(front-back)
         aback = abs(back)
         afront = abs(front)
-        if afront > aback:
-            intvl = (aback, afront)
+        if np.any(afront > aback):
+            intvl = np.vstack((aback, afront))
         else:
-            intvl = (afront, aback)
-        for i in range(len(intervals[:])):
-            if intvl in intervals[i]:
+            intvl = np.vstack((afront, aback))
+        for i in range(intervals.shape[0]):
+            blt = np.all(np.isin(intervals[i],intvl),axis=(1,2))
+            if np.count_nonzero(blt)>0:
                 idata = i
-                ilt = intervals[i].index(intvl)
+                ilt = np.nonzero(blt)
                 break
-        #totpcp.data[:,:] += sign*data[idata].data[:,:,ilt]
-        tp_data[:,:] += sign*data[idata].data[:,:,ilt]
-        tp_mask += np.ma.getmaskarray(data[idata].data[:,:,ilt])
+
+        components.append(data[idata])
+        ilt_comps.append(ilt[0])
+
+        tp_data += sign[:,None,None]*np.squeeze(data[idata].data[:,:,:,ilt[0]])
+        tp_mask += np.ma.getmaskarray(np.squeeze(data[idata].data[:,:,:,ilt[0]]))
         front = back
     totpcp.data = np.ma.array(tp_data, mask=tp_mask)
 
 #   The data matrix of the CAMPS data object has been filled.
 #   Construct the rest of this data object, starting with the
 #   various times.
-    phenomTpd = Time.PhenomenonTimePeriod(data=np.array([[[time+(leadTime*3600)-(duration*3600),time+(leadTime*3600)]]]))
+    phenomTpd = Time.PhenomenonTimePeriod(data=np.stack((np.array(time)+(leadTime*3600)-(duration*3600),np.array(time)+(leadTime*3600)),axis=1)[None,...])
     phenomTpd.duration = duration
     totpcp.time.append(phenomTpd)
-    fcstRefTime = Time.ForecastReferenceTime(data=np.ma.masked_array([time],mask=[0]))
+    fcstRefTime = Time.ForecastReferenceTime(data=np.ma.masked_array(time,mask=[0]))
     totpcp.time.append(fcstRefTime)
     leadT = Time.LeadTime(data=np.ma.masked_array([(leadTime*3600)],mask=[0]))
     totpcp.time.append(leadT)
-    resultT = Time.ResultTime(data=np.ma.masked_array([time],mask=[0]))
-    totpcp.time.append(resultT)
-    validT = Time.ValidTime(data=np.ma.masked_array([[[time,t0]]],mask=[[[0,0]]]))
-    totpcp.time.append(validT)
 
 #   Inherit from the fetched object with the shortest duration
 #   the non-time objects.
     totpcp.location = data[0].location
-    totpcp.dimensions = copy.deepcopy(data[0].dimensions[0:2])
+    totpcp.dimensions = copy.deepcopy(data[0].dimensions[0:3])
     totpcp.properties = copy.deepcopy(data[0].properties)
     totpcp.processes = copy.deepcopy(data[0].processes)
-    for tp_obj in data:
-        totpcp.add_component(tp_obj)
+    for i,tp_obj in enumerate(components):
+        name = 'precipitation_amount_' + str(tp_obj.metadata.get('hours')) + '_hour'
+        component = Camps_data(name)
+        phenomTpd = Time.PhenomenonTimePeriod(data=np.squeeze(tp_obj.get_phenom_time().data[ilt_comps[i],:,:]))
+        phenomTpd.duration = tp_obj.properties.get('hours')
+        component.time.append(phenomTpd)
+        fcstRefTime = Time.ForecastReferenceTime(data=tp_obj.get_forecast_reference_time().data)
+        component.time.append(fcstRefTime)
+        leadT = Time.LeadTime(data=tp_obj.get_lead_time().data[ilt_comps[i]])
+        component.time.append(leadT)
+        component.dimensions = tp_obj.dimensions[0:3]
+        component.data = np.squeeze(tp_obj.data[:,:,:,ilt_comps[i]])
+        component.properties = copy.deepcopy(tp_obj.properties)
+        component.processes = copy.deepcopy(tp_obj.processes)
+        component.preprocesses = copy.deepcopy(tp_obj.preprocesses)
+        component.metadata = copy.deepcopy(tp_obj.metadata)
+        component.metadata.update({'leadtime' : int(tp_obj.get_lead_time().data.data[ilt_comps[i]]/3600.)})
+        totpcp.add_component(component)
         for proc in tp_obj.preprocesses:
             totpcp.add_preprocess(proc)
     totpcp.add_process('TotalPrecipCalc')
 #   Insert the necessary metadata.
     totpcp.properties.update({ 'hours' : duration })
-    totpcp.metadata.update({ 'coordinates' : data[0].metadata.get('coordinates') })
+    totpcp.metadata.update({ 'coordinates' : ' '.join([coord for coord in data[0].metadata.get('coordinates').split() if 'Time' not in coord]) })
     totpcp.metadata.update({ 'FcstTime_hour' : data[0].metadata.get('FcstTime_hour') })
+    totpcp.metadata.update({'PROV__hadPrimarySource' : data[0].metadata.get('PROV__hadPrimarySource')})
     totpcp.metadata['hours'] = duration
 
     return totpcp
@@ -859,26 +892,25 @@ def interval_selection(path,ll,i):
     """This function is called by TotalPrecip to search for intervals
     that can construct the desired total precip.
     """
-
-    while path != []:
-        if path[0] > ll:
+    while np.any(path):
+        if np.any(path[0] > ll):
             intvl = interval_retrieval_and_removal(i,path[0],1)
-            if intvl == []:
-                path.pop(0)
+            if intvl.size==0:
+                path[0]=0
             else:
-                path = [intvl[0]] + path
-                if intvl[0] == ll:
+                path = np.vstack((intvl[:,0],path))
+                if np.any(intvl[:,0] == ll):
                     return path
         else:
             intvl = interval_retrieval_and_removal(i,path[0],0)
-            if intvl == []:
-                path.pop(0)
+            if intvl.size == 0:
+                 path[0] = 0
             else:
-                if intvl[1] > ll:
-                    path.pop(0)
+                if np.any(intvl[:,1] > ll):
+                     path[0] = 0
                 else:
-                    path = [intvl[1]] + path
-                    if intvl[1] == ll:
+                    path = np.vstack((intvl[:,1],path))
+                    if np.any(intvl[:,1] == ll):
                         return path
     return path
 
@@ -888,13 +920,13 @@ def interval_retrieval_and_removal(array, time, index):
     time intervals that may work in calculating the total
     precipitation.
     """
-
-    nlists = len(array[:])
-    b = []
+    nlists = array.shape[0]
     for i in range(nlists):
-        b = [x for x in array[i] if x[index] == time]
-        if b != []:
-            j = array[i].index(b[0])
-            return array[i].pop(j)
+        b = array[i,...]==time
+        if np.any(b[:,index,:]):
+            j = np.where(b[:,index,:])
+            j0 = np.unique(j[0])[0]
+            out_arr = array[i,j0,:,j[1]]
+            return out_arr
 
-    return b
+    return np.where(b[:,index,:])[0]

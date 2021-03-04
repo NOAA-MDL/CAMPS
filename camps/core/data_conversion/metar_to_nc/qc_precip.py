@@ -43,8 +43,10 @@ def qc_precip(station_list):
         precip_24_diff = 0
         for i in range(1, len(precip_1h), 6):
 
-            i_3h = i + 2
-            i_6h = i + 5
+            i_3h = i + 3
+            i_6h = i + 0
+            if i_3h >= len(precip_1h):
+                continue
             if i_6h >= len(precip_1h):
                 continue
             date = station.hours[i]
@@ -72,25 +74,30 @@ def qc_precip(station_list):
                         precip_24h[i] -= precip_24_diff
                 corrected_24h = 0
                 precip_24_diff = 0
-            if precip_3h[i_3h] > precip_6h[i_6h]:
+
+            if precip_3h[i_3h] != MISSING_VALUE and precip_3h[i_3h] > 900:
+                errors.append(qc_error(
+                    station_name=station.name, date_of_error=date_3h,
+                    error_code=9700, old_data_value=precip_3h[i_3h],
+                    new_data_value=MISSING_VALUE,
+                    explanation="3 hour precip out of range. > 9"
+                ))
                 precip_3h[i_3h] = MISSING_VALUE
+
+            if precip_6h[i_6h] != MISSING_VALUE and precip_6h[i_6h] > 1200:
+                errors.append(qc_error(
+                    station_name=station.name, date_of_error=date_6h,
+                    error_code=9700, old_data_value=precip_6h[i_6h],
+                    new_data_value=MISSING_VALUE,
+                    explanation="6 hour precip out of range. > 12"
+                ))
                 precip_6h[i_6h] = MISSING_VALUE
-                if precip_3h[i_3h] != MISSING_VALUE and precip_3h[i_3h] > 900:
-                    errors.append(qc_error(
-                        station_name=station.name, date_of_error=date_3h,
-                        error_code=9700, old_data_value=precip_3h[i_3h],
-                        new_data_value=MISSING_VALUE,
-                        explanation="3 hour precip out of range. > 9"
-                    ))
+
+            if precip_3h[i_3h] != MISSING_VALUE and precip_6h[i_6h] != MISSING_VALUE:
+                if precip_3h[i_3h] > precip_6h[i_6h]:
                     precip_3h[i_3h] = MISSING_VALUE
-                if precip_6h[i_6h] != MISSING_VALUE and precip_6h[i_6h] > 1200:
-                    errors.append(qc_error(
-                        station_name=station.name, date_of_error=date_6h,
-                        error_code=9700, old_data_value=precip_6h[i_6h],
-                        new_data_value=MISSING_VALUE,
-                        explanation="6 hour precip out of range. > 12"
-                    ))
                     precip_6h[i_6h] = MISSING_VALUE
+
             weather_in_3h = False
             weather_in_6h = False
             p1 = precip_1h[i:i + 6]

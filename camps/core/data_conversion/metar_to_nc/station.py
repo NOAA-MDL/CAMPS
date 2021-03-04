@@ -252,8 +252,8 @@ class station:
         old_time = self.observations['TIME']
         old_time = old_time[len(old_time) - 1]
         # extract the hour
-        new_time = new_time.strip()[-2:]
-        old_time = old_time.strip()[-2:]
+        if isinstance(new_time,str): new_time = new_time.strip()[-2:]
+        if isinstance(old_time,str): old_time = old_time.strip()[-2:]
         # cast to int
         new_time = int(new_time)
         old_time = int(old_time)

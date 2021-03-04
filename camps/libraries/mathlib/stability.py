@@ -18,10 +18,12 @@ import numpy as np
 import operator
 
 from ...mospred import create as create
-from ...core.fetch import *
+from ...mospred import parse_pred as parse_pred
+from ...core.reader import read_var
 from ...core.Time import epoch_to_datetime
 from ...core import Time as Time
 from ...core import Camps_data
+from ...registry import constants as const
 from . import moisture
 
 
@@ -38,7 +40,7 @@ def KIndex_setup(filepaths, time, predictor):
         time (int): The time in seconds since January 1, 1970 00Z
         predictor (Predictor): a generic predictor object carrying
             information necessary to fetch Camps data objects from
-            netCDF4 files via a database.
+            netCDF4 files.
 
     Returns:
         kindex (Camps_data): a camps data object containing metadata
@@ -73,16 +75,17 @@ def KIndex_setup(filepaths, time, predictor):
 #   use in fetching the components of the K index.  It is
 #   necessary to do this in order to prevent inadvertently
 #   changing the key/value pairs for
-    pred = predictor.copy()
+    pred = copy.deepcopy(predictor)
 
 #   Fetch the weather parameters that make up K index.
 #   Check that they are camps data objects
 #   and that they have units of temperature.
-    pred.change_property('Temp')
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('Temp')})
 
 #   Fetch temperature at isobar 850 mbar
-    pred.search_metadata.update({'vert_coord1' : 850})
-    t850 = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'vert_coord1' : 850})
+    pred['search_metadata'].update({'vert_units' : 'hPa'})
+    t850 = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     assert(isinstance(t850,Camps_data)),"t850 expected to be camps data object"
     mask = np.ma.getmaskarray(t850.data)
     try:
@@ -100,8 +103,8 @@ def KIndex_setup(filepaths, time, predictor):
     kindex.preprocesses = t850.preprocesses
 
 #   Fetch temperature at isobar 700 mbar
-    pred.search_metadata.update({'vert_coord1' : 700})
-    t700 = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'vert_coord1' : 700})
+    t700 = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     assert(isinstance(t700,Camps_data)),"t700 expected to be camps data object"
     mask += np.ma.getmaskarray(t700.data)
     try:
@@ -121,8 +124,8 @@ def KIndex_setup(filepaths, time, predictor):
         kindex.add_preprocess(proc)
 
 #   Fetch temperature at isobar 500 mbar
-    pred.search_metadata.update({'vert_coord1' : 500})
-    t500 = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'vert_coord1' : 500})
+    t500 = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     assert(isinstance(t500,Camps_data)),"t500 expected to be camps data object"
     mask += np.ma.getmaskarray(t500.data)
     try:
@@ -145,12 +148,12 @@ def KIndex_setup(filepaths, time, predictor):
 #   These parameters may not be available from netCDF files.
 #   But if relative humidity is, then we calculate it from
 #   the dewpoint temperature function within the module moisture.
-    pred.change_property('DewPt')
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('DewPt')})
 
 #   Fetch dewpoint temperature at isobar 850 mbar.
 #   If fetch fails, try the dewpoint temperature function.
-    pred.search_metadata.update({'vert_coord1' : 850})
-    td850 = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'vert_coord1' : 850})
+    td850 = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     if td850 is None:
         td850 = create.calculate(filepaths, time, pred)
     assert(isinstance(td850,Camps_data)),"td850 expected to be camps data object"
@@ -173,8 +176,8 @@ def KIndex_setup(filepaths, time, predictor):
 
 #   Fetch dewpoint temperature at isobar 700 mbar.
 #   If fetch fails, try the dewpoint temperature function.
-    pred.search_metadata.update({'vert_coord1' : 700})
-    td700 = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'vert_coord1' : 700})
+    td700 = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     if td700 is None:
         td700 = create.calculate(filepaths, time, pred)
     assert(isinstance(td700,Camps_data)),"td700 expected to be camps data object"
@@ -201,17 +204,18 @@ def KIndex_setup(filepaths, time, predictor):
 #   Add the dimensions to the camps data object before inserting the data
 #   into it.
     q_kindex = KIndex(q_t850, q_t700, q_t500, q_td850, q_td700).to(unit)
+    kindex.add_dimensions('phenomenonTime')
     kindex.add_dimensions('y')
     kindex.add_dimensions('x')
-    kindex.add_dimensions('elev')
     kindex.add_data(np.ma.array(np.array(q_kindex), mask=mask))
     kindex.add_process('KIndexCalc')
 
 #   Create the rest of the camps data object for K index
-    kindex.add_coord(0,vert_type='elev')
+    kindex.add_vert_coord(0,vert_type='elev')
     kindex.time = copy.deepcopy(t850.time)
     kindex.location = t850.location
     kindex.metadata.update({'FcstTime_hour' : t850.metadata.get('FcstTime_hour')})
+    kindex.metadata.update({'PROV__hadPrimarySource' : t850.metadata.get('PROV__hadPrimarySource')})
 
     return kindex
 
@@ -240,47 +244,3 @@ def KIndex(t850, t700, t500, td850, td700):
     kindex = (t850 - t500) + td850 - (t700 - td700)
 
     return kindex
-
-
-
-def cape_setup(filepaths, time, predictor):
-    r"""The method fetching atmospheric stability index CAPE.
-
-    CAPE is the Convective Available Potential Energy.
-
-    args:
-        time (int): Time in seconds since January 1, 1970 00Z.
-        predictor (predictor): a generic predictor object consisting of a
-            numpy.ndarray data object plus some metadata.
-
-    Returns:
-        cape, a predictor object containing data of the stability index CAPE.
-
-    """
-
-    predictor.change_property('CAPE')
-    cape = fetch(filepaths, time, **predictor.search_metadata)
-
-    return cape
-
-
-
-def cin_setup(filepaths, time, predictor):
-    r"""The method fetching atmospheric stability index CIN.
-
-    CIN stands for the Convective INhibition.  It has units of energy.
-
-    args:
-        time (int): Time in seconds since January 1, 1970 00Z.
-        predictor (predictor): a generic predictor object consisting of a
-            numpy.ndarray data object plus some metadata.
-
-    Returns:
-        cin, a predictor object containing data of the stability index CIN.
-
-    """
-
-    predictor.change_property('CIN')
-    cin = fetch(filepaths, time, **predictor.search_metadata)
-
-    return cin

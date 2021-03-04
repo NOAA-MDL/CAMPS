@@ -11,19 +11,15 @@ import argparse
 from pint import UnitRegistry
 
 from ..registry import util as cfg
-from ..registry.db.update_db import update
 
 from ..mospred import read_pred as read_pred
-#from ..mospred import util as util
 from ..mospred import create as create
-from ..mospred.create import Predictor
 from ..mospred import procedures as procedures
 from ..mospred import parse_pred as parse_pred
 from ..mospred import interp as interp
 
 from ..core import Time as Time
 from ..core import Camps_data as Camps_data
-from ..core.fetch import *
 from ..core.writer import write
 from ..core.reader import read_var
 from ..core import util as util
@@ -124,21 +120,9 @@ def main():
     lon_obj.data = np.array(lons)
 
     # Create station object
-    station_obj = Camps_data('station')
+    station_obj = Camps_data('stations')
     station_obj.dimensions.append(station_dim)
-    dim_name = cfg.read_dimensions()['chars']
-    station_obj.dimensions.append(dim_name)
-    station_obj.add_metadata("fill_value", '_')
-    max_char = np.max([len(s) for s in station_names])
-    for n,s in enumerate(station_names):
-        if len(s)< max_char:
-            s = s+' '*(max_char-len(s))
-        char_arr = np.array(list(s), 'c')
-        if n == 0:
-            station_name_arr = char_arr
-        else:
-            station_name_arr = np.vstack((station_name_arr, char_arr))
-    station_obj.add_data(station_name_arr)
+    station_obj.add_data(np.array(station_names))
 
 
     #--------------------------------------------------------------------------
@@ -186,9 +170,9 @@ def get_predictors(control, predictor_file, fcst_ref_time, date_range_list, sele
             formatted_pred = create.preprocess_entries(entry_dict, fcst_ref_time)
             for i,lead in enumerate(leads):
                 leads[i] = parse_pred.lead_time(lead)
-                pred = formatted_pred.copy()
-                pred.leadTime = leads[i]
-                pred.search_metadata['lead_time'] = leads[i]
+                pred = copy.deepcopy(formatted_pred)
+                pred['leadTime'] = leads[i]
+                pred['search_metadata']['lead_time'] = leads[i]
                 formatted_predictors.append(pred)
                 leads_list.append(leads[i])
         except KeyError:
@@ -198,9 +182,9 @@ def get_predictors(control, predictor_file, fcst_ref_time, date_range_list, sele
             else:
                 formatted_pred = create.preprocess_entries(entry_dict, fcst_ref_time)
                 for i,j in enumerate(lead_times):
-                    pred = formatted_pred.copy()
-                    pred.leadTime = lead_times[i]
-                    pred.search_metadata['lead_time'] = lead_times[i]
+                    pred = copy.deepcopy(formatted_pred)
+                    pred['leadTime'] = lead_times[i]
+                    pred['search_metadata']['lead_time'] = lead_times[i]
                     formatted_predictors.append(pred)
                     leads_list.append(j)
 
@@ -213,22 +197,10 @@ def get_predictors(control, predictor_file, fcst_ref_time, date_range_list, sele
     # each input range based on list index.
     #-------------------------------------------------------------------------
     # An array to hold all the computed variables for date range
-    computed_vars = [[] for _ in range(len(formatted_predictors))]
-    combined_predictors = []
+    computed_vars = [[] for _ in range(len(control.predictor_data_path))]
     input_len = len(control.predictor_data_path)
+    time_dim_name = cfg.read_dimensions()['time']
     for file_ind, input_file in enumerate(control.predictor_data_path):
-
-
-        #--------------------------------------------------------------------------
-        # Update the database
-        #--------------------------------------------------------------------------
-        # Check to see if the variable table is empty or missing files from the
-        # input path provided in the control file. If it is, then the function will
-        # populate the variable table in the database with the input data provided.
-        file_id = update(input_file)
-        #--------------------------------------------------------------------------
-
-
 
         #--------------------------------------------------------------------------
         # Main loop to fetch/create, apply procedures, and interpolate predictors
@@ -248,53 +220,39 @@ def get_predictors(control, predictor_file, fcst_ref_time, date_range_list, sele
                 raise ValueError
         for date_range in date_range_loop:
 
-
-            # set up date range Loop
+            # create list of times using start, end, and stride times
             start,end,stride = read_pred.parse_range(date_range)
-            start = Time.str_to_datetime(start)
-            end = Time.str_to_datetime(end)
-            stride = timedelta(seconds=int(stride))
+            start = Time.epoch_time(start)
+            end = Time.epoch_time(end)
 
             if start == end: #Then we only have 1 day of data, stacking won't work later
                 date_range_len = 1
             else:
                 date_range_len = 2
 
+            times = list(range(start,end+stride,stride))
+            logging.info("Processing date range beginning on date: "+str(Time.epoch_to_datetime(times[0]))[:10])
 
-            # Create a date iterator.
-            cur = copy.copy(start)
 
-            # Loop through the dates.
-            while cur <= end:
-                logging.info("Processing " + str(cur))
+            # Loop through predictors
+            for n,pred in enumerate(formatted_predictors):
+                logging.info("Property: "+ str(pred['search_metadata']['property']))
+                pred['search_metadata']['reserved1'] = 'grid'
+                # Try to fetch the exact variable asked for
+                variable = read_var(filepath=input_file, forecast_time=times,**pred['search_metadata'])
 
-                # Loop through predictors
-                for n,pred in enumerate(formatted_predictors):
-                    logging.info("Property: "+ str(pred.search_metadata['property']))
-                    pred.search_metadata['reserved1'] = 'grid'
-                    pred.search_metadata['file_id'] = file_id
-                    # Try to fetch the exact variable asked for
-                    variable = fetch(control.predictor_data_path, Time.epoch_time(cur), **pred.search_metadata)
+                # If the call to fetch doesn't find the variable,
+                # then see if it can be calculated.
+                if variable is None:
+                    variable = create.calculate(input_file, times, pred, station_list=selected_stations, station_defs=selected_station_defs)
 
-                    # If the call to fetch doesn't find the variable,
-                    # then see if it can be calculated.
-                    if variable is None:
-                        variable = create.calculate(control.predictor_data_path, Time.epoch_time(cur), pred, station_list=selected_stations, station_defs=selected_station_defs)
+                if isinstance(variable, Camps_data):
+                    # Apply procedures set in the predictor.yaml file to the variable.
+                    variable = procedures.apply_procedures(variable, pred['procedures'], xi_x, xi_y)
+                    # Add leadtime to the camps object.
+                    variable.add_metadata('leadtime', pred['leadTime'])
+                    computed_vars[file_ind].append(variable)
 
-                    if isinstance(variable, Camps_data):
-                        # Apply procedures set in the predictor.yaml file to the variable.
-                        variable = procedures.apply_procedures(variable, pred.procedures, xi_x, xi_y)
-                        # Add leadtime to the camps object.
-                        variable.add_metadata('leadtime', pred.leadTime)
-                        computed_vars[n].append(variable)
-
-                    # Add CAMPS variable object to output array
-                    # NOTE: computed_vars is a list of predictor lists.  Index of
-                    # of computed_vars corresponds to one date range iteration. Each
-                    # containing a list of predictor objects.
-                    #computed_vars[n].append(variable)
-
-                cur += stride
 
         # Check if outfile in control is a list. If yes, determine that length of list
         # is same as length of input files and greater than 1. Then write to each outfile per input file.
@@ -302,38 +260,7 @@ def get_predictors(control, predictor_file, fcst_ref_time, date_range_list, sele
             if len(control.predictor_outfile)==input_len:
                 # Set current output file
                 outfile = control.predictor_outfile[file_ind]
-                # Create a list of CAMPS predictor objects
-                logging.info("Adding variables")
-                # Stack predictor objects by date range iteration
-                for n,i in enumerate(computed_vars):
-                    temp_pred = i[0] # Initialize temp_pred as first of the predictor ojbects
-                    for j in range(1,len(i)): # Now loop over computed_vars list (skipping index 0)
-                        temp_pred += i[j] # Stack objects by date dimension
-                    # If date range is one day, need to force data shape into 2D
-                    if date_range_len == 1:
-                        new_shape = tuple([1, len(temp_pred.data)])
-                        temp_pred.data = temp_pred.data.reshape(new_shape)
-
-                    temp_pred.properties['reserved2'] = leads_list[n%len(leads_list)]
-                    temp_pred.get_result_time().append_result(None)
-                    if 'filepath' in list(temp_pred.metadata.keys()):
-                        fp = temp_pred.metadata.pop('filepath')
-                    combined_predictors.append(temp_pred)
-
-                # Add time dimension to predictor objects
-                time_dim_name = cfg.read_dimensions()['time']
-                [x.dimensions.insert(0, time_dim_name) for x in combined_predictors]
-                # Check units of predictors against international_units dictionary
-                combined_predictors = check_units(combined_predictors)
-                # Add lat, lon and station objects to combined predictor object list
-                combined_predictors.append(lat_obj)
-                combined_predictors.append(lon_obj)
-                combined_predictors.append(station_obj)
-
-                # Write list of objects (combined_predictors) to netcdf file
-                write(combined_predictors, outfile, control.components)
-                computed_vars = [[] for _ in range(len(formatted_predictors))]
-                combined_predictors = []
+                finalize_predictors(outfile, computed_vars[file_ind], lat_obj, lon_obj, station_obj, leads_list, time_dim_name, control.components)
             elif len(control.predictor_outfile)>1 and len(control.predictor_outfile)!=input_len:
                 # If length of output file list greater than 1 but not equal to length of input file list:
                 # raise error
@@ -346,69 +273,51 @@ def get_predictors(control, predictor_file, fcst_ref_time, date_range_list, sele
             outfile = control.predictor_outfile[0]
         else:
             outfile = control.predictor_outfile
-        # Create a list of CAMPS predictor objects
-        logging.info("Adding variables")
-        # Stack predictor objects by date range iteration
-        for n,i in enumerate(computed_vars):
-            temp_pred = i[0] # Initialize temp_pred as first of the predictor ojbects
-            for j in range(1,len(i)): # Now loop over computed_vars list (skipping index 0)
-                temp_pred += i[j] # Stack objects by date dimension
-            # If date range is one day, need to force data shape into 2D
-            if date_range_len == 1:
-                new_shape = tuple([1, len(temp_pred.data)])
-                temp_pred.data = temp_pred.data.reshape(new_shape)
-
-            temp_pred.properties['reserved2'] = leads_list[n%len(leads_list)]
-            temp_pred.get_result_time().append_result(None)
-            if 'filepath' in list(temp_pred.metadata.keys()):
-                fp = temp_pred.metadata.pop('filepath')
-            combined_predictors.append(temp_pred)
+        combined_predictors = []
+        for n,preds in enumerate(computed_vars):
+             if n==0:
+                 combined_predictors.extend(copy.copy(preds))
+                 continue
+             for m,pred in enumerate(preds):
+                 combined_predictors[m] += pred
+             
+        finalize_predictors(outfile, combined_predictors, lat_obj, lon_obj, station_obj, leads_list, time_dim_name, control.components)
 
 
-        # Add time dimension to predictor objects
-        time_dim_name = cfg.read_dimensions()['time']
-        [x.dimensions.insert(0, time_dim_name) for x in combined_predictors]
-        # Check units of predictors against international_units dictionary
-        combined_predictors = check_units(combined_predictors)
-        # Add lat, lon and station objects to combined predictor object list
-        combined_predictors.append(lat_obj)
-        combined_predictors.append(lon_obj)
-        combined_predictors.append(station_obj)
 
-        # Write list of objects (combined_predictors) to netcdf file
-        write(combined_predictors, outfile, control.components)
+def finalize_predictors(outfile,combined_predictors,lat_obj,lon_obj,station_obj,leads_list,time_dim_name,components):
+
+    for n,pred in enumerate(combined_predictors):
+        pred.properties['reserved2'] = leads_list[n%len(leads_list)]
+        if 'filepath' in list(pred.metadata.keys()):
+            fp = pred.metadata.pop('filepath')
+        pred.dimensions.insert(0, time_dim_name)
+    combined_predictors = check_units(combined_predictors)
+
+    combined_predictors.append(lat_obj)
+    combined_predictors.append(lon_obj)
+    combined_predictors.append(station_obj)
+    write(combined_predictors, outfile, components)
+
 
 
 def get_predictands(predictand_file, date_range_list, selected_stations, selected_station_defs, control, lons, lats, lead_times, fcst_ref_time):
     """Puts predictands in fetchable form and fetches."""
 
-    #--------------------------------------------------------------------------
-    # Update the database
-    #--------------------------------------------------------------------------
-    # Check to see if the variable table is empty or missing files from the
-    # input path provided in the control file. If that is the case, then the
-    # function will populate the variable table in the database with the
-    # input data provided.  Retrieve file ids of each predictand input file.
-    file_ids = []
-    for FILE in control.predictand_data_path:
-        file_ids.append(update(FILE))
-
     # Get list of desired predictands from predictand_file
     predictand_list = cfg.read_yaml(predictand_file)
 
     # Loop over date_ranges from control file
-    # creating lists of start, end, and stride times
-    starts, ends, strides = [], [], []
+    # creating lists of desired times from start, end, and stride times
+    times_lists = []
     for date_range in date_range_list:
 
         # Set up time Loop
         start,end,stride = read_pred.parse_range(date_range)
-        start_time = Time.str_to_datetime(start)
-        end_time = Time.str_to_datetime(end)
-        stride_time = timedelta(seconds=int(stride))
-        starts.append(start_time)
-        ends.append(end_time)
-        strides.append(stride_time)
+        start_time = Time.epoch_time(start)
+        end_time = Time.epoch_time(end)
+        times = list(range(start_time,end_time+stride,stride))
+        times_lists.append(times)
 
     # Loop over desired predictands and lead times and fetch for each desired time
     predictands = []
@@ -421,56 +330,57 @@ def get_predictands(predictand_file, date_range_list, selected_stations, selecte
                 logging.error("Either a global list of lead times or a per variable list of lead times must be provided")
                 raise
             leads = copy.copy(lead_times)
-        pred = create.Predictor(entry_dict, fcstRef=fcst_ref_time)
-        if 'Vertical_Coordinate' in list(pred.search_metadata.keys()):
-            vertical_coordinate = pred.search_metadata.pop('Vertical_Coordinate')
-        if 'duration_method' not in pred.search_metadata:
-            pred.search_metadata['duration_method'] = None
-        pred.search_metadata['vert_coord1'] = parse_pred.vertical_coordinate(vertical_coordinate)['layer1']
-        logging.info('entry_dict is:'+str(pred.search_metadata))
-        Source = list(pred.search_metadata.pop('Source'))
+        pred = {}
+        pred.update({'search_metadata' : entry_dict})
+        pred.update({'fcst_ref_time' : fcst_ref_time})
+        pred['search_metadata'].update({'property' : parse_pred.observedProperty(pred['search_metadata'].get('property'))})
+        if 'Vertical_Coordinate' in list(pred['search_metadata'].keys()):
+            vertical_coordinate = pred['search_metadata'].pop('Vertical_Coordinate')
+        if 'Duration' in pred['search_metadata'].keys():
+            duration = pred['search_metadata'].pop('Duration')
+            pred['search_metadata'].update({'duration' : parse_pred.duration(duration)['time']})
+        if 'duration_method' not in pred['search_metadata'].keys():
+            pred['search_metadata'].update({'duration_method' : None})
+        pred['search_metadata']['vert_coord1'],pred['search_metadata']['vert_units'] = parse_pred.vertical_coordinate(vertical_coordinate).values()
+        logging.info('entry_dict is:'+str(pred['search_metadata']))
+        Source = list(pred['search_metadata'].pop('Source'))
         # Loop over file_ids associated with predictand input files
         source_vars = []
-        for n,file_id in enumerate(file_ids):
+        for n,filepath in enumerate(control.predictand_data_path):
             variables = []
-            pred.search_metadata['file_id'] = file_id  #needed for fetching
-            pred.search_metadata['source'] = Source[n] #needed for fetching
+            pred['search_metadata'].update({'source' : Source[n]}) #needed for fetching
             for j,L in enumerate(leads):
-                pred.leadTime = L
-                # Loop over list of start times and
+                pred.update({'leadTime' : L})
                 # Adjust start and end time based on desired forecast lead time
-                for Ti,T in enumerate(starts):
-                    start_time2 = T + timedelta(seconds=int(L*3600))
-                    end_time2 = ends[Ti] + timedelta(seconds=int(L*3600))
-                    times = np.arange(start_time2,end_time2+strides[Ti],strides[Ti])
+                for Ti,T in enumerate(times_lists):
+                    times2 = [t + int(L*3600) for t in T]
                     # Fetch variable for each desired time
-                    vars_arr = fetch_many_dates(control.predictand_data_path, start_time2, end_time2, stride_time, pred.search_metadata)
-                    # If vars_arr has any empty values, attempt to create desired predictand.
-                    if None in vars_arr:
-                        for i,t in enumerate(times):
-                            vars_arr[i] = create.calculate(control.predictand_data_path, Time.epoch_time(t.astype(datetime)), pred, station_list=selected_stations, station_defs=selected_station_defs)
+                    vars_arr = read_var(filepath=filepath, forecast_time=times2,**pred['search_metadata'])
+                    if vars_arr is None:
+                        vars_arr = create.calculate(filepath, times2, pred, station_list=selected_stations, station_defs=selected_station_defs)
 
                     variables.append(vars_arr)
 
             # Combine vars from different lead times into single list
-            vars_arr = [var for sub_var in variables for var in sub_var if var is not None]
+            vars_arr = [sub_var for sub_var in variables if sub_var is not None]
             if len(vars_arr)==0:
                 logging.error('\nCould not create any data for predictand %02dZ %s from source  %s!',\
-                    int(pred.fcst_ref_time),entry_dict['property'],Source[n])
+                    int(pred.get('fcst_ref_time'),entry_dict.get('property'),Source[n]))
             # Combine vars from different sources into a single list
             source_vars.append(vars_arr)
 
-        if all(all(v.data.data==9999) for var in source_vars for v in var):
+        if all(np.all(v.data.data==9999) for var in source_vars for v in var):
             logging.warning("No valid returns for predictand: "+pred.search_metadata['property']+". Not writing out.")
             continue
         else:
             # Process_vars checks pulled station data against station list and then stack each by time
             predictand,stations, latitudes, longitudes = process_vars(selected_stations, source_vars, lats, lons)
-        # Set prov_used based on all sources used
-        prov_used = predictand.metadata.pop('PROV__Used')
-        predictand.metadata['PROV__Used'] = ' '.join(Source)
+        # Set prov_hadPrimarySource based on all sources used
+        prov_hPS = predictand.metadata.pop('PROV__hadPrimarySource')
+        predictand.metadata['PROV__hadPrimarySource'] = ' '.join(Source)
         # Remove filepath from metadata and append object to predictands list
-        filepath = predictand.metadata.pop('filepath')
+        if 'filepath' in predictand.metadata.keys():
+            filepath = predictand.metadata.pop('filepath')
         predictands.append(predictand)
 
     # Check to be sure at least 1 predictand object was created. If not, raise error
@@ -483,21 +393,10 @@ def get_predictands(predictand_file, date_range_list, selected_stations, selecte
         # Station object
         station_names = stations
         station_dim = cfg.read_dimensions()['nstations']
-        station_obj = Camps_data('station')
+        station_obj = Camps_data('stations')
         station_obj.dimensions.append(station_dim)
-        dim_name = cfg.read_dimensions()['chars']
-        station_obj.dimensions.append(dim_name)
         station_obj.add_metadata("fill_value", '_')
-        max_char = np.max([len(s) for s in station_names])
-        for n,s in enumerate(station_names):
-            if len(s)< max_char:
-                s = s+' '*(max_char-len(s))
-            char_arr = np.array(list(s), 'c')
-            if n == 0:
-                station_name_arr = char_arr
-            else:
-                station_name_arr = np.vstack((station_name_arr, char_arr))
-        station_obj.add_data(station_name_arr)
+        station_obj.add_data(station_names)
 
         # latitude object
         lat_obj = Camps_data('latitude')
@@ -531,7 +430,7 @@ def process_vars(selected_stations, var_list, lats, lons):
         # Check whether length of station names is 4 or 5 characters
         # and adjust accordingly
         if len(selected_stations[0])==4:
-            intersected_stations = functools.reduce(np.intersect1d, all_stations)
+            intersected_stations = np.array(functools.reduce(np.intersect1d, all_stations))
             indices = np.in1d(intersected_stations,list(selected_stations))
             indices2 = np.in1d(list(selected_stations),intersected_stations)
         elif len(selected_stations[0])==5:
@@ -550,20 +449,24 @@ def process_vars(selected_stations, var_list, lats, lons):
         # Loop over array of times and then stack the variables together
         phenom_times = []
         for i,var in enumerate(vars_arr):
-            if len(var.data)==len(indices2):
-                var.data = var.data[indices2][uniq_ind]
-            elif len(var.data)==len(indices):
-                var.data = var.data[indices][uniq_ind]
+            if var.data.shape[1]==len(indices2):
+                var.data = var.data[:,indices2][:,uniq_ind]
+            elif var.data.shape[1]==len(indices):
+                var.data = var.data[:,indices][:,uniq_ind]
+            if var.location is not None:
+                var.location.set_stations(stations)
 
             if i==0:
                 stacked_data = var
-                phenom_times.append(var.get_phenom_time().data[0])
+                phenom_times.extend(var.get_phenom_time().data)
             else:
-                if var.get_phenom_time().data[0] in phenom_times:
-                    continue
+                phenom_inds = np.where(~np.isin(var.get_phenom_time().data,phenom_times))[0]
+                if len(phenom_inds)==0: continue
                 else:
+                    var.data = var.data[phenom_inds,:]
+                    var.get_phenom_time().data = var.get_phenom_time().data[phenom_inds]
                     stacked_data += var
-                    phenom_times.append(var.get_phenom_time().data[0])
+                    phenom_times.extend(var.get_phenom_time().data)
                     # Compare metadata of var with stacked_data.
                     if stacked_data.location is None:
                         stacked_data.location = copy.copy(var.location)
@@ -590,10 +493,13 @@ def process_vars(selected_stations, var_list, lats, lons):
         out_var = out_vars[0]
     elif len(out_vars) > 1:
         out_var = combine_source(out_vars)
+
+    out_t_inds = np.argsort(out_var.time[0].data)
+    out_var.time[0].data = out_var.time[0].data[out_t_inds]
+    out_var.data = out_var.data[out_t_inds,...]
     stations = np.array(selected_stations)[latlon_indices]
     lats = np.array(lats)[latlon_indices]
     lons = np.array(lons)[latlon_indices]
-
     return (out_var, stations, lats, lons)
 
 
@@ -603,9 +509,18 @@ def combine_source(in_vars):
     """
 
     out_var = in_vars[0]
+    sta = out_var.location.get_stations()
     for n in range(1,len(in_vars)):
         out_var.data = np.concatenate((out_var.data,in_vars[n].data),axis=1)
         [out_var.add_process(proc.name) for proc in in_vars[n].processes if proc.name not in out_var.get_process_str()]
+        # Join station information together
+        sta = np.concatenate((sta,in_vars[n].location.get_stations()),axis=0)
+    # Sort compiled stations and the data
+    sta_ind = np.argsort(sta)
+    sta = sta[sta_ind]
+    out_var.data = out_var.data[...,sta_ind]
+    out_var.location.set_stations(sta)
+
 
     return out_var
 
@@ -628,7 +543,6 @@ def check_units(pred):
         p_name = p.get_observedProperty()
         p_data = np.ma.getdata(p.data)
         p_mask = np.ma.getmaskarray(p.data)
-
         try:
             p_units = p.units
         except:
@@ -646,6 +560,7 @@ def check_units(pred):
 
         if p_units != int_units:
             logging.info("pred units, "+p_units+", do not match unit standards, "+int_units+". Converting.")
+            p_data = np.ma.array(p_data).astype(np.float)
             p_data[:] = convert_units(p_data,p_name,p_units,int_units,Q)
             p.units = int_units
             p.metadata['units'] = int_units

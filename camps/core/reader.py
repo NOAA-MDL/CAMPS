@@ -3,32 +3,30 @@ import numpy as np
 from netCDF4 import Dataset
 import pdb
 import logging
+import copy
 
 from . import Time
 from .Camps_data import Camps_data
 from .Process import Process
 from .Location import Location
+from ..registry import constants as const
 
 
 """Module: reader.py
 
 Methods:
     read
-    add_metadata_from_netcdf_variable
     read_var
+    get_var
     get_location
     subset_time
     create_time
-    reduce_time
     get_procedures
     get_times
     get_coordinate
     removeTime
     get_metadata
     parse_list_attribute_string
-    separate_procedure_and_data
-    separate_time_and_data
-    separate_coordinate_and_data
 """
 
 
@@ -36,14 +34,13 @@ ancil_name = 'ancillary_variables'
 file_cache = {}
 
 def read(*filenames):
-    """This key function reads the netCDF4 files in an inputted list and
+    """This function reads the netCDF4 files in an inputted list and
     creates a list of camps data objects, where each camps data object
-    corresponds to a read netCDF4 variable.
+    corresponds to a read netCDF4 primary variable.
 
-    Note that the predictor variables are seperated
-    from their metadata.  But the metadata is not put
-    in the camps data object!!!  The method read_var
-    fills in the missing metadata.
+    For data variables, the method read_var is called to create the objects
+    and populate the metadata and data. Coordinate variables are created and
+    populated seperately.
 
     Args:
         *filenames (list of str): list of paths to source netCDF4 files
@@ -58,45 +55,23 @@ def read(*filenames):
     for filename in filenames:
         nc = Dataset(filename, mode='r', format="NETCDF4")
         variables_dict = nc.variables
-        #Cull the process variables, the time variables, and the coordinate
-        #variables out of the dictionary of netCDF4 file variables, leaving
-        #a dictionary of primary netCDF4 variables to be input for creating
-        #camps data objects.  Order of culling is important.
-        procedures, variables_dict = separate_procedure_and_data(
-            variables_dict)
-        times, variables_dict = separate_time_and_data(variables_dict)
-        coordinates, variables_dict = separate_coordinate_and_data(
-            variables_dict)
-        nc.close()
 
-        #Append the list of camps data objects, one element
-        #per primary netCDF4 variable in the current netCDF4 file.
-        for varname,vardata in variables_dict.items():
-            logging.info("Reading "+str(varname))
-            w_obj = read_var(filename, varname) #create the camps data object
-            camps_data.append(w_obj)            #and append it to the list.
+        primary_list = nc.primary_variables.split()
+        nc.close()
+        for var_name in primary_list:
+            if var_name in ['x','y','latitude','longitude','station'] or 'grid' in var_name:
+                w_obj = Camps_data(var_name)
+                w_obj.data = nc.variables[var_name][:]
+                w_obj.dimensions = nc.variables[var_name].dimensions
+                camps_data.append(w_obj)
+                continue
+            w_obj = read_var(filename,name=var_name)
+            camps_data.append(w_obj)
 
     return camps_data
 
 
-def add_metadata_from_netcdf_variable(nc_var, camps_obj):
-    """Fill the metadata dictonary of the camps data object with the relevant
-    metadata of the netcdf variable.
-
-    Args:
-        nc_var (:obj:Dataset.Variable): netCDF4 Dataset variable to pull metadata.
-        camps_obj (:obj:Camps_data): Camps_data object to add metadata.
-    """
-
-    metadata_exceptions = ['_FillValue'] #includes irrelevant keys
-    metadata_keys = nc_var.ncattrs()
-    for key in metadata_keys:
-        if key not in metadata_exceptions:
-            value = nc_var.getncattr(key)
-            camps_obj.add_metadata(key, value)
-
-
-def read_var(filepath, name, lead_time=None, forecast_time=None):
+def read_var(filepath, name=None, lead_time=None, forecast_time=None, retrieve_mult=False, **metadata_dict):
     """Constructs and returns a Camps_data object of a primary netCDF4 variable.
     The variable data will be sliced at lead and forecast reference times if
     specified.
@@ -108,6 +83,8 @@ def read_var(filepath, name, lead_time=None, forecast_time=None):
             Can subset data by its value.  Relevant only for forecast variables.
         forecast_time (optional, int): forecast reference time in epoch seconds.
             Can subset data by its value.
+        retrieve_mult (optional, bool): whether retrieval of multiple variables is allowed.
+            If set to False and multiple variables are retrieved, will result in an error.
 
     Returns:
         w_obj (Camps_data)
@@ -119,29 +96,51 @@ def read_var(filepath, name, lead_time=None, forecast_time=None):
     else:
         nc = Dataset(filepath, mode='r', format="NETCDF4")
         file_cache[filepath] = {'filehandle':nc}
-    nc_var = nc.variables[name] #Reference of the variable of interest.
-    
-    #If lead_time is not None then it needs to be in seconds here
-    if lead_time is not None:
-        lead_time = lead_time*3600
 
-    ancil_vars = nc_var.getncattr(ancil_name).split(' ')
+    if name is None: nc_vars = get_var(nc, metadata_dict)
+    else: nc_vars = [nc.variables[name]]
 
-    name = nc_var.getncattr("OM__observedProperty")
-    w_obj = Camps_data(name, autofill=False)
+    if nc_vars is None: return None
+    if len(nc_vars)==0: return None
+    elif len(nc_vars)>1 and retrieve_mult!=True:
+        logging.error("more than 1 variable returned in get_var. Check desired metadata")
+        raise ValueError
+    w_objs = []
+    for nc_var in nc_vars:
+        logging.info("Retrieving "+nc_var.name) 
+        #If lead_time is not None then it needs to be in seconds here
+        if lead_time is not None:
+            lead_time = lead_time*3600
 
-    #Fill metadata dictionary
-    metadata_exceptions = ['_FillValue']
-    metadata_keys = nc_var.ncattrs()
-    for key in metadata_keys:
-        if key not in metadata_exceptions:
-            value = nc_var.getncattr(key)
-            w_obj.add_metadata(key, value)
+        ancil_vars = nc_var.getncattr(ancil_name).split(' ')
+        aux_coord_vars = nc_var.getncattr(const.COORD).split(' ')
 
-    #Fill in list of preprocesses from two sources: the read variable's
-    #preprocesses and processes
-    try:
-        p_string = nc_var.getncattr('PROV__wasInformedBy')
+        name = nc_var.getncattr("SOSA__observedProperty")
+        w_obj = Camps_data(name, autofill=False)
+
+        #Fill metadata dictionary
+        metadata_exceptions = ['_FillValue']
+        metadata_keys = nc_var.ncattrs()
+        for key in metadata_keys:
+            if key not in metadata_exceptions:
+                value = nc_var.getncattr(key)
+                w_obj.add_metadata(key, value)
+
+        #Fill in list of preprocesses from two sources: the read variable's
+        #preprocesses and processes
+        try:
+            p_string = nc_var.getncattr('PROV__wasInformedBy')
+            procedures = parse_list_attribute_string(p_string)
+            for ip, p in enumerate(procedures):
+                p = str(p)
+                w_obj.add_preprocess(p)
+                attributes = nc.variables[p].ncattrs()
+                for attr in attributes:
+                    if attr not in list(w_obj.preprocesses[ip].attributes.keys()):
+                        w_obj.preprocesses[ip].add_attribute(attr, nc.variables[p].getncattr(attr))
+        except AttributeError:
+            pass
+        p_string = nc_var.getncattr('SOSA__usedProcedure')
         procedures = parse_list_attribute_string(p_string)
         for ip, p in enumerate(procedures):
             p = str(p)
@@ -150,115 +149,154 @@ def read_var(filepath, name, lead_time=None, forecast_time=None):
             for attr in attributes:
                 if attr not in list(w_obj.preprocesses[ip].attributes.keys()):
                     w_obj.preprocesses[ip].add_attribute(attr, nc.variables[p].getncattr(attr))
-    except AttributeError:
-        pass
-    p_string = nc_var.getncattr('SOSA__usedProcedure')
-    procedures = parse_list_attribute_string(p_string)
-    for ip, p in enumerate(procedures):
-        p = str(p)
-        w_obj.add_preprocess(p)
-        attributes = nc.variables[p].ncattrs()
-        for attr in attributes:
-            if attr not in list(w_obj.preprocesses[ip].attributes.keys()):
-                w_obj.preprocesses[ip].add_attribute(attr, nc.variables[p].getncattr(attr))
 
-    #Grab the netCDF4 time variables and then, create and insert time
-    #objects into the camps data object.
-    t_names = []
-    for v in ancil_vars:
-        if 'Time' in v or '_time' in v:
-            nc_time = nc.variables[v]
-            t_obj = create_time(nc_time, lead_time, forecast_time)
-            w_obj.time.append(t_obj)
-            t_names.append(t_obj.name)
+        #Grab the netCDF4 time variables and then, create and insert time
+        #objects into the camps data object.
+        t_names = []
+        for v in ancil_vars:
+            if 'Time' in v or '_time' in v:
+                nc_time = nc.variables[v]
+                t_obj = create_time(nc_time, lead_time, forecast_time)
+                w_obj.time.append(t_obj)
+                t_names.append(t_obj.name)
 
-    #Check if lead_time is in the LeadTime object for a forecast
-    #netCDF4 variable.  But first check if forecast reference time exists.
-    #If either do not, return None.
-    if forecast_time is not None and w_obj.is_model():
-        try:
+        #Check if lead_time is in the LeadTime object for a forecast
+        #netCDF4 variable.  But first check if forecast reference time exists.
+        #If either do not, return None.
+        if forecast_time is not None and w_obj.is_model():
             i = t_names.index('FcstRefTime')
-            j = list(w_obj.time[i].data[:]).index(forecast_time)
-        except ValueError:
-            logging.info("Specified forecast reference time not found.")
-            return None
-        if lead_time is not None:
-            i = t_names.index('LeadTime')
-            try:
-                j = list(w_obj.time[i].data[:]).index(lead_time)
-            except ValueError:
-                logging.info("Specified lead time not found")
-                return None
+            if isinstance(forecast_time,list):
+                j = np.where(np.isin(w_obj.time[i].data[:],forecast_time))[0]
+                if len(j)==0:
+                    logging.info("Specified forecast reference times not found.")
+                    return None
+            else:
+                try:
+                    j = list(w_obj.time[i].data[:]).index(forecast_time)
+                except ValueError:
+                    logging.info("Specified forecast reference time not found.")
+                    return None
+            if lead_time is not None:
+                i = t_names.index('lead_times')
+                try:
+                    j = list(w_obj.time[i].data[:]).index(lead_time)
+                except ValueError:
+                    logging.info("Specified lead time not found")
+                    return None
 
-    #Get coordinates
-    coord_vars = []
-    try:
-        coord_vars = [x.strip(' ') for x in nc_var.getncattr('coordinates').split(' ')]
-    except:
-        pass # No coordinate attribute in nc_var
+        #Get coordinates
+        coord_vars = []
+        try:
+            coord_vars = [x.strip(' ') for x in nc_var.getncattr('coordinates').split(' ')]
+        except:
+            pass # No coordinate attribute in nc_var
 
-    #Get locations, be it stations or gridpoints.
-    location = get_location(filepath, nc, coord_vars)
-    w_obj.location = location
+        #Get locations, be it stations or gridpoints.
+        location = get_location(filepath, nc, coord_vars)
+        w_obj.location = location
+        #Fill out the camps data objects properties dictionary.
+        try:
+            nc_coord = nc.variables[w_obj.vertical_coord]
+        except:
+            logging.warning("can't find vertical coordinate information for " + w_obj.name)
+        try: #first treat as bounded level, will error out if it is a single level
+            w_obj.properties['coord_val1'] = np.array(nc_coord[:].data[0][0])
+            w_obj.properties['coord_val2'] = np.array(nc_coord[:].data[0][1])
+        except: #if it is not bounded then it is a single level
+            w_obj.properties['coord_val'] = nc_coord[0]
 
-    #This loop is over our coordinates list which is either [plev(elev), x, y] or [plev(elev), stations]
-    #I don't see a reason to loop here.  If our level is always the first in the list then we can just
-    #access it directly.  I added an if statement just to be safe though.  Otherwise it messes up
-    #the bounded level variables.
-    #----------------------------------------------------------------------------------------
-    #Fill out the camps data objects properties dictionary.
-    for c in coord_vars: #I don't think we need to be looping here.  Why would we need coord info on stations?
-        if 'lev' in c:   #Pick out the level from coordinate list
-            try:
-                nc_coord = nc.variables[c]
-            except:
-                logging.warning("can't find " + str(c))
-                continue
+        #If 'hours' is an attribute of the netCDF4 variable,
+        #insert its key/value pair into the properties dictionary
+        #of the camps data object.
+        if 'hours' in metadata_keys:
+            value = nc_var.getncattr('hours')
+            w_obj.properties['hours'] = value
 
-            try: #first treat as bounded level, will error out if it is a single level
-                w_obj.properties['coord_val1'] = np.array(nc_coord[:].data[0][0])
-                w_obj.properties['coord_val2'] = np.array(nc_coord[:].data[0][1])
-            except: #if it is not bounded then it is a single level
-                w_obj.properties['coord_val'] = nc_coord[0]
+        #'leadtime' is an attribute of a forecast netCDF4 variable.
+        #Insert its key/value pair into the properties dictionary
+        #of the camps data object.
+        if 'leadtime' in metadata_keys:
+            value = nc_var.getncattr('leadtime')
+            w_obj.properties['reserved2'] = value
+        #----------------------------------------------------------------------------------------
 
-    #If 'hours' is an attribute of the netCDF4 variable,
-    #insert its key/value pair into the properties dictionary
-    #of the camps data object.
-    if 'hours' in metadata_keys:
-        value = nc_var.getncattr('hours')
-        w_obj.properties['hours'] = value
+        #Add Dimensions.  Must be added before the data is added.
+        w_obj.dimensions = list(nc_var.dimensions) #change to list so we can edit this
 
-    #'leadtime' is an attribute of a forecast netCDF4 variable.
-    #Insert its key/value pair into the properties dictionary
-    #of the camps data object.
-    if 'leadtime' in metadata_keys:
-        value = nc_var.getncattr('leadtime')
-        w_obj.properties['reserved2'] = value
-    #----------------------------------------------------------------------------------------
+        #Store the netCDF4 variable data.  If lead time or forecast reference time exist,
+        #slice along that time before storing in the camps data object.
+        if lead_time is None and forecast_time is None:
+            w_obj.data = nc_var[:]
+        else:
+            w_obj = subset_time(w_obj, nc_var, lead_time, forecast_time)
 
-    #Add Dimensions.  Must be added before the data is added.
-    w_obj.dimensions = list(nc_var.dimensions) #change to list so we can edit this
+        w_objs.append(w_obj)
 
-    #Store the netCDF4 variable data.  If lead time or forecast reference time exist,
-    #slice along that time before storing in the camps data object.
-    if lead_time is None and forecast_time is None:
-        w_obj.data = nc_var[:]
+    if len(w_objs)==1: return w_objs[0]
+    elif len(w_objs)>1 and retrieve_mult==True: return w_objs
+
+
+
+# Function to retrieve a desired variable based on supplied metadata
+def get_var(nc, metadata_dict):
+    """ Retrieve variables from netcdf dataset object (nc) based on supplied
+    metadata (metadata_dict).
+    """
+
+    if 'vert_coord2' not in metadata_dict.keys():
+        levs = nc.get_variables_by_attributes(units=metadata_dict['vert_units'],axis='Z')
+        levs = [lev for lev in levs if lev.size==1]
+        levs = [lev.name for lev in levs if lev[:]==metadata_dict['vert_coord1']]
     else:
-        w_obj = subset_time(w_obj, nc_var, lead_time, forecast_time)
+        levs = nc.get_variables_by_attributes(units=metadata_dict['vert_units'],axis='Z',long_name='pressure layer bounds')
+        levs = [lev.name for lev in levs if lev[0,0]==metadata_dict['vert_coord1'] and lev[0,1]==metadata_dict['vert_coord2']]
 
-    return w_obj
+    # Construct a coordinate attribute string based on determined level and whether desired variable is grid or station data
+    if len(levs)==0: return None
+    elif len(levs)>1:
+        logging.error("more than 1 level returned in get_var. Check desired metadata.")
+        raise ValueError
+    vert_coord = levs[0]
+
+    # Create dictionary to populate with search criteria for get_variables_by attributes function
+    variable_search_dict = {}
+    variable_search_dict['SOSA__observedProperty'] = metadata_dict['property']
+    variable_search_dict[const.VERT_COORD] = vert_coord
+    if 'reserved2' in metadata_dict.keys():
+        variable_search_dict['leadtime'] = metadata_dict['reserved2']
+
+    # Search for desired variable based on the observed Property, the coordinates, and the duration.
+    #if 'duration_method' in metadata_dict.keys():
+    #    variable_search_dict['hours']=metadata_dict['duration']
+    #    variable_search_dict['cell_methods']='default_time_coordinate_size: '+metadata_dict['duration_method']
+    #    potential_variables = nc.get_variables_by_attributes(**variable_search_dict)
+    #else
+    #    potential_variables = nc.get_variables_by_attributes(**variable_search_dict)
+    #    potential_variables = [v for v in potential_variables if 'instant' in v.name]
+    if 'duration' in metadata_dict.keys():
+        if metadata_dict['duration']!=0:
+            variable_search_dict['hours']=metadata_dict['duration']
+            variable_search_dict['cell_methods']='phenomenonTime: '+metadata_dict['duration_method']
+            potential_variables = nc.get_variables_by_attributes(**variable_search_dict)
+        elif metadata_dict['duration']==0:
+            potential_variables = nc.get_variables_by_attributes(**variable_search_dict)
+            potential_variables = [v for v in potential_variables if 'instant' in v.name]
+    else:
+        potential_variables = nc.get_variables_by_attributes(**variable_search_dict)
+    potential_variables = [var for var in potential_variables if var.name in nc.getncattr('primary_variables').split()]
+    return potential_variables
 
 
 def get_location(filename, nc, coord_vars):
     """Create a location object for a camps data object from
     the location information in a netCDF4 file.
     """
-
     if file_cache[filename] and 'location' in file_cache[filename]:
-        return file_cache[filename]['location']
+        return copy.copy(file_cache[filename]['location'])
 
     locations = []
     for c in coord_vars:
+        if 'time' in c or 'Time' in c: continue
         try:
             nc_coord = nc.variables[c]
         except:
@@ -267,10 +305,15 @@ def get_location(filename, nc, coord_vars):
         coord_len = len(nc_coord[:])
         if coord_len > 2: # location data
             locations.append(nc_coord)
+            if 'stations' in nc_coord.dimensions:
+                add_coord = nc.variables['stations']
+                if add_coord not in locations:
+                    locations.append(add_coord)
+            
 
     location_obj = Location(*locations)
     if location_obj.location_data:
-        file_cache[filename]['location'] = location_obj
+        file_cache[filename]['location'] = copy.copy(location_obj)
 
     return location_obj
 
@@ -317,9 +360,6 @@ def subset_time(w_obj, nc_var, lead_time, time):
     if time is not None and w_obj.is_model():
         p_time = w_obj.get_forecast_reference_time()
         p_time_index = p_time.get_index(time)
-        #Get rid of time dimension in object
-        index = [i for i, s in enumerate(w_obj.dimensions) if 'default_time' in s]
-        w_obj.dimensions.pop(index[0])
     #Search phenomenon time variable for proper index for an observed variable
     elif time is not None and w_obj.is_vector():
         p_time = w_obj.get_phenom_time()
@@ -337,7 +377,6 @@ def subset_time(w_obj, nc_var, lead_time, time):
             data = nc_var[:][p_time_index,:,:,:]
     elif w_obj.is_vector():
         data = nc_var[:][p_time_index,:]
-
     w_obj.data = data
 
     # Subset the time objects
@@ -350,11 +389,14 @@ def subset_time(w_obj, nc_var, lead_time, time):
             lead_time_index = dimensions.index('lead_times')
             slice_arr[lead_time_index] = slice(l_time_index, l_time_index+1)
 
-        if 'default_time_coordinate_size' in dimensions and time is not None:
-            fcst_time_index = dimensions.index('default_time_coordinate_size')
-            slice_arr[fcst_time_index] = slice(p_time_index, p_time_index+1)
+        if 'phenomenonTime' in dimensions and time is not None:
+            fcst_time_index = dimensions.index('phenomenonTime')
+            if len(p_time_index)>1:
+                slice_arr[fcst_time_index] = slice(p_time_index[0],p_time_index[-1]+1,np.diff(p_time_index)[0])
+            else:
+                slice_arr[fcst_time_index] = slice(p_time_index[0], p_time_index[-1]+1)
 
-        if t.name == 'OM__phenomenonTimeInstant':
+        if t.name == 'phenomenonTimes':
             t.data = t.data[slice_arr].ravel()
         else:
             t.data = t.data[slice_arr]
@@ -376,10 +418,8 @@ def create_time(nc_variable, lead_time=None, fcst_time=None):
     """
 
     time_switch = {
-            'OM__phenomenonTime' : Time.PhenomenonTime,
-            'OM__phenomenonTimePeriod' : Time.PhenomenonTimePeriod,
-            'ValidTime' : Time.ValidTime,
-            'OM__resultTime' : Time.ResultTime,
+            'SOSA__phenomenonTime' : Time.PhenomenonTime,
+            'phenomenonTimePeriod' : Time.PhenomenonTimePeriod,
             'FcstRefTime' : Time.ForecastReferenceTime,
             'LeadTime' : Time.LeadTime
             }
@@ -394,6 +434,7 @@ def create_time(nc_variable, lead_time=None, fcst_time=None):
                 t_class = time_switch[role_bn]
         if t_class is None:
             raise Exception("Could not find defined class in role str: " + str(roles))
+    if 'Period' in nc_variable.name and t_class==Time.PhenomenonTime: t_class=Time.PhenomenonTimePeriod
     t_obj =  t_class(data=nc_variable[:])
 
     #add metadata to the time object
@@ -407,28 +448,6 @@ def create_time(nc_variable, lead_time=None, fcst_time=None):
 
     return t_obj
 
-
-#NOTE: This function is incomplete and thus commented out.
-#The intended algorithm is coded at the end of the function subset_time.
-#def reduce_time(time_objs):
-#    """It is assumed that the data has been sliced at a certain lead time or
-#    forecast reference time (phenomenon time) for a forecast (observation) variable.
-#    This function deletes the corresponding time dimensions in the time objects
-#    of the camps data object.
-#    """
-#
-#    slice_arr = [slice(None)]*t_obj.data.ndim
-#    if 'lead_times' in nc_variable.dimensions:
-#        lead_time_index = nc_variable.dimensions.index('lead_times')
-#        slice_arr[lead_time_index] = None
-#    if 'default_time_coordinate_size' in nc_variable.dimensions:
-#        fcst_time_index = nc_variable.dimensions.index('default_time_coordinate_size')
-#        slice_arr[fcst_time_index ] = None
-#
-#        t_obj.data.slice(empty_slice) #empty_slice is undefined
-#    #l_time = w_obj.get_lead_time()
-#    #l_time_index = l_time.get_index(lead_time)
-#    #empty_slice
 
 
 def get_procedures(nc_variable, procedures_dict):
@@ -619,89 +638,3 @@ def parse_list_attribute_string(process_string):
 
     return processes
 
-
-def separate_procedure_and_data(variables_dict):
-    """Divides a dictionary of netCDF4 variables into a dictionary of netCDF4
-    Process variables and a dictionary of the remaining netCDF4 variables.
-    Returns a tuple of these two dictionaries.
-
-    Args:
-        variables_dict (:dict: of NetCDF.Dataset.Variable): Where the key is the name
-                of the nc variable, and the value is the netCDF4 variable object
-
-    Returns:
-        (:tuple: of dict): Where,
-                index[0] is a dictionary of netCDF4 Process variables.
-                index[1] is a dictionary of the remaining netCDF4 variables.
-    """
-
-    process_identifier = 'PROV__Activity'
-    process_dict = {}
-    var_dict = {}
-    for var_name, variable in variables_dict.items():
-        if process_identifier in set(variable.ncattrs()):
-            process_dict[var_name] = variable
-        else:
-            var_dict[var_name] = variable
-
-    return (process_dict, var_dict)
-
-
-def separate_time_and_data(variables_dict):
-    """Divides a dictionary of netCDF4 variables into a dictionary of netCDF4
-    Time variables and a dictionary of the remaining netCDF4 variables.
-    Returns a tuple of the two dictionaries.
-
-    Args:
-        variables_dict (:dict: of NetCDF.Dataset.Variable): Where the key is the name
-                of the nc variable, and the value is the netCDF4 variable object
-
-    Returns:
-        (:tuple: of dict): Where,
-                index[0] is a dictionary of netCDF4 Time variables.
-                index[1] is a dictionary of the remaining netCDF4 variables.
-    """
-
-    time_identifiers = ['Time','time','begin_end_size']
-    time_dict = {}
-    var_dict = {}
-    for name, var in variables_dict.items():
-        for identifier in time_identifiers:
-            if identifier in name:
-                time_dict[name] = var
-                break
-            else:
-                var_dict[name] = var
-
-    return (time_dict, var_dict)
-
-
-def separate_coordinate_and_data(variables_dict):
-    """Divides a dictionary of netCDF4 variables into a dictionary of netCDF4
-    variables with the 'OM__observedProperty' attribute, usually a netCDF4 primary
-    variable, and a dictionary of the remaining netCDF4 variables.  The code
-    block above that calls these 'separate_...' functions calls this function when
-    all that is left in variables_dict is the observed property attribute and
-    coordinates.  Returns a tuple of these two dictionaries.
-
-    Args:
-        variables_dict (:dict: of NetCDF.Dataset.Variable): Where the key is the name
-                of the nc variable, and the value is the netCDF4 variable object
-
-    Returns:
-        (:tuple: of dict): Where,
-                index[0] is a dictionary of netCDF4 variables that do not have
-                    the attribute 'OM__observedProperty'.
-                index[1] is a dictionary of netCDF4 variables with the attribute
-                    'OM__observedProperty'
-    """
-
-    coordinate_dict = {}
-    var_dict = {}
-    for name, var in variables_dict.items():
-        if 'OM__observedProperty' not in var.ncattrs():
-            coordinate_dict[name] = var
-        else:
-            var_dict[name] = var
-
-    return (coordinate_dict, var_dict)

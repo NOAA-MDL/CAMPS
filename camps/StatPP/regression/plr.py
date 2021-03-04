@@ -464,7 +464,7 @@ def make_consistent_dims(predictors, predictands):
     all_locs = []
     all_vars = predictands + predictors
     for var in all_vars:
-        if var.dimensions.index('number_of_stations') == 0:
+        if var.dimensions.index('stations') == 0:
             var.data = var.data.T
     pred_stations = predictors[0].location.get_stations()
     tand_stations = predictands[0].location.get_stations()

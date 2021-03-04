@@ -79,8 +79,5 @@ class Location(nc_writable):
             return self.station
 
         for i in self.location_data:
-            if i.name == 'station':
-                if isinstance(i[:][0][0], str):
-                    return netCDF4.chartostring(i[:].astype('S1'))
-                else:
-                    return netCDF4.chartostring(i[:])
+            if i.name == 'stations':
+                return i[:]
