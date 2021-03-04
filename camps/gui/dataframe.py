@@ -9,12 +9,10 @@ from collections import OrderedDict
 import pdb
 
 from ..core.reader import read
-from ..registry.db.update_db import update
 from ..registry import util as cfg
 from ..mospred import read_pred as read_pred
 from ..mospred import parse_pred as parse_pred
 from ..core import Time as Time
-from ..core.fetch import *
 from ..mospred import create
 
 def stations(station_let):
@@ -52,11 +50,9 @@ def dataframe():
     pred_ctrl = cfg.read_yaml(cfg.get_config_path(control.pred_file))
     predd_ctrl = cfg.read_yaml(cfg.get_config_path(control.predd_file))
 
-    #get file paths and update database
+    #get file paths
     predictor_file_path = control.predictor_file_path
     predictand_file_path = control.predictand_file_path
-    pred_file_id = update(predictor_file_path[0])
-    predd_file_id = update(predictand_file_path[0])
 
     #store lead time and date range
     lead_time = control.lead_time
@@ -64,9 +60,9 @@ def dataframe():
 
     #get info for fetch many dates
     start,end,stride = read_pred.parse_range(date_range[0])
-    stride = timedelta(seconds=int(stride))
-    start = Time.str_to_datetime(start)
-    end = Time.str_to_datetime(end)
+    start = Time.epoch_time(start)
+    end = Time.epoch_time(end)
+    times = list(range(start,end+stride,stride))
 
     fcst_ref_time = control.date_range[0].split('-')[0][-2:]
 
@@ -85,7 +81,7 @@ def dataframe():
         pred.search_metadata['reserved1'] = 'vector'
 
         #build camps data objects for each day
-        variable = fetch_many_dates(predictor_file_path,start,end,stride,pred.search_metadata,lead_time*3600, ids=[pred_file_id])
+        variable = read_var(filepath = predictor_file_path, lead_time=lead_time*3600, forecast_time=times, **pred.search_metadata)
 
         #appends all data to single camps object
         if variable[0] is not None:
@@ -107,7 +103,7 @@ def dataframe():
         entry_dict['file_id'] = predd_file_id
 
         #build camps objects for each day
-        variable = fetch_many_dates(predictand_file_path,start, end, stride, entry_dict, ids=[predd_file_id])
+        variable = read_var(file_path=predictand_file_path, forecast_time=times, **entry_dict)
 
         #append all data to single camps object
         var = variable[0]

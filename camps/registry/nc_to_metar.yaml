@@ -37,7 +37,7 @@ calendar_day_maximum_temperature  : X24
 calendar_day_minimum_temperature  : N24 
 snow_depth_on_ground : SND 
 snowfall_amount : SNF 
-sattelite_cloud_amount_category_GOES_E : SAE 
-sattelite_effective_cloud_amount_GOES_E : SEE 
-sattelite_cloud_amount_category_GOES_W : SAW 
-sattelite_effective_cloud_amount_GOES_W : SEW 
+satellite_cloud_amount_category_GOES_E : SAE 
+satellite_effective_cloud_amount_GOES_E : SEE 
+satellite_cloud_amount_category_GOES_W : SAW 
+satellite_effective_cloud_amount_GOES_W : SEW 

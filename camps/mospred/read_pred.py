@@ -7,7 +7,6 @@ import pdb
 from ..registry import util as cfg
 from . import parse_pred
 from . import procedures
-from ..core.fetch import fetch
 
 
 """Module: read_pred.py
@@ -20,29 +19,6 @@ Methods:
     apply_procedures
     get_variable
 """
-
-
-def read_predictors(control, yaml_file):
-    """Creates and returns a list of camps data objects fetched using information
-    given in the input predictors yaml file.
-    """
-
-    w_objs = [] #Create empty list to fill with camps data objects
-
-    #Fill the list
-    pred_list = cfg.read_yaml(yaml_file) #Get list of dictionaries of predictor information
-    for entry_dict in pred_list:
-        variable_metadata = get_variable(entry_dict)
-        Camps_obj = fetch(control, variable_metadata)
-
-        # Apply procedures to obj
-        if 'Procedure' in entry_dict:
-            apply_procedures(Camps_obj, entry_dict['Procedure'])
-
-        w_objs.append(Camps_obj)
-
-    return w_objs
-
 
 def parse_range(range_str):
     """Parses the time range into a start date, end date, and a stride (interval)."""
@@ -80,23 +56,23 @@ def apply_procedures(w_obj, procedures):
 
 
 def get_variable(entry_dict):
-    """Creates a dictionary whose keys are column names in camps database table 'variable'
-    and values gleaned from the predictor yaml file.  This dictionary facilitates access
+    """Creates a dictionary whose keys and values are gleaned 
+    from the predictor yaml file.  This dictionary facilitates access
     to existing predictor data.
     """
 
     parse_pred.check_valid_keys(entry_dict)
 
-    #The dict that will be populated with key/value pairs to enquire the database.
+    #The dict that will be populated with key/value pairs.
     exit_dict = {}
 
-    #database table 'variable' column 'property'
+    #setting 'property'
     if 'property' not in entry_dict:
         raise LookupError("property is not defined and is required")
     property = parse_pred.observedProperty(entry_dict['property'])
     exit_dict['property'] = property
 
-    #database table 'variable' column 'source'
+    #setting 'source'
     try:
         source = entry_dict['Source']
         is_valid = parse_pred.source(source)
@@ -143,10 +119,11 @@ def get_variable(entry_dict):
             exit_dict['vert_method'] = vert_cell_method
         except:
             pass
-#        try:
-#            units = vert_coord_dict['units']
-#            exit_dict['vert_units'] = units
-#        except:
-#            pass
+        try:
+            units = vert_coord_dict['units']
+            if units=='mb': units='hPa'
+            exit_dict['vert_units'] = units
+        except:
+            pass
 
     return exit_dict

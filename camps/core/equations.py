@@ -11,12 +11,12 @@ import uuid
 import logging
 
 from netCDF4 import Dataset
+from datetime import datetime
 from ..registry import util as cfg
 from ..mospred import read_pred as read_pred
 from ..core import util as util
 from . import Time as Time
 from . import writer as writer
-from .fetch import *
 from .Camps_data import Camps_data
 
 
@@ -40,7 +40,7 @@ def write_globals(nc, control, primary_vars, file_id):
     """
     # Create dictionary of global attributes
     global_dict = {}
-    global_dict['PROV__Entity'] = "StatPP__Data/Source/MOSEqnFile"
+    global_dict['PROV__entity'] = "StatPP__Data/Source/MOSEqnFile"
     global_dict['PROV__wasGeneratedBy'] = "StatPP__Methods/Stat/MOSDev"
     global_dict['file_id'] = file_id
     global_dict['primary_variables'] = primary_vars
@@ -92,7 +92,7 @@ def write_globals(nc, control, primary_vars, file_id):
 def create_dimensions(nc, control, num_stations, num_char_predictor, num_char_predictand, n_outputs, max_inputs, max_params):
     """Create Dimensions for dataset."""
 
-    nc.createDimension('number_of_stations',num_stations)
+    nc.createDimension('stations',num_stations)
     nc.createDimension('number_of_predictands',n_outputs)
     nc.createDimension('max_eq_terms',max_inputs+1)
     nc.createDimension('num_char_predictors',num_char_predictor)
@@ -125,29 +125,34 @@ def write_data(nc, control, equations, nparams=5):
     #num_in = nc.createVariable("input_indices", int, ('number_of_stations','lead_time','number_of_predictands'))
     #inp_in = nc.createVariable("number_of_inputs_used", int, ('number_of_stations', 'lead_time','max_predictors','number_of_outputs'))
 
-    proc_vars = ['PolyLinReg', 'Mean']
+    #proc_vars = ['PolyLinReg', 'Mean']
+    proc_vars = ['PolyLinReg']
     write_process_variables(nc,proc_vars)
 
     #Format coefficients
     coefs = [np.array(x['coefs']) for x in equations]
-    coefs = np.array(coefs)
+    coefs = np.ma.array(np.array(coefs),mask=False)
+    for istn in range(coefs.shape[0]):
+        if np.all(coefs[istn,:,:] == 0.):
+            coefs[istn,:,:] = np.ma.masked
+
     # Create variables for MOS equation parameters
     pred_coef = nc.createVariable("MOS_Predictor_Coeffs", int,())
     setattr(pred_coef, 'standard_name', 'source')
     setattr(pred_coef, 'long_name', 'MOS Predictor Coefficients')
-    setattr(pred_coef, 'PROV__Entity', 'StatPP__Methods/Stat/MOS/OutptParams/MOSEqnCoef')
+    setattr(pred_coef, 'PROV__entity', 'StatPP__Methods/Stat/MOS/OutptParams/MOSEqnCoef')
     setattr(pred_coef, 'SOSA__usedProcedure', '( PolyLinReg )')
 
-    SEE = nc.createVariable("Standard_Error_Estimate", 'f4', ('number_of_stations','number_of_predictands'))
-    setattr(SEE, 'PROV__Entity', 'StatPP__Methods/Stat/MOS/OutptParams/MOSStdErrEst')
+    SEE = nc.createVariable("Standard_Error_Estimate", 'f4', ('stations','number_of_predictands'))
+    setattr(SEE, 'PROV__entity', 'StatPP__Methods/Stat/MOS/OutptParams/MOSStdErrEst')
     setattr(SEE, 'standard_name', 'source')
     setattr(SEE, 'long_name', 'MOS Standard Error Estimate')
     setattr(SEE, 'coordinates', "station Predictand_List")
     setattr(SEE, 'SOSA__usedProcedure', '( PolyLinReg )')
     setattr(SEE, 'units', 1)
 
-    RoV = nc.createVariable("Reduction_of_Variance", 'f4', ('number_of_stations','number_of_predictands'))
-    setattr(RoV, 'PROV__Entity', 'StatPP__Methods/Stat/MOS/OutptParams/MOSRedOfVar')
+    RoV = nc.createVariable("Reduction_of_Variance", 'f4', ('stations','number_of_predictands'))
+    setattr(RoV, 'PROV__entity', 'StatPP__Methods/Stat/MOS/OutptParams/MOSRedOfVar')
     setattr(RoV, 'standard_name', 'source')
     setattr(RoV, 'long_name', 'MOS Reduction of Variance')
     setattr(RoV, 'coordinates', "station Predictand_List")
@@ -155,30 +160,30 @@ def write_data(nc, control, equations, nparams=5):
     setattr(RoV, 'units', 1)
 
     EqCo = nc.createVariable("Equation_Constant", int, ())
-    setattr(EqCo, 'PROV__Entity', 'StatPP__Methods/Stat/MOS/OutptParams/MOSEqnConst')
+    setattr(EqCo, 'PROV__entity', 'StatPP__Methods/Stat/MOS/OutptParams/MOSEqnConst')
     setattr(EqCo, 'standard_name', 'source')
     setattr(EqCo, 'long_name', 'MOS Equation Constant')
     setattr(EqCo, 'SOSA__usedProcedure', '( PolyLinReg )')
 
 
-    MCC = nc.createVariable("Multiple_Correlation_Coefficient", 'f4', ('number_of_stations','number_of_predictands'))
-    setattr(MCC, 'PROV__Entity', 'StatPP__Methods/Stat/MOS/OutptParams/MOSMultiCorCoef')
+    MCC = nc.createVariable("Multiple_Correlation_Coefficient", 'f4', ('stations','number_of_predictands'))
+    setattr(MCC, 'PROV__entity', 'StatPP__Methods/Stat/MOS/OutptParams/MOSMultiCorCoef')
     setattr(MCC, 'standard_name', 'source')
     setattr(MCC, 'long_name', 'MOS Multiple Correlation Coefficient')
     setattr(MCC, 'coordinates', "station Predictand_List")
     setattr(MCC, 'SOSA__usedProcedure', '( PolyLinReg )')
     setattr(MCC, 'units', 1)
 
-    Pred_avg = nc.createVariable("Predictand_Average", 'f4', ('number_of_stations','number_of_predictands'))
-    setattr(Pred_avg, 'PROV__Entity', 'StatPP__Methods/MOS/Arith/Mean')
+    Pred_avg = nc.createVariable("Predictand_Average", 'f4', ('stations','number_of_predictands'))
+    setattr(Pred_avg, 'PROV__entity', 'StatPP__Methods/MOS/Arith/Mean')
     setattr(Pred_avg, 'standard_name', 'source')
     setattr(Pred_avg, 'long_name', 'Predictand Average')
     setattr(Pred_avg, 'coordinates', "station Predictand_List")
     setattr(Pred_avg, 'SOSA__usedProcedure', '( Mean )')
     setattr(Pred_avg, 'units', 1)
 
-    MOS_eq = nc.createVariable("MOS_Equations", 'f4', ('number_of_stations','max_eq_terms','number_of_predictands'))
-    setattr(MOS_eq, 'PROV__Entity', 'StatPP__Methods/Stat/MOS/MOSEqn')
+    MOS_eq = nc.createVariable("MOS_Equations", 'f4', ('stations','max_eq_terms','number_of_predictands'))
+    setattr(MOS_eq, 'PROV__entity', 'StatPP__Methods/Stat/MOS/MOSEqn')
     setattr(MOS_eq, 'standard_name', 'source')
     setattr(MOS_eq, 'long_name','MOS Equation Coefficients and Constants')
     setattr(MOS_eq, 'coordinates', "station Equations_List Predictand_List")
@@ -186,14 +191,14 @@ def write_data(nc, control, equations, nparams=5):
     setattr(MOS_eq, 'ancillary_variables', '( MOS_Predictor_Coeffs Equation_Constant )')
     setattr(MOS_eq, 'units', 1)
 
-    ancils = [np.array(list(x['ancil'].values())) for x in equations]
+    ancils = [np.ma.array(np.array(list(x['ancil'].values())),mask=False) for x in equations]
     shape = (nparams,nc.dimensions['number_of_predictands'].size)
     for n,a in enumerate(ancils):
         if a.shape != shape:
-            ancils[n] = np.zeros(shape)
+            ancils[n] = np.ma.array(np.zeros(shape),mask=True)
             logging.info("Not enough ancils. Adding")
 
-    ancils = np.dstack(ancils)
+    ancils = np.ma.dstack(ancils)
     MOS_eq[:,0:-1,:] = coefs
     MOS_eq[:,-1,:] = ancils[0,:,:].T
 
@@ -203,10 +208,8 @@ def write_data(nc, control, equations, nparams=5):
     Pred_avg[:] = ancils[4,:,:].T
 
     #Create prefix list
-    prefixes =  { "OM__" : "http://opengeospatial.org/standards/om/",
-            "PROV__" : "http://www.w3.org/ns/prov/#",
+    prefixes =  { "PROV__" : "http://www.w3.org/ns/prov/#",
             "StatPP__" : "http://codes.nws.noaa.gov/StatPP/",
-            "OM2__" : "http://codes.nws.noaa.gov/StatPP/",
             "StatPPTime__" : "http://codes.nws.noaa.gov/StatPP/Data/Time/",
             "StatPPSystem__" : "http://codes.nws.noaa.gov/StatPP/Methods/System/",
             "SOSA__" : "http://www.w3.org/ns/sosa/"
@@ -228,8 +231,12 @@ def write_stations(nc, equations):
         if len(station) > 1:
         # Handle writing groups here
             logging.info("writing station groups")
-
-    writer.write_stations(nc,[x[0] for x in stations])
+    station_list = [x[0] for x in stations]
+    station_obj = Camps_data('stations')
+    station_dim = cfg.read_dimensions()['nstations']
+    station_obj.dimensions.append(station_dim)
+    station_obj.data = np.array(station_list)
+    station_obj.write_to_nc(nc)
 
 
 def get_max_parameters(equations):
@@ -268,12 +275,12 @@ def write_equations(filename, control, predictors, predictands, equations):
         predictor_var[n] = entry_name
         predictor.data = None #remove data
         predictor.dimensions = [] #remove data dimensions
-        filepath = predictor.metadata.pop('filepath')
+        if 'filepath' in predictor.metadata.keys():
+            filepath = predictor.metadata.pop('filepath')
         var = predictor.write_to_nc(nc)
-        nc.variables[var].coordinates += ' station'
     predictor_var[-1] = "Equation_Constant"+' '*(max_char_predictor-len("Equation_Constant"))
     pred_list = predictor_var[:-1]
-    setattr(predictor_var,'PROV__Entity','StatPP__Methods/Stat/OrdrdInpt')
+    setattr(predictor_var,'PROV__entity','StatPP__Methods/Stat/OrdrdInpt')
     setattr(predictor_var,'long_name','Ordered List of Equation Terms')
 
     # Write ordered predictand list for equations and associated metadata
@@ -281,7 +288,8 @@ def write_equations(filename, control, predictors, predictands, equations):
     for n,predictand in enumerate(predictands):
         predictand.data = None
         predictand.dimensions = []
-        filepath = predictand.metadata.pop('filepath')
+        if 'filepath' in predictand.metadata.keys():
+            filepath = predictand.metadata.pop('filepath')
         var = predictand.write_to_nc(nc)
         nc.variables[var].coordinates += ' station'
         tand_name = predictand.get_variable_name()
@@ -293,7 +301,7 @@ def write_equations(filename, control, predictors, predictands, equations):
             entry_name = tand_name+str(counter)+' '*(max_char_predictand-name_len-len(str(counter)))
         predictand_var[n] = entry_name
     tand_list = predictand_var[:]
-    setattr(predictand_var,'PROV__Entity', 'StatPP__Methods/Stat/OrdrdOutpt')
+    setattr(predictand_var,'PROV__entity', 'StatPP__Methods/Stat/OrdrdOutpt')
     setattr(predictand_var,'long_name','Ordered List of Predictand Outputs')
 
     # Writes equation coefficients, constants, and regression parameters and any other ancillary variables

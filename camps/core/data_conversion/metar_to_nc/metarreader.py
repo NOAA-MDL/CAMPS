@@ -85,19 +85,21 @@ class metarreader():
             self.observations.pop()  # Remove extra column
             self.observations = strip_array(self.observations)
 
-        if self.obs_time < date:
-            logging.debug("Skipping date "+self.obs_time)
+        while self.obs_time < date:
+            logging.info("Reading METAR Obs for date = "+self.obs_time+\
+                         ": Obs not needed for input date range. Skipping these obs...")
             for row in self._metar_reader:
                 if row[0] == 'ZZZZZZZZ':
                     break
-            self.read(date)
-
-        elif self.obs_time == date:
+            file_header = next(self._metar_reader)
+            self.observations = next(self._metar_reader)
+            self.observations.pop(0) # This removes "CALL" from the ob name row
+            self.observations.pop()  # Remove extra column
+            self.observations = strip_array(self.observations)
+            self.parse_header(file_header)
+           
+        if self.obs_time == date:
             logging.info("Reading METAR Obs for date = "+self.obs_time)
-            #self.observations = self._metar_reader.next()
-            #self.observations.pop(0) # This removes "CALL" from the ob name row
-            #self.observations.pop()  # Remove extra column
-            #self.observations = strip_array(self.observations)
 
             # Iterate over every row (ob) for a given hour; get and catalog the station name
             # of the ob. If it exists in the user input station list, then capture the obs.
@@ -117,9 +119,6 @@ class metarreader():
             # IMPORTANT: We should only come here if a date that we want process is
             # missing in the input file.
             logging.warning("No METAR Obs for date "+date+". Data set to missing.")
-            #for row in self._metar_reader:
-            #    if row[0] == 'ZZZZZZZZ':
-            #        break
             self._fill_missing(station_list_check)
 
         self.read_count += 1

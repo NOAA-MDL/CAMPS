@@ -10,7 +10,7 @@ except(ImportError):
 
 # Set information about CAMPS
 NAME = 'camps'
-VERSION = '1.1.0'
+VERSION = '1.2.0'
 
 # List required packages
 required_packages = ['numpy>=1.17.3',

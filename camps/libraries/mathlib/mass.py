@@ -10,10 +10,12 @@ import math
 import numpy as np
 import operator
 
-from ...core.fetch import *
+from ...mospred import parse_pred as parse_pred
 from ...core.Time import epoch_to_datetime
 from ...core import Time as Time
 from ...core import Camps_data
+from ...core.reader import read_var
+from ...registry import constants as const
 
 
 def thickness(filepaths, time, predictor):
@@ -46,7 +48,7 @@ def thickness(filepaths, time, predictor):
     try:
         unit = thickness.metadata['units']
         u_pint = units.Quantity(1., unit)
-        assert(u_pint.dimensionality == iu_pint.dimensionality),"Unit for pressure layer thickness in database has wrong dimensionality."
+        assert(u_pint.dimensionality == iu_pint.dimensionality),"Unit for pressure layer thickness in metadata has wrong dimensionality."
     except KeyError:
         logging.info("Metadata key \'units\' does not exist or has no value.")
         logging.info("Adopt the unit of the fetched geopotential heights.")
@@ -55,31 +57,30 @@ def thickness(filepaths, time, predictor):
         thickness.metadata.update({'units' : unit})
 
     #Make a deep copy of the predictor object.
-    pred = predictor.copy()
+    pred = copy.deepcopy(predictor)
 
     #Sort the isobar values with pl haviing the lesser value.
-    plevel1 = pred.__getitem__('vert_coord1')
-    plevel2 = pred.__getitem__('vert_coord2')
+    plevel1 = pred['search_metadata'].__getitem__('vert_coord1')
+    plevel2 = pred['search_metadata'].__getitem__('vert_coord2')
     pl = plevel1
     pg = plevel2
     if pl > pg:
         pl = plevel2
         pg = plevel1
-    thickness.add_coord(pl,level2=pg,vert_type='plev')
+    thickness.add_vert_coord(pl,level2=pg,vert_type='plev')
 
     #Fetch the geopotential heights.
-    pred.change_property('GeoHght')
-    #The keys 'vert_coord2' and 'vert_method' cannot be in
-    #the database queries for the two geopotential heights,
-    #if the fetches are to succeed.
-    pred.search_metadata.pop('vert_coord2')
-    pred.search_metadata.pop('vert_method')
+    pred['search_metadata'].update({'property' : parse_pred.observedProperty('GeoHght')})
+    #The keys 'vert_coord2' and 'vert_method' are not needed to
+    # retrieve the two geopotential heights.
+    pred['search_metadata'].pop('vert_coord2')
+    pred['search_metadata'].pop('vert_method')
     #------------------------------------------------------
 
     q_ght = units.Quantity(1., unit)
     #Fetch the geopotential height corresponding to the lesser isobar.
-    pred.search_metadata.update({'vert_coord1' : pl})
-    ght_pl = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'vert_coord1' : pl})
+    ght_pl = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     assert(isinstance(ght_pl,Camps_data)),"ght_pl expected to be camps data object"
     mask = np.ma.getmaskarray(ght_pl.data)
     try:
@@ -97,8 +98,8 @@ def thickness(filepaths, time, predictor):
     thickness.preprocesses = ght_pl.preprocesses
 
     #Fetch the geopotential height corresponding to the greater isobar.
-    pred.search_metadata.update({'vert_coord1' : pg})
-    ght_pg = fetch(filepaths, time, **pred.search_metadata)
+    pred['search_metadata'].update({'vert_coord1' : pg})
+    ght_pg = read_var(filepath=filepaths, forecast_time=time, **pred['search_metadata'])
     assert(isinstance(ght_pg,Camps_data)),"ght_pg expected to be camps data object"
     mask += np.ma.getmaskarray(ght_pg.data)
     try:
@@ -116,20 +117,21 @@ def thickness(filepaths, time, predictor):
 #   Copy the processes from ght_pg
     #thickness.processes = copy.deepcopy(ght_pg.processes)
     q_thick = (q_ghtPL - q_ghtPG).to(unit)
+    thickness.add_dimensions('phenomenonTime')
     thickness.add_dimensions('y')
     thickness.add_dimensions('x')
-    thickness.add_dimensions('plev_bounds')
     thickness.add_data(np.ma.array(np.array(q_thick), mask=mask))
 
     #Construct the pressure layer thickness camps data object.
     #The object is built by instantiating an object with empty substructures
     #and filling one substructure (metadata) with information in the
-    #database table 'metadata'.  We further fill in the substructures with
+    #necessary metadata.  We further fill in the substructures with
     #references to the fetched object ght_pl, and edit portions to be
     #relevant for the constructed predictor.
     thickness.location = ght_pl.location
     thickness.time = copy.deepcopy(ght_pl.time)
     thickness.metadata.update({'FcstTime_hour' : ght_pl.metadata.get('FcstTime_hour')})
+    thickness.metadata.update({'PROV__hadPrimarySource' : ght_pl.metadata.get('PROV__hadPrimarySource')})
     thickness.add_process('PressLayerThickCalc')
 
     return thickness

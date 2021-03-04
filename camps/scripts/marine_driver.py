@@ -16,7 +16,6 @@ from ..core import util
 from ..core.data_conversion.marine_to_nc.marinereader import marinereader
 from ..core.data_conversion.metar_to_nc.util import convert_to_numpy
 from ..registry import util as cfg
-from ..registry.db import db as db
 
 
 def main():
@@ -63,6 +62,10 @@ def main():
     stn_lst = util.read_station_list(station_list)
     stn_lst,stn_tbl = util.read_station_table(station_table,stn_lst)
 
+    # Create lat and lon arrays from station information
+    lats, lons = map(list,zip(*[(lst['lat'],lst['lon']) for i,lst in enumerate(list(stn_tbl.values())) if list(stn_tbl.keys())[i] in stn_lst]))
+ 
+
     # Read all marine observations
     reader = marinereader(stn_tbl,stn_lst,filename=input_data)
     start_date = dates[0]
@@ -80,9 +83,23 @@ def main():
     # Create Output filename
     filename = output
 
+    dimensions = cfg.read_dimensions()
+    num_stations = dimensions['nstations']
+    time_dim = dimensions['time']
     # Create a list of Camps data objects, one object for each
     # observed parameter
     camps_data = []
+
+    lat_obj = Camps_data('latitude')
+    lat_obj.set_dimensions((num_stations,))
+    lat_obj.data = np.array(lats)
+    lon_obj = Camps_data('longitude')
+    lon_obj.set_dimensions((num_stations,))
+    lon_obj.data = np.array(lons)
+
+    camps_data.append(lat_obj)
+    camps_data.append(lon_obj)
+
     obs = reader.observations
     obs.remove('TIME')
     start_time = start_date
@@ -108,37 +125,45 @@ def main():
 
         # Construct Camps data object for particular observed variable
         camps_obj = Camps_data(observation_name)
-        camps_obj.set_dimensions()
+        if camps_obj.is_feature_of_interest() and len(obs_data.shape)>1:
+            obs_data = obs_data[:,0]
+            camps_obj.set_dimensions((num_stations,))
+        else:
+            camps_obj.set_dimensions((time_dim,num_stations))
         camps_obj.add_data(obs_data)
-        camps_obj.add_source('StatPP__Data/Source/NDBC')
-        camps_obj.add_process('MarineObProcStep1')
-        camps_obj.add_process('MarineObProcStep2')
+        camps_obj.add_source('NDBC')
+        camps_obj.add_process('ProcMarine')
+        camps_obj.add_process('MarineQC')
         camps_obj.change_data_type()
 
+        try:
+            camps_obj.metadata['vertical_coord'] = camps_obj.metadata.pop('coordinates')
+        except:
+            pass
         # Again check for time bounds, pass extra info to add_time if
         # there are time bounds
-        if camps_obj.has_time_bounds():
-            hours = db.get_property(camps_obj.name,'hours')
-            camps_obj.metadata['hours'] = hours
-            camps_obj.time = add_time(start_time, end_time, time_bounds=hours)
-        else:
-            camps_obj.time = add_time(start_time, end_time)
+        if not camps_obj.is_feature_of_interest():
+            if camps_obj.has_time_bounds():
+                hours = camps_obj.properties['hours']
+                camps_obj.metadata['hours'] = hours
+                camps_obj.time = add_time(start_time, end_time, time_bounds=hours)
+            else:
+                camps_obj.time = add_time(start_time, end_time)
 
         # Transpose the array and swap dimension names. Note that this may be a
         # temporary solution.
-        camps_obj.data = np.transpose(camps_obj.data)
-        camps_obj.set_dimensions(dimensions=('default_time_coordinate_size','number_of_stations',))
+        if len(camps_obj.data.shape)>1:
+            camps_obj.data = np.transpose(camps_obj.data)
         camps_data.append(camps_obj)
 
     # Fill in object with common metadata and append to list
     camps_obj = pack_station_names(list(stations.keys()))
-    camps_obj.add_source('StatPP__Data/Source/NDBC')
-    camps_obj.time=add_time(start_time, end_time)
+    camps_obj.add_source('NDBC')
     camps_data.append(camps_obj)
 
     # Write list of Camps data objects to netCDF4 file
     extra_globals = get_globals()
-    writer.write(camps_data, filename, extra_globals, write_to_db=True)
+    writer.write(camps_data, filename, extra_globals)
 
     if log_file:
         out_log.close()
@@ -171,7 +196,7 @@ def pack_station_names(names):
     """Constructs and returns a Camps data object for station data. """
 
     # Instantiate the object
-    w_obj = Camps_data('station')
+    w_obj = Camps_data('stations')
 
     # Construct station data array
     max_chars = max([len(i) for i in names])
@@ -181,15 +206,10 @@ def pack_station_names(names):
         char_arr = np.array(list(names[0]))
         station_name_arr = np.reshape(char_arr,(len(char_arr.shape),char_arr.shape[0]))
     elif len(names) > 1:
-        for name in names:
-            char_arr = np.array(list(name))
-            if len(station_name_arr) == 0:  # if it's the first station
-                station_name_arr = char_arr
-            else:
-                station_name_arr = np.vstack((station_name_arr, char_arr))
+        station_name_arr = np.array(names)
 
     # Fill in the object with appropriate data.
-    w_obj.set_dimensions(tuple(['number_of_stations', 'num_characters']))
+    w_obj.set_dimensions(tuple(['stations']))
     w_obj.add_data(station_name_arr)
     w_obj.add_metadata("fill_value", '_')
     w_obj.add_metadata("comment","NDBC stations consist of buoy, C-MAN, and platform drilling sites")

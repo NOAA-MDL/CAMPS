@@ -18,6 +18,11 @@ input : "/path/to/directory/model_output.pgrb2"
 # ---------------------------------------------------------------------------------------- 
 output : "/path/to/directory/model_output.nc"
 
+# ----------------------------------------------------------------------------------------
+# Source of input data. Must be the name of originating model.
+# ----------------------------------------------------------------------------------------
+source : 'GFS'
+
 # ---------------------------------------------------------------------------------------- 
 # Specify "" or None to output log to stdout
 # ---------------------------------------------------------------------------------------- 
@@ -34,8 +39,8 @@ debug_level : "INFO"
 #num_processors : 16
 
 # ---------------------------------------------------------------------------------------- 
-# A list of the processes applied to the input grib2 data
-# Check procedures.yaml for the definitions of GFSModProcStep1(2)
+# A list of the preprocesses applied to the input grib2 data
+# Check procedures.yaml for the definitions. 
 # Any valid procedure can be added to the list below
 # ---------------------------------------------------------------------------------------- 
-processes : ['GFSModProcStep1','GFSModProcStep2']
+preprocesses : ['FilterGRIB2','ResampleGRIB2']

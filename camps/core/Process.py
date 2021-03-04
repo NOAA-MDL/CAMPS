@@ -47,12 +47,12 @@ class Process(nc_writable):
         pname, exists = self.get_name(nc_handle)
         if not exists:
             process_var = nc_handle.createVariable(pname, int)
-            setattr(process_var, "PROV__Activity", self.process_step)
+            setattr(process_var, "PROV__activity", self.process_step)
             #Add the remainder of the attributes to the Dataset variable.
             for name, value in self.attributes.items():
                 if name != 'process_step' and name != 'feature_of_interest':
                     if name == 'source':
-                        name = 'PROV__Used'
+                        name = 'PROV__used'
                     setattr(process_var, name, value)
 
         return pname
@@ -87,7 +87,7 @@ class Process(nc_writable):
                         equal = False
                         break
                 except:
-                    if attr == 'PROV__Activity':
+                    if attr == 'PROV__activity':
                         try:
                             a = self.get_attribute('process_step')
                             if a != var.getncattr(attr):
@@ -97,7 +97,7 @@ class Process(nc_writable):
                             equal = False
                             break
                         continue
-                    elif attr == 'PROV__Used':
+                    elif attr == 'PROV__used':
                         try:
                             a = self.get_attribute('source')
                             if a != var.getncattr(attr):

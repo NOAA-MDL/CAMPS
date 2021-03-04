@@ -39,7 +39,6 @@ Classes
             get_stride
             _search_equal_size
             is_duration
-            check_dimensions
             add_common_metadata
             get_bounded_dimension_name
             get_start_time
@@ -469,23 +468,41 @@ class Time(nc_writable):
                 name = self._search_equal_size(nc_dims, dim, size)
                 if name is not None: #found
                     dim_list[i] = name #set variable dimension name to 'name'
+                    if 'lead' in name and 'lead' in self.name:
+                        var_name = self.get_name(nc_handle)[0]
+                        if var_name != name:
+                            name = var_name
+                            dim_list[i] = name
+                            if name not in nc_dims:
+                                nc_handle.createDimension(name,size)
+                    elif 'lead' in name and 'Period' in self.name:
+                        if not self.get_name(nc_handle)[1]:
+                            refs = nc_handle.variables['FcstRefTime'][:]
+                            leads = (self.data-refs[None,:,None])[:,0,1]
+                            lead_vars = [var.name for var in nc_handle.variables.values() if 'lead' in var.name and np.all(var[:]==leads)]
+                            if len(lead_vars)==0:
+                                alt_name = self.get_alt_dim_name(dim,nc_dims)
+                                nc_handle.createDimension(alt_name, size)
+                                dim_list[i] = alt_name
+                            else:
+                                dim_list[i] = lead_vars[0]
                 else: #not found
-                    #Create a netCDF Dataset dimension and rename the variable dimension
-                    count = 0
-                    #stride = self.get_stride() #stride between time entries will be in dimension name
-                    #hours = int(stride/3600)
-                    #name = dim + '_' + str(hours) + 'hr'
-                    name = dim
-                    #Ensure that name of new dimension is unique via a digital suffix
-                    alt_name = name
-                    while alt_name in nc_dims:
-                        count += 1
-                        #alt_name = name + '_' + str(count)
-                        alt_name = name + str(count)
+                    alt_name = self.get_alt_dim_name(dim,nc_dims)
                     nc_handle.createDimension(alt_name, size) #create the new netCDF Dataset dimension
                     dim_list[i] = alt_name #rename variable dimension name
 
         return tuple(dim_list)
+
+
+    def get_alt_dim_name(self,name,nc_dims):
+        """Creates a dimension name with a suffix when necessary"""
+
+        count = 0
+        alt_name = name
+        while alt_name in nc_dims:
+            count += 1
+            alt_name = name + str(count)
+        return alt_name
 
 
     def add_common_metadata(self, nc_var):
@@ -499,7 +516,7 @@ class Time(nc_writable):
     def get_bounded_dimension_name(self):
         """Returns the name of the bounded Time dimension."""
 
-        return 'begin_end_size'
+        return 'nv'
 
 
     def get_start_time(self):
@@ -588,7 +605,7 @@ class PhenomenonTimePeriod(Time):
     def __init__(self, **kwargs):
         """Initializes the data array
         """
-        self.name = "OM__phenomenonTimePeriod"
+        self.name = "phenomenonTimePeriod"
 
         #Set the object's data, either by specifying the start and end times
         #along with the variable's period OR ... (see elif statement below)
@@ -671,7 +688,7 @@ class PhenomenonTimePeriod(Time):
             self.duration = int(self.diff/3600)
 
         self.metadata.update({ 'standard_name' : 'time' })
-        self.metadata.update({ 'PROV__specializationOf' : '( StatPP__concepts/TimeBoundsSyntax/BeginEnd OM__phenomenonTimePeriod )' })
+        self.metadata.update({ 'PROV__specializationOf' : '( StatPP__concepts/TimeBoundsSyntax/BeginEnd SOSA__phenomenonTime )' })
 
 
     def get_duration(self):
@@ -800,7 +817,7 @@ class PhenomenonTime(Time):
         """Initializes the data array."""
 
         #Set natal name of PhenomenonTime object.  It may change during process.
-        self.name = "OM__phenomenonTimeInstant"
+        self.name = "phenomenonTime"
 
         #Create PhenomenonTime data from required keyword arguments 'start_time' and 'end_time'
         #OR from ...
@@ -829,6 +846,8 @@ class PhenomenonTime(Time):
             #Ensure that the data is one-dimensional.
             shape = data.shape
             ndims = len(shape)
+            if ndims > 1:
+                self.name = "phenomenonTimes"
             assert(ndims < 3), \
                 "PhenomenonTimeInstant data is %r-dimensional.\n It should be <3-dimensional." % ndims
 
@@ -840,7 +859,7 @@ class PhenomenonTime(Time):
             #Refer the successfully create/tested data to the PhenomenonTime object.
             self.data = data
 
-        self.metadata.update({ 'PROV__specializationOf' : '( OM__phenomenonTime )' })
+        self.metadata.update({ 'PROV__specializationOf' : '( SOSA__phenomenonTime )' })
 
 
     def get_dimensions(self):
@@ -869,205 +888,14 @@ class PhenomenonTime(Time):
         Throws error if multiple indicies are found or none are found.
         """
 
-        if len(self.data.shape) == 2:
-            indices = np.where(self.data[:,0] == num_seconds)
-        else:
-            indices = np.where(self.data == num_seconds)
+        indices = np.where(np.isin(self.data,num_seconds))
 
         # indices is returned as tuple; extract first element
         indices = indices[0]
         if len(indices) == 0:
             raise ValueError("time not found in PhenomenonTime object.")
-        if len(indices) > 1:
-            raise ValueError("lead time found multiple times in PhenomenonTime object.")
 
-        return indices[0]
-
-
-class ValidTime(Time):
-    """Class representing the valid time.
-    The valid time is the time of intended use.
-    Must be a period of time.
-    """
-
-    def __init__(self, **kwargs): #start_time=None, end_time=None, stride=ONE_HOUR, offset=0):
-        """Initializes the data array.
-        offset can be:
-        a function that is applied to the data array,
-        a timedelta duration,
-        a datetime fixed date, or
-        a 0 representing an unlimited valid time
-        """
-
-        self.name = 'ValidTime'
-
-        if 'start_time' in kwargs and 'end_time' in kwargs:
-            start_time = kwargs['start_time']
-            end_time = kwargs['end_time']
-            try:
-                stride = kwargs['stride']
-            except:
-                stride = ONE_HOUR
-            super(ValidTime, self).__init__(start_time=start_time,
-                                          end_time=end_time,
-                                          stride=stride)
-            try:
-                offset = kwargs['offset']
-            except:
-                offset = 0
-            self.add_offset(offset)
-
-        elif 'data' in kwargs:
-            super(ValidTime, self).__init__()
-            self.data = np.array(kwargs.get('data'))
-            offset = 0
-
-        self.metadata['PROV__specializationOf'] = '( StatPP__concepts/TimeBoundsSyntax/BeginEnd OM2__Data/Time/ValidTime )'
-        self.metadata['standard_name'] = 'time'
-
-
-    def add_offset(self, offset):
-        """Offset can be:
-        a function that is applied to the data array,
-        a timedelta duration,
-        a datetime fixed date, or
-        a 0 representing an unlimited valid time
-        """
-
-        o_type = type(offset)
-        is_a_function = callable(offset)
-
-        if is_a_function:
-            for i, value in enumerate(self.data):
-                self.data[i] = offset(value)
-
-        elif o_type is timedelta:
-            start_time = self.data.copy()
-            end_time = self.data.copy()
-            for i, value in enumerate(self.data):
-                end_time[i] += offset.total_seconds()
-            self.data = np.vstack((start_time, end_time))
-
-        elif o_type is datetime:
-            end_time = np.zeros(self.data.shape)
-            end_time[:] = epoch_time(offset)
-            start_time = self.data
-            self.data = np.vstack((start_time, end_time))
-        # Assume data is valid indefinitely
-        elif o_type is int and offset == 0:
-            # min_int = -sys.maxint - 1
-            start_time = self.data.copy()
-            end_time = np.zeros(self.data.shape)
-            end_time[:] = FILL_VALUE
-            self.data = np.vstack((start_time, end_time))
-
-
-    def get_dimensions(self):
-        """Return a tuple of dimension names.
-        Will account for data with different shapes.
-        """
-
-        if len(self.data.shape) == 1:
-            logging.error('ValidTime cannot have a shape of 1, \
-                    since it\'s of type OM__TimePeriod')
-            raise ValueError
-
-        #NOTE: Shouldn't the order of these dimensions be switched.
-        if len(self.data.shape) == 2:
-            dim_tuple = (self.get_bounded_dimension_name(),
-                         get_time_dim_name())
-        elif len(self.data.shape) == 3:
-            dim_tuple = (get_lead_dim_name(),
-                         get_time_dim_name(),
-                         self.get_bounded_dimension_name())
-
-        assert len(dim_tuple) == len(self.data.shape)
-
-        return dim_tuple
-
-
-    def get_stride(self, as_timedelta=False):
-        """Returns the number of seconds between two time steps.
-        This function may provide misleading information if timesteps
-        have an irregular step duration.
-        """
-
-        size = len(self.data)
-        if size <= 1:
-            raise IndexError("Time data has 1 or 0 elements")
-
-        if len(self.data.shape) == 3:
-            start = self.data[0][0][0]
-            end = self.data[1][0][0]
-        elif len(self.data.shape) == 2:
-            start = self.data[0][0]
-            end = self.data[0][1]
-        else:
-            sample_data = self.data.flatten()
-            start = sample_data[0]
-            end = sample_data[1]
-        stride = end - start
-
-        if as_timedelta:
-            return timedelta(seconds=stride)
-
-        return stride
-
-
-
-class ResultTime(Time):
-    """Class representing the Result time.
-    The result time is when the result (analysis, forcast)
-    became available to data consumers.
-    Must be an instant in time.
-    """
-
-    def __init__(self, **kwargs): # start_time=None, end_time=None, stride=ONE_HOUR, result_time=None):
-        """Initializes the data array"""
-
-        self.name = 'OM__resultTime'
-
-        if 'start_time' in kwargs and 'end_time' in kwargs:
-            start_time = kwargs['start_time']
-            end_time = kwargs['end_time']
-            try:
-                stride = kwargs['stride']
-            except:
-                stride = ONE_HOUR
-            super(ResultTime, self).__init__(start_time=start_time,
-                                        end_time=end_time,
-                                        stride=stride)
-        if 'data' in kwargs:
-            super(ResultTime, self).__init__()
-            self.data = np.array(kwargs.get('data'))
-
-        self.metadata['standard_name'] = 'time'
-
-        if 'result_time' in kwargs:
-            result_time = kwargs['result_time']
-            self.append_result(result_time)
-
-
-    def append_result(self, result_time):
-        """Adds the Result Time."""
-
-        # Used to ammend the result time data
-        o_type = type(result_time)
-
-        if result_time is None:
-            # Return current time rounded to the next hour
-            r = datetime.now() + timedelta(hours=1)
-            r = datetime(year=r.year, month=r.month,day=r.day, hour=r.hour)
-            self.data[:] = epoch_time(r)
-        elif o_type is timedelta:
-            for i, value in enumerate(self.data):
-                self.data[i] = epoch_time(datetime.now() + result_time)
-
-        elif o_type is datetime or o_type is str:
-            self.data[:] = epoch_time(result_time)
-
-        elif o_type is int:
-            self.data[:] = result_time
+        return indices
 
 
 class ForecastReferenceTime(Time):
@@ -1113,18 +941,15 @@ class ForecastReferenceTime(Time):
         Throws error if multiple indicies are found or none are found.
         """
 
-        indices = np.where(self.data == num_seconds)
+        #indices = np.where(self.data == num_seconds)
+        indices = np.where(np.isin(self.data,num_seconds))
 
         # indices is returned as tuple; extract first element
         indices = indices[0]
         if len(indices) == 0: #NOTE: how does this jibe with the previous line
             raise ValueError("time not found in ForecastReferenceTime object.")
-        if len(indices) > 1:
-            err_str = "Found multiple desired times in ForecastReferencTime object."
-            logging.info(err_str)
-            raise ValueError(err_str)
 
-        return indices[0]
+        return indices
 
 
     def append_reference_time(self, ref_time):
@@ -1139,13 +964,11 @@ class LeadTime(Time):
     forecast_reference_time to the
     Phenomenon time
     """
-    # def __init__(self, start_time=None, end_time=None, stride=ONE_HOUR,
-    # lead=None):
 
     def __init__(self, **kwargs):
         """Initializes the data array"""
 
-        self.name = "LeadTime"
+        self.name = "lead_times"
 
         stride = ONE_HOUR
         start_time = None
@@ -1212,7 +1035,6 @@ class LeadTime(Time):
     def add_common_metadata(self, nc_var):
         """Adds metadata that is common to LeadTime variables."""
 
-        #setattr(nc_var, 'calendar', 'gregorian')
         setattr(nc_var, 'units', 'seconds')
         setattr(nc_var, 'standard_name', 'time')
 

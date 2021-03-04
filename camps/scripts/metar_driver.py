@@ -9,7 +9,6 @@ import pdb
 from netCDF4 import Dataset
 from datetime import datetime, timedelta
 
-from ..registry.db import db as db
 from ..core.data_conversion.metar_to_nc.util import *
 from ..core.data_conversion.metar_to_nc import qc_main
 from ..registry import util as cfg
@@ -100,7 +99,6 @@ def main():
     filename = output
 
     dimensions = cfg.read_dimensions()
-    n_chars = dimensions['chars']
     num_stations = dimensions['nstations']
     time_dim = dimensions['time']
 
@@ -133,38 +131,51 @@ def main():
         # Loop through the stations and stitch together the current observation
         temp_obs = []
         for station_name, cur_station in stations.items():
-            temp_obs.append(cur_station.get_obs(metar_name))
+            if 'latitude' in observation_name:
+                temp_obs.append(list(np.repeat(stn_tbl[station_name]['lat'],len(dates))))
+            elif 'longitude' in observation_name:
+                temp_obs.append(list(np.repeat(stn_tbl[station_name]['lon'],len(dates))))
+            else:
+                temp_obs.append(cur_station.get_obs(metar_name))
         obs_data = np.array(temp_obs)
         logging.info(observation_name)
 
         # Construct Camps data object
         camps_obj = Camps_data(observation_name)
-        camps_obj.set_dimensions()
+        try:
+            camps_obj.metadata['vertical_coord'] = camps_obj.metadata.pop('coordinates')
+        except:
+            pass
+        if camps_obj.is_feature_of_interest() and len(obs_data.shape)>1:
+            obs_data = obs_data[:,0]
+            camps_obj.set_dimensions((num_stations,))
+        else:
+            camps_obj.set_dimensions((time_dim,num_stations))
         camps_obj.add_data(obs_data)
-        camps_obj.add_source('StatPP__Data/Source/NCEPSfcObsMETAR')
-        camps_obj.add_process('MetarObProcStep1')
-        if qc_flag: camps_obj.add_process('MetarObProcStep2')
+        camps_obj.add_source('METAR')
+        camps_obj.add_process('DecodeBUFR')
+        if qc_flag: camps_obj.add_process('METARQC')
         camps_obj.change_data_type()
 
         # Again check for time bounds, pass extra info to add_time if
         # there are time bounds
-        if camps_obj.has_time_bounds():
-            hours = db.get_property(camps_obj.name,'hours')
-            camps_obj.metadata['hours'] = hours
-            camps_obj.time = add_time(start_time, end_time, time_bounds=hours)
-        else:
-            camps_obj.time = add_time(start_time, end_time)
+        if not camps_obj.is_feature_of_interest():
+            if camps_obj.has_time_bounds():
+                hours = camps_obj.properties['hours']
+                camps_obj.metadata['hours'] = hours
+                camps_obj.time = add_time(start_time, end_time, time_bounds=hours)
+            else:
+                camps_obj.time = add_time(start_time, end_time)
 
         # Transpose the array and swap dimension names. Note that this may be a
         # temporary solution.
-        camps_obj.data = np.transpose(camps_obj.data)
-        camps_obj.set_dimensions(dimensions=('default_time_coordinate_size','number_of_stations',))
+        if len(camps_obj.data.shape)>1:
+            camps_obj.data = np.transpose(camps_obj.data)
 
         camps_data.append(camps_obj)
 
     camps_obj = pack_station_names(list(stations.keys()))
-    camps_obj.add_source('StatPP__Data/Source/NCEPSfcObsMETAR')
-    camps_obj.time = add_time(start_time, end_time)
+    camps_obj.add_source('METAR')
     camps_data.append(camps_obj)
 
     if qc_flag:
@@ -172,8 +183,20 @@ def main():
     else:
         extra_globals = {"source": "Data from METAR (No MDL Quality Control)"}
 
+    # TEMPORARY: Need to perform 2 actions here. We should do this elsewhere, but here for now...
+    #
+    # 1) Unscale precip obs. Precip obs in MDL hourly table are units of hundreths of inches
+    #    (i.e. 1.00 inches is 100).
+    # 2) Trace amounts in the MDL hourly table are coded as -4.  Here we need to set these
+    #    to a "defined" trace amount as float of value 0.004.
+    for c in camps_data:
+        if "precipitation_amount" in c.standard_name:
+            c.data = np.where(np.logical_and(c.data>=0.0,c.data<9999.),c.data/100.0,c.data)
+            c.data = np.where(c.data==-4,np.float32(0.004),c.data)
+    # TEMPORARY
+
     # Write into netCDF4 file
-    writer.write(camps_data, filename, extra_globals, write_to_db=True)
+    writer.write(camps_data, filename, extra_globals)
     if log_file:
         out_log.close()
 
@@ -213,7 +236,7 @@ def add_time(start, end, stride=None, time_bounds=None):
 def pack_station_names(names):
     """Constructs and returns Camps data object for stations."""
 
-    w_obj = Camps_data('station')
+    w_obj = Camps_data('stations')
     max_chars = max([len(i) for i in names])
     names = [name + ('_' * (max_chars - len(name))) for name in names]
     station_name_arr = np.array([])
@@ -221,13 +244,8 @@ def pack_station_names(names):
         char_arr = np.array(list(names[0]))
         station_name_arr = np.reshape(char_arr,(len(char_arr.shape),char_arr.shape[0]))
     elif len(names) > 1:
-        for name in names:
-            char_arr = np.array(list(name))
-            if len(station_name_arr) == 0:  # if it's the first station
-                station_name_arr = char_arr
-            else:
-                station_name_arr = np.vstack((station_name_arr, char_arr))
-    w_obj.set_dimensions(tuple(['number_of_stations', 'num_characters']))
+        station_name_arr = np.array(names)
+    w_obj.set_dimensions(tuple(['stations']))
     w_obj.add_data(station_name_arr)
     w_obj.add_metadata("fill_value", '_')
 

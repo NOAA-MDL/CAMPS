@@ -8,7 +8,6 @@ from scipy.interpolate import griddata
 from pyproj import Proj
 
 from ..registry import util as cfg
-#from . import util
 from ..core.Camps_data import Camps_data
 
 
@@ -38,13 +37,12 @@ def interp_setup(w_obj, xi_x, xi_y, interp_method):
 
     # Extract model_values
     model_values = w_obj.data
-    if len(model_values.shape) > 2:
-        model_values = model_values[:,:,0]
+    if len(model_values.shape) > 3:
+        model_values = model_values[:,:,:,0]
 
     # Convert station x and y to grid referenced x and y
     xind = xi_x
     yind = xi_y
-
     #--------------------------------------------------------------------------
     # Perform interpolation
     #--------------------------------------------------------------------------
@@ -151,18 +149,18 @@ def bilinear_interp(model_values,xind,yind):
     # Adjust end points of indices
     xi[xi<0] = 0
     yi[yi<0] = 0
-    xi[xi>model_values.shape[1]-2] = model_values.shape[1]-2
-    yi[yi>model_values.shape[0]-2] = model_values.shape[0]-2
+    xi[xi>model_values.shape[2]-2] = model_values.shape[2]-2
+    yi[yi>model_values.shape[1]-2] = model_values.shape[1]-2
 
     # Get 'next' index in each direction
     xi1 = xi+1
     yi1 = yi+1
 
     # Perform bilinear interpolation
-    data = model_values[yi,xi] + \
-              (model_values[yi,xi1]-model_values[yi,xi])*dx + \
-              (model_values[yi1,xi]-model_values[yi,xi])*dy + \
-              (model_values[yi,xi]+model_values[yi1,xi1]-model_values[yi1,xi]-model_values[yi,xi1])*dx*dy
+    data = model_values[:,yi,xi] + \
+              (model_values[:,yi,xi1]-model_values[:,yi,xi])*dx + \
+              (model_values[:,yi1,xi]-model_values[:,yi,xi])*dy + \
+              (model_values[:,yi,xi]+model_values[:,yi1,xi1]-model_values[:,yi1,xi]-model_values[:,yi,xi1])*dx*dy
 
     return data
 
@@ -174,8 +172,8 @@ def budget_interp(a,xind,yind):
     """
 
     # IMPORTANT: 2D grids in CAMPS are ordered j/y,i/x
-    ny = a.shape[0]
-    nx = a.shape[1]
+    ny = a.shape[1]
+    nx = a.shape[2]
 
     adata = np.ma.getdata(a)
     amask = np.ma.getmaskarray(a)
@@ -188,71 +186,39 @@ def budget_interp(a,xind,yind):
     # Pre-process input 2D grid
     it = np.nditer([adata,awdata],flags=['multi_index',],op_flags=[['readonly'],['readwrite']])
     for a1,aw1 in it:
-        j = it.multi_index[0]
-        i = it.multi_index[1]
+        d = it.multi_index[0]
+        j = it.multi_index[1]
+        i = it.multi_index[2]
         asum = 0.
         acount = 0
         if a1[...] <= 0.0:
             if j+1 in range(ny):
-                asum += adata[j+1,i]
+                asum += adata[d,j+1,i]
                 acount += 1
             if j-1 in range(ny):
-                asum += adata[j-1,i]
+                asum += adata[d,j-1,i]
                 acount += 1
             if i+1 in range(nx):
-                asum += adata[j,i+1]
+                asum += adata[d,j,i+1]
                 acount += 1
             if i-1 in range(nx):
-                asum += adata[j,i-1]
+                asum += adata[d,j,i-1]
                 acount += 1
             if acount > 0:
                 aw1[...] = -1.0*(asum/np.float32(acount))
 
     # Setup output data array using xind shape info.
-    data = np.zeros((xind.shape[0]),dtype=np.float32)
-    mask = np.zeros((xind.shape[0]),dtype=np.int8)
-
-    it = np.nditer([xind,yind,data,mask],flags=['multi_index',],op_flags=[['readonly'],['readonly'],['readwrite'],['readwrite']])
-    for x1,y1,d1,m1 in it:
-        # Convert to indices for data points
-        i = x1.astype(int)
-        j = y1.astype(int)
-
-        # Make sure i,j are within grid domain [0:ny-1,0:nx-1]
-        if i < 0:
-            i = 0
-        elif i >= nx:
-            i = nx-1
-        if j < 0:
-            j = 0
-        elif j >= ny:
-            j = ny-1
-
-        ip1 = i+1 if i < nx-2 else nx-1
-        jp1 = j+1 if j < ny-2 else ny-1
-
-        dx = x1-np.float32(i)
-        dy = y1-np.float32(j)
-
-        if dx == 0.0 and dy == 0.0:
-            d1[...] = adata[j,i]
-            m1[...] = amask[j,i]
-        else:
-            d1[...] = awdata[j,i]+\
-                      ((awdata[j,ip1]-awdata[j,i])*dx)+\
-                      ((awdata[jp1,i]-awdata[j,i])*dy)+\
-                      ((awdata[j,i]+awdata[jp1,ip1]-awdata[jp1,i]-awdata[j,ip1])*dx*dy)
-            m1[...] = awmask[j,i]+awmask[jp1,i]+awmask[j,ip1]+awmask[jp1,ip1]
-
-    data = np.where(data<0.0,0.0,data)
-
-    return np.ma.array(data, mask=mask)
-
+    # Pass pre-processed data array into bilinear interpolation function
+    data = bilinear_interp(np.ma.array(awdata,mask=awmask), xind, yind)
+    data[data<0.0] = 0.0
+    return data
+    
 
 def biquadratic_interp(model_values,xind,yind):
 
     #Convert to indices for data points and get distances
     #between grid points and data points
+    ndays = model_values.shape[0]
     dx = xind.round(0)-xind
     dy = yind.round(0)-yind
     xi = xind.astype(int)
@@ -261,8 +227,8 @@ def biquadratic_interp(model_values,xind,yind):
     #Adjust end points of indices
     xi[xi<0] = 0
     yi[yi<0] = 0
-    xi[xi>model_values.shape[1]-2] = model_values.shape[1]-2
-    yi[yi>model_values.shape[0]-2] = model_values.shape[0]-2
+    xi[xi>model_values.shape[2]-2] = model_values.shape[2]-2
+    yi[yi>model_values.shape[1]-2] = model_values.shape[1]-2
 
     #Get several 'adjacent' indices.
     xi1 = xi+1
@@ -277,19 +243,19 @@ def biquadratic_interp(model_values,xind,yind):
     D = []
     for j in range(4):
         X = xi[inner_ind] - 1 + j
-        M = model_values[yi[inner_ind],X] + (model_values[yi1[inner_ind],X] - model_values[yi[inner_ind],X])*dy[inner_ind] + (model_values[yiM1[inner_ind],X]+model_values[yi2[inner_ind],X]-model_values[yi[inner_ind],X]-model_values[yi1[inner_ind],X])*FCT[inner_ind]
+        M = model_values[:,yi[inner_ind],X] + (model_values[:,yi1[inner_ind],X] - model_values[:,yi[inner_ind],X])*dy[inner_ind] + (model_values[:,yiM1[inner_ind],X]+model_values[:,yi2[inner_ind],X]-model_values[:,yi[inner_ind],X]-model_values[:,yi1[inner_ind],X])*FCT[inner_ind]
         D.append(M)
 
-    data = np.ma.ones(xi.shape)*9999
-    data[inner_ind] = D[1]+(D[2]-D[1])*dx[inner_ind]+(D[0]+D[3]-D[1]-D[2])*FET[inner_ind]
+    data = np.ma.ones((ndays,xi.size))*9999
+    data[:,inner_ind] = D[1]+(D[2]-D[1])*dx[inner_ind]+(D[0]+D[3]-D[1]-D[2])*FET[inner_ind]
 
     # For points along the grid boundary, perform bilinear interpolation
-    bound_ind = np.where((xi==0) | (yi==0) | (xi==model_values.shape[1]-2) | (yi==model_values.shape[0]-2))
-    data[bound_ind] = model_values[yi[bound_ind],xi[bound_ind]] + \
-    (model_values[yi[bound_ind],xi1[bound_ind]] - model_values[yi[bound_ind],xi[bound_ind]])*dx[bound_ind] + \
-    (model_values[yi1[bound_ind],xi[bound_ind]] - model_values[yi[bound_ind],xi[bound_ind]])*dy[bound_ind] + \
-    (model_values[yi[bound_ind],xi[bound_ind]] + model_values[yi1[bound_ind],xi1[bound_ind]] - \
-    model_values[yi1[bound_ind],xi[bound_ind]] - model_values[yi[bound_ind],xi1[bound_ind]])*dx[bound_ind]*dy[bound_ind]
+    bound_ind = np.where((xi==0) | (yi==0) | (xi==model_values.shape[1]-2) | (yi==model_values.shape[0]-2))[0]
+    data[:,bound_ind] = model_values[:,yi[bound_ind],xi[bound_ind]] + \
+    (model_values[:,yi[bound_ind],xi1[bound_ind]] - model_values[:,yi[bound_ind],xi[bound_ind]])*dx[bound_ind] + \
+    (model_values[:,yi1[bound_ind],xi[bound_ind]] - model_values[:,yi[bound_ind],xi[bound_ind]])*dy[bound_ind] + \
+    (model_values[:,yi[bound_ind],xi[bound_ind]] + model_values[:,yi1[bound_ind],xi1[bound_ind]] - \
+    model_values[:,yi1[bound_ind],xi[bound_ind]] - model_values[:,yi[bound_ind],xi1[bound_ind]])*dx[bound_ind]*dy[bound_ind]
 
     return data
 
@@ -300,11 +266,12 @@ def nearest_neighbor_interp(model_values,xind,yind):
     xi = np.round(xind).astype(int)
     yi = np.round(yind).astype(int)
 
+    ndays = model_values.shape[0]
 
     # Perform nearest neighbor interpolation, leaving points outside of grid boundary as missing.
-    data = np.ma.ones(xi.shape)*9999
-    valid_ind = np.where((xi>=0) & (yi>=0) & (xi<model_values.shape[1]) & (yi<model_values.shape[0]))
-    data[valid_ind] = model_values[yi[valid_ind],xi[valid_ind]]
+    data = np.ma.ones((ndays,xi.size))*9999
+    valid_ind = np.where((xi>=0) & (yi>=0) & (xi<model_values.shape[1]) & (yi<model_values.shape[0]))[0]
+    data[:,valid_ind] = model_values[:,yi[valid_ind],xi[valid_ind]]
 
     return data
 

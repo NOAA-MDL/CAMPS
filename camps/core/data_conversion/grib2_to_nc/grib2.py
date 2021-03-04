@@ -81,7 +81,7 @@ def convert_grib2(control):
         isProjected = True
         dx = tmp_grb.Dx/1000.0
         dy = tmp_grb.Dy/1000.0
-        grid_meta_dict['OM__observedProperty'] = 'projection'
+        grid_meta_dict['SOSA__observedProperty'] = 'projection'
         grid_meta_dict['grid_mapping_name'] = "lambert_conformal_conic" # CF-conventions name
         grid_meta_dict['standard_parallel'] = tmp_grb.LaDInDegrees
         grid_meta_dict['longitude_of_central_meridian'] = tmp_grb.LoVInDegrees
@@ -90,7 +90,7 @@ def convert_grib2(control):
         isProjected = True
         dx = tmp_grb.Di/1000.0
         dy = tmp_grb.Dj/1000.0
-        grid_meta_dict['OM__observedProperty'] = 'projection'
+        grid_meta_dict['SOSA__observedProperty'] = 'projection'
         grid_meta_dict['grid_mapping_name'] = "mercator" # CF-conventions name
         grid_meta_dict['standard_parallel'] = tmp_grb.LaDInDegrees
         grid_meta_dict['longitude_of_projection_origin'] = tmp_grb.projparams['lon_0']
@@ -99,7 +99,7 @@ def convert_grib2(control):
         isProjected = True
         dx = tmp_grb.Dx/1000.0
         dy = tmp_grb.Dy/1000.0
-        grid_meta_dict['OM__observedProperty'] = 'projection'
+        grid_meta_dict['SOSA__observedProperty'] = 'projection'
         grid_meta_dict['grid_mapping_name'] = "polar_stereographic" # CF-conventions name
         grid_meta_dict['straight_vertical_longitude_from_pole'] = tmp_grb.orientationOfTheGridInDegrees
         grid_meta_dict['latitude_of_projection_origin'] = 90.0
@@ -107,7 +107,7 @@ def convert_grib2(control):
         grid_meta_dict['scale_factor_at_projection_origin'] = 1
     elif tmp_grb.gridType == "regular_ll":
         isProjected = False
-        grid_meta_dict['OM__observedProperty'] = 'projection'
+        grid_meta_dict['SOSA__observedProperty'] = 'projection'
         grid_meta_dict['grid_mapping_name'] = "latitude_longitude" # CF-conventions name
 
 
@@ -253,8 +253,8 @@ def convert_grib2(control):
         #Create object for variable
         obj = Camps_data(name)
 
-        #Check to see if variable is in netcdf.yaml file and thus in db
-        if len(obj.metadata) == 0: #if not in db we cannot write -- skip variable
+        #Check to see if variable is in netcdf.yaml file
+        if len(obj.metadata) == 0: #if not in netcdf.yaml we cannot write -- skip variable
             logging.warning('variable %s not in netcdf.yaml, not writing to file'%(name))
             continue
 
@@ -276,8 +276,11 @@ def convert_grib2(control):
                 valid_time[i, j] = Time.epoch_time(val)
         valid_time = valid_time.astype(int)
 
+        #Add source information from control file
+        if control.source:
+            obj.add_source(control.source)
         #Add processes to object based on the control file settings
-        if control.processes: [ obj.add_process(p) for p in control.processes ]
+        if control.preprocesses: [ obj.add_preprocess(p) for p in control.preprocesses ]
 
         #Adding forecast model cycle time to object
         obj.add_fcstTime(fcst_time)
@@ -296,7 +299,7 @@ def convert_grib2(control):
             vert_type = 'plev'
         else:
             vert_type = 'elev'
-        obj.add_coord(vert_coords[0], vert_type=vert_type)
+        obj.add_vert_coord(vert_coords[0], vert_type=vert_type)
 
         #Add units
         obj.metadata['units'] = grb_dict['units']
@@ -324,21 +327,11 @@ def convert_grib2(control):
             ptime = Time.PhenomenonTime(data=valid_time)
         obj.time.append(ptime)
 
-        #Add ResultTime
-        rtime = Time.ResultTime(start_time=full_start, end_time=full_end, stride=Time.ONE_DAY)
-        obj.time.append(rtime)
 
         #Add ForecastReferenceTime
         ftime = Time.ForecastReferenceTime(start_time=full_start, end_time=full_end, stride=Time.ONE_DAY)
         obj.time.append(ftime)
 
-        #Add ValidTime
-        #Will be dimensioned so for each leadtime there is a new valid time
-        vstart = np.full(valid_time.shape,ftime.data.copy(),dtype='int')
-        vend = valid_time.copy()
-        valid_time = np.dstack((vstart, vend))
-        vtime = Time.ValidTime(data=valid_time)
-        obj.time.append(vtime)
 
         #Add LeadTime
         ltime = Time.LeadTime(data=lead_time)
@@ -382,7 +375,7 @@ def convert_grib2(control):
     #Append object to list of objects
     all_objs.append(proj)
 
-    writer.write(all_objs, output, write_to_db=True)
+    writer.write(all_objs, output)
 
 
 def get_projection_data(grb):

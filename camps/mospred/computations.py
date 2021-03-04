@@ -8,7 +8,6 @@ import math
 import numpy as np
 import operator
 
-from ..core.fetch import *
 from ..core.Time import epoch_to_datetime
 from ..core import Time as Time
 from ..core.Camps_data import Camps_data

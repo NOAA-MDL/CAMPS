@@ -280,15 +280,15 @@ predictors :
   Source : 'GFS13'
   Vertical_Coordinate : "0"
   Duration : '6 hour sum'
-  Procedure : ['grid_binary >= 0.04 inches', 'interp linear']
+  Procedure : ['grid_binary >= 0.04 inches', 'interp bilinear']
   lead_times : ['12 h']
 
-#- property : 'TotalPrecip'
-#  Source : 'GFS13'
-#  Vertical_Coordinate : "0"
-#  Duration : '12 hour sum'
-#  Procedure : ['grid_binary >= 2.00', 'interp linear']
-#  lead_times : ['12 h']
+- property : 'TotalPrecip'
+  Source : 'GFS13'
+  Vertical_Coordinate : "0"
+  Duration : '12 hour sum'
+  Procedure : ['grid_binary >= 2.00', 'interp budget']
+  lead_times : ['12 h']
 
 #- property : 'TotalPrecip'
 #  Source : 'GFS13'
@@ -354,23 +354,26 @@ predictors :
 
 predictands:
 
-#- property : 'Temp'
-#  Source : ['NCEPSfcObsMETAR','NDBC']
-#  Vertical_Coordinate : "2m"
-#  lead_times : ['12 h']
+- property : 'Temp'
+  Source : ['METAR','NDBC']
+  Vertical_Coordinate : "2m"
+  lead_times : ['12 h']
+  Duration : "0"
 
-#- property : 'DewPt'
-#  Source : ['NCEPSfcObsMETAR','NDBC']
-#  Vertical_Coordinate : "2m"
-#  lead_times : ['12 h']
+- property : 'DewPt'
+  Source : ['METAR','NDBC']
+  Vertical_Coordinate : "2m"
+  lead_times : ['12 h']
+  Duration : "0"
 
 #- property : 'DayMaxT'
-#  Source : ['NCEPSfcObsMETAR','NDBC']
+#  Source : ['METAR','NDBC']
 #  Vertical_Coordinate : "2m"
 #  lead_times : ['30 h']
 
+
 #- property : 'NightMinT'
-#  Source : ['NCEPSfcObsMETAR','NDBC']
+#  Source : ['METAR','NDBC']
 #  Vertical_Coordinate : "2m"
 #  lead_times : ['42 h']
 

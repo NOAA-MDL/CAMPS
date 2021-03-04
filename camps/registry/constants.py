@@ -9,6 +9,7 @@ Module to give symbolic representation to magic strings and numbers.
 ######################
 PLEV = 'plev'
 ELEV = 'elev'
+VERT_COORD = 'vertical_coord'
 COORD = 'coordinates'
 BOUNDS = 'bounds'
 TIME_BOUNDS = 'time_bounds'
@@ -16,8 +17,8 @@ PLEV_BOUNDS = 'plev_bounds'
 ELEV_BOUNDS = 'elev_bounds'
 GFS = 'GFS'
 NAM = 'NAM'
-PROCESS_IDENTIFIER = 'PROV__Activity'
-SOURCE_IDENTIFIER = "PROV__Used"
+PROCESS_IDENTIFIER = 'PROV__activity'
+SOURCE_IDENTIFIER = "PROV__used"
 
 #######################
 # Numerical Constants #

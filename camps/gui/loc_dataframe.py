@@ -10,12 +10,10 @@ from collections import OrderedDict
 import pdb
 
 from ..core.reader import read
-from ..registry.db.update_db import update
 from ..registry import util as cfg
 from ..mospred import read_pred as read_pred
 from ..mospred import parse_pred as parse_pred
 from ..core import Time as Time
-from ..core.fetch import *
 from ..mospred import create
 
 def loc_stations(station_let,lat,lon):
@@ -61,11 +59,9 @@ def loc_dataframe(LCOlat,UCOlat,LCOlon,UCOlon):
     pred_ctrl = cfg.read_yaml(cfg.get_config_path(control.pred_file))
     predd_ctrl = cfg.read_yaml(cfg.get_config_path(control.predd_file))
 
-    #get paths to data and update database
+    #get paths to data
     predictor_file_path = control.predictor_file_path
     predictand_file_path = control.predictand_file_path
-    pred_file_id = update(predictor_file_path[0])
-    predd_file_id = update(predictand_file_path[0])
 
     #stores lead time and date range
     lead_time = control.lead_time
@@ -73,9 +69,9 @@ def loc_dataframe(LCOlat,UCOlat,LCOlon,UCOlon):
 
     #store info for fetch many dates
     start,end,stride = read_pred.parse_range(date_range[0])
-    stride = timedelta(seconds=int(stride))
-    start = Time.str_to_datetime(start)
-    end = Time.str_to_datetime(end)
+    start = Time.epoch_time(start)
+    end = Time.epoch_time(end)
+    times = list(range(start,end+stride,stride))
     fcst_ref_time = control.date_range[0].split('-')[0][-2:]
 
     #intializes list of predictors
@@ -93,7 +89,7 @@ def loc_dataframe(LCOlat,UCOlat,LCOlon,UCOlon):
         pred.search_metadata['reserved1'] = 'vector'
 
         #builds camps data objects for each day
-        variable = fetch_many_dates(predictor_file_path,start,end,stride,pred.search_metadata,lead_time*3600, ids=[pred_file_id])
+        variable = read_var(file_path=predictor_file_path, lead_time=lead_time*3600, forecast_time=times, **pred.search_metadata)
 
         #appends data to single camps data object
         if variable[0] is not None:
@@ -115,7 +111,7 @@ def loc_dataframe(LCOlat,UCOlat,LCOlon,UCOlon):
         entry_dict['file_id'] = predd_file_id
 
         #builds camps data object for each day
-        variable = fetch_many_dates(predictand_file_path,start, end, stride, entry_dict,ids=[predd_file_id])
+        variable = read_var(file_path=predictand_file_path, forecast_time=times, **entry_dict)
 
         #appends data to single camps data object
         var = variable[0]

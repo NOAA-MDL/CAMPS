@@ -8,7 +8,6 @@ import random
 import uuid
 from netCDF4 import Dataset
 
-from ..registry.db import db as db
 from ..registry import util as util
 from .Camps_data import Camps_data
 
@@ -18,7 +17,7 @@ Module to handle writing Camps netCDF data
 
 
 def write(camps_data, filename, write_components=False, 
-          global_attrs={}, overwrite=True, write_to_db=True):
+          global_attrs={}, overwrite=True):
     """Writes a list of Camps_data to NetCDF file.
     camps_data is expected to be a list of Camps_data objects.
     filename is the filename to write to.
@@ -32,7 +31,6 @@ def write(camps_data, filename, write_components=False,
         global_attrs (dict): Dict of global attributes for NetCDF file.
         overwrite (bool): If true, write a new file regardless of whether a file
             already exists, otherwise append to existing file if possible.
-        write_to_db (bool): write to database
 
     Returns:
         True if successful, False otherwise.
@@ -41,7 +39,6 @@ def write(camps_data, filename, write_components=False,
     logging.info("\nWriting to "+filename+"\n")
     file_id = str(uuid.uuid4())
     global_attrs['file_id'] = file_id
-
     if type(camps_data) is not list:
         camps_data = [camps_data]
 
@@ -52,7 +49,6 @@ def write(camps_data, filename, write_components=False,
     else:
         mode = 'a'
     nc = Dataset(filename, mode=mode, format="NETCDF4")
-
     #----------------------------------------------------------------------
     #I don't understand what this is for...if it errors out it just skips.
     #----------------------------------------------------------------------
@@ -69,23 +65,11 @@ def write(camps_data, filename, write_components=False,
 
     #Write the data by calling its write_to_nc function
     primary_vars = []
-    #write file info to the file_info table if write_to_db is true
-    if write_to_db:
-        db.insert_file_info(filename,str(file_id))
-        #what if add_to_database fails...need some kind of check
-        #what if it fails for only some predictors but not others?
 
     for da in camps_data:
         name = da.write_to_nc(nc, write_components)
         primary_vars.append(name)
-        if write_to_db:
-            try:
-                da.add_to_database(filename, file_id)
-            except AttributeError as e :
-                logging.info(e)
-            #pass # Variable doesn't have a Phenomenon Time.
 
-    #global_attrs['primary_variables'] = get_primary_variables(camps_data)
     global_attrs['primary_variables'] = ' '.join(primary_vars)
     write_global_attributes(nc, global_attrs)
     write_prefixes(nc)
@@ -204,15 +188,8 @@ def write_stations(nc, station_list):
 
     dim_name = util.read_dimensions()['nstations']
     max_number_of_chars = len(max(station_list))
-    nc.createDimension('number_of_characters', max_number_of_chars)
-    call_var = nc.createVariable('station','c', (dim_name, 'number_of_characters'))
+    call_var = nc.createVariable('stations','c', (dim_name,))
     setattr(call_var, 'standard_name', 'platform_id')
     setattr(call_var, 'long_name', 'observation station name')
-    station_name_arr = []
-    for station_name in station_list:
-        char_arr = np.array(list(station_name), 'c')
-        if len(station_name_arr) == 0:
-            station_name_arr = char_arr
-        else:
-            station_name_arr = np.vstack((station_name_arr, char_arr))
+    station_name_arr = np.array(station_list)
     call_var[:] = station_name_arr

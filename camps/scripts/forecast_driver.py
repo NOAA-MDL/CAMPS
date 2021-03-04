@@ -17,14 +17,11 @@ from ..registry import util as cfg
 from ..mospred import read_pred as read_pred
 from ..mospred import parse_pred as parse_pred
 from ..mospred import create as create
-from ..mospred.create import Predictor
 from ..mospred import procedures as procedures
 from ..mospred import interp
-from ..registry.db.update_db import update
 
 from ..core import Time as Time
 from ..core import Camps_data as Camps_data
-from ..core.fetch import *
 from ..core.writer import write
 from ..core import reader as reader
 from ..core import util as util
@@ -33,9 +30,10 @@ from ..core import util as util
 global control
 
 def main(control_file=None):
-    """
-    """
+    """ """
+
     import sys
+
     # Get control file
     control_file = None if len(sys.argv) !=2 else sys.argv[1]
     if control_file is not None:
@@ -74,23 +72,14 @@ def main(control_file=None):
         lead_times = None
     # Determine start and end dates and stride
     start,end,stride = read_pred.parse_range(control.range[0])
-    start_time = Time.str_to_datetime(start)
-    end_time = Time.str_to_datetime(end)
-    stride_time = timedelta(seconds=int(stride))
+    start_time = Time.epoch_time(start)
+    end_time = Time.epoch_time(end)
+    print(start_time, end_time, stride)
+    times = list(range(start_time,end_time+stride,stride))
     # Read equations from equation file
     eq_dict = read_equations(control.equation_file)
     predictands = []
     predictors = []
-
-    #Collect ids of multiple input predictor files
-    predictor_ids = []
-    for FILE in control.predictor_data_path:
-        predictor_ids.append(update(FILE))
-
-    #Collect ids of multiple input predictand files
-    file_ids = []
-    for FILE in control.predictand_data_path:
-        file_ids.append(update(FILE))
 
     # loop through predictors, predictands, and lead times and fetch.
     sources = []
@@ -112,19 +101,15 @@ def main(control_file=None):
         # Adjust entry_dict for fetch
         pred_dict['reserved1'] = 'vector'
 
-        # If smoothing, add to pred_dict metadata
-        if 'Procedure' in entry_dict:
-            indices = [i for i, s in enumerate(entry_dict['Procedure']) if 'smooth' in s]
-            if len(indices) == 1:
-                smooth, arg = procedures.get_procedure(entry_dict['Procedure'][indices[0]])
-                pred_dict['smooth'] = int(arg[0])
-
         # loop through lead times and fetch
         for i,L in enumerate(leads):
             lead = parse_pred.lead_time(L)
             pred_dict['reserved2'] = lead
             # Fetch predictors for each date and then stack data
-            pred_arr = fetch_many_dates(control.predictor_data_path, start_time, end_time, stride_time, pred_dict, lead, ids=predictor_ids)
+            pred_arr = []
+            for filepath in control.predictor_data_path:
+                variable = reader.read_var(filepath=filepath, forecast_time=times,**pred_dict)
+                pred_arr.append(variable)
             if None in pred_arr:
                 logging.warning('Could not fetch all '+pred_dict['property']+' predictors for lead time '+str(lead))
                 logging.warning(str(pred_arr))
@@ -144,17 +129,18 @@ def main(control_file=None):
                 raise
             leads = copy.copy(lead_times)
         # Adjust entry_dict for fetch
-        vertical_coordinate = entry_dict.pop('Vertical_Coordinate')
         if isinstance(entry_dict['Source'],list):
             Source = entry_dict.pop('Source')
-            entry_dict['Source'] = ' '.join(Source)
+        entry_dict = read_pred.get_variable(entry_dict)
+        if Source: entry_dict['source'] = ' '.join(Source)
         for i,L in enumerate(leads):
             lead = parse_pred.lead_time(L)
             # Adjust predictand start and end time using lead time
-            start_time2 = start_time + timedelta(hours=int(lead))
-            end_time2 = end_time + timedelta(hours=int(lead))
-            # Fetch predictands for each date and then stack data
-            vars_arr = fetch_many_dates(control.predictand_data_path, start_time2, end_time2, stride_time, entry_dict, ids=file_ids)
+            times2 = [t + int(lead*3600) for t in times]
+            vars_arr = []
+            for filepath in control.predictand_data_path:
+                variable = reader.read_var(filepath=filepath, forecast_time=times2,**entry_dict)
+                vars_arr.append(variable)
             if None in vars_arr:
                 logging.warning('Could not fetch all '+entry_dict['property']+' predictands for hour '+str(start_time2.hour))
                 logging.warning(str(vars_arr))
@@ -193,6 +179,7 @@ def main(control_file=None):
                 continue
             const = eq_dict['equations'][st_index,-1,p]
             coefs = eq_dict['equations'][st_index,0:-1,p]
+
             assert len(coefs)==len(predictors),"number of coefficients and number of predictors must be equal"
             tot = np.ma.zeros(predictands[p].data[:,st_index].size)
             # Loop through coefs
@@ -205,13 +192,9 @@ def main(control_file=None):
                     datapoint = predictors[nf].data[:,pred_index]
                 tot+= datapoint * coef
             tot += const
-            if not np.all(predictands[p].data[:,st_index]==9999) and not np.all(tot==0):
-                logging.info(str(predictands[p].data[:,st_index])+' at '+str(s))
-                logging.info(str(tot)+' at '+str(s))
-            if const == 0. and np.ma.all(coefs == 0.):
-                output_data[:,st_index] = np.ma.masked
-            else:
-                output_data[:,st_index] = tot[:]
+            logging.info(str(predictands[p].data[:,st_index])+' at '+str(s))
+            logging.info(str(tot)+' at '+str(s))
+            output_data[:,st_index] = tot[:]
         if valid_min:
             output_data[output_data<valid_min] = np.ma.masked
         if valid_max:
@@ -221,26 +204,15 @@ def main(control_file=None):
         # Set forecast data to object
         while len(output_data.shape)<len(forecast_obj.dimensions):
             output_data = output_data[...,None]
-            forecast_obj.add_data(output_data)
+        forecast_obj.add_data(output_data)
         outputs.append(forecast_obj)
     outputs = consistency_check(outputs)
     # Create station object
     station_dim = cfg.read_dimensions()['nstations']
-    station_obj = Camps_data('station')
+    station_obj = Camps_data('stations')
     station_obj.dimensions.append(station_dim)
-    dim_name = cfg.read_dimensions()['chars']
-    station_obj.dimensions.append(dim_name)
     station_obj.add_metadata("fill_value", '_')
-    station_name_arr = []
-    max_char = np.max([len(s) for s in stations])
-    for n,s in enumerate(stations):
-        if len(s)<max_char:
-            s = s+' '*(max_char-len(s))
-        char_arr = np.array(list(s), 'c')
-        if n==0:
-            station_name_arr = char_arr
-        else:
-            station_name_arr = np.vstack((station_name_arr, char_arr))
+    station_name_arr = np.array(stations)
     station_obj.add_data(station_name_arr)
 
     # Create lat/lon objects
@@ -262,19 +234,19 @@ def main(control_file=None):
 
 def read_equations(filename):
     """Reads equations file and returns dict"""
+
     logging.info('Reading equations')
     nc = Dataset(filename, 'r')
-    stations = netCDF4.chartostring(nc.variables['station'][:])
+    stations = nc.variables['stations'][:]
     equations = nc.variables['MOS_Equations'][:]
     preds = chartostring(nc.variables['Equations_List'][0:-1])
     tands = chartostring(nc.variables['Predictand_List'][:])
-#    coefs = nc.variables['input_parameters'][:]
     return {'stations':stations, 'equations':equations, 'predictor_list':preds,'predictand_list':tands}
 
 
 def process_vars(selected_stations, vars_arr, lats, lons):
-    """Stacks read variables into proper dimensions
-    """
+    """Stacks read variables into proper dimensions"""
+
     all_stations = [st.location.get_stations() for st in vars_arr]
     # Get only the stations and lats/lons we want
     if len(selected_stations[0])==4:
@@ -291,21 +263,18 @@ def process_vars(selected_stations, vars_arr, lats, lons):
         lats = np.array(lats)[indices2]
         lons = np.array(lons)[indices2]
     for i,var in enumerate(vars_arr):
-        var.data = var.data[indices]
+        var.data = var.data[:,indices]
         if i==0:
-            stacked_var = var
+            stacked_var = copy.copy(var)
         else:
             stacked_var += var
-    # Reshape the stacked data for dimensionality
-    if stacked_var.data.shape[0]>len(vars_arr):
-        stacked_var.data = np.reshape(stacked_var.data, (len(vars_arr),var.data.shape[0]))
+ 
     return (stacked_var,stations, lats, lons)
 
 
 def create_forecast_obj(output_name,predictand,start,end,stride,sources):
-    """
-    Create forecast object for write out
-    """
+    """ Create forecast object for write out """
+
     logging.info("Creating "+output_name+" forecast object")
     forecast_obj = Camps_data(output_name)
     # Use predictand metadata to create a forecast object.
@@ -316,29 +285,24 @@ def create_forecast_obj(output_name,predictand,start,end,stride,sources):
     forecast_obj.time.append(FcstRef_Times)
     FcstTime_hour = Time.epoch_to_datetime(FcstRef_Times.data[0]).hour
     forecast_obj.metadata.update(predictand.metadata)
-    ValidTimes = Time.ValidTime(**{'start_time':start,'end_time':end,'stride':stride,'offset':timedelta(hours=forecast_obj.metadata['leadtime'])})
-    forecast_obj.time.append(ValidTimes)
-    ResultTimes = Time.ResultTime(**{'start_time':start,'end_time':end,'stride':stride})
-    ResultTimes.append_result(None)
-    forecast_obj.time.append(ResultTimes)
     LeadTime = Time.LeadTime(data=np.ma.array([forecast_obj.metadata['leadtime']]))
     forecast_obj.time.append(LeadTime)
     forecast_obj.metadata['FcstTime_hour'] = FcstTime_hour
-    if 'PROV__Used' in list(forecast_obj.metadata.keys()):
-        forecast_obj.metadata['PROV__Used'] = sources
-    #except:
-    #    pass
+    if 'PROV__hadPrimarySource' in list(forecast_obj.metadata.keys()):
+        forecast_obj.metadata['PROV__hadPrimarySource'] = sources
     forecast_obj.add_process('MOS_Method')
     forecast_obj.location = predictand.location
-    forecast_obj.add_coord(predictand.get_coordinate())
-    fp = forecast_obj.metadata.pop('filepath')
+    forecast_obj.add_vert_coord(predictand.get_coordinate())
+    try:
+        fp = forecast_obj.metadata.pop('filepath')
+    except:
+        pass
 
     return forecast_obj
 
 def consistency_check(outputs):
-    """
-    Check related output variables for logical consistency
-    """
+    """ Check related output variables for logical consistency """
+
     # Loop through output variables. If temp is found, extract rest of variable name.
     # Loop through again. If dew point is found, compare rest of variable name (lead
     # time, level, etc). If match is found, find any place in data where dew point is
