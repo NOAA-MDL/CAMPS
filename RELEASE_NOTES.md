@@ -1,3 +1,24 @@
+# Version 1.2.0 March 5th, 2020
+Minor release
+
+## Main Features:
+* Removal of the CAMPS database.  The database aided in fetching variables from an input file based on a limited amount of metadata, provided by the user.  This functionality was easily replaced using the python package NetCDF4.  This change significantly sped up runtime of mospred_driver.py.
+* By removing level from the dimensions of primary variables, CF-Convention rules are fully met for each driver script.  The vertical level of a variable is instead accessed via a the metadata attribute verical_coord, which resolves to a variable that contains the vertical level of the variable.
+* Removed the temporary class in predictor.py.  This functionality was replaced with a simple dictionary.
+* Removed O&M ontology from the software.  SOSA has classes and properties that satisfy the CAMPS metadata ontology needs, and it is publically accessible, where O&M documentation exists behind a paywall.
+* Removed the time classes ResultTime and ValidTime.  These were unnecessary for representing our data.  Additionally, ValidTime within the O&M ontology does not match the commonly accepted definition within atmospheric science.
+* Cleaned up and and updated procedures.yaml and netcdf.yaml
+* In order to be CF-Compliant, started encoding time bound variables as auxiliary coordinate variables to represent variables that occur over a period of time.
+* Added more explicit documentation to control files
+
+## Bug Fixes:
+* Fixed precip scaling factor error in metar_driver.py.
+
+## Known Issues:
+* Spelling error in equations.py
+* Lingering file_id global attributes within NetCDF files.  File_id is no longer used in CAMPS.
+* Deprecation warnings resulting from the conversion from python 2 to python 3.
+
 # Version 1.1.0 September 30, 2020
 Minor release
 
