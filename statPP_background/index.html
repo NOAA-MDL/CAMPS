@@ -1,0 +1,271 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Statistical Post-Processing Background &mdash; camps 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The NWS Codes Registry: Using linked data to support CAMPS" href="../codes_registry/index.html" />
+    <link rel="prev" title="Output Examples" href="../Technical_Description/examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../users_guide.html">User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical_description.html">Technical Description</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Statistical Post-Processing Background</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/statPP_background/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statistical-post-processing-background">
+<span id="background"></span><h1>Statistical Post-Processing Background<a class="headerlink" href="#statistical-post-processing-background" title="Permalink to this headline">¶</a></h1>
+<p><strong>Statistical post-processing (StatPP)</strong> refers to the adjustment of current real-time
+forecast guidance using the discrepancies noted between past forecasts and
+observations/analyses. Past experience has shown that StatPP is capable of
+modifying real-time NWP guidance that is biased, somewhat unskillful, and
+unreliable into guidance that is unbiased, much more skillful, downscaled to
+local conditions, and highly reliable, thus making it suitable for use in
+decision support with little or no manual modification by forecasters.”
+StatPP can also ameliorate deficiencies due to finite ensemble size and infer
+forecasts for weather elements that are not directly forecast by the NWP system.
+(Cf. Hamill and Peroutka, 2016: High-Level Functional Requirements for
+Statistical Post-Processing in NOAA.)</p>
+<p>It is a truism among StatPP developers that they spend 10% of their time in
+science, 10% in statistics, and 80% in bookkeeping. Indeed, metadata storage and
+use are key aspects to any successful StatPP project. Daunting amounts of data
+characterize the training phase of many techniques. Some techniques defer these
+challenges to the production phase.</p>
+<p>For many StatPP techniques, the <strong>Training Phase</strong> or <strong>Development Phase</strong> is a set of
+processes and software that notes discrepancies between past forecasts and
+observations/analyses and distills them into a set of parameters. The Model
+Output Statistics (MOS) and Kalman Filter techniques both have distinct training
+phases. Most bias-correction techniques, however, do not.</p>
+<p>All StatPP techniques have a <strong>Production Phase</strong> or <strong>Implementation Phase</strong>, which
+is the set of processes and software that creates output forecasts.</p>
+<p>The <strong>Proxy for Truth</strong> is the set of observations/analyses that guides the StatPP
+process. The name recognizes the biases and errors that afflict our best
+observing platforms and analytical techniques. The proxy for truth is generally
+accepted to be adequate for the task of StatPP.</p>
+<p><strong>Numerical Weather Prediction (NWP)</strong> generally begins with some form of
+<strong>Data Assimilation (DA)</strong> which is followed by one or more runs of a NWP system.
+Additional steps may be required to breed perturbed inputs to facilitate an
+ensemble of NWP runs. The final step of an NWP run is named the Model Post;
+this step generally converts output from the specialized coordinate reference
+systems used in NWP (e.g., spherical harmonics and sigma levels) to more
+standard coordinate reference systems. StatPP applications generally work with
+these standard outputs.</p>
+<p>Many StatPP applications use some form of <strong>Statistical Pre-processing</strong> step where
+<strong>NWP output</strong> from multiple runs is captured in a <strong>StatPP Archive</strong>. This Statistical
+Pre-processing captures the data needed for the Training Phase. Often, NWP
+output is transformed in ways that facilitate statistical training. In general,
+if a Statistical Pre-processing step is required in the Training Phase, that
+same step will also appear in the Production Step.</p>
+<p>A Training Phase, if present, will use one or more <strong>Statistical Development
+Engines</strong> to note discrepancies between past NWP output and a selected Proxy for
+Truth. These discrepancies are then captured in a set of <strong>StatPP Parameters</strong> which
+can be used in the Production Phase.</p>
+<p>Figure 1, below, attempts to capture some of these concepts in a data flow diagram.</p>
+<img alt="a data flow diagram of a generic statistical post-processing training phase" src="../_images/StatPPTrainingPhasev0.1.png" />
+<p>Figure 2, below, also captures these concepts, but applies them to the <strong>Production Phase</strong>.</p>
+<img alt="a data flow diagram of a generic statistical post-processing implementation phase" src="../_images/StatPPProductionPhasev0.1.png" />
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../codes_registry/index.html" class="btn btn-neutral float-right" title="The NWS Codes Registry: Using linked data to support CAMPS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../Technical_Description/examples.html" class="btn btn-neutral float-left" title="Output Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Apr 23, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

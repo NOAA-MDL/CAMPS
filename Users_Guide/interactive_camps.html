@@ -1,0 +1,373 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Interactive CAMPS &mdash; camps 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Known Issues" href="known_issues.html" />
+    <link rel="prev" title="CAMPS Forecast Development - start to finish" href="camps_start_to_finish.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../users_guide.html">User’s Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structure.html">CAMPS Package Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="camps_start_to_finish.html">CAMPS Forecast Development - start to finish</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Interactive CAMPS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="known_issues.html">Known Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../technical_description.html">Technical Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../users_guide.html">User’s Guide</a> &raquo;</li>
+        
+      <li>Interactive CAMPS</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/Users_Guide/interactive_camps.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="interactive-camps">
+<h1>Interactive CAMPS<a class="headerlink" href="#interactive-camps" title="Permalink to this headline">¶</a></h1>
+<p>CAMPS can also be used via an interactive python session. The user can import CAMPS, instantiate a Camps_data object, apply procedures, and read/write data.</p>
+<p>When instantiating a Camps_data object, two arguments are accepted: <strong>name</strong> and <strong>autofill</strong>.  The default for autofill is set to True.
+When autofill is set to True, name must match a variable defined within the netcdf.yaml configuration file. This can be through a direct match,
+or via a predefined alias.  Once identified, the associated metadata will be  automatically added to the object.
+If the name doesn’t match any variable within netcdf.yaml, an error will be raised.</p>
+<p>For example, In netcdf.yaml the following entry exists for wind speed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wind_speed_instant</span> <span class="p">:</span>  <span class="o">&amp;</span><span class="n">WindSpd</span>
+  <span class="n">data_type</span> <span class="p">:</span> <span class="n">float32</span>
+  <span class="n">attribute</span> <span class="p">:</span>
+    <span class="n">SOSA__observedProperty</span> <span class="p">:</span> <span class="s2">&quot;StatPP__Data/Met/Moment/WindSpd&quot;</span>
+    <span class="n">long_name</span> <span class="p">:</span> <span class="s2">&quot;horizontal wind speed&quot;</span>
+    <span class="n">standard_name</span> <span class="p">:</span> <span class="s2">&quot;wind_speed&quot;</span>
+    <span class="n">comment</span> <span class="p">:</span> <span class="s2">&quot;Wind speed is set to -9 if winds are variable.&quot;</span>
+</pre></div>
+</div>
+<p>A Camps_data object can then be instantiated as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">camps.core.Camps_data</span> <span class="kn">import</span> <span class="n">Camps_data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span> <span class="o">=</span> <span class="n">Camps_data</span><span class="p">(</span><span class="s1">&#39;wind_speed_instant&#39;</span><span class="p">)</span> <span class="c1"># Initializes object</span>
+</pre></div>
+</div>
+<p>Notice that next to the variable name there is a pre-defined alias “WindSpd”.  At the bottom of netcdf.yaml
+there is a list of alternative variable names for some variables, which are linked to the desired alias.
+These aliases act as “pointers” to allow for CAMPS to recognize alternative variable names, and use the metadata pre-defined in netcdf.yaml.</p>
+<p>For example, perhaps your wind speed variable is called “wind_speed_value”.  At the bottom of the netcdf.yaml file one simply would need to add the following:
+<code class="docutils literal notranslate"><span class="pre">“wind_speed_value”</span> <span class="pre">:</span> <span class="pre">*WindSpd</span></code> to the list of pointers.  This would link the variable name “wind_speed_value” to the assigned metadata for “wind_speed_instant”.</p>
+<p>If autofill is instead set to False, name can be whatever string a user decides.  However, all metadata will need to be added manually by the user.
+It is highly recommended that any new variables be added to a users netcdf.yaml file, following the formatting layout contained in that file.
+Otherwise, there may be issues with reading the resulting output using other CAMPS utilities.</p>
+<p>Instantiating a CAMPS data object provides you with essentially an empty container, with some basic metadata, either autofilled
+or manually entered. The next steps would be to add actual data to the object, along with associated data such as time or location
+information. This can be added to the Camps_data object in the following way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span><span class="o">*</span><span class="mi">50</span> <span class="c1"># Assign data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ptime</span> <span class="o">=</span> <span class="n">Time</span><span class="o">.</span><span class="n">PhenomenonTime</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="s1">&#39;19910518&#39;</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="s1">&#39;20180810&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ptime</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Perhaps the user has a piece of metadata they would like to add that is unique to their data.  Metadata attributes can always be added
+to a Camps_data object in the following way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;my_important_attribute&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>
+</pre></div>
+</div>
+<p>As the user works with their data, they will likely want to add information about what procedures have been performed on their data.
+To add a procedure to your Camps_data object, a Process object is instantiated, and appended to the Camps_data object.</p>
+<p>Using the procedure ‘BiLinInterp’ as an example (predefined in procedures.yaml), there are two ways to add a Process object to your
+Camps_data object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span><span class="o">.</span><span class="n">add_process</span><span class="p">(</span><span class="s1">&#39;BiLinInterp&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Another option is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; p = camps.core.Process.Process(‘BiLinInterp’)
+&gt;&gt;&gt; wspd.processes.append(p)
+</pre></div>
+</div>
+<p>Similar to netcdf.yaml, metadata for predefined procedures are stored in procedures.yaml.  If the user wishes to take advantage of the “add_process” function,
+they need to add their procedure to that control file, following the format outlined there.  Otherwise “empty” procedure objects can be instantiated,
+and their metadata manually added.</p>
+<p>Lastly, since we’re writing to netcdf, dimensions of the variable data must be added to the Camps_data object. Dimensions can generally be named anything,
+but there are a few dimensions that have special properties, that act slightly differently. These are found in netcdf.yaml in the dimensions section.
+To add dimensions to the Camps_data object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span><span class="o">.</span><span class="n">add_dimensions</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The Camps_data object would now look as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*****</span> <span class="n">wind_speed</span> <span class="o">******</span>
+<span class="o">*</span>
+<span class="o">*</span> <span class="n">dtype</span>               <span class="p">:</span> <span class="n">float64</span>
+<span class="o">*</span> <span class="n">processes</span>           <span class="p">:</span> <span class="p">(</span> <span class="p">)</span>
+<span class="o">*</span> <span class="n">dimensions</span>          <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span>
+  <span class="n">Metadata</span><span class="p">:</span>
+<span class="o">*</span> <span class="n">comment</span>             <span class="p">:</span> <span class="n">Wind</span> <span class="n">speed</span> <span class="ow">is</span> <span class="nb">set</span> <span class="n">to</span> <span class="o">-</span><span class="mi">9</span> <span class="k">if</span> <span class="n">winds</span> <span class="n">are</span> <span class="n">variable</span><span class="o">.</span>
+<span class="o">*</span> <span class="n">SOSA__observedProperty</span><span class="p">:</span> <span class="n">StatPP__Data</span><span class="o">/</span><span class="n">Met</span><span class="o">/</span><span class="n">Moment</span><span class="o">/</span><span class="n">WindSpd</span>
+<span class="o">*</span> <span class="n">name</span>                <span class="p">:</span> <span class="n">wind_speed</span>
+<span class="o">*</span> <span class="n">valid_min</span>           <span class="p">:</span> <span class="mf">0.0</span>
+<span class="o">*</span> <span class="n">coordinates</span>         <span class="p">:</span> <span class="n">elev</span>
+<span class="o">*</span> <span class="n">long_name</span>           <span class="p">:</span> <span class="n">horizontal</span> <span class="n">wind</span> <span class="n">speed</span>
+<span class="o">*</span> <span class="n">standard_name</span>       <span class="p">:</span> <span class="n">wind_speed</span>
+<span class="o">*</span> <span class="n">my_important_attribute</span><span class="p">:</span> <span class="mi">42</span>
+<span class="o">*</span> <span class="n">valid_max</span>           <span class="p">:</span> <span class="mf">75.0</span>
+<span class="n">Shape</span><span class="p">:</span>
+<span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">Data</span><span class="p">:</span>
+<span class="p">[[</span> <span class="mf">44.32559503</span>  <span class="mf">29.6</span>
+<span class="mi">29957</span>  <span class="mf">48.87075532</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>The user will likely want to write their data to an output file.  Once the Camps_data object has
+been instantiated and populated with data and metadata, writing output is simple:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">camps.core.writer</span> <span class="kn">import</span> <span class="n">write</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">write</span><span class="p">(</span><span class="n">wspd</span><span class="p">,</span> <span class="s1">&#39;CAMPS_output.nc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The CDL output from the newly created file would look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ncdump output.nc
+
+netcdf CAMPS_output {
+dimensions:
+    x = 4 ;
+    y = 3 ;
+variables:
+    double WindSpd_instant(x, y) ;
+            WindSpd_instant:_FillValue = 9999. ;
+            WindSpd_instant:SOSA__observedProperty = &quot;StatPP__Data/Met/Moment/WindSpd&quot; ;
+            WindSpd_instant:long_name = &quot;horizontal wind speed&quot; ;
+            WindSpd_instant:valid_max = 75. ;
+            WindSpd_instant:standard_name = &quot;wind_speed&quot; ;
+            WindSpd_instant:comment = &quot;Wind speed is set to -9 if winds are variable.&quot; ;
+            WindSpd_instant:units = &quot;m/s&quot; ;
+            WindSpd_instant:my_important_attribute = 42LL ;
+            WindSpd_instant:coordinates = &quot;latitude longitude&quot; ;
+            WindSpd_instant:ancillary_variables = &quot;&quot; ;
+            WindSpd_instant:missing_value = 9999. ;
+            WindSpd_instant:PROV__wasInformedBy = &quot;( )&quot; ;
+            WindSpd_instant:SOSA__usedProcedure = &quot;( )&quot; ;
+
+// global attributes:
+            :institution = &quot;NOAA/National Weather Service&quot; ;
+            :Conventions = &quot;CF-1.7 CAMPS-1.2&quot; ;
+            :version = &quot;CAMPS-1.2&quot; ;
+            :history = &quot;&quot; ;
+            :references = &quot;&quot; ;
+            :organization = &quot;NOAA/MDL&quot; ;
+            :url = &quot;http://www.nws.noaa.gov/mdl/, https://sats.nws.noaa.gov/~camps/&quot; ;
+            :primary_variables = &quot;WindSpd_instant&quot; ;
+data:
+
+  WindSpd_instant =
+    9.36115709400316, 40.0805602441551, 4.00665537148,
+    40.9072218935792, 16.2853803224382, 23.8285486619925,
+    2.557393430461, 18.4436592224694, 26.3832006293729,
+    29.9961875737658, 17.9772550713641, 33.5965850685218 ;
+
+group: prefix_list {
+
+  // group attributes:
+            :PROV__ = &quot;http://www.w3.org/ns/prov/#&quot; ;
+            :StatPP__ = &quot;http://codes.nws.noaa.gov/StatPP/&quot; ;
+            :SOSA__ = &quot;http://www.w3.org/ns/sosa/&quot; ;
+  } // group prefix_list
+}
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="known_issues.html" class="btn btn-neutral float-right" title="Known Issues" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="camps_start_to_finish.html" class="btn btn-neutral float-left" title="CAMPS Forecast Development - start to finish" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Apr 23, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

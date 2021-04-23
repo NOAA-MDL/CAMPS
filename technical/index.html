@@ -1,0 +1,752 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>CAMPS Techinical description &mdash; camps 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../users_guide.html">User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical_description.html">Technical Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>CAMPS Techinical description</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/technical/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="camps-techinical-description">
+<h1>CAMPS Techinical description<a class="headerlink" href="#camps-techinical-description" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The purpose of this section is to provide some detail on the technical and unseen
+side of CAMPS. It will also cover the reasoning for certain design decisions.</p>
+<div class="section" id="goals-and-scope">
+<h3>Goals and Scope<a class="headerlink" href="#goals-and-scope" title="Permalink to this headline">¶</a></h3>
+<p>For context, it’s important to understand what problems the CAMPS project does
+and does not try to address.</p>
+<p><strong>It does:</strong></p>
+<ul class="simple">
+<li><p>Provide a way of encoding CAMPS formatted metadata.</p></li>
+<li><p>Aid in the processing of predictors from model output.</p></li>
+<li><p>Have modules for converting observations and model output to netCDF.</p></li>
+<li><p>Allow for alternative statistical postprocessing techniques to be added.</p></li>
+</ul>
+<p><strong>It does NOT:</strong></p>
+<ul class="simple">
+<li><p>Have ways of remotely pulling data (You’ll need to have the data available locally).</p></li>
+<li><p>Promise to be able to handle all file types.</p></li>
+<li><p>Support very diverse situations. It was intended to be used with NWP output,
+for multiple linear regression post processing. However, with a bit of hacking,
+other types of StatPP applications could be implemented.</p></li>
+</ul>
+</div>
+<div class="section" id="python-version-and-libraries">
+<h3>Python version and Libraries<a class="headerlink" href="#python-version-and-libraries" title="Permalink to this headline">¶</a></h3>
+<p>Anaconda2-5.3.1 (or newer) is recommended for running CAMPS.  The following libraries are required
+even when using Anaconda.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 53%" />
+<col style="width: 47%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Language</p></th>
+<th class="head"><p>Version</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>python</p></td>
+<td><p>2.7.13</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 54%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Library (with Anaconda)</p></th>
+<th class="head"><p>Recommended Version</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>netCDF4</p></td>
+<td><p>1.5.1</p></td>
+</tr>
+<tr class="row-odd"><td><p>pyproj</p></td>
+<td><p>1.9.5.1</p></td>
+</tr>
+<tr class="row-even"><td><p>pygrib</p></td>
+<td><p>2.0.3</p></td>
+</tr>
+<tr class="row-odd"><td><p>metpy</p></td>
+<td><p>0.9.2</p></td>
+</tr>
+<tr class="row-even"><td><p>basemap</p></td>
+<td><p>1.2.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>basemap-data-hires</p></td>
+<td><p>1.2.0</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If not using Anaconda, the libraries in the following table must be added</p>
+</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Library (without Anaconda)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>matplotlib</p></td>
+</tr>
+<tr class="row-odd"><td><p>scipy</p></td>
+</tr>
+<tr class="row-even"><td><p>numpy</p></td>
+</tr>
+<tr class="row-odd"><td><p>PyYAML</p></td>
+</tr>
+<tr class="row-even"><td><p>matplotlib</p></td>
+</tr>
+<tr class="row-odd"><td><p>pandas</p></td>
+</tr>
+<tr class="row-even"><td><p>seaborn</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="directory-structure">
+<h2>Directory Structure<a class="headerlink" href="#directory-structure" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="camps-camps-core">
+<h3>camps/camps/core<a class="headerlink" href="#camps-camps-core" title="Permalink to this headline">¶</a></h3>
+<p>Contains code that defines the Camps_data object. Also stored here are composite classes such as Time and Loaction, along with I/O modules.
+Additionally, the directory with data conversion modules resides within core.</p>
+</div>
+<div class="section" id="camps-camps-core-data-conversion-grib2-to-nc">
+<h3>camps/camps/core/data_conversion/grib2_to_nc<a class="headerlink" href="#camps-camps-core-data-conversion-grib2-to-nc" title="Permalink to this headline">¶</a></h3>
+<p>Grib2 to netCDF conversion code here.</p>
+</div>
+<div class="section" id="camps-camps-core-data-conversion-marine-to-nc">
+<h3>camps/camps/core/data_conversion/marine_to_nc<a class="headerlink" href="#camps-camps-core-data-conversion-marine-to-nc" title="Permalink to this headline">¶</a></h3>
+<p>Marine buoy observations to netCDF code here.</p>
+</div>
+<div class="section" id="camps-camps-core-data-conversion-metar-to-nc">
+<h3>camps/camps/core/data_conversion/metar_to_nc<a class="headerlink" href="#camps-camps-core-data-conversion-metar-to-nc" title="Permalink to this headline">¶</a></h3>
+<p>Metar observations to netCDF code here. Also includes QC.</p>
+</div>
+<div class="section" id="camps-camps-registry">
+<h3>camps/camps/registry<a class="headerlink" href="#camps-camps-registry" title="Permalink to this headline">¶</a></h3>
+<p>Contains all the example configuration and control files for the various drivers.
+Also, contains a key file, netcdf.yaml, that is used widely in metadata templating.</p>
+</div>
+<div class="section" id="camps-camps-registry-db">
+<h3>camps/camps/registry/db<a class="headerlink" href="#camps-camps-registry-db" title="Permalink to this headline">¶</a></h3>
+<p>Contains the sqlite database and associated code to access it. The database stores all variables and their metadata that have been written from the used package</p>
+</div>
+<div class="section" id="camps-camps-scripts">
+<h3>camps/camps/scripts<a class="headerlink" href="#camps-camps-scripts" title="Permalink to this headline">¶</a></h3>
+<p>This contains all the driver scripts. All scripts require a control file to be used as an argument when running the script.</p>
+</div>
+<div class="section" id="camps-camps-statpp-regression">
+<h3>camps/camps/StatPP/regression<a class="headerlink" href="#camps-camps-statpp-regression" title="Permalink to this headline">¶</a></h3>
+<p>Code that contains the modules used for the multiple linear regression.</p>
+</div>
+<div class="section" id="camps-camps-gui">
+<h3>camps/camps/gui<a class="headerlink" href="#camps-camps-gui" title="Permalink to this headline">¶</a></h3>
+<p>Various GUIs and modules used to display data are here.</p>
+</div>
+<div class="section" id="camps-camps-mospred">
+<h3>camps/camps/mospred<a class="headerlink" href="#camps-camps-mospred" title="Permalink to this headline">¶</a></h3>
+<p>Contains modules that support the capabilities of the u201 equivalent code, which does a does a number of things.
+It creates new predictors and predictands – typically from model output.
+It applies procedures to the variables, such as smoothing and interpolating.
+It organizes the variables into appropriate dimensions.</p>
+</div>
+<div class="section" id="camps-camps-libraries-mathlib">
+<h3>camps/camps/libraries/mathlib<a class="headerlink" href="#camps-camps-libraries-mathlib" title="Permalink to this headline">¶</a></h3>
+<p>Contains modules used when creating new predictors/predictands. Modules contained here are largely used during the mospred (u201 equivalent) step in a CAMPS development.</p>
+</div>
+</div>
+<div class="section" id="running-camps-software">
+<h2>Running CAMPS Software<a class="headerlink" href="#running-camps-software" title="Permalink to this headline">¶</a></h2>
+<p>Every driver script in CAMPS will have an accompanying configration file that
+controls certain aspects of the run. It is imperative that you read the appropriate example config file to determine how to format your control file for the given driver
+script you are running. Without a control file passed as an argument, CAMPS software will error out.</p>
+<div class="section" id="metar-processing">
+<h3>METAR processing:<a class="headerlink" href="#metar-processing" title="Permalink to this headline">¶</a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">Driver</dt>
+<dd class="field-odd"><p>camps/camps/scripts/metar_driver.py</p>
+</dd>
+<dt class="field-even">Config example</dt>
+<dd class="field-even"><p>camps/camps/registry/metar_control.yaml</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="marine-bouy-processing">
+<h3>Marine bouy processing:<a class="headerlink" href="#marine-bouy-processing" title="Permalink to this headline">¶</a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">Driver</dt>
+<dd class="field-odd"><p>camps/camps/scripts/marine_driver.py</p>
+</dd>
+<dt class="field-even">Config example</dt>
+<dd class="field-even"><p>camps/camps/registry/marine_control.yaml</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="grib2-processing">
+<h3>grib2 processing:<a class="headerlink" href="#grib2-processing" title="Permalink to this headline">¶</a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">Driver</dt>
+<dd class="field-odd"><p>camps/camps/scripts/grib2_to_nc_driver.py</p>
+</dd>
+<dt class="field-even">Config example</dt>
+<dd class="field-even"><p>camps/camps/registry/grib2_to_nc_control.yaml</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="mospred-processing">
+<h3>mospred processing:<a class="headerlink" href="#mospred-processing" title="Permalink to this headline">¶</a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">Driver</dt>
+<dd class="field-odd"><p>camps/camps/scripts/mospred_driver.py</p>
+</dd>
+<dt class="field-even">Config example</dt>
+<dd class="field-even"><p>camps/camps/registry/mospred_control.yaml</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="equation-processing">
+<h3>equation processing:<a class="headerlink" href="#equation-processing" title="Permalink to this headline">¶</a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">Driver</dt>
+<dd class="field-odd"><p>camps/camps/scripts/equations_driver.py</p>
+</dd>
+<dt class="field-even">Config example</dt>
+<dd class="field-even"><p>camps/camps/registry/equations_control.yaml</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="forecast-processing">
+<h3>forecast processing:<a class="headerlink" href="#forecast-processing" title="Permalink to this headline">¶</a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">Driver</dt>
+<dd class="field-odd"><p>camps/camps/scripts/forecast_driver.py</p>
+</dd>
+<dt class="field-even">Config example</dt>
+<dd class="field-even"><p>camps/camps/registry/forecast_control.yaml</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="architecture-and-design">
+<h2>Architecture and Design<a class="headerlink" href="#architecture-and-design" title="Permalink to this headline">¶</a></h2>
+<img alt="../_images/classDiaCamps.PNG" src="../_images/classDiaCamps.PNG" />
+<p>CAMPS’ core data structure is the Camps_data class. It is a composition of
+different components that often represent variables that can be written to a
+netcdf file independently of the parent object. Classes like Time, Location,
+and Process all share a common interface, <strong>nc_writable</strong> which
+enforces the definition of the method <strong>write_to_nc</strong>.</p>
+<img alt="../_images/fetch_camps.PNG" src="../_images/fetch_camps.PNG" />
+<p>Fetching utilizes the database, which keeps track of variables and their metadata.
+If fetch is passed metadata, it will return one of the entries that contains that
+metadata. If a phenomenon time or lead time is also given, it will slice the
+variable based on those parameters.</p>
+<img alt="../_images/write_camps.PNG" src="../_images/write_camps.PNG" />
+<p>Writing a variable simply invokes the Camps_data object’s <strong>write_to_nc</strong> function,
+which in turn calls composite object’s <strong>write_to_nc</strong>. Upon succesful write,
+the variable and its metadata are stored in the database.</p>
+<img alt="../_images/prototype_camps.PNG" src="../_images/prototype_camps.PNG" />
+<p>Prototyping is CAMPS’ way reducing time spent adding metadata to an object.
+Metadata is defined in <strong>netcdf.yaml</strong> and is added to a Camps_data object when
+initialized with the appropriate key.</p>
+</div>
+<div class="section" id="camps-data-object">
+<h2>Camps Data Object<a class="headerlink" href="#camps-data-object" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="introduction">
+<h3>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h3>
+<p>The Camps Data class should be a representation of ANY kind of ‘CAMPS’
+formatted data. That is, the data can be gridded or vector, it
+may or may not have a lead time associated with it, and can be
+n-dimensional.</p>
+</div>
+<div class="section" id="dimensions">
+<h3>Dimensions<a class="headerlink" href="#dimensions" title="Permalink to this headline">¶</a></h3>
+<p>Allowing for the flexiblility of the object, the number of dimensions of the
+data are unlimited. However, these dimensions should be able to be
+identified.</p>
+<p>For example,
+Assume there is a variable that is gridded and is a snapshot of a single time.
+This variable would have three dimensions: x, y, and time.
+Another variable is a vector of stations and includes lead times at
+multiple forecast reference times. This would also have three dimensions: number of stations,
+lead time, and time.</p>
+<p>Standard dimension names are located in netcdf.yaml in the ‘Dimensions’ section.</p>
+<p>These separate variables should be distinguished based on other metadata.</p>
+</div>
+<div class="section" id="creating-camps-data-objects">
+<h3>Creating Camps_data Objects<a class="headerlink" href="#creating-camps-data-objects" title="Permalink to this headline">¶</a></h3>
+<p>Regardless of the type of data, there are similar procedures
+for creating a camps data object.</p>
+<p>First, You’ll need to initialize the object. If the argument passed into the
+constructor is a key defined in <strong>netcdf.yaml</strong>, such as,</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span> <span class="o">=</span> <span class="n">Camps_data</span><span class="p">(</span><span class="s1">&#39;wind_speed_instant&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>then it will be initialized to the metadata corresponding to that key.</p>
+<p>Next, you’d want to give your object a time period. There are different <em>flavors</em>
+of Time in CAMPS, so which ones you need depend on the application. However, there’s
+a very good chance you’d need a phenomenon time defined. You might create it like
+this,</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ptime</span> <span class="o">=</span> <span class="n">Time</span><span class="o">.</span><span class="n">PhenomenonTime</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="s1">&#39;19910518&#39;</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="s1">&#39;20180810&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And add it to your object like this,</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ptime</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>CAMPS will try to handle the formatting, writing, and reading of these variables.</p>
+<p>Sometimes, you’ll want to apply a procedure to the variable. If that’s the case,
+it would be a good idea to add a Process object to your object.</p>
+<p>A Process is created similar to a Wisps_data object, you can initialize it using
+a key in <strong>procedures.yaml</strong>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="s1">&#39;BiLinInterp&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Lastly, since we’re wring to netcdf, you need to provide dimensions to your object.
+You can name them whatever you’d like, but there are a few dimensions that
+have special properties, that act slightly differently. These are found in
+<strong>netcdf.yml</strong> in the dimensions section.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span><span class="o">.</span><span class="n">add_dimensions</span><span class="p">(</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="fetching-and-database">
+<h2>Fetching and Database<a class="headerlink" href="#fetching-and-database" title="Permalink to this headline">¶</a></h2>
+<p>The fetch module is the CAMPS way of pulling data by metadata. Traditionally,
+this would be done by searching all files in a given directory until the correct
+variable was found. For CAMPS, to improve performance, we opted to use a sqlite3
+database to keep track of where our variables are located and what metadata is
+associated with them. When a user initially imports CAMPS from a python interpreter
+a hidden directory named “.camps” is created in their “home” directory. This is where
+the database will be stored automatically when running a CAMPS application.
+Each user should have their own database, although if two users are on the same machine with
+similar file permissions, a database could be easily shared.</p>
+<p>In most cases, interacting with the database directly is unneeded, as the normal interaction with CAMPS will handle updating
+the database. In cases where direct intervention is necessary, the db.py module has
+some helper methods to assist in this interaction. Of course, those
+comfortable with SQL can modify it directly with some very limited knowledge of python’s
+sqlite3 package or by running sqlite3 directly.</p>
+</div>
+<div class="section" id="time">
+<h2>Time<a class="headerlink" href="#time" title="Permalink to this headline">¶</a></h2>
+<p>Time in CAMPSS is divided into 5 concepts, and the software makes use of 5 distinct classes to handle their differences.
+They include, ForecastReferenceTime, LeadTime, PhenomenonTime, PhenomenonTimePeriod, ResultTime, and ValidTime.</p>
+</div>
+<div class="section" id="registry-and-configuration">
+<h2>Registry and configuration<a class="headerlink" href="#registry-and-configuration" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Below are a few very basic examples of data manipulation in CAMPS.
+Since CAMPS was built with specific metadata requirements, the use of the
+built in data objects and I/O utilities is necessary.</p>
+<div class="section" id="create">
+<h3>Create<a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">camps.core.Camps_data</span> <span class="kn">import</span> <span class="n">Camps_data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span> <span class="o">=</span> <span class="n">Camps_data</span><span class="p">(</span><span class="s1">&#39;wind_speed_instant&#39;</span><span class="p">)</span> <span class="c1"># Initializes object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span><span class="o">*</span><span class="mi">50</span> <span class="c1"># Assign data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span><span class="o">.</span><span class="n">add_dimensions</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">)</span> <span class="c1"># Need to specify dimension names</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;my_important_attribute&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wspd</span>
+<span class="go">***** wind_speed ******</span>
+<span class="go">*</span>
+<span class="go">* dtype               : float64</span>
+<span class="go">* processes           : ( )</span>
+<span class="go">* dimensions          : [&#39;y&#39;, &#39;x&#39;]</span>
+<span class="go">  Metadata:</span>
+<span class="go">* comment             : Wind speed is set to -9 if winds are variable.</span>
+<span class="go">* OM__observedProperty: StatPP__Data/Met/Moment/WindSpd</span>
+<span class="go">* name                : wind_speed</span>
+<span class="go">* valid_min           : 0.0</span>
+<span class="go">* coordinates         : elev</span>
+<span class="go">* long_name           : horizontal wind speed</span>
+<span class="go">* standard_name       : wind_speed</span>
+<span class="go">* my_important_attribute: 42</span>
+<span class="go">* valid_max           : 75.0</span>
+<span class="go">Shape:</span>
+<span class="go">(10, 10)</span>
+<span class="go">Data:</span>
+<span class="go">[[ 44.32559503  29.6</span>
+<span class="go">29957  48.87075532]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="write">
+<h3>Write<a class="headerlink" href="#write" title="Permalink to this headline">¶</a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">camps.core</span> <span class="kn">import</span> <span class="n">writer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">wspd</span><span class="p">,</span> <span class="s1">&#39;output.nc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ncdump output.nc
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">netcdf</span> <span class="n">output</span> <span class="p">{</span>
+<span class="n">dimensions</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="mi">3</span> <span class="p">;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="p">;</span>
+        <span class="n">elev</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span>
+<span class="n">variables</span><span class="p">:</span>
+        <span class="n">int64</span> <span class="n">elev0</span><span class="p">(</span><span class="n">elev</span><span class="p">)</span> <span class="p">;</span>
+                <span class="n">elev0</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;height above surface&quot;</span> <span class="p">;</span>
+                <span class="n">elev0</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span> <span class="p">;</span>
+                <span class="n">elev0</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;height&quot;</span> <span class="p">;</span>
+                <span class="n">elev0</span><span class="p">:</span><span class="n">positive</span> <span class="o">=</span> <span class="s2">&quot;up&quot;</span> <span class="p">;</span>
+                <span class="n">elev0</span><span class="p">:</span><span class="n">axis</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span> <span class="p">;</span>
+        <span class="n">double</span> <span class="n">WindSpd_instant__</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span> <span class="p">;</span>
+                <span class="n">WindSpd_instant__</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+                <span class="n">WindSpd_instant__</span><span class="p">:</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;Wind speed is set to -9 if winds are variable.&quot;</span> <span class="p">;</span>
+                <span class="n">WindSpd_instant__</span><span class="p">:</span><span class="n">OM__observedProperty</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Met/Moment/WindSpd&quot;</span> <span class="p">;</span>
+                <span class="n">WindSpd_instant__</span><span class="p">:</span><span class="n">ancillary_variables</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+                <span class="n">WindSpd_instant__</span><span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="mf">0.</span> <span class="p">;</span>
+                <span class="n">WindSpd_instant__</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;elev0 x y&quot;</span> <span class="p">;</span>
+                <span class="n">WindSpd_instant__</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;horizontal wind speed&quot;</span> <span class="p">;</span>
+                <span class="n">WindSpd_instant__</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;wind_speed&quot;</span> <span class="p">;</span>
+                <span class="n">WindSpd_instant__</span><span class="p">:</span><span class="n">my_important_attribute</span> <span class="o">=</span> <span class="mi">42</span><span class="n">LL</span> <span class="p">;</span>
+                <span class="n">WindSpd_instant__</span><span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mf">75.</span> <span class="p">;</span>
+                <span class="n">WindSpd_instant__</span><span class="p">:</span><span class="n">SOSA__usedProcedure</span> <span class="o">=</span> <span class="s2">&quot;( )&quot;</span> <span class="p">;</span>
+
+<span class="o">//</span> <span class="k">global</span> <span class="n">attributes</span><span class="p">:</span>
+                <span class="p">:</span><span class="n">primary_variables</span> <span class="o">=</span> <span class="s2">&quot;WindSpd_instant__&quot;</span> <span class="p">;</span>
+                <span class="p">:</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;CAMPS-1.0&quot;</span> <span class="p">;</span>
+                <span class="p">:</span><span class="n">references</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+                <span class="p">:</span><span class="n">file_id</span> <span class="o">=</span> <span class="s2">&quot;b0592d4f-88b1-4160-adb9-9cb031c025dd&quot;</span> <span class="p">;</span>
+                <span class="p">:</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.nws.noaa.gov/mdl/, https://sats.nws.noaa.gov/~wisps/&quot;</span> <span class="p">;</span>
+                <span class="p">:</span><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;NOAA/MDL/SMB&quot;</span> <span class="p">;</span>
+                <span class="p">:</span><span class="n">institution</span> <span class="o">=</span> <span class="s2">&quot;NOAA/National Weather Service&quot;</span> <span class="p">;</span>
+                <span class="p">:</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s2">&quot;CF-1.7 CAMPS-1.0&quot;</span> <span class="p">;</span>
+<span class="n">data</span><span class="p">:</span>
+
+ <span class="n">elev0</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">;</span>
+
+ <span class="n">WindSpd_instant__</span> <span class="o">=</span>
+  <span class="mf">6.59734754874646</span><span class="p">,</span>
+  <span class="mf">41.240254448533</span><span class="p">,</span>
+  <span class="mf">40.076160141887</span><span class="p">,</span>
+  <span class="mf">40.8188432115729</span><span class="p">,</span>
+  <span class="mf">45.445944531748</span><span class="p">,</span>
+  <span class="mf">33.2932430382621</span><span class="p">,</span>
+  <span class="mf">16.531263567237</span><span class="p">,</span>
+  <span class="mf">13.2378413416106</span><span class="p">,</span>
+  <span class="mf">41.7054178526444</span> <span class="p">;</span>
+
+<span class="n">group</span><span class="p">:</span> <span class="n">prefix_list</span> <span class="p">{</span>
+
+  <span class="o">//</span> <span class="n">group</span> <span class="n">attributes</span><span class="p">:</span>
+                <span class="p">:</span><span class="n">StatPP__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/&quot;</span> <span class="p">;</span>
+                <span class="p">:</span><span class="n">OM2__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/&quot;</span> <span class="p">;</span>
+                <span class="p">:</span><span class="n">SOSA__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/sosa/&quot;</span> <span class="p">;</span>
+                <span class="p">:</span><span class="n">OM__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/sosa/&quot;</span> <span class="p">;</span>
+                <span class="p">:</span><span class="n">PROV__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/prov/#&quot;</span> <span class="p">;</span>
+                <span class="p">:</span><span class="n">StatppUncertainty__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/Uncertainty&quot;</span> <span class="p">;</span>
+  <span class="p">}</span> <span class="o">//</span> <span class="n">group</span> <span class="n">prefix_list</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="camps-start-to-finish">
+<h2>CAMPS start to finish<a class="headerlink" href="#camps-start-to-finish" title="Permalink to this headline">¶</a></h2>
+<p>Once CAMPS is properly installed into your Anaconda2 distribution, make sure you do the following first step:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$  python
+$  import camps
+$  quit<span class="o">()</span>
+</pre></div>
+</div>
+<p>This first import to the camps module will create a hidden directory in your home directory which contains both the
+CAMPS database and a control directory which contains all your control file templates.</p>
+<p>CAMPS makes use of the python feature “console scripts” which allows a user to run driver scripts directly from the command line</p>
+<p>metar_driver.py –&gt; CAMPS_metar_to_nc
+marine_driver.py –&gt; CAMPS_marine_to_nc
+grib2_to_nc_driver.py –&gt; CAMPS_grib2_to_nc
+mospred_driver.py –&gt; CAMPS_mospred
+equations_driver.py –&gt; CAMPS_equations
+forecast_driver.py –&gt; CAMPS_forecast</p>
+<div class="section" id="obs">
+<h3>Obs<a class="headerlink" href="#obs" title="Permalink to this headline">¶</a></h3>
+<p>To start, you’ll need to process some observations.</p>
+<p>Go to <code class="docutils literal notranslate"><span class="pre">camps/camps/registry/metar_conrol.yaml</span></code> to view an example control file.
+Then create your own control file, following the example syntax very carefully.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ CAMPS_metar_to_nc /path/to/controlfile/metar_control.yaml
+</pre></div>
+</div>
+<p>Let’s get some marine observations too.
+Again, you’ll want to view the example and create your own control file, <code class="docutils literal notranslate"><span class="pre">camps/camps/registry/marine_conrol.yaml</span></code>,
+and then execute the driver.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ CAMPS_marine_to_nc /path/to/controlfile/marine_control.yaml
+</pre></div>
+</div>
+</div>
+<div class="section" id="model">
+<h3>Model<a class="headerlink" href="#model" title="Permalink to this headline">¶</a></h3>
+<p>Great! We have our observation data. Let’s try to process some model data.
+For now, grib2_to_nc only accepts grib2 data on a Polar Stereographic grid.  More functionality will be
+added as CAMPS continues to grow.</p>
+<p>First, create your control file, as done previously <code class="docutils literal notranslate"><span class="pre">camps/camps/registry/grib2_to_nc_control.yaml</span></code>.
+This might start to get repetative. Then,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ CAMPS_grib2_to_nc /path/to/controlfile/grib2_to_nc_control.yaml
+</pre></div>
+</div>
+<p>So far so good?</p>
+</div>
+<div class="section" id="generating-predictors">
+<h3>Generating Predictors<a class="headerlink" href="#generating-predictors" title="Permalink to this headline">¶</a></h3>
+<p>Now, model data doesn’t have <em>everything</em> we want for a regression. Sometimes,
+we’ll want to create our own predictors that are derived from the model variables.
+We can also apply different procedures to the data we produce that changes its
+characteristics.
+Also, if we’re doing a station based
+MOS run, we’ll need to interpolate to stations.</p>
+<p>Mospred_driver can be run for both creating predictors and/or predictands.
+Be sure to specify which (or both) you want to run for.</p>
+<p>In addition to the standard control file, mospred_driver also requires a couple other
+input files, the locations of which should be added as arguments inside mospred_control.yaml.</p>
+<p>The config file to follow: <code class="docutils literal notranslate"><span class="pre">camps/camps/registry/mospred_conrol.yaml</span></code></p>
+<p>And the driver,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ CAMPS_mospred /path/to/controlfile/mospred_control.yaml
+</pre></div>
+</div>
+</div>
+<div class="section" id="regression">
+<h3>Regression<a class="headerlink" href="#regression" title="Permalink to this headline">¶</a></h3>
+<p>Now we’re ready for the regression. The config file
+<code class="docutils literal notranslate"><span class="pre">camps/camps/registry/equation_conrol.yaml</span></code> will give an example of tuning, and
+is where you can specify which predictors and predictands you want run the regression over.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ CAMPS_equation path/to/controlfile/equations_control.yaml
+</pre></div>
+</div>
+</div>
+<div class="section" id="forecast">
+<h3>Forecast<a class="headerlink" href="#forecast" title="Permalink to this headline">¶</a></h3>
+<p>Finally, we will want to generate some forecast output and apply basic consistency checks.</p>
+<p>The config file to follow: <code class="docutils literal notranslate"><span class="pre">camps/camps/registry/forecast_control.yaml</span></code></p>
+<p>And the driver,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ CAMPS_forecast /path/to/controlfile/forecast_control.yaml
+</pre></div>
+</div>
+</div>
+<div class="section" id="output">
+<h3>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h3>
+<p>That’s it!  That is all you need for a MOS-2000 like MOS development using CAMPS software!
+All output files are saved in NetCDF format and can be found in the output paths you
+specified inside each driver control file.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Apr 23, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

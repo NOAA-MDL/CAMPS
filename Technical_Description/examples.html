@@ -1,0 +1,931 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Output Examples &mdash; camps 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Statistical Post-Processing Background" href="../statPP_background/index.html" />
+    <link rel="prev" title="Data Format" href="format.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../users_guide.html">User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../technical_description.html">Technical Description</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="camps_metadata.html">Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html">Data Format</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Output Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sample-metar-driver-output">Sample metar_driver Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sample-marine-driver-output">Sample marine_driver Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sample-grib2-to-nc-driver-output">Sample grib2_to_nc_driver output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sample-mospred-driver-output-predictors">Sample mospred_driver output (predictors)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sample-mospred-driver-output-predictands">Sample mospred_driver output (predictands)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sample-equations-driver-output">Sample equations_driver output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sample-forecast-driver-output">Sample forecast_driver output</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../technical_description.html">Technical Description</a> &raquo;</li>
+        
+      <li>Output Examples</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/Technical_Description/examples.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="output-examples">
+<h1>Output Examples<a class="headerlink" href="#output-examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="sample-metar-driver-output">
+<h2>Sample metar_driver Output<a class="headerlink" href="#sample-metar-driver-output" title="Permalink to this headline">¶</a></h2>
+<p>The example CDL output, from a metar_driver output file, is shown for 2 meter temperature, for 384 hours, and 2584 stations.
+Quality Control was applied to the data, and the metadata variables reflect that procedure application.
+The necessary time and location variables are also included in the output.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">netcdf</span> <span class="n">camps_metar_output</span> <span class="p">{</span>
+<span class="n">dimensions</span><span class="p">:</span>
+      <span class="n">stations</span> <span class="o">=</span> <span class="mi">2584</span> <span class="p">;</span>
+      <span class="n">phenomenonTime</span> <span class="o">=</span> <span class="mi">384</span> <span class="p">;</span>
+      <span class="n">level</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span>
+      <span class="n">nv</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">;</span>
+<span class="n">variables</span><span class="p">:</span>
+      <span class="n">int64</span> <span class="n">DecodeBUFR</span> <span class="p">;</span>
+              <span class="n">DecodeBUFR</span><span class="p">:</span><span class="n">PROV__activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Ingest/DecodeBUFR&quot;</span> <span class="p">;</span>
+              <span class="n">DecodeBUFR</span><span class="p">:</span><span class="n">PROV__used</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Source/NCEPSfcObsMETAR&quot;</span> <span class="p">;</span>
+              <span class="n">DecodeBUFR</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Ingest BUFR encoded METAR observations from NCEP repository&quot;</span> <span class="p">;</span>
+              <span class="n">DecodeBUFR</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">METARQC</span> <span class="p">;</span>
+              <span class="n">METARQC</span><span class="p">:</span><span class="n">PROV__activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/QC/METARQC&quot;</span> <span class="p">;</span>
+              <span class="n">METARQC</span><span class="p">:</span><span class="n">PROV__wasInformedBy</span> <span class="o">=</span> <span class="s2">&quot;DecodeBUFR&quot;</span> <span class="p">;</span>
+              <span class="n">METARQC</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Apply MDL METAR Quality Control procedure&quot;</span> <span class="p">;</span>
+              <span class="n">METARQC</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+      <span class="n">string</span> <span class="n">stations</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">string</span> <span class="n">stations</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;ICAO METAR call letters&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;platform_id&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot; Only currently archives reports from stations only if the first letter of the ICAO ID is </span><span class="se">\&#39;</span><span class="s2">K</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="s2">P</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="s2">M</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="s2">C</span><span class="se">\&#39;</span><span class="s2">, or </span><span class="se">\&#39;</span><span class="s2">T</span><span class="se">\&#39;</span><span class="s2">. &quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+      <span class="n">byte</span> <span class="n">station_type</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">15</span><span class="n">b</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;platform_id&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;station type&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;METAR&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+      <span class="n">double</span> <span class="n">latitude</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees_north&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">90.</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mf">90.</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;METAR&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+      <span class="n">double</span> <span class="n">longitude</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees_west&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">180.</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mf">180.</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;METAR&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">phenomenonTime</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( SOSA__phenomenonTime )&quot;</span> <span class="p">;</span>
+      <span class="n">short</span> <span class="n">Temp_instant_2m</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">,</span> <span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">s</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">SOSA__observedProperty</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Met/Temp/Temp&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;dry bulb temperature&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">80</span><span class="n">s</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mi">130</span><span class="n">s</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;air_temperature&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degF&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">vertical_coord</span> <span class="o">=</span> <span class="s2">&quot;elev0&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;METAR&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;phenomenonTime latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">ancillary_variables</span> <span class="o">=</span> <span class="s2">&quot;elev0 phenomenonTime DecodeBUFR METARQC &quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">s</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">PROV__wasInformedBy</span> <span class="o">=</span> <span class="s2">&quot;( )&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">SOSA__usedProcedure</span> <span class="o">=</span> <span class="s2">&quot;( DecodeBUFR METARQC )&quot;</span> <span class="p">;</span>
+<span class="o">//</span> <span class="k">global</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">institution</span> <span class="o">=</span> <span class="s2">&quot;NOAA/National Weather Service&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s2">&quot;CF-1.7 CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">history</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">references</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;NOAA/MDL&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.nws.noaa.gov/mdl/, https://sats.nws.noaa.gov/~camps/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">primary_variables</span> <span class="o">=</span> <span class="s2">&quot;Temp_instant_2m longitude latitude stations station_type&quot;</span> <span class="p">;</span>
+  <span class="o">//</span> <span class="n">group</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">PROV__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/prov/#&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPP__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">SOSA__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/sosa/&quot;</span> <span class="p">;</span>
+  <span class="p">}</span> <span class="o">//</span> <span class="n">group</span> <span class="n">prefix_list</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sample-marine-driver-output">
+<h2>Sample marine_driver Output<a class="headerlink" href="#sample-marine-driver-output" title="Permalink to this headline">¶</a></h2>
+<p>Marine_driver output is extremely similar to Metar_driver output.  The difference is the procedures, stations, and source of information.
+Everything else is effectively the same, for the same time range and variables.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">netcdf</span> <span class="n">camps_marine_output</span> <span class="p">{</span>
+<span class="n">dimensions</span><span class="p">:</span>
+      <span class="n">stations</span> <span class="o">=</span> <span class="mi">328</span> <span class="p">;</span>
+      <span class="n">phenomenonTime</span> <span class="o">=</span> <span class="mi">384</span> <span class="p">;</span>
+      <span class="n">level</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span>
+      <span class="n">nv</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">;</span>
+<span class="n">variables</span><span class="p">:</span>
+      <span class="n">string</span> <span class="n">stations</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">string</span> <span class="n">stations</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;NDBC station identifiers&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;platform_id&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;NDBC stations consist of buoy, C-MAN, and platform drilling sites&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;NDBC&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+      <span class="n">byte</span> <span class="n">station_type</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">15</span><span class="n">b</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;platform_id&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;station type&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;NDBC&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+      <span class="n">double</span> <span class="n">latitude</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees_north&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">90.</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mf">90.</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+      <span class="n">double</span> <span class="n">longitude</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees_west&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">180.</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mf">180.</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">elev0</span><span class="p">(</span><span class="n">level</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;height above surface&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;height&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">positive</span> <span class="o">=</span> <span class="s2">&quot;up&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">axis</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">phenomenonTime</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( SOSA__phenomenonTime )&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">ProcMarine</span> <span class="p">;</span>
+              <span class="n">ProcMarine</span><span class="p">:</span><span class="n">PROV__activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Ingest/DecodeTabularText&quot;</span> <span class="p">;</span>
+              <span class="n">ProcMarine</span><span class="p">:</span><span class="n">PROV__used</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Source/NDBC&quot;</span> <span class="p">;</span>
+              <span class="n">ProcMarine</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Decode tabular text data&quot;</span> <span class="p">;</span>
+              <span class="n">ProcMarine</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">MarineQC</span> <span class="p">;</span>
+              <span class="n">MarineQC</span><span class="p">:</span><span class="n">PROV__activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/QC/MarineQC&quot;</span> <span class="p">;</span>
+              <span class="n">MarineQC</span><span class="p">:</span><span class="n">PROV__wasInformedBy</span> <span class="o">=</span> <span class="s2">&quot;ProcMarine&quot;</span> <span class="p">;</span>
+              <span class="n">MarineQC</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Marine Observation Quality Control&quot;</span> <span class="p">;</span>
+              <span class="n">MarineQC</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+      <span class="n">short</span> <span class="n">Temp_instant_2m</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">,</span> <span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">s</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">SOSA__observedProperty</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Met/Temp/Temp&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;dry bulb temperature&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">80</span><span class="n">s</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mi">130</span><span class="n">s</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;air_temperature&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degF&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">vertical_coord</span> <span class="o">=</span> <span class="s2">&quot;elev0&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;NDBC&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;phenomenonTime latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">ancillary_variables</span> <span class="o">=</span> <span class="s2">&quot;elev0 phenomenonTime ProcMarine MarineQC &quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">s</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">PROV__wasInformedBy</span> <span class="o">=</span> <span class="s2">&quot;( )&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">SOSA__usedProcedure</span> <span class="o">=</span> <span class="s2">&quot;( ProcMarine MarineQC )&quot;</span> <span class="p">;</span>
+<span class="o">//</span> <span class="k">global</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">institution</span> <span class="o">=</span> <span class="s2">&quot;NOAA/National Weather Service&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s2">&quot;CF-1.7 CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">history</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">references</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;NOAA/MDL&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.nws.noaa.gov/mdl/, https://sats.nws.noaa.gov/~camps/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">primary_variables</span> <span class="o">=</span> <span class="s2">&quot;Temp_instant_2m longitude latitude stations station_type&quot;</span> <span class="p">;</span>
+<span class="n">group</span><span class="p">:</span> <span class="n">prefix_list</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">group</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">PROV__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/prov/#&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPP__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">SOSA__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/sosa/&quot;</span> <span class="p">;</span>
+  <span class="p">}</span> <span class="o">//</span> <span class="n">group</span> <span class="n">prefix_list</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sample-grib2-to-nc-driver-output">
+<h2>Sample grib2_to_nc_driver output<a class="headerlink" href="#sample-grib2-to-nc-driver-output" title="Permalink to this headline">¶</a></h2>
+<p>This example is CDL output from grib2_to_nc_driver, for 2 meter temperature.
+Primary variables from this driver script will include lead_times in the dimensions, unlike the other
+driver scripts which process model data.  This makes encoding time for grib2_to_nc_driver output look
+slightly different from all the other driver scripts.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">netcdf</span> <span class="n">camps_grib2_output</span> <span class="p">{</span>
+<span class="n">dimensions</span><span class="p">:</span>
+      <span class="n">level</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span>
+      <span class="n">lead_times</span> <span class="o">=</span> <span class="mi">33</span> <span class="p">;</span>
+      <span class="n">phenomenonTime</span> <span class="o">=</span> <span class="mi">10</span> <span class="p">;</span>
+      <span class="n">y</span> <span class="o">=</span> <span class="mi">169</span> <span class="p">;</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="mi">297</span> <span class="p">;</span>
+      <span class="n">nv</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">;</span>
+<span class="n">variables</span><span class="p">:</span>
+      <span class="n">int64</span> <span class="n">elev0</span><span class="p">(</span><span class="n">level</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;height above surface&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;height&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">positive</span> <span class="o">=</span> <span class="s2">&quot;up&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">axis</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">phenomenonTimes</span><span class="p">(</span><span class="n">lead_times</span><span class="p">,</span> <span class="n">phenomenonTime</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">phenomenonTimes</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">phenomenonTimes</span><span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTimes</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTimes</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTimes</span><span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( SOSA__phenomenonTime )&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">FcstRefTime</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;forecast_reference_time&quot;</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( StatPP__Data/Time/FcstRefTime )&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">lead_times</span><span class="p">(</span><span class="n">lead_times</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds&quot;</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;forecast_period&quot;</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( StatPP__Data/Time/LeadTime )&quot;</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">firstLeadTime</span> <span class="o">=</span> <span class="s2">&quot;P0H&quot;</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">PeriodicTime</span> <span class="o">=</span> <span class="s2">&quot;P3H&quot;</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">lastLeadTime</span> <span class="o">=</span> <span class="s2">&quot;P96H&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">FilterGRIB2</span> <span class="p">;</span>
+              <span class="n">FilterGRIB2</span><span class="p">:</span><span class="n">PROV__activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Ingest/FilterGRIB2&quot;</span> <span class="p">;</span>
+              <span class="n">FilterGRIB2</span><span class="p">:</span><span class="n">PROV__used</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Source/GFS13&quot;</span> <span class="p">;</span>
+              <span class="n">FilterGRIB2</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Filter GRIB2-encoded forecasts&quot;</span> <span class="p">;</span>
+              <span class="n">FilterGRIB2</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">ResampleGRIB2</span> <span class="p">;</span>
+              <span class="n">ResampleGRIB2</span><span class="p">:</span><span class="n">PROV__activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Ingest/ResampleGRIB2&quot;</span> <span class="p">;</span>
+              <span class="n">ResampleGRIB2</span><span class="p">:</span><span class="n">PROV__wasInformedBy</span> <span class="o">=</span> <span class="s2">&quot;FilterGRIB2&quot;</span> <span class="p">;</span>
+              <span class="n">ResampleGRIB2</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Resampling of GRIB2 data onto a new grid&quot;</span> <span class="p">;</span>
+              <span class="n">ResampleGRIB2</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+      <span class="nb">float</span> <span class="n">Temp_instant_2m_00Z</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">,</span> <span class="n">lead_times</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span><span class="n">f</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">SOSA__observedProperty</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Met/Temp/Temp&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;temperature instant&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;air_temperature&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;K&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;GFS&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">FcstTime_hour</span> <span class="o">=</span> <span class="mi">0</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">grid_mapping</span> <span class="o">=</span> <span class="s2">&quot;polar_stereographic_grid&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">vertical_coord</span> <span class="o">=</span> <span class="s2">&quot;elev1&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;phenomenonTimes latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">ancillary_variables</span> <span class="o">=</span> <span class="s2">&quot;elev1 phenomenonTimes FcstRefTime lead_times FilterGRIB2 ResampleGRIB2 &quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">9999.</span><span class="n">f</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">PROV__wasInformedBy</span> <span class="o">=</span> <span class="s2">&quot;( FilterGRIB2 ResampleGRIB2 )&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z</span><span class="p">:</span><span class="n">SOSA__usedProcedure</span> <span class="o">=</span> <span class="s2">&quot;( )&quot;</span> <span class="p">;</span>
+      <span class="n">double</span> <span class="n">polar_stereographic_grid</span> <span class="p">;</span>
+              <span class="n">polar_stereographic_grid</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">polar_stereographic_grid</span><span class="p">:</span><span class="n">grid_mapping_name</span> <span class="o">=</span> <span class="s2">&quot;polar_stereographic&quot;</span> <span class="p">;</span>
+              <span class="n">polar_stereographic_grid</span><span class="p">:</span><span class="n">straight_vertical_longitude_from_pole</span> <span class="o">=</span> <span class="mf">255.</span> <span class="p">;</span>
+              <span class="n">polar_stereographic_grid</span><span class="p">:</span><span class="n">latitude_of_projection_origin</span> <span class="o">=</span> <span class="mf">90.</span> <span class="p">;</span>
+              <span class="n">polar_stereographic_grid</span><span class="p">:</span><span class="n">standard_parallel</span> <span class="o">=</span> <span class="mf">60.</span> <span class="p">;</span>
+              <span class="n">polar_stereographic_grid</span><span class="p">:</span><span class="n">scale_factor_at_projection_origin</span> <span class="o">=</span> <span class="mi">1</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">polar_stereographic_grid</span><span class="p">:</span><span class="n">PROJ_string</span> <span class="o">=</span> <span class="s2">&quot;+a=6371229 +b=6371229 +proj=stere +lat_ts=60.0 +lat_0=90.0 +lon_0=255.0 +x_0=8001120.943743923 +y_0=8001120.943743925&quot;</span> <span class="p">;</span>
+              <span class="n">polar_stereographic_grid</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+<span class="o">//</span> <span class="k">global</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">institution</span> <span class="o">=</span> <span class="s2">&quot;NOAA/National Weather Service&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s2">&quot;CF-1.7 CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">history</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">references</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;NOAA/MDL&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.nws.noaa.gov/mdl/, https://sats.nws.noaa.gov/~camps/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">primary_variables</span> <span class="o">=</span> <span class="s2">&quot;Temp_instant_2m_00Z latitude longitude x y polar_stereographic_grid&quot;&quot; ;</span>
+<span class="n">group</span><span class="p">:</span> <span class="n">prefix_list</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">group</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">PROV__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/prov/#&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPP__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">SOSA__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/sosa/&quot;</span> <span class="p">;</span>
+  <span class="p">}</span> <span class="o">//</span> <span class="n">group</span> <span class="n">prefix_list</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sample-mospred-driver-output-predictors">
+<h2>Sample mospred_driver output (predictors)<a class="headerlink" href="#sample-mospred-driver-output-predictors" title="Permalink to this headline">¶</a></h2>
+<p>Mospred_driver will have two potential output files.  This example is the CDL output from processing predictors only.
+Notice that lead_times is no longer a dimension of our primary variable, 2 meter temperature.
+Instead, primary variables will be broken into separate variables based on procedures, level, AND lead_time.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">netcdf</span> <span class="n">camps_predictor_output</span> <span class="p">{</span>
+<span class="n">dimensions</span><span class="p">:</span>
+      <span class="n">phenomenonTime</span> <span class="o">=</span> <span class="mi">10</span> <span class="p">;</span>
+      <span class="n">stations</span> <span class="o">=</span> <span class="mi">20</span> <span class="p">;</span>
+      <span class="n">level</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span>
+      <span class="n">lead_times</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span>
+<span class="n">variables</span><span class="p">:</span>
+      <span class="n">int64</span> <span class="n">elev0</span><span class="p">(</span><span class="n">level</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;height above surface&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;height&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">positive</span> <span class="o">=</span> <span class="s2">&quot;up&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">axis</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">phenomenonTimes</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">phenomenonTimes</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">phenomenonTimes</span><span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTimes</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTimes</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTimes</span><span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( SOSA__phenomenonTime )&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">FcstRefTime</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;forecast_reference_time&quot;</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( StatPP__Data/Time/FcstRefTime )&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">lead_times</span><span class="p">(</span><span class="n">lead_times</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds&quot;</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;forecast_period&quot;</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( StatPP__Data/Time/LeadTime )&quot;</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">firstLeadTime</span> <span class="o">=</span> <span class="s2">&quot;P0H&quot;</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">PeriodicTime</span> <span class="o">=</span> <span class="s2">&quot;P3H&quot;</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">lastLeadTime</span> <span class="o">=</span> <span class="s2">&quot;P96H&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">FilterGRIB2</span> <span class="p">;</span>
+              <span class="n">FilterGRIB2</span><span class="p">:</span><span class="n">PROV__activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Ingest/FilterGRIB2&quot;</span> <span class="p">;</span>
+              <span class="n">FilterGRIB2</span><span class="p">:</span><span class="n">PROV__used</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Source/GFS13&quot;</span> <span class="p">;</span>
+              <span class="n">FilterGRIB2</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Filter GRIB2-encoded forecasts&quot;</span> <span class="p">;</span>
+              <span class="n">FilterGRIB2</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">ResampleGRIB2</span> <span class="p">;</span>
+              <span class="n">ResampleGRIB2</span><span class="p">:</span><span class="n">PROV__activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Ingest/ResampleGRIB2&quot;</span> <span class="p">;</span>
+              <span class="n">ResampleGRIB2</span><span class="p">:</span><span class="n">PROV__wasInformedBy</span> <span class="o">=</span> <span class="s2">&quot;FilterGRIB2&quot;</span> <span class="p">;</span>
+              <span class="n">ResampleGRIB2</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Resampling of GRIB2 data onto a new grid&quot;</span> <span class="p">;</span>
+              <span class="n">ResampleGRIB2</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">LinSmooth</span> <span class="p">;</span>
+              <span class="n">LinSmooth</span><span class="p">:</span><span class="n">PROV__activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Arith/LinSmooth&quot;</span> <span class="p">;</span>
+              <span class="n">LinSmooth</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Linear Smoothing&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">BiLinInterp</span> <span class="p">;</span>
+              <span class="n">BiLinInterp</span><span class="p">:</span><span class="n">PROV__activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Geosp/BiLinInterp&quot;</span> <span class="p">;</span>
+              <span class="n">BiLinInterp</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Bilinear Interpolation&quot;</span> <span class="p">;</span>
+      <span class="n">byte</span> <span class="n">station_type</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">15</span><span class="n">b</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;platform_id&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;station type&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;METAR&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+      <span class="n">string</span> <span class="n">stations</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">string</span> <span class="n">stations</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;NDBC station identifiers&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;platform_id&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;NDBC stations consist of buoy, C-MAN, and platform drilling sites&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;NDBC&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+      <span class="n">double</span> <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">,</span> <span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">SOSA__observedProperty</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Met/Temp/Temp&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;temperature instant&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;air_temperature&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;K&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;GFS&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">FcstTime_hour</span> <span class="o">=</span> <span class="mi">0</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">vertical_coord</span> <span class="o">=</span> <span class="s2">&quot;elev0&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;phenomenonTimes latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">ancillary_variables</span> <span class="o">=</span> <span class="s2">&quot;elev0 phenomenonTimes FcstRefTime lead_times FilterGRIB2 ResampleGRIB2 LinSmooth BiLinInterp &quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">PROV__wasInformedBy</span> <span class="o">=</span> <span class="s2">&quot;( FilterGRIB2 ResampleGRIB2 )&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">smooth</span> <span class="o">=</span> <span class="s2">&quot;25&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">leadtime</span> <span class="o">=</span> <span class="mi">12</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp</span><span class="p">:</span><span class="n">SOSA__usedProcedure</span> <span class="o">=</span> <span class="s2">&quot;( LinSmooth BiLinInterp )&quot;</span> <span class="p">;</span>
+<span class="o">//</span> <span class="k">global</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">institution</span> <span class="o">=</span> <span class="s2">&quot;NOAA/National Weather Service&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s2">&quot;CF-1.7 CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">history</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">references</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;NOAA/MDL&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.nws.noaa.gov/mdl/, https://sats.nws.noaa.gov/~camps/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">primary_variables</span> <span class="o">=</span> <span class="s2">&quot;Temp_instant_2m_00Z_12hr_LinSmooth25_BiLinInterp longitude latitude stations station_type&quot;</span> <span class="p">;</span>
+<span class="n">group</span><span class="p">:</span> <span class="n">prefix_list</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">group</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">PROV__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/prov/#&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPP__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">SOSA__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/sosa/&quot;</span> <span class="p">;</span>
+  <span class="p">}</span> <span class="o">//</span> <span class="n">group</span> <span class="n">prefix_list</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sample-mospred-driver-output-predictands">
+<h2>Sample mospred_driver output (predictands)<a class="headerlink" href="#sample-mospred-driver-output-predictands" title="Permalink to this headline">¶</a></h2>
+<p>Mospred_driver will have two potential output files.  This example is the CDL output from processing predictands only.
+The main difference between mospred predictor output and predictand output is how time is encoded.  For predictands,
+there is no lead_time or forecast_reference_time.  Instead, there is only a phenomenonTime.  Predictands are still
+split out by procedure and level.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">netcdf</span> <span class="n">camps_predictand_output</span> <span class="p">{</span>
+<span class="n">dimensions</span><span class="p">:</span>
+      <span class="n">phenomenonTime</span> <span class="o">=</span> <span class="mi">10</span> <span class="p">;</span>
+      <span class="n">stations</span> <span class="o">=</span> <span class="mi">20</span> <span class="p">;</span>
+      <span class="n">level</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span>
+<span class="n">variables</span><span class="p">:</span>
+      <span class="n">int64</span> <span class="n">elev0</span><span class="p">(</span><span class="n">level</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;height above surface&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;height&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">positive</span> <span class="o">=</span> <span class="s2">&quot;up&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">axis</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">phenomenonTime</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( SOSA__phenomenonTime )&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">DecodeBUFR</span> <span class="p">;</span>
+              <span class="n">DecodeBUFR</span><span class="p">:</span><span class="n">PROV__activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Ingest/DecodeBUFR&quot;</span> <span class="p">;</span>
+              <span class="n">DecodeBUFR</span><span class="p">:</span><span class="n">PROV__used</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Source/NCEPSfcObsMETAR&quot;</span> <span class="p">;</span>
+              <span class="n">DecodeBUFR</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Ingest BUFR encoded METAR observations from NCEP repository&quot;</span> <span class="p">;</span>
+              <span class="n">DecodeBUFR</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">METARQC</span> <span class="p">;</span>
+              <span class="n">METARQC</span><span class="p">:</span><span class="n">PROV__activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/QC/METARQC&quot;</span> <span class="p">;</span>
+              <span class="n">METARQC</span><span class="p">:</span><span class="n">PROV__wasInformedBy</span> <span class="o">=</span> <span class="s2">&quot;DecodeBUFR&quot;</span> <span class="p">;</span>
+              <span class="n">METARQC</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Apply MDL METAR Quality Control procedure&quot;</span> <span class="p">;</span>
+              <span class="n">METARQC</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+      <span class="n">double</span> <span class="n">Temp_instant_2m</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">,</span> <span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">SOSA__observedProperty</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Met/Temp/Temp&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;dry bulb temperature&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="mf">210.927777777778</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mf">327.594444444444</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;air_temperature&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;K&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">vertical_coord</span> <span class="o">=</span> <span class="s2">&quot;elev0&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;phenomenonTime latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">ancillary_variables</span> <span class="o">=</span> <span class="s2">&quot;elev0 phenomenonTime DecodeBUFR METARQC &quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">PROV__wasInformedBy</span> <span class="o">=</span> <span class="s2">&quot;( DecodeBUFR METARQC )&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;METAR NDBC&quot;</span> <span class="p">;</span>
+              <span class="n">Temp_instant_2m</span><span class="p">:</span><span class="n">SOSA__usedProcedure</span> <span class="o">=</span> <span class="s2">&quot;( )&quot;</span> <span class="p">;</span>
+      <span class="n">byte</span> <span class="n">station_type</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">15</span><span class="n">b</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;platform_id&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;station type&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;METAR&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">station_type</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+      <span class="n">string</span> <span class="n">stations</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">string</span> <span class="n">stations</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;ICAO METAR call letters&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;platform_id&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot; Only currently archives reports from stations only if the first letter of the ICAO ID is </span><span class="se">\&#39;</span><span class="s2">K</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="s2">P</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="s2">M</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="s2">C</span><span class="se">\&#39;</span><span class="s2">, or </span><span class="se">\&#39;</span><span class="s2">T</span><span class="se">\&#39;</span><span class="s2">. &quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+      <span class="n">double</span> <span class="n">latitude</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees_north&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">90.</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mf">90.</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+      <span class="n">double</span> <span class="n">longitude</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees_west&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">180.</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mf">180.</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+
+<span class="o">//</span> <span class="k">global</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">institution</span> <span class="o">=</span> <span class="s2">&quot;NOAA/National Weather Service&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s2">&quot;CF-1.7 CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">history</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">references</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;NOAA/MDL&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.nws.noaa.gov/mdl/, https://sats.nws.noaa.gov/~camps/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">primary_variables</span> <span class="o">=</span> <span class="s2">&quot;Temp_instant_2m stations station_type latitude longitude&quot;</span> <span class="p">;</span>
+
+<span class="n">group</span><span class="p">:</span> <span class="n">prefix_list</span> <span class="p">{</span>
+
+  <span class="o">//</span> <span class="n">group</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">PROV__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/prov/#&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPP__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">SOSA__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/sosa/&quot;</span> <span class="p">;</span>
+  <span class="p">}</span> <span class="o">//</span> <span class="n">group</span> <span class="n">prefix_list</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sample-equations-driver-output">
+<h2>Sample equations_driver output<a class="headerlink" href="#sample-equations-driver-output" title="Permalink to this headline">¶</a></h2>
+<p>Regression coefficients, and the <em>Equation_Constant</em>, are saved as a single variable (<em>MOS_Equations</em>),
+dimensioned by the number of stations, the number of coefficients (including the <em>Equation_Constant</em>) and the number of Predictands.</p>
+<p>The ancillary_variables attribute, for the <em>MOS_equations</em> variable, should contain a reference to the non-data-bearing variables
+<em>MOS_Predictor_Coeffs</em> and <em>Equation_Constant</em>. These variables contain the appropriate metadata description to identify the type of
+information a <em>MOS_equations</em> variable contains.</p>
+<p>The auxiliary coordinate variable attribute (coordinates), for a <em>MOS_equations</em> variable, references an <em>Equations_List</em> and
+<em>Predictand_List</em> variable. These variables provide ordered lists that apply to the dimensions of the <em>MOS_equations</em> variable.</p>
+<p><em>Equations_List</em> corresponds to the dimension <em>max_eq_terms</em>, which stores an ordered list of the predictors that provide input
+to the set of equations, along with the equation constant, as a character array. The ordered input list references the
+non-data-bearing predictor variables that appear elsewhere in the file. The attributes assigned to each of those non-data-bearing
+variables, provide all the metadata needed to access and use those predictors contained in the input file to equations_driver.</p>
+<p><em>Predictand_List</em> provides an ordered character output array, which plays a complementary role by identifying the predictands
+that are forecast by the equations.</p>
+<p>In addition to the MOS_equations variable, ordered input and output lists, and non-data-bearing predictor and predictand variables,
+there are a number of variables that contain diagnostic information about the MOS development process. Each of these variables is
+stored individually, as primary variables, within an equations output file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">netcdf</span> <span class="n">camps_equations_output</span> <span class="p">{</span>
+<span class="n">dimensions</span><span class="p">:</span>
+      <span class="n">stations</span> <span class="o">=</span> <span class="mi">20</span> <span class="p">;</span>
+      <span class="n">number_of_predictands</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span>
+      <span class="n">max_eq_terms</span> <span class="o">=</span> <span class="mi">4</span> <span class="p">;</span>
+      <span class="n">num_char_predictors</span> <span class="o">=</span> <span class="mi">51</span> <span class="p">;</span>
+      <span class="n">num_char_predictands</span> <span class="o">=</span> <span class="mi">20</span> <span class="p">;</span>
+      <span class="n">level</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span>
+      <span class="n">phenomenonTime</span> <span class="o">=</span> <span class="mi">10</span> <span class="p">;</span>
+      <span class="n">lead_times</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span>
+<span class="n">variables</span><span class="p">:</span>
+      <span class="n">char</span> <span class="n">Equations_List</span><span class="p">(</span><span class="n">max_eq_terms</span><span class="p">,</span> <span class="n">num_char_predictors</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">Equations_List</span><span class="p">:</span><span class="n">PROV__entity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Stat/OrdrdInpt&quot;</span> <span class="p">;</span>
+              <span class="n">Equations_List</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Ordered List of Equation Terms&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">PolyLinReg</span> <span class="p">;</span>
+              <span class="n">PolyLinReg</span><span class="p">:</span><span class="n">PROV__Activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Stat/PolyLinReg&quot;</span> <span class="p">;</span>
+              <span class="n">PolyLinReg</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Polynomial Linear Regression&quot;</span> <span class="p">;</span>
+              <span class="n">PolyLinReg</span><span class="p">:</span><span class="n">feature_of_interest</span> <span class="o">=</span> <span class="s2">&quot;no&quot;</span> <span class="p">;</span>
+      <span class="nb">float</span> <span class="n">Reduction_of_Variance</span><span class="p">(</span><span class="n">stations</span><span class="p">,</span> <span class="n">number_of_predictands</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">Reduction_of_Variance</span><span class="p">:</span><span class="n">PROV__entity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Stat/MOS/OutptParams/MOSRedOfVar&quot;</span> <span class="p">;</span>
+              <span class="n">Reduction_of_Variance</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+              <span class="n">Reduction_of_Variance</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;MOS Reduction of Variance&quot;</span> <span class="p">;</span>
+              <span class="n">Reduction_of_Variance</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;station Predictand_List&quot;</span> <span class="p">;</span>
+              <span class="n">Reduction_of_Variance</span><span class="p">:</span><span class="n">SOSA__usedProcedure</span> <span class="o">=</span> <span class="s2">&quot;( PolyLinReg )&quot;</span> <span class="p">;</span>
+              <span class="n">Reduction_of_Variance</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="mi">1</span><span class="n">LL</span> <span class="p">;</span>
+      <span class="nb">float</span> <span class="n">Multiple_Correlation_Coefficient</span><span class="p">(</span><span class="n">stations</span><span class="p">,</span> <span class="n">number_of_predictands</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">Multiple_Correlation_Coefficient</span><span class="p">:</span><span class="n">PROV__entity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Stat/MOS/OutptParams/MOSMultiCorCoef&quot;</span> <span class="p">;</span>
+              <span class="n">Multiple_Correlation_Coefficient</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+              <span class="n">Multiple_Correlation_Coefficient</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;MOS Multiple Correlation Coefficient&quot;</span> <span class="p">;</span>
+              <span class="n">Multiple_Correlation_Coefficient</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;station Predictand_List&quot;</span> <span class="p">;</span>
+              <span class="n">Multiple_Correlation_Coefficient</span><span class="p">:</span><span class="n">SOSA__usedProcedure</span> <span class="o">=</span> <span class="s2">&quot;( PolyLinReg )&quot;</span> <span class="p">;</span>
+              <span class="n">Multiple_Correlation_Coefficient</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="mi">1</span><span class="n">LL</span> <span class="p">;</span>
+      <span class="nb">float</span> <span class="n">Predictand_Average</span><span class="p">(</span><span class="n">stations</span><span class="p">,</span> <span class="n">number_of_predictands</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">Predictand_Average</span><span class="p">:</span><span class="n">PROV__entity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/MOS/Arith/Mean&quot;</span> <span class="p">;</span>
+              <span class="n">Predictand_Average</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+              <span class="n">Predictand_Average</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Predictand Average&quot;</span> <span class="p">;</span>
+              <span class="n">Predictand_Average</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;station Predictand_List&quot;</span> <span class="p">;</span>
+              <span class="n">Predictand_Average</span><span class="p">:</span><span class="n">SOSA__usedProcedure</span> <span class="o">=</span> <span class="s2">&quot;( Mean )&quot;</span> <span class="p">;</span>
+              <span class="n">Predictand_Average</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="mi">1</span><span class="n">LL</span> <span class="p">;</span>
+      <span class="nb">float</span> <span class="n">MOS_Equations</span><span class="p">(</span><span class="n">stations</span><span class="p">,</span> <span class="n">max_eq_terms</span><span class="p">,</span> <span class="n">number_of_predictands</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">MOS_Equations</span><span class="p">:</span><span class="n">PROV__entity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Stat/MOS/MOSEqn&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Equations</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Equations</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;MOS Equation Coefficients and Constants&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Equations</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;station Equations_List Predictand_List&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Equations</span><span class="p">:</span><span class="n">SOSA__usedProcedure</span> <span class="o">=</span> <span class="s2">&quot;( PolyLinReg )&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Equations</span><span class="p">:</span><span class="n">ancillary_variables</span> <span class="o">=</span> <span class="s2">&quot;( MOS_Predictor_Coeffs Equation_Constant )&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Equations</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="mi">1</span><span class="n">LL</span> <span class="p">;</span>
+<span class="o">//</span> <span class="k">global</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">PROV__entity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Source/MOSEqnFile&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">PROV__wasGeneratedBy</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Stat/MOSDev&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">primary_variables</span> <span class="o">=</span> <span class="s2">&quot;MOS_Equations Standard_Error_Estimate Reduction_of_Variance Multiple_Correlation_Coefficient Predictand_Average&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">season</span> <span class="o">=</span> <span class="s2">&quot;warm&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPPTime__SeasBeginDay</span> <span class="o">=</span> <span class="s2">&quot;0401&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPPTime__SeasEndDay</span> <span class="o">=</span> <span class="s2">&quot;0410&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPPTime__SeasDayFmt</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Time/SeasDayFmt/MMDD&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPPTime__FcstCyc</span> <span class="o">=</span> <span class="s2">&quot;00&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPPTime__FcstCycFmt</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Time/FcstCycFmt/HH&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPPSystem__Status</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/System/Status/Dev&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">institution</span> <span class="o">=</span> <span class="s2">&quot;NOAA/National Weather Service&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s2">&quot;CF-1.7 CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">PROV__wasAttributedTo</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Source/MDL&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.nws.noaa.gov/mdl/, https://sats.nws.noaa.gov/~camps/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">PROV__generatedAtTime</span> <span class="o">=</span> <span class="s2">&quot;2021-02-25T19:00:00&quot;</span> <span class="p">;</span>
+
+<span class="n">group</span><span class="p">:</span> <span class="n">prefix_list</span> <span class="p">{</span>
+
+  <span class="o">//</span> <span class="n">group</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">PROV__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/prov/#&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPP__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPPTime__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/Data/Time/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPPSystem__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/Methods/System/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">SOSA__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/sosa/&quot;</span> <span class="p">;</span>
+  <span class="p">}</span> <span class="o">//</span> <span class="n">group</span> <span class="n">prefix_list</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sample-forecast-driver-output">
+<h2>Sample forecast_driver output<a class="headerlink" href="#sample-forecast-driver-output" title="Permalink to this headline">¶</a></h2>
+<p>The CDL output for forecast_driver should look very similar to that of mospred_driver, for predictors.
+The main exception being the “MOS” identifier prepended to the start of every variable.
+There are also consistency check variables included in forecast_driver output, when appropriate.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">netcdf</span> <span class="n">camps_forecast_output</span> <span class="p">{</span>
+<span class="n">dimensions</span><span class="p">:</span>
+      <span class="n">phenomenonTime</span> <span class="o">=</span> <span class="mi">10</span> <span class="p">;</span>
+      <span class="n">stations</span> <span class="o">=</span> <span class="mi">20</span> <span class="p">;</span>
+      <span class="n">level</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span>
+      <span class="n">lead_times</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span>
+<span class="n">variables</span><span class="p">:</span>
+      <span class="n">int64</span> <span class="n">elev0</span><span class="p">(</span><span class="n">level</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;height above surface&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;height&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">positive</span> <span class="o">=</span> <span class="s2">&quot;up&quot;</span> <span class="p">;</span>
+              <span class="n">elev0</span><span class="p">:</span><span class="n">axis</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">phenomenonTime</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span> <span class="p">;</span>
+              <span class="n">phenomenonTime</span><span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( SOSA__phenomenonTime )&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">FcstRefTime</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds since 1970-01-01 00:00:00.0&quot;</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;forecast_reference_time&quot;</span> <span class="p">;</span>
+              <span class="n">FcstRefTime</span><span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( StatPP__Data/Time/FcstRefTime )&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">lead_times</span><span class="p">(</span><span class="n">lead_times</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;seconds&quot;</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;forecast_period&quot;</span> <span class="p">;</span>
+              <span class="n">lead_times</span><span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span> <span class="s2">&quot;( StatPP__Data/Time/LeadTime )&quot;</span> <span class="p">;</span>
+      <span class="n">int64</span> <span class="n">MOS_Method</span> <span class="p">;</span>
+              <span class="n">MOS_Method</span><span class="p">:</span><span class="n">PROV__activity</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Methods/Stat/MOS&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Method</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Model Output statistical method: Multiple Linear Regression &quot;</span> <span class="p">;</span>
+      <span class="n">double</span> <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">(</span><span class="n">phenomenonTime</span><span class="p">,</span> <span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">SOSA__observedProperty</span> <span class="o">=</span> <span class="s2">&quot;StatPP__Data/Met/Temp/Temp&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;dry bulb temperature&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="mf">210.927777777778</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mf">327.594444444444</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;air_temperature&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;K&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">vertical_coord</span> <span class="o">=</span> <span class="s2">&quot;elev0&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;phenomenonTime latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">ancillary_variables</span> <span class="o">=</span> <span class="s2">&quot;elev0 phenomenonTime FcstRefTime lead_times MOS_Method &quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">PROV__wasInformedBy</span> <span class="o">=</span> <span class="s2">&quot;( )&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">PROV__hadPrimarySource</span> <span class="o">=</span> <span class="s2">&quot;GFS13&quot;</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">leadtime</span> <span class="o">=</span> <span class="mi">12</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">FcstTime_hour</span> <span class="o">=</span> <span class="mi">0</span><span class="n">LL</span> <span class="p">;</span>
+              <span class="n">MOS_Temp_instant_2m_00Z_12hr</span><span class="p">:</span><span class="n">SOSA__usedProcedure</span> <span class="o">=</span> <span class="s2">&quot;( MOS_Method )&quot;</span> <span class="p">;</span>
+      <span class="n">string</span> <span class="n">stations</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">string</span> <span class="n">stations</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;ICAO METAR call letters&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;platform_id&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot; Only currently archives reports from stations only if the first letter of the ICAO ID is </span><span class="se">\&#39;</span><span class="s2">K</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="s2">P</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="s2">M</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="s2">C</span><span class="se">\&#39;</span><span class="s2">, or </span><span class="se">\&#39;</span><span class="s2">T</span><span class="se">\&#39;</span><span class="s2">. &quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">stations</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mi">9999</span><span class="n">LL</span> <span class="p">;</span>
+      <span class="n">double</span> <span class="n">latitude</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees_north&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">90.</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mf">90.</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">latitude</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+      <span class="n">double</span> <span class="n">longitude</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees_west&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">valid_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">180.</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mf">180.</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;latitude longitude&quot;</span> <span class="p">;</span>
+              <span class="n">longitude</span><span class="p">:</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">9999.</span> <span class="p">;</span>
+<span class="o">//</span> <span class="k">global</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">institution</span> <span class="o">=</span> <span class="s2">&quot;NOAA/National Weather Service&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s2">&quot;CF-1.7 CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;CAMPS-1.2&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">history</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">references</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;NOAA/MDL&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.nws.noaa.gov/mdl/, https://sats.nws.noaa.gov/~camps/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">file_id</span> <span class="o">=</span> <span class="s2">&quot;0e4181eb-9683-4e17-bcd1-a0096fca9b1f&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">primary_variables</span> <span class="o">=</span> <span class="s2">&quot;MOS_Temp_instant_2m_00Z_12hr stations latitude longitude&quot;</span> <span class="p">;</span>
+<span class="n">group</span><span class="p">:</span> <span class="n">prefix_list</span> <span class="p">{</span>
+
+  <span class="o">//</span> <span class="n">group</span> <span class="n">attributes</span><span class="p">:</span>
+              <span class="p">:</span><span class="n">PROV__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/prov/#&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">StatPP__</span> <span class="o">=</span> <span class="s2">&quot;http://codes.nws.noaa.gov/StatPP/&quot;</span> <span class="p">;</span>
+              <span class="p">:</span><span class="n">SOSA__</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/ns/sosa/&quot;</span> <span class="p">;</span>
+  <span class="p">}</span> <span class="o">//</span> <span class="n">group</span> <span class="n">prefix_list</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../statPP_background/index.html" class="btn btn-neutral float-right" title="Statistical Post-Processing Background" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="format.html" class="btn btn-neutral float-left" title="Data Format" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Apr 23, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

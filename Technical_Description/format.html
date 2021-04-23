@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Data Format &mdash; camps 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Output Examples" href="examples.html" />
+    <link rel="prev" title="Metadata" href="camps_metadata.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../users_guide.html">User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../technical_description.html">Technical Description</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="camps_metadata.html">Metadata</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Data Format</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#camps-data-object">Camps_data object:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dimensions">Dimensions:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reading">Reading:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#writing">Writing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#time-coordinates">Time Coordinates:</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#phenomenon-time">Phenomenon Time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#forecast-reference-time">Forecast Reference Time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lead-time">Lead Time</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html">Output Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../technical_description.html">Technical Description</a> &raquo;</li>
+        
+      <li>Data Format</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/Technical_Description/format.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="data-format">
+<h1>Data Format<a class="headerlink" href="#data-format" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="camps-data-object">
+<h2>Camps_data object:<a class="headerlink" href="#camps-data-object" title="Permalink to this headline">¶</a></h2>
+<p>The core data structure of CAMPS is the Camps_data object. This is defined as: a class containing components which fully describe a given
+variable. Many of these components can be written to a netcdf file independently of the parent object. Classes like Time, Location, and
+Process all share a common interface, <em>nc_writable</em>, which enforces the definition of the method <em>write_to_nc</em>.</p>
+<p>The data contained in a Camps_data object can be gridded or vector, it may or may not have a lead time (forecast period) associated with it,
+and can be n-dimensional. For example, assume there is a variable that is gridded and includes lead times at multiple forecast reference times.
+This would have 4 dimensions; time, lead time, y, and x, and is a snapshot of a single time. Another type of variable could be
+a vector of stations. This variable could be one-dimensional as a snapshot of a single time, two-dimensional covering multiple
+forecast reference times, or three-dimensional and include multiple lead times.These dimensions would be number of stations,
+lead time, and time. It is also possible to have a Camps_data object with no numerical data, only metadata.</p>
+<p>When instantiating  a Camps_data object, the variable name provided is used to look up pre-defined metadata from the control file <em>netcdf.yaml</em>.
+This metadata is added to the Camps_data object for the variable. The name provided must match a variable listed in netcdf.yaml for the
+autofill feature to work. Alternative names for existing variables can be added to the bottom of the netcdf.yaml control file.</p>
+<img alt="../_images/CAMPS2.0_prototype.png" src="../_images/CAMPS2.0_prototype.png" />
+</div>
+<div class="section" id="dimensions">
+<h2>Dimensions:<a class="headerlink" href="#dimensions" title="Permalink to this headline">¶</a></h2>
+<p>Standard dimension names are located in netcdf.yaml in the ‘Dimensions’ section.  Allowing for the flexibility of the object,
+the number of dimensions of the data are unlimited.</p>
+</div>
+<div class="section" id="reading">
+<h2>Reading:<a class="headerlink" href="#reading" title="Permalink to this headline">¶</a></h2>
+<p>When reading from a NetCDF input file, either a unique variable name should be provided to the camps.core.reader.read_var()
+function, or specific metadata should be provided via the template control file pred.yaml.  If no name is provided, the metadata
+is used to search for the desired primary variable from the input file, by matching specific metadata attributes.. If a phenomenonTime
+or lead_time is also given, CAMPS will slice the retrieved primary variable based on those parameters.</p>
+</div>
+<div class="section" id="writing">
+<h2>Writing<a class="headerlink" href="#writing" title="Permalink to this headline">¶</a></h2>
+<p>Writing a variable to a NetCDF file is achieved by invoking the Camps_data object’s write_to_nc function.
+This will call the appropriate write_to_nc function for any composite object of the main Camps_data object.</p>
+<p>Camps_data.write_to_nc() uses a core metadata structure to generate unique variable names when writing to NetCDF.
+Additionally, this function helps format and filter the metadata written to the output file.</p>
+<img alt="../_images/CAMPS2.0_writing.png" src="../_images/CAMPS2.0_writing.png" />
+</div>
+<div class="section" id="time-coordinates">
+<h2>Time Coordinates:<a class="headerlink" href="#time-coordinates" title="Permalink to this headline">¶</a></h2>
+<p>NetCDF-CAMPS makes use of 4 distinct classes to handle the differences. They are; ForecastReferenceTime, LeadTime, phenomenonTime,
+and phenomenonTimePeriod.</p>
+<p>The following table provides explanations of these time variables:</p>
+<div class="section" id="phenomenon-time">
+<h3>Phenomenon Time<a class="headerlink" href="#phenomenon-time" title="Permalink to this headline">¶</a></h3>
+<p>The SOSA property phenomenonTime can be of type instant or period. This makes phenomenonTime appropriate for weather elements
+valid at both points in time (e.g., temperature, wind speed) and spans of time (e.g., event probabilities, precipitation accumulations).</p>
+<p>A phenomenonTime variable is linked to the appropriate primary variable by including it in the coordinates attribute,
+and the ancillary_variables attribute list.  This follows CF-Conventions by making this multi-dimensional time variable
+an auxiliary coordinate variable. We recognize that in many applications a combination of forecast reference time and
+lead time can convey the same content as phenomenonTime. However, in NetCDF-CAMPS, it is necessary to create an auxiliary
+coordinate variable explicitly for this purpose and assign it the appropriate attribute. The purpose is to limit implicit
+metadata wherever possible.</p>
+<p>In NetCDF-CAMPS, a period of time has an instant when it begins, an instant when it ends, and a duration.
+Generally knowledge of any two of the three will be sufficient to compute the third.</p>
+<p>CF-conventions describes a method for identifying vertices on a time axis which can then be designated period bounds.
+While this method is useful for many applications, we note a number of StatPP applications where it is inadequate.
+(E.g., this method cannot describe overlapping time periods.) Instead we provide an alternative which is more general
+and better-suited to StatPP.</p>
+<p>For NetCDF-CAMPS time period variables are encoded using the syntax phenomenonTimePeriod. The PROV-O concept specializationOf
+can take on multiple values. In this example, the variable phenomenonTimePeriod is a specialization of the SOSA concept
+phenomenonTime and it is also a specialization of the concept of the NetCDF-CAMPS time bounds syntax called “BeginEnd”.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span>  <span class="n">SOSA__phenomenonTimePeriod</span><span class="p">:</span><span class="n">PROV__specializationOf</span> <span class="o">=</span>
+<span class="o">|</span>  <span class="s2">&quot;StatPP__concepts/TimeBoundsSyntax/BeginEnd&quot;</span><span class="p">,</span> <span class="s2">&quot;SOSA__phenomenonTime&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>If there are multiple phenomenonTimePeriod variables in a single file, the duration (in hours) is appended to the end of the variable name.
+These variables should include a dimension (the one that varies fastest) of 2. That dimension can be interpreted as either a duration,
+beginning, or ending.</p>
+<p>In order to properly associate the phenomenonTimePeriod variable with the primary variable it represents,
+it should be added to the coordinates attribute of the primary variable, as well as the ancillary_variables attribute list.
+By adding the phenomenonTimePeriod variable to the coordinates attribute, we are declaring it an auxiliary coordinate variable,
+according to CF-Conventions.</p>
+</div>
+<div class="section" id="forecast-reference-time">
+<h3>Forecast Reference Time<a class="headerlink" href="#forecast-reference-time" title="Permalink to this headline">¶</a></h3>
+<p>The concept of forecast_reference_time is defined in NetCDF CF-Conventions as “The ‘data time’, the time of the analysis from which
+the forecast was made”. The forecast_reference_time is an instant in time. It is frequently used to define the epoch of the time
+coordinate for variables associated with numerical weather prediction output.  For data where this variable is appropriate,
+the syntax used for this variable is FcstRefTime, and will have the standard name forecast_reference_time.  In order to link
+this time variable to the appropriate primary variable, it should be included in the ancillary_variables attribute list.</p>
+</div>
+<div class="section" id="lead-time">
+<h3>Lead Time<a class="headerlink" href="#lead-time" title="Permalink to this headline">¶</a></h3>
+<p>The term “lead time” is often used to describe a duration of time that is measured from a forecast_reference_time to the time when
+some phenomenon is observed or forecast to occur. There are a number of expressions that are commonly used to describe this concept
+(e.g., forecast period, forecast lead, time projection). In NetCDF-CAMPS, the syntax used to encode a lead time variable is lead_time.
+If there are multiple lead time variables in a single file, an identifying number will be appended to the end of the variable name.
+According to CF-Conventions, the standard name for lead time is forecast_period. The standard name should be included as an attribute
+for any lead time variable. .In NetCDF-CAMPS datasets, where this concept is meaningful, a variable of appropriate dimensionality
+should be defined and contain lead time values. This variable should have the attribute PROV__specializationOf declared with a value
+that expresses the concept of lead time. Ideally this value will use a URI and be machine-readable.</p>
+<p>This variable should be encoded as a CF-Conventions coordinate variable, when appropriate.
+Otherwise, it should be included in the ancillary_variables attribute list for the appropriate primary variable.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="examples.html" class="btn btn-neutral float-right" title="Output Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="camps_metadata.html" class="btn btn-neutral float-left" title="Metadata" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Apr 23, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

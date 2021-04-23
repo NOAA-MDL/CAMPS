@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Technical Description &mdash; camps 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Metadata" href="Technical_Description/camps_metadata.html" />
+    <link rel="prev" title="Known Issues" href="Users_Guide/known_issues.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> camps
+          
+
+          
+            
+            <img src="_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="users_guide.html">User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Technical Description</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/camps_metadata.html">Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/format.html">Data Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/examples.html">Output Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Technical Description</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/technical_description.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="technical-description">
+<h1>Technical Description<a class="headerlink" href="#technical-description" title="Permalink to this headline">¶</a></h1>
+<p>Network Common Data Format (NetCDF) will be used as the primary CAMPS file format, as it supports the creation, access, and sharing of array-oriented scientific data.
+In addition, NetCDF also offers a self-describing data format with more flexibility than other widely used table driven formats such as TDLPACK or Gridded Binary (GRIB).
+Additionally, NetCDF has more widespread support within the StatPP community than other self-describing data formats like Hierarchical Data Format (HDF).</p>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Technical_Description/camps_metadata.html">Metadata</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/camps_metadata.html#netcdf-cf-conventions">NetCDF CF-Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/camps_metadata.html#sosa">SOSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/camps_metadata.html#prov-o">PROV-O</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/camps_metadata.html#netcdf-classic-linked-data">NetCDF Classic Linked-Data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Technical_Description/format.html">Data Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/format.html#camps-data-object">Camps_data object:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/format.html#dimensions">Dimensions:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/format.html#reading">Reading:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/format.html#writing">Writing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/format.html#time-coordinates">Time Coordinates:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Technical_Description/format.html#phenomenon-time">Phenomenon Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Technical_Description/format.html#forecast-reference-time">Forecast Reference Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Technical_Description/format.html#lead-time">Lead Time</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Technical_Description/examples.html">Output Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/examples.html#sample-metar-driver-output">Sample metar_driver Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/examples.html#sample-marine-driver-output">Sample marine_driver Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/examples.html#sample-grib2-to-nc-driver-output">Sample grib2_to_nc_driver output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/examples.html#sample-mospred-driver-output-predictors">Sample mospred_driver output (predictors)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/examples.html#sample-mospred-driver-output-predictands">Sample mospred_driver output (predictands)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/examples.html#sample-equations-driver-output">Sample equations_driver output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/examples.html#sample-forecast-driver-output">Sample forecast_driver output</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="Technical_Description/camps_metadata.html" class="btn btn-neutral float-right" title="Metadata" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Users_Guide/known_issues.html" class="btn btn-neutral float-left" title="Known Issues" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Apr 23, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

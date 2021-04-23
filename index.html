@@ -1,0 +1,271 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>An Introduction to the Community Atmospheric Model Post-processing System (CAMPS) &mdash; camps 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User’s Guide" href="users_guide.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> camps
+          
+
+          
+            
+            <img src="_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="users_guide.html">User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="technical_description.html">Technical Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>An Introduction to the Community Atmospheric Model Post-processing System (CAMPS)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="an-introduction-to-the-community-atmospheric-model-post-processing-system-camps">
+<h1>An Introduction to the Community Atmospheric Model Post-processing System (CAMPS)<a class="headerlink" href="#an-introduction-to-the-community-atmospheric-model-post-processing-system-camps" title="Permalink to this headline">¶</a></h1>
+<p>The Community Atmospheric Model Post-processing System (CAMPS) is a Python-based software package
+that supports Statistical Post-Processing (StatPP) of atmospheric data and is maintained as community code.
+This package includes frameworks for metadata standards, and tools for data representation.</p>
+<p>The original vision for CAMPS put priority on achieving the functionality to reproduce a station-based
+<a class="reference external" href="https://vlab.ncep.noaa.gov/web/mdl/mos-documentation/">Model Output Statistics (MOS)</a> forecast development.
+In its current form, CAMPS has the capability to produce a limited MOS forecast for the variables:
+Temperature, Dewpoint, Daytime Maximum Temperature, and Nighttime Minimum Temperature.</p>
+<p>While replicating a <em>complete</em> “MOS forecast development” is still a long term goal, the main focus of CAMPS going forward has
+shifted towards supporting the <a class="reference external" href="https://vlab.ncep.noaa.gov/web/mdl/nbm/">National Blend of Models (NBM)</a>.</p>
+<p>As CAMPS matures and makes progress towards fully supporting the NBM, updates will be added to these
+documentation pages accordingly.</p>
+</div>
+<div class="section" id="current-scope-of-camps">
+<h1>Current Scope of CAMPS:<a class="headerlink" href="#current-scope-of-camps" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Provide structured metadata for encoding Statistical Post Processing (StatPP) data.</p></li>
+<li><p>Provide capability to convert observations and model output to netCDF.</p></li>
+<li><p>Provide capability to apply select procedures to data (ex: smoothing, interpolations, etc…).</p></li>
+<li><p>Perform a multiple linear regression (MLR), based on the legacy MOS-2000 software.</p></li>
+<li><p>Generate forecasts based on MLR output.</p></li>
+<li><p>Foster community involvement.</p></li>
+<li><p>Provide accessible, documented, robust, and portable code.</p></li>
+<li><p>Allow for user created utilities to be easily incorporated into the software (Ex: statistical post-processing techniques, interpolations, atmospheric variable calculations, etc).</p></li>
+<li><p>Utilize NetCDF-Linked Data to expand on metadata within CAMPS output files by pointing
+directly to metadata ontology documentation, as well as codes registries.</p></li>
+</ul>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="users_guide.html">User’s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Users_Guide/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Users_Guide/structure.html">CAMPS Package Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Users_Guide/camps_start_to_finish.html">CAMPS Forecast Development - start to finish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Users_Guide/interactive_camps.html">Interactive CAMPS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Users_Guide/known_issues.html">Known Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="technical_description.html">Technical Description</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/camps_metadata.html">Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/format.html">Data Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Technical_Description/examples.html">Output Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="codes_registry/index.html#introduction-to-the-nws-codes-registry">Introduction to the NWS Codes Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="codes_registry/index.html#how-to-submit-new-entries-to-the-nws-codes-registry">How to submit new entries to the NWS Codes Registry</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="users_guide.html" class="btn btn-neutral float-right" title="User’s Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Apr 23, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

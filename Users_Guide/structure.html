@@ -1,0 +1,304 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>CAMPS Package Structure &mdash; camps 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="CAMPS Forecast Development - start to finish" href="camps_start_to_finish.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../users_guide.html">User’s Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">CAMPS Package Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="camps_start_to_finish.html">CAMPS Forecast Development - start to finish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interactive_camps.html">Interactive CAMPS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="known_issues.html">Known Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../technical_description.html">Technical Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../users_guide.html">User’s Guide</a> &raquo;</li>
+        
+      <li>CAMPS Package Structure</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/Users_Guide/structure.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="camps-package-structure">
+<h1>CAMPS Package Structure<a class="headerlink" href="#camps-package-structure" title="Permalink to this headline">¶</a></h1>
+<p><strong>camps/camps/core</strong></p>
+<p>Contains code that defines a Camps_data object. Also stored here are composite classes such as Time and Location, along with I/O modules.
+Additionally, the directory with data conversion modules resides within core.</p>
+<p><strong>camps/camps/core/data_conversion/grib2_to_nc</strong></p>
+<p>Grib2 to netCDF conversion code.</p>
+<p><strong>camps/camps/core/data_conversion/marine_to_nc</strong></p>
+<p>Marine buoy observations to netCDF code.</p>
+<p><strong>camps/camps/core/data_conversion/metar_to_nc</strong></p>
+<p>Metar observations to netCDF code. Also includes QC.</p>
+<p><strong>camps/camps/scripts</strong></p>
+<p>This contains all of the driver scripts. Running all driver scripts constitutes a “CAMPS development”.
+All scripts require a control file to be used as an argument when running the script.</p>
+<p>There are six driver scripts in a CAMPS development:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>grib2_to_nc_driver.py</p></li>
+<li><p>Metar_driver.py</p></li>
+<li><p>Marine_driver.py</p></li>
+<li><p>Mospred_driver.py</p></li>
+<li><p>equations_driver.py</p></li>
+<li><p>forecast_driver.py</p></li>
+</ol>
+</div></blockquote>
+<p><strong>camps/camps/registry</strong></p>
+<p>Contains all the example control files for the various drivers. Also, contains several configuration files.</p>
+<p>The registry directory in CAMPS can be broken down into 4 categories of files:</p>
+<ol class="arabic simple">
+<li><dl class="simple">
+<dt>Control files for each driver script</dt><dd><ol class="loweralpha simple">
+<li><p>metar_control.yaml</p></li>
+<li><p>marine_control.yaml</p></li>
+<li><p>grib2_to_nc_control.yaml</p></li>
+<li><p>mospred_control.yaml</p></li>
+<li><p>equations_control.yaml</p></li>
+<li><p>forecast_control.yaml</p></li>
+<li><p>graphs.yaml - this controls the graphing functions held within the GUI directory.  This feature is currently being updated.</p></li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Configuration files, aiding in various aspects of the CAMPS development process</dt><dd><ol class="loweralpha simple">
+<li><p>netcdf.yaml - Serves a comprehensive list of accepted variables within CAMPS.  A user must modify to this configuration file using the correct formatting, to add a new supported variable to CAMPS.</p></li>
+<li><p>constants.py - A collection of constants and unit information used within CAMPS.</p></li>
+<li><p>marine_to_nc.yaml - key/value pairs that decode marine txt files for the desired variables.</p></li>
+<li><p>nc_to_metar.yaml - key/value pairs that decode metar txt files for the desired variables.</p></li>
+<li><p>pred.yaml - Configuration file that informs CAMPS which predictors, predictands and leadtimes to process, and what procedures to apply.</p></li>
+<li><p>predictands_graphs.yaml - This configures graph features for predictands, this is part of the graphing feature that is currently being updated.</p></li>
+<li><p>predictors_graphs.yaml - This configures graph features for predictors, this is part of the graphing feature that is currently being updated.</p></li>
+<li><p>procedures.yaml - A comprehensive list of accepted procedures within CAMPS.  A user must modify this configuration file, using the correct formatting, to add a new supported procedure to CAMPS.</p></li>
+</ol>
+</dd>
+</dl>
+</li>
+</ol>
+<p>3. List and table files, with station information, which may or may not be of use to the user.  Each user may decide which station information they wish to use.
+For example, the file “short.lst” is a small subset of stations often used by CAMPS developers for testing.  Alldevsites.lst is a grouping of all stations from alldevsites.tbl.  A user could develop their own desired station list, as was done with short.lst.  As long as the station information exists in the .tbl file specified in the driver script control file, then it should work.</p>
+<ol class="arabic simple" start="4">
+<li><p>Util.py is a utility module that aids the CAMPS software in interfacing with yaml files.</p></li>
+</ol>
+<p><strong>camps/camps/StatPP/regression</strong></p>
+<p>Contains the modules used for regressions.  Currently there is only one multiple linear regression module.</p>
+<p><strong>camps/camps/gui</strong></p>
+<p>Various modules used to display data are here.  The modules in this directory are currently broken and will be fixed in a subsequent release of the software.</p>
+<p><strong>camps/camps/mospred</strong></p>
+<p>Contains modules that aid in the processing, and calculation, of predictors and predictands (ie. mospred_driver.py).</p>
+<p>Examples of mospred support modules would be smooth.py and interp.py.  These modules contain procedures for smoothing and interpolating gridded model data onto stations.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For those familiar with MOS-2000, the functionality of this driver script is essentially equivalent to u201.</p>
+</div>
+<p><strong>camps/camps/libraries/mathlib</strong></p>
+<p>Contains modules used when calculating new predictors/predictands. Modules contained here are largely used during the mospred (u201 equivalent) step in a CAMPS development.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="camps_start_to_finish.html" class="btn btn-neutral float-right" title="CAMPS Forecast Development - start to finish" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Apr 23, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

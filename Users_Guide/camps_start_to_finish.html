@@ -1,0 +1,370 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>CAMPS Forecast Development - start to finish &mdash; camps 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Interactive CAMPS" href="interactive_camps.html" />
+    <link rel="prev" title="CAMPS Package Structure" href="structure.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../users_guide.html">User’s Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structure.html">CAMPS Package Structure</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">CAMPS Forecast Development - start to finish</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-data-conversion">Step 1: Data conversion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-data-processing">Step 2: Data Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-generate-equations">Step 3: Generate equations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-4-generate-forecast">Step 4: Generate Forecast</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="interactive_camps.html">Interactive CAMPS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="known_issues.html">Known Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../technical_description.html">Technical Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../users_guide.html">User’s Guide</a> &raquo;</li>
+        
+      <li>CAMPS Forecast Development - start to finish</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/Users_Guide/camps_start_to_finish.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="camps-forecast-development-start-to-finish">
+<h1>CAMPS Forecast Development - start to finish<a class="headerlink" href="#camps-forecast-development-start-to-finish" title="Permalink to this headline">¶</a></h1>
+<p>To run a CAMPS development, aside from the initial import step, there is no need to interact directly with Python.
+CAMPS makes use of a feature called “console scripts”, which allows a user to run the driver scripts directly from the command line.</p>
+<p>Each CAMPS driver script has a subsequent console script:</p>
+<ul class="simple">
+<li><p>metar_driver.py –&gt; <em>camps_metar_to_nc</em></p></li>
+<li><p>marine_driver.py –&gt; <em>camps_marine_to_nc</em></p></li>
+<li><p>grib2_to_nc_driver.py –&gt; <em>camps_grib2_to_nc</em></p></li>
+<li><p>mospred_driver.py –&gt; <em>camps_mospred</em></p></li>
+<li><p>equations_driver.py –&gt; <em>camps_equations</em></p></li>
+<li><p>forecast_driver.py –&gt; <em>camps_forecast</em></p></li>
+</ul>
+<p>Input files for driver scripts have metadata and format requirements. When using CAMPS interactively,
+the same metadata requirements still exist, but input file requirements could be circumvented.
+If a file is not read using the internal CAMPS reader module, the user could still instantiate a Camps_data object,
+populate it with data, and add the required metadata.</p>
+<p>CAMPS driver scripts require formatted input files.
+While the sources of input data are currently somewhat limited, as the software matures, additional sources
+and flexibility of input data will be added. In the spirit of being a community, open source, software package,
+CAMPS is being designed so that users can easily add their own features if desired. This could include additional data conversion methods.</p>
+<p>Every driver script in CAMPS will have an accompanying control file(s) that configures certain aspects of the associated driver script.
+Without the appropriate control file(s) passed as an argument, CAMPS software will error out.</p>
+<p>After installation, template control files can be found in the automatically generated directory:  <code class="docutils literal notranslate"><span class="pre">$HOME/.camps/control</span></code></p>
+<p>They can also be viewed in the <a class="reference external" href="https://github.com/NOAA-MDL/CAMPS/tree/master/camps/registry">CAMPS Github Repository</a>
+in the registry directory.</p>
+<p>A CAMPS forecast development can be broken into 4 steps:</p>
+<div class="section" id="step-1-data-conversion">
+<h2>Step 1: Data conversion<a class="headerlink" href="#step-1-data-conversion" title="Permalink to this headline">¶</a></h2>
+<p>To start a CAMPS development, you’ll need to convert observation and model data into CAMPS compliant NetCDF files, and apply quality
+control where necessary.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There is no order required for converting data.</p>
+</div>
+<p><strong>METAR observations:</strong></p>
+<p>MDL Hourly Table Text Files (METAR) are ASCII text, fixed-width, and colon-delimited.
+The data are decoded from METAR reports and a first-pass quality control is performed.</p>
+<p>Go to <code class="docutils literal notranslate"><span class="pre">$HOME/.camps/control/metar_conrol.yaml</span></code> to view an example control file.</p>
+<p>Then execute the console script, providing the control file as standard input.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ camps_metar_to_nc /path/to/controlfile/metar_control.yaml
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For more information on METAR reports, see sections A-D (pages 13.1 to 13.13) of chapter 13 in
+the following office note document: <a class="reference external" href="https://www.weather.gov/media/mdl/TDL_OfficeNote00-1.pdf">https://www.weather.gov/media/mdl/TDL_OfficeNote00-1.pdf</a></p>
+</div>
+<p><strong>Marine observations:</strong></p>
+<p>NBDC QC Marine Observations Text Files are ASCII text , fixed-width, and colon-delimited. These files are
+from the National Buoy Data Center (NBDC) and are quality controlled by NBDC.</p>
+<p>Go to <code class="docutils literal notranslate"><span class="pre">$HOME/.camps/control/marine_conrol.yaml</span></code> to view an example control file.</p>
+<p>Then execute the driver script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ camps_marine_to_nc /path/to/controlfile/marine_control.yaml
+</pre></div>
+</div>
+<p><strong>Model data:</strong></p>
+<p>Model data will also need to be processed and converted to NetCDF. The input file must only contain
+GRIB2 Messages that the user wishes to convert to NetCDF. For now, grib2_to_nc_driver only
+accepts GRIB2 data that has already been filtered by level, and the GRIB2 Messages Grid Definition
+Template must be one of the acceptable coordinate systems.</p>
+<dl class="simple">
+<dt>Currently accepted projections/grids:</dt><dd><ol class="loweralpha simple">
+<li><p>Lambert Conformal</p></li>
+<li><p>Polar Stereographic</p></li>
+<li><p>Mercator</p></li>
+<li><p>Regular Latitude/Longitude</p></li>
+</ol>
+</dd>
+</dl>
+<p>We recommend wgrib2 (<a class="reference external" href="https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/">https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/</a>) to filter and interpolate GRIB2 Messages
+outside of CAMPS.</p>
+<p>The ability to do filtering and grid-to-grid interpolation internally, within CAMPS, is currently under development.</p>
+<p>Once again, create your control file based on the
+<a class="reference external" href="https://github.com/NOAA-MDL/CAMPS/blob/master/camps/registry/grib2_to_nc_control.yaml">provided template</a>.
+<code class="docutils literal notranslate"><span class="pre">$HOME/.camps/control/grib2_to_nc_control.yaml</span></code></p>
+<p>Run the console script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ camps_grib2_to_nc /path/to/controlfile/grib2_to_nc_control.yaml
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-2-data-processing">
+<h2>Step 2: Data Processing<a class="headerlink" href="#step-2-data-processing" title="Permalink to this headline">¶</a></h2>
+<p>During this step, the user will choose what predictors and predictands to process and/or derive, and what procedures to apply.
+Input files must be in NetCDF-CAMPS format, and have the necessary metadata. The source of this input data will more than likely
+be the output files produced by grib2_to_nc_driver, Metar_driver, and Marine_driver.</p>
+<p>Currently CAMPS only interpolates from select map projections, to stations.  The ability to process gridded
+predictors is being developed for a future release. Mospred_driver can be run for processing predictors and/or
+predictands. Be sure to specify which (or both) you want to run for in the control file.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Reminder that for a linear regression, predictand is the dependent variable, and the predictor is the independent variable.</p>
+</div>
+<p>Inside the control file for this driver script, paths to other input and control files should be provided.
+The template control file itself <code class="docutils literal notranslate"><span class="pre">$HOME/.camps/control/mospred_conrol.yaml</span></code> should provide adequate instruction for proper configuration.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In mospred_control.yaml, of unique importance is the “pred_file” declaration. The pred_file provided should contain information about the predictors and predictands for the current development. See the template control file “pred.yaml” for more information on configuration.</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ camps_mospred /path/to/controlfile/mospred_control.yaml
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-3-generate-equations">
+<h2>Step 3: Generate equations<a class="headerlink" href="#step-3-generate-equations" title="Permalink to this headline">¶</a></h2>
+<p>Now we’re ready for the regression. The control file $HOME/.camps/control/equation_conrol.yaml will give an example of how to tune regression parameters.
+You will again specify the predictors and predictands you want to generate equations for by specifying the path to your “pred_file”.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Required input files are the output files from Mospred_driver.</p>
+</div>
+<p>Execute the driver script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ camps_equations path/to/controlfile/equations_control.yaml
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-4-generate-forecast">
+<h2>Step 4: Generate Forecast<a class="headerlink" href="#step-4-generate-forecast" title="Permalink to this headline">¶</a></h2>
+<p>Finally, we will want to generate some forecast output and apply basic consistency checks.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Required input files are the output files from Mospred_driver and Equations_driver.</p>
+</div>
+<p>The template control file to follow:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$HOME/.camps/control/forecast_control.yaml
+</pre></div>
+</div>
+<p>And the driver,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ camps_forecast /path/to/controlfile/forecast_control.yaml
+</pre></div>
+</div>
+<p><strong>Finished!</strong></p>
+<p>That’s it! That is all you need for a CAMPS forecast development! All output files are saved in NetCDF format
+and can be found in the output paths specified inside each driver script control file.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="interactive_camps.html" class="btn btn-neutral float-right" title="Interactive CAMPS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="structure.html" class="btn btn-neutral float-left" title="CAMPS Package Structure" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Apr 23, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

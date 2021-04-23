@@ -1,0 +1,444 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Metadata &mdash; camps 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data Format" href="format.html" />
+    <link rel="prev" title="Technical Description" href="../technical_description.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../users_guide.html">User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../technical_description.html">Technical Description</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Metadata</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#netcdf-cf-conventions">NetCDF CF-Conventions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sosa">SOSA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prov-o">PROV-O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#netcdf-classic-linked-data">NetCDF Classic Linked-Data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="format.html">Data Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html">Output Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../technical_description.html">Technical Description</a> &raquo;</li>
+        
+      <li>Metadata</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/Technical_Description/camps_metadata.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="metadata">
+<h1>Metadata<a class="headerlink" href="#metadata" title="Permalink to this headline">¶</a></h1>
+<p>A key motivation in establishing the NetCDF-CAMPS metadata structure, has been to develop a well-defined template for incorporating descriptive,
+well established, controlled vocabularies for StatPP output. Here CAMPS introduces an application profile, which utilizes 3 controlled vocabularies:
+<a class="reference external" href="https://cfconventions.org/">NetCDF Climate and Forecast (CF) Conventions</a>, <a class="reference external" href="https://www.w3.org/TR/prov-overview/">PROV Family of Documents (PROV-O)</a>,
+and <a class="reference external" href="https://www.w3.org/TR/vocab-ssn/">Sensor, Observation, Sample, and Actuator (SOSA)</a>.
+These data models and ontologies are already in use outside the U.S., and are hosted on the Web (supported by XML).
+CAMPS also makes use of <a class="reference external" href="https://binary-array-ld.github.io/netcdf-ld/">NetCDF Linked-Data</a>, which allows for the linkage of a given attribute, to an external descriptive source.</p>
+<p>There are several different “types” of variables in a NetCDF-CAMPS file.  Some contain numerical data, while others contain only descriptive metadata.
+The main types of variables are:</p>
+<ul class="simple">
+<li><p><strong>Primary variable</strong>:  All “primary_variables” are listed as a string, with space delimiters, under the “global attributes”
+section of a NetCDF-CAMPS file.  These variables should satisfy CF-Convention rules, and be represented as a Camps_data object,
+with numerical data.</p></li>
+<li><p><strong>Metadata variable</strong>: This type of variable contains no numerical data, only metadata attributes that help describe a procedure
+or some important characteristic of a primary variable.</p></li>
+<li><p><strong>Coordinate variable</strong>:  Our definition of a coordinate variable matches the definition outlined in NetCDF CF-Conventions.</p>
+<ul>
+<li><p><strong>Time variable</strong>:  Any variable containing time information.  Examples would be: phenomenonTime, forecast_reference_time,
+and lead_time.  Most time variables are going to either be coordinate variables, or auxiliary coordinate variables,
+following CF-Conventions.</p></li>
+<li><p><strong>Location variable</strong>: These are variables which signify the horizontal axis of a primary variable.
+These will either be coordinate variables or auxiliary coordinate variables, following CF-Conventions.</p></li>
+</ul>
+</li>
+<li><p><strong>Vertical coordinate variable</strong>: These variables will contain the numerical data, and metadata, necessary to describe the vertical axis
+information for a primary variable. This information is attached to a primary variable via the vertical_coord metadata attribute,
+and is also included in the ancillary_variables attribute list.</p></li>
+</ul>
+<p>By establishing this application profile, our goal is to improve the interoperability within the StatPP and Atmospheric Science community.
+This will also ensure that CAMPS data files contain sufficient metadata to be self-describing for relatively long periods of time.
+We introduce the shorthand NetCDF-CAMPS to describe a file that conforms to this application profile.  The metadata properties outlined in
+this documentation suffice for the intended purposes of StatPP within MDL.  However, any user of CAMPS is welcome, and even encouraged,
+to use any additional metadata properties necessary for their specific use case.</p>
+<div class="section" id="netcdf-cf-conventions">
+<h2>NetCDF CF-Conventions<a class="headerlink" href="#netcdf-cf-conventions" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://cfconventions.org/">NetCDF Climate and Forecast (CF) Conventions</a> are meant to encourage the exchange of data created with the NetCDF API.
+These conventions provide a controlled vocabulary (standard names), and a controlled data structure. This allows descriptive metadata,
+and spatial and temporal properties, to be encoded for each variable within a file. These conventions are gaining in popularity in the
+atmospheric science community, with many new programs and applications using them as a standard. CAMPS aims to be fully NetCDF CF compliant,
+while including additional metadata ontologies, and unique CAMPS terminology where necessary.</p>
+<p>While NetCDF CF-Conventions is widely used and a stable resource, it is also actively maintained.  If a specific standard name,
+or method of representing data, is not possible under the current convention rules,
+there is a <a class="reference external" href="https://github.com/cf-convention/cf-conventions/issues">discussion page</a> where new proposals may
+be submitted.  If approved, they are published in a subsequent version of the
+<a class="reference external" href="https://cfconventions.org/standard-names.html">CF Standard Name Table</a>. The CAMPS team has, and will continue
+to, publish new standard names, as necessary. Additionally, there are
+<a class="reference external" href="http://cfconventions.org/Data/cf-standard-names/docs/guidelines.html">guidelines for construction of CF Standard Names</a>, which provides
+background for how CF Standard Names are constructed, and how new standard names should be developed. Included in this description are
+transformations of existing standard names, which should be utilized, if possible, before new standard names are proposed. If no
+CF standard name, or transformation, adequately describes the given StatPP variable, method, or process, the most appropriate standard
+name should be used, while a proposal for a new standard name should be initiated.</p>
+<p><strong>Primary Variables:</strong> While not an official CF-Convention term, a primary variable within CAMPS should satisfy CF-Convention rules.
+A primary variable should contain the following CF-Conventions metadata attributes:</p>
+<ul class="simple">
+<li><p>standard_name  - Should use the most appropriate standard name from the CF standard name table.</p></li>
+<li><p>long_name - A human readable definition of the variable.</p></li>
+<li><p>coordinates - Following CF conventions, this attribute specifies the auxiliary coordinate variables for the primary variable.</p></li>
+<li><p>ancillary_variables - Following CF conventions, this attribute specifies a variable, or procedure, that contains data, or information,
+closely associated with the given primary variable. The value should be a blank separated list of variable or procedure names,
+encoded as a single string.</p></li>
+</ul>
+<p><strong>CF-Convention Ancillary Variables:</strong> These attributes aid in describing the primary variable, and may or may not contain numerical data.</p>
+<p><strong>CF-Convention Coordinate Variables:</strong> A CF-Convention coordinate variable has a very strict definition.
+The variable can only have a single dimension, and that dimension must be the same name as the variable itself (ex: latitude(latitude)).
+The data must be numeric in type and be either monotonically increasing or decreasing, without missing values.</p>
+<p><strong>CF-Convention Auxiliary Coordinate Variables:</strong>  A CF-Convention auxiliary coordinate variable helps make up for the flexibility that
+a coordinate variable lacks. These variables must contain coordinate data, but can be multi-dimensional, and there are no restrictions on
+the naming of the variable.</p>
+<p><strong>Globals:</strong>  Every NetCDF-CAMPS file must contain the appropriate string representing the version of CF it follows.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="k">global</span> <span class="n">attributes</span><span class="p">:</span>
+            <span class="p">:</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s2">&quot;CF-1.7&quot;</span> <span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sosa">
+<h2>SOSA<a class="headerlink" href="#sosa" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://www.w3.org/TR/vocab-ssn/">The Semantic Sensor Network Ontology [SSN]</a>, developed by the World Wide Web Consortium (W3C),
+also includes a simple core ontology named SOSA (Sensor, Observation, Sample, and Actuator).
+This ontology introduces a data model and a controlled vocabulary that is useful for the description of both
+observations and forecasts of a given StatPP variable. Attributes can be easily recognized and the terminology
+is designed to apply across disciplines.</p>
+<p>The most fundamental metadata concept in CAMPS is the <strong>Observation</strong> class.  SOSA defines Observation as:
+“Act of carrying out an (<em>Observation</em>) <em>Procedure</em> to estimate or calculate a value of a property of a
+<a class="reference external" href="https://www.w3.org/TR/vocab-ssn/#SOSAFeatureOfInterest">FeatureOfInterest</a>.
+Links to a <em>Sensor</em> to describe what made the Observation and how; links to an <em>ObservableProperty</em> to describe what the
+result is an estimate of, and to a <em>FeatureOfInterest</em> to detail what that property was associated with.”</p>
+<p>The procedure that estimates a temperature value at some point on the earth could be a human reading a mercury-in-glass thermometer,
+an automated observing platform reading a voltage from a sensor, or an numerical weather prediction system running on a supercomputer.
+All three are procedures; all can estimate temperature values. Thus, one can consider the difference between an observation and a
+forecast to be a difference in the estimating procedure used.</p>
+<p>The following SOSA properties are necessary to fully comply and describe NetCDF-CAMPS data (italics represent related SOSA classes
+and properties the user should familiarize themselves with). Every primary_variable should contain these SOSA metadata attributes:</p>
+<ul>
+<li><p><a class="reference external" href="https://www.w3.org/TR/vocab-ssn/#SOSAobservedProperty">observedProperty</a>: “Relation linking an Observation to the property that
+was observed. The ObservableProperty should be a property of the FeatureOfInterest (linked by hasFeatureOfInterest) of this Observation.”</p>
+<p>Within a NetCDF-CAMPS file, every unique primary variable will have an observedProperty.  For example: 500 mb temperature has an
+observedProperty of temperature. The value of the observedProperty attribute will resolve to a URI, usually an entry in the NWS Codes
+Registry. This URI will refer to a clear description of the primary_variable’s property. The URI need not describe any procedures
+performed to obtain the variable.</p>
+</li>
+<li><p><a class="reference external" href="https://www.w3.org/TR/vocab-ssn/#SOSAphenomenonTime">phenomenonTime</a>: “The time that the Result of an Observation, Actuation, or Sampling applies to the FeatureOfInterest. Not necessarily
+the same as the resultTime. May be an interval or an instant, or some other compound temporal entity [owl-time].”</p>
+<p>The unique definition of phenomenonTime, within the SOSA ontology, allows for a standardized time scheme to persist across all driver
+scripts that make up a CAMPS development.  However, there are slight, but important, differences between the phenomenonTime for forecast
+model output vs. observations.</p>
+<p>The phenomenonTime for forecast model output is: forcast_reference_time (initialization date and time) + forecast_period (lead time).
+This effectively gives the time the phenomenon is forecast to occur.</p>
+<p>There is no forecast_reference_time, or forecast_period for observational data.  Instead, the phenomenonTime is simply the time at
+which the phenomenon occurred.</p>
+</li>
+<li><p><a class="reference external" href="https://www.w3.org/TR/vocab-ssn/#SOSAusedProcedure">usedProcedure</a>: “A relation to link to a reusable Procedure used in making an
+Observation, an Actuation, or a Sample, typically through a Sensor, Actuator or Sampler.”</p>
+<p>To expand on the idea of a Procedure within CAMPS, we look to the PROV-O ontology.  This ontology allows for categorization of procedures.
+Those being applied to a dataset by the current user, or procedures which were previously applied to a dataset, either by a different user,
+or the current user at an earlier point in time.  This is specifically relevant when performing a full CAMPS development, as a user
+executes each subsequent driver script.</p>
+<p>Within a NetCDF-CAMPS object, usedProcedures should be encoded in the same order that the procedures were/are performed.
+Each usedProcedure is encoded as a separate metadata variable within the file, containing no numerical data, whose attributes describe
+the usedProcedure.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="prov-o">
+<h2>PROV-O<a class="headerlink" href="#prov-o" title="Permalink to this headline">¶</a></h2>
+<p>The PROV Family of Documents (PROV) provides a model for provenance information (entities, activities, production of data).
+This information can be used to form assessments about the quality of the data.  PROV allows for the exchange of such information using
+formats such as RDF and XML.</p>
+<p><a class="reference external" href="https://www.w3.org/TR/2013/REC-prov-o-20130430/">The PROV Ontology (PROV-O)</a>, “provides a set of classes, properties,
+and restrictions that can be used to represent and interchange provenance information generated in different systems and under
+different contexts. It can also be specialized to create new classes and properties to model provenance information for different applications
+and domains.”</p>
+<p>NetCDF-CAMPS utilizes this ontology to specify data sources, procedures, and inherited information about a given dataset.
+The following PROV-O properties are used to encode NetCDF-CAMPS output:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.w3.org/TR/2013/REC-prov-o-20130430/#p_entity">entity</a>- Is used exclusively for encoding statistics and coefficients within
+NetCDF-CAMPS equation output files.  This attribute should resolve to a web based URI with a more robust description of the entity.</p></li>
+<li><p><a class="reference external" href="https://www.w3.org/TR/2013/REC-prov-o-20130430/#p_activity">activity</a> - This attribute should be included for all procedure metadata
+variables.  It should resolve to a web based URI providing more detailed information on the given procedure. Likely a NWS codes
+registry entry.</p></li>
+<li><p><a class="reference external" href="https://www.w3.org/TR/2013/REC-prov-o-20130430/#used">used</a> - Represents the entity that is being used by the given procedure.
+Where applicable, provides the source of the data for the procedure. Not required.</p></li>
+<li><p><a class="reference external" href="https://www.w3.org/TR/2013/REC-prov-o-20130430/#wasInformedBy">wasInformedBy</a> - The value of this attribute will contain strings
+representing the procedures performed on this data prior to the current application.  This metadata attribute should be present for all
+primary_variables, but can be empty if appropriate.</p></li>
+<li><p><a class="reference external" href="https://www.w3.org/TR/2013/REC-prov-o-20130430/#wasDerivedFrom">wasDerivedFrom</a> - The value of this attribute will contain strings
+representing the individual pieces of information (often other primary variables) that went into deriving the given primary variable.
+This attribute will only be included for primary variables that have been computed during the current application.</p></li>
+<li><p><a class="reference external" href="https://www.w3.org/TR/2013/REC-prov-o-20130430/#hadPrimarySource">hadPrimarySource</a>- The originating source of the data for a
+primary variable.  Should be a predefined string representing source data recognized by CAMPS (Ex: METAR).
+New sources can easily be added.</p></li>
+<li><p><a class="reference external" href="https://www.w3.org/TR/2013/REC-prov-o-20130430/#specializationOf">specializationOf</a>- Used in NetCDF-CAMPS to link a very specific
+time variable to a broader time concept.</p></li>
+</ul>
+</div>
+<div class="section" id="netcdf-classic-linked-data">
+<h2>NetCDF Classic Linked-Data<a class="headerlink" href="#netcdf-classic-linked-data" title="Permalink to this headline">¶</a></h2>
+<p>NetCDF-CAMPS makes use of <a class="reference external" href="https://binary-array-ld.github.io/netcdf-ld/">Linked Data (LD)</a> for encoding and publishing data wherever
+possible. One key aspect of netCDF-LD that CAMPS takes advantage of is the mapping of global and variable attributes within a
+NetCDF-CAMPS file to URIs, using prefixes. Following the NetCDF-LD guidelines will allow NetCDF-CAMPS files to be represented within
+the Resource Description Framework (RDF). This furthers the versatility goal of CAMPS by allowing the use of other linked data technologies.</p>
+<p>For example, CAMPS uses the <a href="#id2"><span class="problematic" id="id3">SOSA__</span></a> prefix to designate concepts that had their origin in SOSA. In order to fully adhere to the Netcdf-CAMPS
+structure, there will be multiple prefixes in any given CAMPS file. The user should include NetCDF group attributes which identify the
+necessary prefixes within the file. The ‘double underscore’ character pair: __ is used as an identifier and as the termination of the prefix;
+the double underscore is part of the prefix.</p>
+<p><strong>CDL output showing the prefixes from a NetCDF-CAMPS file:</strong></p>
+<dl>
+<dt>::</dt><dd><div class="line-block">
+<div class="line">group: prefix_list {</div>
+<div class="line-block">
+<div class="line">// group attributes:</div>
+<div class="line-block">
+<div class="line">:<a href="#id2"><span class="problematic" id="id4">StatPP__</span></a> = “<a class="reference external" href="http://codes.nws.noaa.gov/StatPP/">http://codes.nws.noaa.gov/StatPP/</a>” ;</div>
+<div class="line">:<a href="#id2"><span class="problematic" id="id5">SOSA__</span></a> = “<a class="reference external" href="http://www.w3.org/ns/sosa/">http://www.w3.org/ns/sosa/</a>” ;</div>
+<div class="line">:<a href="#id2"><span class="problematic" id="id6">PROV__</span></a> = “<a class="reference external" href="http://www.w3.org/ns/prov">http://www.w3.org/ns/prov</a>/#” ;</div>
+</div>
+<div class="line">} // group prefix_list</div>
+</div>
+<div class="line">}</div>
+</div>
+</dd>
+</dl>
+<p>CDL output showing how a prefix is used to link a variable’s metadata to external web resources:</p>
+<dl class="simple">
+<dt>::</dt><dd><dl class="simple">
+<dt>short Temp_instant_2m(phenomenonTime, stations) ;</dt><dd><p>Temp_instant_2m:_FillValue = 9999s ;
+Temp_instant_2m:<a class="reference external" href="https://www.w3.org/TR/vocab-ssn/#SOSAobservedProperty">SOSA__observedProperty</a> = <a class="reference external" href="https://www.w3.org/TR/vocab-ssn/#SOSAobservedProperty">“StatPP__Data/Met/Temp/Temp”</a> ;
+Temp_instant_2m:long_name = “dry bulb temperature” ;
+Temp_instant_2m:valid_min = -80s ;
+Temp_instant_2m:valid_max = 130s ;
+Temp_instant_2m:standard_name = “air_temperature” ;
+Temp_instant_2m:units = “degF” ;
+Temp_instant_2m:vertical_coord = “elev0” ;
+Temp_instant_2m:<a class="reference external" href="https://www.w3.org/TR/2013/REC-prov-o-20130430/#hadPrimarySource">PROV__hadPrimarySource</a> = “METAR” ;
+Temp_instant_2m:coordinates = “phenomenonTime latitude longitude” ;
+Temp_instant_2m:ancillary_variables = “elev0 phenomenonTime DecodeBUFR METARQC ” ;
+Temp_instant_2m:missing_value = 9999s ;
+Temp_instant_2m:<a class="reference external" href="https://www.w3.org/TR/2013/REC-prov-o-20130430/#wasInformedBy">PROV__wasInformedBy</a> = “( )” ;
+Temp_instant_2m:<a class="reference external" href="https://www.w3.org/TR/vocab-ssn/#SOSAusedProcedure">SOSA__usedProcedure</a> = “( DecodeBUFR METARQC )” ;</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>In the CDL output above SOSA__observedProperty is set to the path StatPP__Data/Met/Temp/Temp. <a href="#id2"><span class="problematic" id="id7">StatPP__</span></a> has been given the prefix
+definition of <a class="reference external" href="http://codes.nws.noaa.gov/StatPP/">http://codes.nws.noaa.gov/StatPP/</a>. Thus if one replaces the prefix with it’s definition they get the full URI to the
+codes registry entry for temperature (<a class="reference external" href="http://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp">http://codes.nws.noaa.gov/StatPP/Data/Met/Temp/Temp</a>). This same technique is also applied to
+other prefixes followed by double underscores in CDL output above “SOSA__observedProperty”. By replacing <a href="#id2"><span class="problematic" id="id8">SOSA__</span></a> with it’s prefix
+definition, the user will be directed to <a class="reference external" href="http://www.w3.org/ns/sosa/observedProperty">http://www.w3.org/ns/sosa/observedProperty</a>, which is the documentation describing
+SOSA observedProperty.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="format.html" class="btn btn-neutral float-right" title="Data Format" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../technical_description.html" class="btn btn-neutral float-left" title="Technical Description" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Apr 23, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

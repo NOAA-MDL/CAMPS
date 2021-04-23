@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>The NWS Codes Registry: Using linked data to support CAMPS &mdash; camps 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Statistical Post-Processing Background" href="../statPP_background/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../users_guide.html">User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical_description.html">Technical Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The NWS Codes Registry:  Using linked data to support CAMPS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction-to-the-nws-codes-registry">Introduction to the NWS Codes Registry</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#code-registry-basics">Code Registry Basics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-submit-new-entries-to-the-nws-codes-registry">How to submit new entries to the NWS Codes Registry</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#entries-for-statistical-post-processing">Entries for statistical post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#entries-for-other-projects">Entries for other projects</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>The NWS Codes Registry:  Using linked data to support CAMPS</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/codes_registry/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="the-nws-codes-registry-using-linked-data-to-support-camps">
+<h1>The NWS Codes Registry:  Using linked data to support CAMPS<a class="headerlink" href="#the-nws-codes-registry-using-linked-data-to-support-camps" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction-to-the-nws-codes-registry">
+<h2>Introduction to the NWS Codes Registry<a class="headerlink" href="#introduction-to-the-nws-codes-registry" title="Permalink to this headline">¶</a></h2>
+<p>The NWS Codes Registry (<a class="reference external" href="https://codes.nws.noaa.gov">https://codes.nws.noaa.gov</a>) supports a number of projects, including XML-encoding of
+aviation products and the Community Atmospheric Model Post-processing System (CAMPS).  Most of the techniques
+described here apply to all of them.  The technical documentation for the codes registry API
+can be found at <a class="reference external" href="https://github.com/UKGovLD/registry-core/wiki/Api">https://github.com/UKGovLD/registry-core/wiki/Api</a>.</p>
+<div class="section" id="code-registry-basics">
+<h3>Code Registry Basics<a class="headerlink" href="#code-registry-basics" title="Permalink to this headline">¶</a></h3>
+<p>Upon navigating to the NWS Codes Registry website, users are directed to the Registry’s main page (Fig. 1).
+From there, one may search directly for a specific entry or group of entries by typing text into the search box
+at the top of the page (red numeral “1”, Fig. 1), or may browse through the registry by using the URI navigation bar (2)
+and the links for the various “collections” of entries found in the table of contents at the middle of the page (3).
+The Registry may be traversed as a nested file system by using the links of the desired collections to move to the desired collection and level of the registry tree.</p>
+<p>Conversely, the navigation bar can be used to navigate quickly back <em>up</em> the Registry “tree”.
+The various path segments of the URI are separate, clickable links, which will take the user to the Registry contents page at that level.
+(<em>Note:</em> In addition to clicking on the link for the “root” level in the navigation bar, the “Browse”
+button at the top of the page may also be used to return quickly to the main page of the Registry.)</p>
+<div class="figure align-default">
+<img alt="Figure 1: Main or &quot;Home&quot; page of Registry at root level" src="../_images/CaptureRegistryHome.png" />
+</div>
+<p>Figure 1:  Main or “Home” page of Registry at root level</p>
+<p>Once at the desired level of the Registry, the user can obtain metadata for specific “concept”
+entries by clicking on their links in the table of contents. Most of the entries that will be of
+interest to StatPP practitioners are found under the collection named “Statistical Post Processing”.</p>
+<p>Figure 2 is a screenshot of the GUI display after navigating to the entry for “Potential temperature”
+<strong>URI:</strong> <a class="reference external" href="https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/PotTemp">https://codes.nws.noaa.gov/StatPP/Data/Met/Temp/PotTemp</a> in the “/statPP/Data/Met/Temp” collection of the Registry.
+Note:  1) the navigation bar with links to all levels above the current Registry level,
+2) the entry name and link to the full URI near the center of the page, and
+3) a further set of links near the upper right of the page which can be used to view or download metadata and history information for this entry.
+The “core” metadata for the entry is displayed at the bottom portion of the page under the heading “Definition”
+(4). The core metadata includes a number of standard properties (“description”, “label”, “notation”, “references”, “type”, etc.) which are used to describe the entry</p>
+<div class="figure align-default">
+<img alt="Figure 2: Registry GUI display for &quot;Potential Temperature&quot; under /StatPP/Data/Met/Temp" src="../_images/PotentTempConcept.png" />
+</div>
+<p>Figure 2: Registry GUI display for “Potential Temperature” under /StatPP/Data/Met/Temp</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In this case, the “description” is quite generic, however this field will often contain more extensive and detailed language. Further, the “references” and “type” fields may contain links to other URIs which more completely describe the particular concept or collection. In this case our “type” is a Concept and we have two “references”, one points to the WMO Codes Registry entry for Potential Temperature (0 0 2) and the other the AMS Glossary definition of Potential Temperature.</p>
+</div>
+</div>
+</div>
+<div class="section" id="how-to-submit-new-entries-to-the-nws-codes-registry">
+<h2>How to submit new entries to the NWS Codes Registry<a class="headerlink" href="#how-to-submit-new-entries-to-the-nws-codes-registry" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="entries-for-statistical-post-processing">
+<h3>Entries for statistical post-processing<a class="headerlink" href="#entries-for-statistical-post-processing" title="Permalink to this headline">¶</a></h3>
+<p>Entries for statistical post-processing were drawn originally from concepts, variables, and procedures used in the MOS-2000 statistical post-processing system,
+augmented with various WMO resources. Requests for new entries should be submited as a .csv (or similar spreadsheet format) file with
+specific formatting the user should follow which is outlined in Figures 3a, 3b, and 3c.</p>
+<p>Submissions of new items and their metadata should be in exactly the same format as the example entries.
+New entries will be added to the Registry only after their metadata
+are determined to be in good order and the entries have been approved by the CAMPS Metadata Review Team via an internal review process.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See the “Definitions and References” (Fig. 3c) for further explanation of the metadata properties required for entry into the Registry and their format.</p>
+</div>
+<p>Developers proposing new entries for the Registry should submit their requests via the CAMPS github page (more to come on that soon!)
+A member of the CAMPS team will initiate the internal review process.
+The CAMPS team will work to ensure that the requested entries are necessary (i.e. that functionally similar entries do not already exist
+elsewhere in the Registry which could be used to describe the proposed Concept), and conform to CAMPS metadata standards for software and netCDF datasets.</p>
+<p>Once the CAMPS Metadata Review Team is satisfied that the metadata request is well-posed, properly organized for the Registry,
+and conforms to CAMPS standards, the new entry will be added to the registry.</p>
+<div class="figure align-default">
+<img alt="Figure 3a: Metadata Request Form for Codes Regsitry Collections" src="../_images/collections_request.png" />
+</div>
+<p>Figure 3a: Metadata Request Form for Codes Regsitry Collections</p>
+<div class="figure align-default">
+<img alt="Figure 3b: Metadata Request Form for Codes Registry Concepts" src="../_images/Concepts_request.png" />
+</div>
+<p>Figure 3b: Metadata Request Form for Codes Registry Concepts</p>
+<div class="figure align-default">
+<img alt="Figure 3c: Definitions and References" src="../_images/Definitions_referernces_requests.png" />
+</div>
+<p>Figure 3c: Definitions and References</p>
+</div>
+<div class="section" id="entries-for-other-projects">
+<h3>Entries for other projects<a class="headerlink" href="#entries-for-other-projects" title="Permalink to this headline">¶</a></h3>
+<p>Code Registry entries for projects other than StatPP should follow the procedures established elsewhere by the Administrators of those particular projects.
+These will generally not be reviewed by the CAMPS team for adherence to CAMPS StatPP metadata standards, but occasionally may need to be added to the
+Registry by a CAMPS Administrator or superuser.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../statPP_background/index.html" class="btn btn-neutral float-left" title="Statistical Post-Processing Background" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Apr 23, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

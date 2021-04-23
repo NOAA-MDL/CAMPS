@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Installation &mdash; camps 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="CAMPS Package Structure" href="structure.html" />
+    <link rel="prev" title="User’s Guide" href="../users_guide.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> camps
+          
+
+          
+            
+            <img src="../_static/CAMPS.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../users_guide.html">User’s Guide</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#standard-installation">Standard Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-installation">Custom Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initializing-camps">Initializing CAMPS</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="structure.html">CAMPS Package Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="camps_start_to_finish.html">CAMPS Forecast Development - start to finish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interactive_camps.html">Interactive CAMPS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="known_issues.html">Known Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../technical_description.html">Technical Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../statPP_background/index.html">Statistical Post-Processing Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codes_registry/index.html">The NWS Codes Registry:  Using linked data to support CAMPS</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">camps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../users_guide.html">User’s Guide</a> &raquo;</li>
+        
+      <li>Installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/Users_Guide/installation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installation">
+<span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>Python 3.6 or newer is required to run CAMPS.
+Anaconda3-5.3.1 (or newer) is highly recommended for running CAMPS, as many of the additional
+required packages are included within an Anaconda distribution.</p>
+<p><strong>Required Packages (minimum versions):</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 53%" />
+<col style="width: 47%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Language</p></th>
+<th class="head"><p>Version</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Python</p></td>
+<td><p>3.6</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 54%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Packages</p></th>
+<th class="head"><p>Version</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>netCDF4</p></td>
+<td><p>1.7.3</p></td>
+</tr>
+<tr class="row-odd"><td><p>pyproj</p></td>
+<td><p>1.9.6</p></td>
+</tr>
+<tr class="row-even"><td><p>pygrib</p></td>
+<td><p>2.0.4</p></td>
+</tr>
+<tr class="row-odd"><td><p>metpy</p></td>
+<td><p>0.12.0</p></td>
+</tr>
+<tr class="row-even"><td><p>scipy</p></td>
+<td><p>1.3.1</p></td>
+</tr>
+<tr class="row-odd"><td><p>pandas</p></td>
+<td><p>0.23.4</p></td>
+</tr>
+<tr class="row-even"><td><p>seaborn</p></td>
+<td><p>0.9.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>PyYaml</p></td>
+<td><p>3.13</p></td>
+</tr>
+<tr class="row-even"><td><p>numpy</p></td>
+<td><p>1.17.3</p></td>
+</tr>
+<tr class="row-odd"><td><p>matplotlib</p></td>
+<td><p>3.1.1</p></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="standard-installation">
+<h2>Standard Installation<a class="headerlink" href="#standard-installation" title="Permalink to this headline">¶</a></h2>
+<p>If you have the correct permissions, you may install CAMPS directly into your system’s main Python
+distribution (either Anaconda or a custom library with all necessary dependencies met for CAMPS).
+This should make the CAMPS package available for anyone using that Python distribution, just like any other Python package.</p>
+<p>To install CAMPS into an existing Python distribution, perform the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd /path/to/CAMPS/repository_clone
+$ python3 setup.py install
+</pre></div>
+</div>
+<p>When installing CAMPS into an existing Python installation, <a class="reference external" href="https://setuptools.readthedocs.io/en/latest/userguide/entry_point.html">console scripts</a> will be installed to the
+same bin/ directory as the python executable you are invoking.</p>
+</div>
+<div class="section" id="custom-installation">
+<h2>Custom Installation<a class="headerlink" href="#custom-installation" title="Permalink to this headline">¶</a></h2>
+<p>CAMPS can be installed into a separate directory (outside of an existing Python installation).
+A situation where this might occur is if you are working on a shared computing system.
+Given an installation path prefix (&lt;install-path&gt;), Python packages will install packages using the following directory structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ mkdir -p &lt;install-path&gt;/lib/pythonX.Y/site-packages
+</pre></div>
+</div>
+<p><strong>Note:</strong> &lt;install-path&gt; should be the absolute path.</p>
+<p>Issue the following commands to set the necessary environment variables and install CAMPS:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd /path/to/CAMPS/repository_clone
+$ export PYTHONPATH=&lt;install-path&gt;/lib/pythonX.Y/site-packages
+$ python3 setup.py install --prefix=&lt;install-path&gt;
+$ export PATH=$PATH:&lt;install-path&gt;/bin
+</pre></div>
+</div>
+<p>When installing CAMPS outside of a Python distribution, if the installation path does not exist,
+and/or the installation directory is not in your PYTHONPATH environment variable, then setup.py will fail.
+Append the CAMPS installation bin/ directory to PATH.  This allows CAMPS console scripts to be available in your shell environment.</p>
+<p>Alternatively, you can install CAMPS into your own user space via the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 setup.py install --user
+</pre></div>
+</div>
+<p>which will install into <cite>$HOME/.local</cite> on most modern Linux/UNIX systems.</p>
+</div>
+<div class="section" id="initializing-camps">
+<h2>Initializing CAMPS<a class="headerlink" href="#initializing-camps" title="Permalink to this headline">¶</a></h2>
+<p>After successfully installing CAMPS, it is necessary to open a python session, and import the software at least once.
+This first import of the CAMPS module will create a hidden directory, <code class="docutils literal notranslate"><span class="pre">$HOME/.camps/control</span></code>, which
+will contain all the control and configuration file templates.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$  python
+$  import camps
+$  quit()
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="structure.html" class="btn btn-neutral float-right" title="CAMPS Package Structure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../users_guide.html" class="btn btn-neutral float-left" title="User’s Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Apr 23, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
